@@ -2,6 +2,7 @@ from Entities.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
 import psycopg2
 
 
+
 class EndpointPostgreSQL(Endpoint):
     def __init__(self, endpoint_type: EndpointType, endpoint_name: str, credentials: dict):
         super().__init__(DatabaseType.POSTGRESQL, endpoint_type, endpoint_name, credentials)

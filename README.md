@@ -31,7 +31,7 @@ Essa imagem ilustra o processo ETL (Extract, Transform, Load), que é amplamente
 ## ENTIDADES
 
 ### 1. ENDPOINT
-#### PRÉ-REQUISITOS PARA INSTANCIAR
+#### PRÉ-REQUISITOS
 - Tipo do Banco de Dados
 - Tipo do Endpoint (Source ou Target)
 - Nome do Banco de Dados

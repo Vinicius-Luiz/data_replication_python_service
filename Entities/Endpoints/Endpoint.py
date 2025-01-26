@@ -1,10 +1,5 @@
-from enum import Enum
-class DatabaseType(Enum):
-    POSTGRESQL = 'PostgreSQL'
-
-class EndpointType(Enum):
-    SOURCE = 'Source'
-    TARGET = 'Target'
+from Entities.Endpoints.Decorators.EndpointDecorators import *
+from Entities.Shared.Types import DatabaseType, EndpointType
 
 class Endpoint:
     def __init__(self, database_type: DatabaseType, endpoint_type: EndpointType, endpoint_name: str, credentials: dict):
@@ -22,3 +17,11 @@ class Endpoint:
             raise ValueError('Invalid database type.')
         if self.endpoint_type not in EndpointType:
             raise ValueError('Invalid endpoint type.')
+    
+    @source_method
+    def get_schemas(self) -> list:
+        raise NotImplementedError
+
+    @source_method
+    def get_tables(self, schema: str) -> list:
+        raise NotImplementedError

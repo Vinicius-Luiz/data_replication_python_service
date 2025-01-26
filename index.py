@@ -31,3 +31,5 @@ if __name__ == "__main__":
 
     # Testar a conexão
     print(f"Conexão criada com sucesso: {endpoint.connection}")
+
+    endpoint.get_schemas()
