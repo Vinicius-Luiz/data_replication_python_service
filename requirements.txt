@@ -1,2 +1,9 @@
+numpy==2.2.2
+pandas==2.2.3
+pretty-errors==1.0.10
 psycopg2==2.9.10
+python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+pytz==2024.2
+six==1.17.0
+tzdata==2025.1

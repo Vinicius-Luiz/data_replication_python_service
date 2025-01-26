@@ -1,5 +1,5 @@
-from Entities.Endpoints.Endpoint import DatabaseType, EndpointType
 from Entities.Endpoints.Factory.EndpointFactory import EndpointFactory
+from Entities.Shared.Types import EndpointType, DatabaseType
 from dotenv import load_dotenv
 import os
 
@@ -30,10 +30,16 @@ if __name__ == "__main__":
     )
 
     # Testar a conexão
-    print(f"Conexão criada com sucesso: {endpoint.connection}")
+    print(f"Conexão criada com sucesso: {endpoint.__dict__}\n")
 
-    employees_employee = endpoint.get_table_details(schema='employees', table='employee')
-    for key, value in employees_employee.__dict__.items():
+    employees_employee_detail = endpoint.get_table_details(schema='employees', table='employee')
+    employees_employee_data   = endpoint.get_full_load_from_table(schema='employees', table='employee')
+
+    print(employees_employee_data)
+
+    print('\n')
+
+    for key, value in employees_employee_detail.__dict__.items():
         if key == 'columns':
             for column in value:
                 for key, value in column.__dict__.items():

@@ -3,6 +3,7 @@ from Entities.Shared.Queries import PostgreSQLQueries
 from Entities.Tables.Table import Table
 from Entities.Columns.Column import Column
 import psycopg2
+import pandas as pd
 
 class EndpointPostgreSQL(Endpoint):
 
@@ -60,10 +61,26 @@ class EndpointPostgreSQL(Endpoint):
                       estimated_row_count=metadata_table[2],
                       table_size=metadata_table[3])
         
+        cursor.close()
+
+        primary_keys = self.get_table_primary_key(table)
         
+        table = self.get_table_columns(table, primary_keys)
+        
+        return table
+    
+    def get_table_primary_key(self, table: Table) -> list:
+        cursor = self.cursor()
+
         cursor.execute(PostgreSQLQueries.GET_TABLE_PRIMARY_KEY, (table.schema_name, table.table_name))
         primary_keys = [row[0] for row in cursor.fetchall()]
-        
+
+        cursor.close()
+        return primary_keys
+    
+    def get_table_columns(self, table: Table, primary_keys: list) -> Table:
+        cursor = self.cursor()
+
         cursor.execute(PostgreSQLQueries.GET_TABLE_COLUMNS, (table.schema_name, table.table_name))
         for row in cursor.fetchall():
             is_primary_key = True if row[2] in primary_keys else False
@@ -73,7 +90,24 @@ class EndpointPostgreSQL(Endpoint):
                                        character_maximum_length=row[5],
                                        ordinal_position=row[6],
                                        is_primary_key=is_primary_key))
-        
+
         cursor.close()
+
         return table
-        
+    
+    def get_full_load_from_table(self, schema: str, table: str) -> dict:
+        cursor = self.cursor()
+
+        cursor.execute(PostgreSQLQueries.GET_FULL_LOAD_FROM_TABLE.format(schema = schema, table = table))
+        data = cursor.fetchall()
+        cursor.close()
+
+        df = pd.DataFrame(data, columns=[desc[0] for desc in cursor.description])
+        df.to_csv(f'{self.PATH_FULL_LOAD_STAGING_AREA}{schema}_{table}.csv', index=False)
+
+        return {
+            'rowcount': cursor.rowcount,
+            'rownumber': cursor.rownumber,
+            'statusmessage': cursor.statusmessage,
+            'file_path': f'{self.PATH_FULL_LOAD_STAGING_AREA}{schema}_{table}.csv'
+        }

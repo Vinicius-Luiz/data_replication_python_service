@@ -44,3 +44,8 @@ class PostgreSQLQueries:
             tc.table_schema = %s      AND
             tc.table_name   = %s
     """
+
+    GET_FULL_LOAD_FROM_TABLE = """
+    SELECT *
+      FROM {schema}.{table}
+    """
