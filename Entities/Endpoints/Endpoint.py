@@ -1,7 +1,8 @@
+from abc import ABC, abstractmethod
 from Entities.Endpoints.Decorators.EndpointDecorators import *
 from Entities.Shared.Types import DatabaseType, EndpointType
 
-class Endpoint:
+class Endpoint(ABC):
     def __init__(self, database_type: DatabaseType, endpoint_type: EndpointType, endpoint_name: str, credentials: dict):
         self.database_type = database_type
         self.endpoint_type = endpoint_type
@@ -18,10 +19,12 @@ class Endpoint:
         if self.endpoint_type not in EndpointType:
             raise ValueError('Invalid endpoint type.')
     
+    @abstractmethod
     @source_method
     def get_schemas(self) -> list:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     @source_method
     def get_tables(self, schema: str) -> list:
-        raise NotImplementedError
+        pass
