@@ -32,6 +32,12 @@ if __name__ == "__main__":
     # Testar a conexão
     print(f"Conexão criada com sucesso: {endpoint.connection}")
 
-    print(endpoint.get_schemas())
-
-    print(endpoint.get_tables('employees'))
+    employees_employee = endpoint.get_table_details(schema='employees', table='employee')
+    for key, value in employees_employee.__dict__.items():
+        if key == 'columns':
+            for column in value:
+                for key, value in column.__dict__.items():
+                    print(f"\t\t{key}: {value}")
+                print("")
+        else:
+            print(f"{key}: {value}")

@@ -28,3 +28,8 @@ class Endpoint(ABC):
     @source_method
     def get_tables(self, schema: str) -> list:
         pass
+
+    @abstractmethod
+    @source_method
+    def get_table_details(self, schema: str, table: str) -> list:
+        pass

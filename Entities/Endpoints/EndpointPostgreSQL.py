@@ -1,5 +1,7 @@
 from Entities.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
 from Entities.Shared.Queries import PostgreSQLQueries
+from Entities.Tables.Table import Table
+from Entities.Columns.Column import Column
 import psycopg2
 
 class EndpointPostgreSQL(Endpoint):
@@ -46,3 +48,32 @@ class EndpointPostgreSQL(Endpoint):
         data = [row[0] for row in cursor.fetchall()]
         cursor.close()
         return data
+    
+    def get_table_details(self, schema: str, table: str) -> Table:
+        """Obtém os detalhes de uma tabela do banco de dados."""
+        cursor = self.cursor()
+
+        cursor.execute(PostgreSQLQueries.GET_TABLE_DETAILS, (schema, table))
+        metadata_table = cursor.fetchone()
+        table = Table(schema_name=metadata_table[0],
+                      table_name=metadata_table[1],
+                      estimated_row_count=metadata_table[2],
+                      table_size=metadata_table[3])
+        
+        
+        cursor.execute(PostgreSQLQueries.GET_TABLE_PRIMARY_KEY, (table.schema_name, table.table_name))
+        primary_keys = [row[0] for row in cursor.fetchall()]
+        
+        cursor.execute(PostgreSQLQueries.GET_TABLE_COLUMNS, (table.schema_name, table.table_name))
+        for row in cursor.fetchall():
+            is_primary_key = True if row[2] in primary_keys else False
+            table.columns.append(Column(name=row[2],
+                                       data_type=row[3],
+                                       udt_name=row[4],
+                                       character_maximum_length=row[5],
+                                       ordinal_position=row[6],
+                                       is_primary_key=is_primary_key))
+        
+        cursor.close()
+        return table
+        
