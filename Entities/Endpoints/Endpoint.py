@@ -50,3 +50,8 @@ class Endpoint(ABC):
     @source_method
     def get_full_load_from_table(self, schema: str, table: str) -> dict:
         pass
+
+    @abstractmethod
+    @target_method
+    def insert_full_load_into_table(self, schema: str, table: str, path_data: str, create_table_if_not_exists: bool) -> dict:
+        pass

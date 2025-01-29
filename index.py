@@ -32,18 +32,29 @@ if __name__ == "__main__":
     # Testar a conexão
     print(f"Conexão criada com sucesso: {endpoint.__dict__}\n")
 
-    employees_employee_detail = endpoint.get_table_details(schema='employees', table='employee')
-    employees_employee_data   = endpoint.get_full_load_from_table(schema='employees', table='employee')
+    employees_employee_detail = endpoint.get_table_details(schema='employees', table='salary')
 
+    employees_employee_data   = endpoint.get_full_load_from_table(schema='employees', table='salary')
     print(employees_employee_data)
 
-    print('\n')
 
-    for key, value in employees_employee_detail.__dict__.items():
-        if key == 'columns':
-            for column in value:
-                for key, value in column.__dict__.items():
-                    print(f"\t\t{key}: {value}")
-                print("")
-        else:
-            print(f"{key}: {value}")
+    # for key, value in employees_employee_detail.__dict__.items():
+    #     if key == 'columns':
+    #         for column in value:
+    #             for key, value in column.__dict__.items():
+    #                 print(f"\t\t{key}: {value}")
+    #             print("")
+    #     else:
+    #         print(f"{key}: {value}")
+
+    # print(employees_employee_data)
+
+    employees_employee_full_load = endpoint.insert_full_load_into_table(
+        target_schema_name='employees',
+        target_table_name='salary_target',
+        path_data='data/full_load_data/employees_salary.csv',
+        source_table=employees_employee_detail,
+        create_table_if_not_exists=True,
+        recreate_table_if_exists=True,
+        truncate_before_insert=True)
+    print(employees_employee_full_load)

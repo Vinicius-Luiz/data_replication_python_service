@@ -25,6 +25,7 @@ class PostgreSQLQueries:
            data_type,
            udt_name,
            character_maximum_length,
+           is_nullable,
            ordinal_position
       FROM information_schema.columns
      WHERE table_schema = %s
@@ -48,4 +49,32 @@ class PostgreSQLQueries:
     GET_FULL_LOAD_FROM_TABLE = """
     SELECT *
       FROM {schema}.{table}
+    """
+
+    INSERT_FULL_LOAD_DATA = """
+    INSERT INTO {schema}.{table}
+    ({columns})
+    VALUES %s
+    """
+
+    TRUNCATE_TABLE = """
+    TRUNCATE TABLE {schema}.{table}
+    """
+
+    CHECK_TABLE_EXISTS = """
+    SELECT COUNT(*)
+      FROM information_schema.tables
+     WHERE table_schema = %s
+       AND table_name   = %s
+    """
+
+    CREATE_TABLE = """
+    CREATE TABLE {schema}.{table}
+    (
+        {columns}
+    )
+    """
+
+    DROP_TABLE = """
+    DROP TABLE IF EXISTS {schema}.{table}
     """
