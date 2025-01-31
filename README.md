@@ -28,6 +28,23 @@ Essa imagem ilustra o processo ETL (Extract, Transform, Load), que é amplamente
    - É o sistema final onde os dados transformados são armazenados.
    - Pode ser um data warehouse ou outro banco de dados projetado para consultas, análises e relatórios.
 
+## BANCO DE DADOS SUPORTADOS
+
+### 1. POSTGRESQL
+
+#### PRÉ-REQUISITOS
+Configuração em `postgresql.conf`
+```
+wal_level = logical
+max_replication_slots = 5 # recomendado > 20
+max_wal_senders = 5       # recomendado = max_replication_slots
+```
+
+Configuração em `pg_hba.conf`
+```
+host replication all 0.0.0.0/0 trust # permitir conexões de replicação
+```
+
 ## ENTIDADES
 
 ### 1. ENDPOINT
