@@ -21,7 +21,7 @@ class Endpoint(ABC):
     PATH_FULL_LOAD_STAGING_AREA = 'data/full_load_data/'
     PATH_CDC_STAGING_AREA = 'data/cdc_data/'
 
-    def __init__(self, database_type: DatabaseType, endpoint_type: EndpointType, endpoint_name: str) -> None:
+    def __init__(self, database_type: DatabaseType, endpoint_type: EndpointType, endpoint_name: str, periodicity_in_seconds_of_reading_from_source: int) -> None:
         """
         Inicializa um endpoint com os dados fornecidos.
 
@@ -36,6 +36,7 @@ class Endpoint(ABC):
         self.database_type = database_type
         self.endpoint_type = endpoint_type
         self.endpoint_name = endpoint_name
+        self.periodicity_in_seconds_of_reading_from_source = periodicity_in_seconds_of_reading_from_source
 
         self.id = f'{self.database_type.name}_{self.endpoint_type.name}_{self.endpoint_name}'
         

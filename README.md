@@ -48,6 +48,7 @@ host replication all 0.0.0.0/0 trust # permitir conexões de replicação
 ## ENTIDADES
 
 ### 1. ENDPOINT
+Entidade de conexão com um banco de dados. Define métodos para operações comuns como obtenção de esquemas, tabelas e carregamento de dados.
 #### PRÉ-REQUISITOS
 - Tipo do Banco de Dados
 - Tipo do Endpoint (Source ou Target)
@@ -65,3 +66,18 @@ host replication all 0.0.0.0/0 trust # permitir conexões de replicação
 ##### TARGET
 - Inserir dados em Tabelas no modo Full Load
 - Inserir dados em Tabelas no modo CDC
+
+### 2. TASK
+Entidade de configuração de um processo de replicação de dados. Define métodos para definição de endpoints, tabelas, filtros e transformações.
+#### PRÉ-REQUISITOS
+- Endpoint de origem
+- Endpoint de destino
+- Tabelas a serem replicadas
+- Tipo de Replicação (Full Load e/ou CDC)
+#### FUNCIONALIDADES
+- Definir filtros de replicação
+- Definir transformações de replicação:
+   - Nome de coluna
+   - Valores
+   - Tipo de dados
+   - Nome de schema e tabelas

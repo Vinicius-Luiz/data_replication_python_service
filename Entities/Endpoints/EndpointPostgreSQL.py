@@ -12,7 +12,7 @@ import os
 
 class EndpointPostgreSQL(Endpoint):
 
-    def __init__(self, endpoint_type: EndpointType, endpoint_name: str, credentials: dict):
+    def __init__(self, endpoint_type: EndpointType, endpoint_name: str, credentials: dict, periodicity_in_seconds_of_reading_from_source: int = 10):
         """
         Inicializa um endpoint para PostgreSQL, gerenciando a conexão.
 
@@ -22,7 +22,7 @@ class EndpointPostgreSQL(Endpoint):
             credentials (dict): Credenciais do banco de dados.
         """
         # Inicializa o Endpoint
-        super().__init__(DatabaseType.POSTGRESQL, endpoint_type, endpoint_name)
+        super().__init__(DatabaseType.POSTGRESQL, endpoint_type, endpoint_name, periodicity_in_seconds_of_reading_from_source)
 
         try:
             # Salva temporariamente as credenciais para tentar conectar
@@ -37,7 +37,7 @@ class EndpointPostgreSQL(Endpoint):
             return psycopg2.connect(**credentials)
         except Exception as e:
             logging.critical(f"Erro ao conectar ao banco de dados: {e}")
-            raise
+            raise ValueError(f"Erro ao conectar ao banco de dados: {e}")
 
     def cursor(self) -> psycopg2.extensions.cursor:
         """Retorna um cursor para a conexão atual."""
@@ -95,7 +95,7 @@ class EndpointPostgreSQL(Endpoint):
                 return self.get_table_columns(table_obj, primary_keys)
         except Exception as e:
             logging.critical(f"Erro ao obter os detalhes da tabela: {e}")
-            return None
+            raise ValueError(f"Erro ao obter os detalhes da tabela: {e}")
 
     def get_table_primary_key(self, table: Table) -> list:
         """Obtém as chaves primárias de uma tabela."""
@@ -105,7 +105,7 @@ class EndpointPostgreSQL(Endpoint):
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
             logging.critical(f"Erro ao obter as chaves primárias da tabela: {e}")
-            return []
+            raise ValueError(f"Erro ao obter as chaves primárias da tabela: {e}")
 
     def get_table_columns(self, table: Table, primary_keys: list) -> Table:
         """Obtém as colunas de uma tabela e adiciona ao objeto Table."""
@@ -127,7 +127,7 @@ class EndpointPostgreSQL(Endpoint):
             return table
         except Exception as e:
             logging.critical(f"Erro ao obter as colunas da tabela: {e}")
-            return None
+            raise ValueError(f"Erro ao obter as colunas da tabela: {e}")
 
     def get_full_load_from_table(self, schema: str, table: str) -> dict:
         """Realiza um full load de uma tabela e salva como CSV."""
@@ -144,6 +144,7 @@ class EndpointPostgreSQL(Endpoint):
                 df.to_csv(file_path, index=False)
 
                 return {
+                    'success': True,
                     'rowcount': cursor.rowcount,
                     'statusmessage': cursor.statusmessage,
                     'file_path': file_path,
@@ -151,7 +152,7 @@ class EndpointPostgreSQL(Endpoint):
                 }
         except Exception as e:
             logging.critical(f"Erro ao obter a carga completa da tabela: {e}")
-            return {}
+            raise ValueError(f"Erro ao obter a carga completa da tabela: {e}")
 
     def insert_full_load_into_table(self, target_schema: str, target_table: str, source_table: Table,
                                     create_table_if_not_exists: bool, recreate_table_if_exists: bool, truncate_before_insert: bool) -> dict:
@@ -174,7 +175,7 @@ class EndpointPostgreSQL(Endpoint):
         except Exception as e:
             self.rollback()
             logging.critical(f"Erro ao inserir dados na tabela: {e}")
-            return {'message': str(e), 'success': False}
+            raise ValueError(f"Erro ao inserir dados na tabela: {e}")
         
     def _manage_table(
         self,
