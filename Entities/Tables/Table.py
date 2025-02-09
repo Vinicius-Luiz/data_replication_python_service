@@ -1,6 +1,8 @@
 from Entities.Shared.Queries import PostgreSQLQueries
+from Entities.Transformations.Transformation import Transformation
 from Entities.Columns.Column import Column
 from typing import List
+import pandas as pd
 
 class Table:
     def __init__(self, schema_name: str  = None,  
@@ -14,7 +16,13 @@ class Table:
         self.table_size = table_size
         self.id = f'{self.schema_name}_{self.table_name}'
 
+        self.target_schema_name = self.schema_name
+        self.target_table_name = self.table_name
+
+        self.data: pd.DataFrame = None
+
         self.columns: List[Column] = []
+        self.transformations: List[Transformation] = []
 
     def mount_columns_to_create_table(self) -> str:
         columns_sql = []

@@ -76,8 +76,24 @@ Entidade de configuração de um processo de replicação de dados. Define méto
 - Tipo de Replicação (Full Load e/ou CDC)
 #### FUNCIONALIDADES
 - Definir filtros de replicação
-- Definir transformações de replicação:
-   - Nome de coluna
-   - Valores
-   - Tipo de dados
-   - Nome de schema e tabelas
+- Definir transformações de replicação
+
+### 3. TRANSFORMATIONS
+Entidade de definição de regras de uma determinada transformação na relicação de dados
+#### PRÉ-REQUISITOS
+- Tipo de transformação
+   - Criar coluna
+   - Modificar nome do schema da tabela
+   - Modificar nome da tabela
+   - Modificar nome de coluna
+   - Modificar tipo de dados
+   - Modificar valores da coluna
+- Contrato de transformação
+   - Criar coluna: nome da coluna; tipo da coluna; valores
+   - Modificar nome do schema da tabela: nome da tabela; nome do novo schema
+   - Modificar nome da tabela: nome da tabela; novo nome da tabela
+   - Modificar nome de coluna: nome da coluna; novo nome da coluna
+   - Modificar tipo de dados: nome da coluna; novo tipo de dado
+   - Modificar valores da coluna: nome da coluna; novo valor
+#### FUNCIONALIDADES
+- Aplicar transformações nas tabelas conforme especificado no contrato

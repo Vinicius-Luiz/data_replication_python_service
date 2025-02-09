@@ -1,5 +1,6 @@
 from Entities.Endpoints.Factory.EndpointFactory import EndpointFactory
-from Entities.Shared.Types import EndpointType, DatabaseType, TaskType
+from Entities.Transformations.Transformation import Transformation
+from Entities.Shared.Types import *
 from Entities.Tasks.Task import Task
 from dotenv import load_dotenv
 import logging
@@ -8,7 +9,7 @@ import os
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
 
-logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename='app.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
 
@@ -37,23 +38,19 @@ if __name__ == "__main__":
     }
 
 
-    logging.info(f"Conectando ao banco de dados {dbname_source} como Source")
     endpoint_source = EndpointFactory.create_endpoint(
         database_type=DatabaseType.POSTGRESQL,
         endpoint_type=EndpointType.SOURCE,
         endpoint_name='Source_PostgreSQL',
         credentials=credentials_source
     )
-    logging.info("Conexão criada com sucesso: {}".format(endpoint_source.__dict__))
 
-    logging.info(f"Conectando ao banco de dados {dbname_target} como Target")
     endpoint_target = EndpointFactory.create_endpoint(
         database_type=DatabaseType.POSTGRESQL,
         endpoint_type=EndpointType.TARGET,
         endpoint_name='Target_PostgreSQL',
         credentials=credentials_target
     )
-    logging.info("Conexão criada com sucesso: {}".format(endpoint_target.__dict__))
   
     task = Task(task_name = 'fl-employees',
                 source_endpoint = endpoint_source,
@@ -62,8 +59,13 @@ if __name__ == "__main__":
     
     table_names = [{'schema_name': 'employees', 'table_name': 'salary', 'priority': 1},
                    {'schema_name': 'employees', 'table_name': 'employee', 'priority': 0}]
-    task.map_tables(table_names)
-    task.run()
+    task.add_tables(table_names)
+
+    modify_table_name = Transformation(
+        transformation_type=TransformationType.MODIFY_TABLE_NAME,
+        description='Modificar nome da tabela adicionando o sufixo "_target"',
+        contract={'table_name': 'salary', 'target_table_name': 'salary_target'})
     
-    # schema_target = 'employees'
-    # table_target = 'salary_target'
+    task.add_transformation(modify_table_name)
+
+    task.run()

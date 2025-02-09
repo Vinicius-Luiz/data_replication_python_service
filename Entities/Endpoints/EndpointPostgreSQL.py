@@ -30,6 +30,8 @@ class EndpointPostgreSQL(Endpoint):
             self.connection = self.connect(temp_credentials)
         finally:
             del temp_credentials  # Remove as credenciais para evitar exposição
+        
+        logging.info("Conexão criada com sucesso: {}".format(self.__dict__))
 
     def connect(self, credentials: dict) -> psycopg2.extensions.connection:
         """Estabelece a conexão com o PostgreSQL."""
@@ -157,10 +159,12 @@ class EndpointPostgreSQL(Endpoint):
     def insert_full_load_into_table(self, target_schema: str, target_table: str, source_table: Table,
                                     create_table_if_not_exists: bool, recreate_table_if_exists: bool, truncate_before_insert: bool) -> dict:
         """Insere dados completos em uma tabela de destino."""
+        # TODO refazer tudo isso aqui
+        # TODO o df fica dentro de Table
         try:
             initial_time = time()
             path_data = f'{self.PATH_FULL_LOAD_STAGING_AREA}{source_table.schema_name}_{source_table.table_name}.csv'
-            df = pd.read_csv(path_data)
+            df = pd.read_csv(path_data) # TODO: isso vai sair daqui
 
             with self.connection.cursor() as cursor:
                 self._manage_table(cursor, target_schema, target_table, source_table,

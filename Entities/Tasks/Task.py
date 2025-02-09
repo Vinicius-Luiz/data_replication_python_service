@@ -1,7 +1,8 @@
 from Entities.Endpoints.Endpoint import Endpoint
+from Entities.Transformations.Transformation import Transformation
 from Entities.Tables.Table import Table
 from Entities.Shared.Types import TaskType
-from typing import List
+from typing import List, Dict
 import logging
 
 class Task:
@@ -10,9 +11,12 @@ class Task:
         self.source_endpoint = source_endpoint
         self.target_endpoint = target_endpoint
         self.replication_type = replication_type
-        self.tables: List[Table] = []
 
         self.id = f'{self.source_endpoint.id}_{self.target_endpoint.id}_{self.task_name}'
+
+        self.tables: List[Table] = []
+
+        self.filters = []
 
         self.validate()
 
@@ -23,7 +27,7 @@ class Task:
 
         logging.info(f"Task {self.id} validado com sucesso.")
 
-    def map_tables(self, table_names: List[dict]) -> dict:
+    def add_tables(self, table_names: List[dict]) -> dict:
         try:
             tables_detail = []
             for idx, table in enumerate(table_names):
@@ -44,9 +48,23 @@ class Task:
         except Exception as e:
             logging.critical(f"Erro ao obter detalhes da tabela: {e}")
             raise ValueError(f"Erro ao obter detalhes da tabela: {e}")
-        
+    
+    def find_table(self, schema_name: str, table_name: str) -> Table:
+        for table in self.tables:
+            if table.schema_name == schema_name and table.table_name == table_name:
+                return table
+    
+    def add_transformation(self, schema_name: str, table_name: str, transformation: Transformation) -> None:
+        try:
+            table = self.find_table(schema_name, table_name)
+            table.transformations.append(transformation)
+        except Exception as e:
+            logging.critical(f"Erro ao adicionar transformação: {e}")
+            raise ValueError(f"Erro ao adicionar transformação: {e}")
 
     def run(self) -> dict:
+        self.apply_transformations()
+
         if self.replication_type == TaskType.FULL_LOAD:
             return self._run_full_load()
         if self.replication_type == TaskType.CDC:
@@ -62,11 +80,15 @@ class Task:
                 table_get_full_load = self.source_endpoint.get_full_load_from_table(schema=table.schema_name, table=table.table_name)
                 logging.debug(table_get_full_load)
 
+                for transformation in table.transformations:
+                    logging.info(f"Aplicando transformação: {transformation.description}")
+                    transformation.execute(table)
+
                 logging.info(f"Realizando carga completa da tabela {table.schema_name}.{table.table_name}")
                 table_full_load = self.target_endpoint.insert_full_load_into_table(
-                    target_schema=table.schema_name,
-                    target_table=table.table_name,
-                    source_table=table,
+                    # target_schema=table.target_schema_name,
+                    # target_table=table.target_table_name,
+                    table=table,
                     create_table_if_not_exists=True,
                     recreate_table_if_exists=True,
                     truncate_before_insert=True
