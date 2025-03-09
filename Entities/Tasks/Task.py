@@ -80,7 +80,7 @@ class Task:
         try:
             for table in self.tables:
                 logging.info(f"Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}")
-                table.path_data = f'{self.PATH_FULL_LOAD_STAGING_AREA}{table.target_schema_name}_{table.target_table_name}.csv'
+                table.path_data = f'{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.csv'
                 table_get_full_load = self.source_endpoint.get_full_load_from_table(table = table)
                 table.data = pd.read_csv(table.path_data)
                 logging.debug(table_get_full_load)
