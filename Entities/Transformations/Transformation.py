@@ -12,8 +12,8 @@ class Transformation:
     
     def validate(self) -> None:
         if self.transformation_type not in TransformationType:
-            logging.error(f"Tipo de transformação inválido: {self.transformation_type}")
-            raise ValueError("Invalid transformation type.")
+            logging.error(f"TRANSFORMATION - Tipo de transformação inválido: {self.transformation_type}")
+            raise ValueError(f"TRANSFORMATION - Tipo de transformação inválido: {self.transformation_type}")
         
     def get_contract_example(self) -> dict:
         match self.transformation_type:

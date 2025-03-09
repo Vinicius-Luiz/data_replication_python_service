@@ -47,5 +47,5 @@ class Table:
     
     def execute_transformations(self) -> None:
         for transformation in self.transformations:
-            logging.info(f"Aplicando transformação em {self.schema_name}.{self.table_name}: {transformation.description}")
+            logging.info(f"TABLE - Aplicando transformação em {self.schema_name}.{self.table_name}: {transformation.description}")
             transformation.execute(self)

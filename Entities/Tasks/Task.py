@@ -26,10 +26,10 @@ class Task:
 
     def validate(self) -> None:
         if self.replication_type not in TaskType:
-            logging.error(f"Tipo de tarefa inválido: {self.replication_type}")
-            raise ValueError("Invalid task type.")
+            logging.error(f"TASK - Tipo de tarefa {self.replication_type} inválido")
+            raise ValueError(f"TASK - Tipo de tarefa {self.replication_type} inválido")
 
-        logging.info(f"Task {self.id} validado com sucesso.")
+        logging.info(f"TASK - {self.task_name} válido")
 
     def add_tables(self, table_names: List[dict]) -> dict:
         try:
@@ -39,7 +39,7 @@ class Task:
                 table_name = table.get('table_name')
                 priority = table.get('priority') or idx
                 
-                logging.info(f"Obtendo detalhes da tabela {schema_name}.{table_name}")
+                logging.info(f"TASK - Obtendo detalhes da tabela {schema_name}.{table_name}")
                 table_detail = self.source_endpoint.get_table_details(schema=schema_name, table=table_name)
                 logging.debug(table_detail.__dict__)
                 
@@ -50,16 +50,16 @@ class Task:
 
             return {'success': True, 'tables': self.tables}
         except Exception as e:
-            logging.critical(f"Erro ao obter detalhes da tabela: {e}")
-            raise ValueError(f"Erro ao obter detalhes da tabela: {e}")
+            logging.critical(f"TASK - Erro ao obter detalhes da tabela: {e}")
+            raise ValueError(f"TASK - Erro ao obter detalhes da tabela: {e}")
     
     def add_transformation(self, schema_name: str, table_name: str, transformation: Transformation) -> None:
         try:
             table = self.find_table(schema_name, table_name)
             table.transformations.append(transformation)
         except Exception as e:
-            logging.critical(f"Erro ao adicionar transformação: {e}")
-            raise ValueError(f"Erro ao adicionar transformação: {e}")
+            logging.critical(f"TASK - Erro ao adicionar transformação: {e}")
+            raise ValueError(f"TASK - Erro ao adicionar transformação: {e}")
     
     def find_table(self, schema_name: str, table_name: str) -> Table:
         for table in self.tables:
@@ -79,7 +79,7 @@ class Task:
     def _run_full_load(self) -> dict:
         try:
             for table in self.tables:
-                logging.info(f"Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}")
+                logging.info(f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}")
                 table.path_data = f'{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet'
                 table_get_full_load = self.source_endpoint.get_full_load_from_table(table = table)
                 table.data = pl.read_parquet(table.path_data)
@@ -87,7 +87,7 @@ class Task:
 
                 table.execute_transformations()
 
-                logging.info(f"Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}")
+                logging.info(f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}")
                 table_full_load = self.target_endpoint.insert_full_load_into_table(
                     table=table,
                     create_table_if_not_exists=True,

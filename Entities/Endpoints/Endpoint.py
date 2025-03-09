@@ -47,14 +47,14 @@ class Endpoint(ABC):
             ValueError: Se o tipo do banco de dados ou o tipo de endpoint não forem válidos.
         """
         if self.database_type not in DatabaseType:
-            logging.error(f"Tipo de banco de dados inválido: {self.database_type}")
-            raise ValueError("Invalid database type.")
+            logging.error(f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido.")
+            raise ValueError(f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido.")
 
         if self.endpoint_type not in EndpointType:
-            logging.error(f"Tipo de endpoint inválido: {self.endpoint_type}")
-            raise ValueError("Invalid endpoint type.")
+            logging.error(f"ENDPOINT - Tipo de endpoint {self.endpoint_type} inválido")
+            raise ValueError(f"ENDPOINT - Tipo de endpoint {self.endpoint_type} inválido")
 
-        logging.info(f"Endpoint {self.id} validado com sucesso.")
+        logging.info(f"ENDPOINT - {self.endpoint_name} válido")
 
     @abstractmethod
     @source_method

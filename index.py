@@ -14,13 +14,13 @@ logging.basicConfig(filename='app.log', level=logging.DEBUG, format='%(asctime)s
 load_dotenv()
 
 if __name__ == "__main__":
-    logging.info("Obtendo credenciais")
     dbname_source = os.getenv('DB_NAME_POSTGRESQL_SOURCE')
     dbname_target = os.getenv('DB_NAME_POSTGRESQL_TARGET')
     user = os.getenv('DB_USER_POSTGRESQL')
     password = os.getenv('DB_PASSWORD_POSTGRESQL')
     host = os.getenv('DB_HOST_POSTGRESQL')
     port = os.getenv('DB_PORT_POSTGRESQL')
+    logging.info("LOBBY - Credenciais obtidas")
 
     credentials_source = {
         'dbname': dbname_source,
