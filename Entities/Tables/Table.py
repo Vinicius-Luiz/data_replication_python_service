@@ -2,7 +2,7 @@ from Entities.Shared.Queries import PostgreSQLQueries
 from Entities.Transformations.Transformation import Transformation
 from Entities.Columns.Column import Column
 from typing import List
-import pandas as pd
+import polars as pl
 import logging
 
 class Table:
@@ -21,7 +21,7 @@ class Table:
         self.target_table_name = self.table_name
 
         self.path_data: str = None
-        self.data: pd.DataFrame = None
+        self.data: pl.DataFrame = None
 
         self.columns: List[Column] = []
         self.transformations: List[Transformation] = []

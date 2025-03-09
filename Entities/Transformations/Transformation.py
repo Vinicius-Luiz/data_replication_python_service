@@ -1,5 +1,5 @@
 from Entities.Shared.Types import TransformationType
-import pandas as pd
+import polars as pl
 import logging 
 
 class Transformation:

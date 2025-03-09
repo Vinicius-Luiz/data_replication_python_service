@@ -5,7 +5,7 @@ from Entities.Columns.Column import Column
 from psycopg2 import sql
 from psycopg2.extras import execute_values
 from time import time
-import pandas as pd
+import polars as pl
 import psycopg2
 import logging
 import os
@@ -21,7 +21,6 @@ class EndpointPostgreSQL(Endpoint):
             endpoint_name (str): Nome do endpoint.
             credentials (dict): Credenciais do banco de dados.
         """
-        # Inicializa o Endpoint
         super().__init__(DatabaseType.POSTGRESQL, endpoint_type, endpoint_name, periodicity_in_seconds_of_reading_from_source)
 
         try:
@@ -141,8 +140,8 @@ class EndpointPostgreSQL(Endpoint):
                 data = cursor.fetchall()
                 columns = [desc[0] for desc in cursor.description]
 
-                df = pd.DataFrame(data, columns=columns)
-                df.to_csv(table.path_data, index=False)
+                df = pl.DataFrame(data, schema=columns, orient='row')
+                df.write_parquet(table.path_data)
 
                 return {
                     'success': True,
@@ -230,10 +229,10 @@ class EndpointPostgreSQL(Endpoint):
                 schema=table.target_schema_name, table=table.target_table_name, columns=', '.join(table.data.columns)
             ))
             
-            records = [tuple(row) for row in table.data.itertuples(index=False, name=None)]
-            
+            records = [tuple(row) for row in table.data.iter_rows()]
+      
             logging.info(f"Inserindo {len(records)} registros na tabela {table.target_schema_name}.{table.target_table_name}")
-            execute_values(cursor, query, records)
+            execute_values(cursor, query, records, page_size=10000)
         except Exception as e:
             logging.error(f"Erro ao inserir dados na tabela {table.target_schema_name}.{table.target_table_name}: {e}")
             raise

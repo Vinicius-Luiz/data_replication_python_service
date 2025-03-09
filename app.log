@@ -1,29 +1,29 @@
-2025-03-08 23:47:44,391 - INFO - Obtendo credenciais
-2025-03-08 23:47:44,391 - INFO - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-03-08 23:47:44,391 - INFO - Endpoint POSTGRESQL_SOURCE_Source_PostgreSQL validado com sucesso.
-2025-03-08 23:47:44,424 - INFO - Conexão criada com sucesso: {'database_type': <DatabaseType.POSTGRESQL: 'PostgreSQL'>, 'endpoint_type': <EndpointType.SOURCE: 'Source'>, 'endpoint_name': 'Source_PostgreSQL', 'periodicity_in_seconds_of_reading_from_source': 10, 'id': 'POSTGRESQL_SOURCE_Source_PostgreSQL', 'connection': <connection object at 0x000001DBADF7DCF0; dsn: 'user=postgres password=xxx dbname=db_employees host=localhost port=5432', closed: 0>}
-2025-03-08 23:47:44,424 - INFO - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-03-08 23:47:44,424 - INFO - Endpoint POSTGRESQL_TARGET_Target_PostgreSQL validado com sucesso.
-2025-03-08 23:47:44,454 - INFO - Conexão criada com sucesso: {'database_type': <DatabaseType.POSTGRESQL: 'PostgreSQL'>, 'endpoint_type': <EndpointType.TARGET: 'Target'>, 'endpoint_name': 'Target_PostgreSQL', 'periodicity_in_seconds_of_reading_from_source': 10, 'id': 'POSTGRESQL_TARGET_Target_PostgreSQL', 'connection': <connection object at 0x000001DBADF7DF10; dsn: 'user=postgres password=xxx dbname=db_employees_target host=localhost port=5432', closed: 0>}
-2025-03-08 23:47:44,454 - INFO - Task POSTGRESQL_SOURCE_Source_PostgreSQL_POSTGRESQL_TARGET_Target_PostgreSQL_fl-employees validado com sucesso.
-2025-03-08 23:47:44,454 - INFO - Obtendo detalhes da tabela employees.salary
-2025-03-08 23:47:44,471 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'id': 'employees_salary', 'target_schema_name': 'employees', 'target_table_name': 'salary', 'path_data': None, 'data': None, 'columns': [<Entities.Columns.Column.Column object at 0x000001DBAE1AAA70>, <Entities.Columns.Column.Column object at 0x000001DBAE1AABF0>, <Entities.Columns.Column.Column object at 0x000001DBAE1AAB00>, <Entities.Columns.Column.Column object at 0x000001DBAE1AAB30>], 'transformations': []}
-2025-03-08 23:47:44,471 - INFO - Obtendo detalhes da tabela employees.employee
-2025-03-08 23:47:44,475 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'id': 'employees_employee', 'target_schema_name': 'employees', 'target_table_name': 'employee', 'path_data': None, 'data': None, 'columns': [<Entities.Columns.Column.Column object at 0x000001DBAE1AAB90>, <Entities.Columns.Column.Column object at 0x000001DBAE1AAD10>, <Entities.Columns.Column.Column object at 0x000001DBAE1AAD40>, <Entities.Columns.Column.Column object at 0x000001DBAE1AAD70>, <Entities.Columns.Column.Column object at 0x000001DBAE1AACB0>, <Entities.Columns.Column.Column object at 0x000001DBAE1AADA0>], 'transformations': []}
-2025-03-08 23:47:44,475 - INFO - Obtendo dados da tabela employees.salary
-2025-03-08 23:47:52,954 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/employees_salary.csv', 'time_elapsed': '7.33s'}
-2025-03-08 23:47:52,955 - INFO - Aplicando transformação em employees.salary: Modificar nome da tabela adicionando o sufixo "_target"
-2025-03-08 23:47:52,955 - INFO - Realizando carga completa da tabela employees.salary_target
-2025-03-08 23:47:52,955 - INFO - Removendo a tabela employees.salary_target
-2025-03-08 23:47:52,960 - INFO - Criando a tabela employees.salary_target
-2025-03-08 23:47:52,964 - INFO - Truncando a tabela employees.salary_target
-2025-03-08 23:47:53,665 - INFO - Inserindo 2844047 registros na tabela employees.salary_target
-2025-03-08 23:48:17,783 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '24.83s'}
-2025-03-08 23:48:17,784 - INFO - Obtendo dados da tabela employees.employee
-2025-03-08 23:48:18,927 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/employees_employee.csv', 'time_elapsed': '0.95s'}
-2025-03-08 23:48:18,928 - INFO - Realizando carga completa da tabela employees.employee
-2025-03-08 23:48:18,928 - INFO - Removendo a tabela employees.employee
-2025-03-08 23:48:18,932 - INFO - Criando a tabela employees.employee
-2025-03-08 23:48:18,936 - INFO - Truncando a tabela employees.employee
-2025-03-08 23:48:19,045 - INFO - Inserindo 300024 registros na tabela employees.employee
-2025-03-08 23:48:22,379 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '3.45s'}
+2025-03-09 00:54:55,553 - INFO - Obtendo credenciais
+2025-03-09 00:54:55,553 - INFO - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-03-09 00:54:55,553 - INFO - Endpoint POSTGRESQL_SOURCE_Source_PostgreSQL validado com sucesso.
+2025-03-09 00:54:55,588 - INFO - Conexão criada com sucesso: {'database_type': <DatabaseType.POSTGRESQL: 'PostgreSQL'>, 'endpoint_type': <EndpointType.SOURCE: 'Source'>, 'endpoint_name': 'Source_PostgreSQL', 'periodicity_in_seconds_of_reading_from_source': 10, 'id': 'POSTGRESQL_SOURCE_Source_PostgreSQL', 'connection': <connection object at 0x0000027045713BC0; dsn: 'user=postgres password=xxx dbname=db_employees host=localhost port=5432', closed: 0>}
+2025-03-09 00:54:55,588 - INFO - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-03-09 00:54:55,588 - INFO - Endpoint POSTGRESQL_TARGET_Target_PostgreSQL validado com sucesso.
+2025-03-09 00:54:55,619 - INFO - Conexão criada com sucesso: {'database_type': <DatabaseType.POSTGRESQL: 'PostgreSQL'>, 'endpoint_type': <EndpointType.TARGET: 'Target'>, 'endpoint_name': 'Target_PostgreSQL', 'periodicity_in_seconds_of_reading_from_source': 10, 'id': 'POSTGRESQL_TARGET_Target_PostgreSQL', 'connection': <connection object at 0x0000027045713DE0; dsn: 'user=postgres password=xxx dbname=db_employees_target host=localhost port=5432', closed: 0>}
+2025-03-09 00:54:55,619 - INFO - Task POSTGRESQL_SOURCE_Source_PostgreSQL_POSTGRESQL_TARGET_Target_PostgreSQL_fl-employees validado com sucesso.
+2025-03-09 00:54:55,619 - INFO - Obtendo detalhes da tabela employees.salary
+2025-03-09 00:54:55,642 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'id': 'employees_salary', 'target_schema_name': 'employees', 'target_table_name': 'salary', 'path_data': None, 'data': None, 'columns': [<Entities.Columns.Column.Column object at 0x0000027045BB5450>, <Entities.Columns.Column.Column object at 0x0000027045BB55D0>, <Entities.Columns.Column.Column object at 0x0000027045BB54E0>, <Entities.Columns.Column.Column object at 0x0000027045BB5510>], 'transformations': []}
+2025-03-09 00:54:55,643 - INFO - Obtendo detalhes da tabela employees.employee
+2025-03-09 00:54:55,647 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'id': 'employees_employee', 'target_schema_name': 'employees', 'target_table_name': 'employee', 'path_data': None, 'data': None, 'columns': [<Entities.Columns.Column.Column object at 0x0000027045BB5570>, <Entities.Columns.Column.Column object at 0x0000027045BB56F0>, <Entities.Columns.Column.Column object at 0x0000027045BB5720>, <Entities.Columns.Column.Column object at 0x0000027045BB5750>, <Entities.Columns.Column.Column object at 0x0000027045BB5690>, <Entities.Columns.Column.Column object at 0x0000027045BB5780>], 'transformations': []}
+2025-03-09 00:54:55,648 - INFO - Obtendo dados da tabela employees.salary
+2025-03-09 00:54:59,014 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl-employees_employees_salary.parquet', 'time_elapsed': '3.17s'}
+2025-03-09 00:54:59,015 - INFO - Aplicando transformação em employees.salary: Modificar nome da tabela adicionando o sufixo "_target"
+2025-03-09 00:54:59,015 - INFO - Realizando carga completa da tabela employees.salary_target
+2025-03-09 00:54:59,015 - INFO - Removendo a tabela employees.salary_target
+2025-03-09 00:54:59,026 - INFO - Criando a tabela employees.salary_target
+2025-03-09 00:54:59,028 - INFO - Truncando a tabela employees.salary_target
+2025-03-09 00:55:00,222 - INFO - Inserindo 2844047 registros na tabela employees.salary_target
+2025-03-09 00:55:30,070 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '31.06s'}
+2025-03-09 00:55:30,070 - INFO - Obtendo dados da tabela employees.employee
+2025-03-09 00:55:30,607 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl-employees_employees_employee.parquet', 'time_elapsed': '0.50s'}
+2025-03-09 00:55:30,607 - INFO - Realizando carga completa da tabela employees.employee
+2025-03-09 00:55:30,607 - INFO - Removendo a tabela employees.employee
+2025-03-09 00:55:30,610 - INFO - Criando a tabela employees.employee
+2025-03-09 00:55:30,615 - INFO - Truncando a tabela employees.employee
+2025-03-09 00:55:30,779 - INFO - Inserindo 300024 registros na tabela employees.employee
+2025-03-09 00:55:35,348 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '4.74s'}
