@@ -3,6 +3,7 @@ from Entities.Transformations.Transformation import Transformation
 from Entities.Columns.Column import Column
 from typing import List
 import pandas as pd
+import logging
 
 class Table:
     def __init__(self, schema_name: str  = None,  
@@ -19,6 +20,7 @@ class Table:
         self.target_schema_name = self.schema_name
         self.target_table_name = self.table_name
 
+        self.path_data: str = None
         self.data: pd.DataFrame = None
 
         self.columns: List[Column] = []
@@ -36,9 +38,14 @@ class Table:
     
     def mount_create_table(self) -> str:
         columns_sql = self.mount_columns_to_create_table()
-        return PostgreSQLQueries.CREATE_TABLE.format(schema=self.schema_name, table=self.table_name, columns=columns_sql)      
+        return PostgreSQLQueries.CREATE_TABLE.format(schema=self.target_schema_name, table=self.target_table_name, columns=columns_sql)      
 
     def copy(self) -> 'Table':
         new_table = Table(self.schema_name, self.table_name, self.estimated_row_count, self.table_size)
         new_table.columns = self.columns.copy()
         return new_table
+    
+    def execute_transformations(self) -> None:
+        for transformation in self.transformations:
+            logging.info(f"Aplicando transformação em {self.schema_name}.{self.table_name}: {transformation.description}")
+            transformation.execute(self)

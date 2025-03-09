@@ -18,9 +18,6 @@ class Endpoint(ABC):
         id (str): Identificador único do endpoint gerado a partir dos atributos.
     """
 
-    PATH_FULL_LOAD_STAGING_AREA = 'data/full_load_data/'
-    PATH_CDC_STAGING_AREA = 'data/cdc_data/'
-
     def __init__(self, database_type: DatabaseType, endpoint_type: EndpointType, endpoint_name: str, periodicity_in_seconds_of_reading_from_source: int) -> None:
         """
         Inicializa um endpoint com os dados fornecidos.

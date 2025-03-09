@@ -3,9 +3,13 @@ from Entities.Transformations.Transformation import Transformation
 from Entities.Tables.Table import Table
 from Entities.Shared.Types import TaskType
 from typing import List, Dict
+import pandas as pd
 import logging
 
 class Task:
+    PATH_FULL_LOAD_STAGING_AREA = 'data/full_load_data/'
+    PATH_CDC_STAGING_AREA = 'data/cdc_data/'
+
     def __init__(self, task_name: str, source_endpoint: Endpoint, target_endpoint: Endpoint, replication_type: TaskType) -> None:
         self.task_name = task_name
         self.source_endpoint = source_endpoint
@@ -49,11 +53,6 @@ class Task:
             logging.critical(f"Erro ao obter detalhes da tabela: {e}")
             raise ValueError(f"Erro ao obter detalhes da tabela: {e}")
     
-    def find_table(self, schema_name: str, table_name: str) -> Table:
-        for table in self.tables:
-            if table.schema_name == schema_name and table.table_name == table_name:
-                return table
-    
     def add_transformation(self, schema_name: str, table_name: str, transformation: Transformation) -> None:
         try:
             table = self.find_table(schema_name, table_name)
@@ -61,10 +60,14 @@ class Task:
         except Exception as e:
             logging.critical(f"Erro ao adicionar transformação: {e}")
             raise ValueError(f"Erro ao adicionar transformação: {e}")
+    
+    def find_table(self, schema_name: str, table_name: str) -> Table:
+        for table in self.tables:
+            if table.schema_name == schema_name and table.table_name == table_name:
+                return table
+    
 
     def run(self) -> dict:
-        self.apply_transformations()
-
         if self.replication_type == TaskType.FULL_LOAD:
             return self._run_full_load()
         if self.replication_type == TaskType.CDC:
@@ -76,18 +79,16 @@ class Task:
     def _run_full_load(self) -> dict:
         try:
             for table in self.tables:
-                logging.info(f"Obtendo dados da tabela {table.schema_name}.{table.table_name}")
-                table_get_full_load = self.source_endpoint.get_full_load_from_table(schema=table.schema_name, table=table.table_name)
+                logging.info(f"Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}")
+                table.path_data = f'{self.PATH_FULL_LOAD_STAGING_AREA}{table.target_schema_name}_{table.target_table_name}.csv'
+                table_get_full_load = self.source_endpoint.get_full_load_from_table(table = table)
+                table.data = pd.read_csv(table.path_data)
                 logging.debug(table_get_full_load)
 
-                for transformation in table.transformations:
-                    logging.info(f"Aplicando transformação: {transformation.description}")
-                    transformation.execute(table)
+                table.execute_transformations()
 
-                logging.info(f"Realizando carga completa da tabela {table.schema_name}.{table.table_name}")
+                logging.info(f"Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}")
                 table_full_load = self.target_endpoint.insert_full_load_into_table(
-                    # target_schema=table.target_schema_name,
-                    # target_table=table.target_table_name,
                     table=table,
                     create_table_if_not_exists=True,
                     recreate_table_if_exists=True,
@@ -95,10 +96,10 @@ class Task:
                 )
                 logging.debug(table_full_load)
 
-            return {'message': 'Full load data inserted successfully', 'success': True}
+            return table_full_load
         except Exception as e:
-            logging.critical(f"Erro ao realizar carga completa: {e}")
-            raise ValueError(f"Erro ao realizar carga completa: {e}")
+            logging.critical(e)
+            raise ValueError(e)
 
     def _run_cdc(self) -> dict:
-        pass
+        raise NotImplementedError

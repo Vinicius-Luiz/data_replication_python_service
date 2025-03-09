@@ -1,5 +1,4 @@
 from Entities.Shared.Types import TransformationType
-from Entities.Tables.Table import Table
 import pandas as pd
 import logging 
 
@@ -21,9 +20,9 @@ class Transformation:
             case TransformationType.CREATE_COLUMN:
                 return {'column_name': None, 'column_type': None}
             case TransformationType.MODIFY_SCHEMA_NAME:
-                return {'schema_name': None, 'target_schema_name': None}
+                return {'target_schema_name': None}
             case TransformationType.MODIFY_TABLE_NAME:
-                return {'table_name': None, 'target_table_name': None}
+                return {'target_table_name': None}
             case TransformationType.MODIFY_COLUMN_NAME:
                 return {'column_name': None, 'target_column_name': None}
             case TransformationType.MODIFY_COLUMN_TYPE:
@@ -31,7 +30,7 @@ class Transformation:
             case TransformationType.MODIFY_COLUMN_VALUES:
                 return {'column_name': None, 'target_column_value': None}
     
-    def execute(self, table: Table = None) -> None:
+    def execute(self, table = None) -> None:
         match self.transformation_type:
             case TransformationType.CREATE_COLUMN:
                 return self.execute_create_column(table)
@@ -46,21 +45,21 @@ class Transformation:
             case TransformationType.MODIFY_COLUMN_VALUES:
                 return self.execute_modify_column_values(table)
     
-    def execute_create_column(self, table: Table) -> Table:
+    def execute_create_column(self, table):
         raise NotImplementedError
 
-    def execute_modify_schema_name(self, table: Table) -> Table:
+    def execute_modify_schema_name(self, table):
         raise NotImplementedError
 
-    def execute_modify_table_name(self, table: Table) -> Table:
+    def execute_modify_table_name(self, table):
         table.target_table_name = self.contract['target_table_name']
         return table
 
-    def execute_modify_column_name(self, table: Table) -> Table:
+    def execute_modify_column_name(self, table):
         raise NotImplementedError
 
-    def execute_modify_column_type(self, table: Table) -> Table:
+    def execute_modify_column_type(self, table):
         raise NotImplementedError
 
-    def execute_modify_column_values(self, table: Table) -> Table:
+    def execute_modify_column_values(self, table):
         raise NotImplementedError

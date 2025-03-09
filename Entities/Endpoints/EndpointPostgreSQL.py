@@ -131,49 +131,43 @@ class EndpointPostgreSQL(Endpoint):
             logging.critical(f"Erro ao obter as colunas da tabela: {e}")
             raise ValueError(f"Erro ao obter as colunas da tabela: {e}")
 
-    def get_full_load_from_table(self, schema: str, table: str) -> dict:
+    def get_full_load_from_table(self, table: Table) -> dict:
         """Realiza um full load de uma tabela e salva como CSV."""
         try:
             initial_time = time()
-            file_path = f'{self.PATH_FULL_LOAD_STAGING_AREA}{schema}_{table}.csv'
 
             with self.connection.cursor() as cursor:
-                cursor.execute(PostgreSQLQueries.GET_FULL_LOAD_FROM_TABLE.format(schema=schema, table=table))
+                cursor.execute(PostgreSQLQueries.GET_FULL_LOAD_FROM_TABLE.format(schema=table.schema_name, table=table.table_name))
                 data = cursor.fetchall()
                 columns = [desc[0] for desc in cursor.description]
 
                 df = pd.DataFrame(data, columns=columns)
-                df.to_csv(file_path, index=False)
+                df.to_csv(table.path_data, index=False)
 
                 return {
                     'success': True,
                     'rowcount': cursor.rowcount,
                     'statusmessage': cursor.statusmessage,
-                    'file_path': file_path,
+                    'path_data': table.path_data,
                     'time_elapsed': f"{time() - initial_time:.2f}s"
                 }
         except Exception as e:
             logging.critical(f"Erro ao obter a carga completa da tabela: {e}")
             raise ValueError(f"Erro ao obter a carga completa da tabela: {e}")
 
-    def insert_full_load_into_table(self, target_schema: str, target_table: str, source_table: Table,
-                                    create_table_if_not_exists: bool, recreate_table_if_exists: bool, truncate_before_insert: bool) -> dict:
+    def insert_full_load_into_table(self, table: Table, create_table_if_not_exists: bool, recreate_table_if_exists: bool, truncate_before_insert: bool) -> dict:
         """Insere dados completos em uma tabela de destino."""
-        # TODO refazer tudo isso aqui
-        # TODO o df fica dentro de Table
         try:
             initial_time = time()
-            path_data = f'{self.PATH_FULL_LOAD_STAGING_AREA}{source_table.schema_name}_{source_table.table_name}.csv'
-            df = pd.read_csv(path_data) # TODO: isso vai sair daqui
 
             with self.connection.cursor() as cursor:
-                self._manage_table(cursor, target_schema, target_table, source_table,
+                self._manage_table(cursor, table,
                                    create_table_if_not_exists, recreate_table_if_exists, truncate_before_insert)
 
-                self._insert_data(cursor, target_schema, target_table, df)
+                self._insert_data(cursor, table)
 
                 self.commit()
-                os.remove(path_data)
+                os.remove(table.path_data)
 
                 return {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': f"{time() - initial_time:.2f}s"}
         except Exception as e:
@@ -184,9 +178,7 @@ class EndpointPostgreSQL(Endpoint):
     def _manage_table(
         self,
         cursor: psycopg2.extensions.cursor,
-        schema_name: str,
-        table_name: str,
-        source_table: Table,
+        table: Table,
         create_if_not_exists: bool,
         recreate_if_exists: bool,
         truncate_before_insert: bool
@@ -196,9 +188,7 @@ class EndpointPostgreSQL(Endpoint):
         
         Args:
             cursor (psycopg2.extensions.cursor): Cursor do banco de dados para execução de comandos SQL.
-            schema_name (str): Nome do schema onde a tabela está localizada.
-            table_name (str): Nome da tabela a ser gerenciada.
-            source_table (Table): Objeto representando a estrutura da tabela de origem.
+            table: Table, (Table): Objeto representando a estrutura da tabela de origem.
             create_if_not_exists (bool): Se True, cria a tabela caso ela não exista.
             recreate_if_exists (bool): Se True, recria a tabela caso ela já exista.
             truncate_before_insert (bool): Se True, trunca a tabela antes da inserção dos dados.
@@ -206,52 +196,44 @@ class EndpointPostgreSQL(Endpoint):
         try:
             if recreate_if_exists:
                 create_if_not_exists = True
-                logging.info(f"Removendo a tabela {schema_name}.{table_name}")
-                cursor.execute(PostgreSQLQueries.DROP_TABLE.format(schema=schema_name, table=table_name))
+                logging.info(f"Removendo a tabela {table.target_schema_name}.{table.target_table_name}")
+                cursor.execute(PostgreSQLQueries.DROP_TABLE.format(schema=table.target_schema_name, table=table.target_table_name))
             
             if create_if_not_exists:
-                cursor.execute(PostgreSQLQueries.CHECK_TABLE_EXISTS, (schema_name, table_name))
+                cursor.execute(PostgreSQLQueries.CHECK_TABLE_EXISTS, (table.target_schema_name, table.target_table_name))
                 if cursor.fetchone()[0] == 0:
-                    target_table = source_table.copy()
-                    target_table.schema_name = schema_name
-                    target_table.table_name = table_name
-                    create_table_sql = target_table.mount_create_table()
-                    logging.info(f"Criando a tabela {schema_name}.{table_name}")
+                    create_table_sql = table.mount_create_table()
+                    logging.info(f"Criando a tabela {table.target_schema_name}.{table.target_table_name}")
                     cursor.execute(create_table_sql)
             
             if truncate_before_insert:
-                logging.info(f"Truncando a tabela {schema_name}.{table_name}")
-                cursor.execute(PostgreSQLQueries.TRUNCATE_TABLE.format(schema=schema_name, table=table_name))
+                logging.info(f"Truncando a tabela {table.target_schema_name}.{table.target_table_name}")
+                cursor.execute(PostgreSQLQueries.TRUNCATE_TABLE.format(schema=table.target_schema_name, table=table.target_table_name))
         except Exception as e:
-            logging.error(f"Erro ao gerenciar a tabela {schema_name}.{table_name}: {e}")
-            raise
+            logging.error(f"Erro ao gerenciar a tabela {table.target_schema_name}.{table.target_table_name}: {e}")
+            raise ValueError(f"Erro ao gerenciar a tabela {table.target_schema_name}.{table.target_table_name}: {e}")
 
     def _insert_data(
         self,
         cursor: psycopg2.extensions.cursor,
-        schema_name: str,
-        table_name: str,
-        data: pd.DataFrame
+        table: Table
     ) -> None:
         """
         Insere dados de um DataFrame em uma tabela do banco de dados usando o comando COPY.
         
         Args:
             cursor (psycopg2.extensions.cursor): Cursor do banco de dados para execução de comandos SQL.
-            schema_name (str): Nome do schema onde a tabela está localizada.
-            table_name (str): Nome da tabela onde os dados serão inseridos.
-            data (pd.DataFrame): DataFrame contendo os dados a serem inseridos.
+            table: Table, (Table): Objeto representando a estrutura da tabela de origem.
         """
         try:
             query = sql.SQL(PostgreSQLQueries.INSERT_FULL_LOAD_DATA.format(
-                schema=schema_name, table=table_name, columns=', '.join(data.columns)
+                schema=table.target_schema_name, table=table.target_table_name, columns=', '.join(table.data.columns)
             ))
             
-            # Converter DataFrame para lista de tuplas
-            records = [tuple(row) for row in data.itertuples(index=False, name=None)]
+            records = [tuple(row) for row in table.data.itertuples(index=False, name=None)]
             
-            logging.info(f"Inserindo {len(records)} registros na tabela {schema_name}.{table_name}")
+            logging.info(f"Inserindo {len(records)} registros na tabela {table.target_schema_name}.{table.target_table_name}")
             execute_values(cursor, query, records)
         except Exception as e:
-            logging.error(f"Erro ao inserir dados na tabela {schema_name}.{table_name}: {e}")
+            logging.error(f"Erro ao inserir dados na tabela {table.target_schema_name}.{table.target_table_name}: {e}")
             raise

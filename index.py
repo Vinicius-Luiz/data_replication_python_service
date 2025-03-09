@@ -64,8 +64,8 @@ if __name__ == "__main__":
     modify_table_name = Transformation(
         transformation_type=TransformationType.MODIFY_TABLE_NAME,
         description='Modificar nome da tabela adicionando o sufixo "_target"',
-        contract={'table_name': 'salary', 'target_table_name': 'salary_target'})
+        contract={'target_table_name': 'salary_target'})
     
-    task.add_transformation(modify_table_name)
+    task.add_transformation(schema_name = 'employees', table_name = 'salary', transformation = modify_table_name)
 
     task.run()
