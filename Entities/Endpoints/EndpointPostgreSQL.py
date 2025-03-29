@@ -30,7 +30,7 @@ class EndpointPostgreSQL(Endpoint):
         finally:
             del temp_credentials  # Remove as credenciais para evitar exposição
         
-        logging.info(f"ENDPOINT - {endpoint_name} Conectado")
+        logging.info(f"ENDPOINT - {endpoint_name} conectado")
         logging.debug(self.connection.get_dsn_parameters())
 
     def connect(self, credentials: dict) -> psycopg2.extensions.connection:

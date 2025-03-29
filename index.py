@@ -1,10 +1,9 @@
 from Entities.Endpoints.Factory.EndpointFactory import EndpointFactory
 from Entities.Transformations.Transformation import Transformation
-from Entities.Shared.Types import *
 from Entities.Tasks.Task import Task
+from tasks.fl_employees import TaskSettings
 from dotenv import load_dotenv
 import logging
-import os
 
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
@@ -14,58 +13,28 @@ logging.basicConfig(filename='app.log', level=logging.DEBUG, format='%(asctime)s
 load_dotenv()
 
 if __name__ == "__main__":
-    dbname_source = os.getenv('DB_NAME_POSTGRESQL_SOURCE')
-    dbname_target = os.getenv('DB_NAME_POSTGRESQL_TARGET')
-    user = os.getenv('DB_USER_POSTGRESQL')
-    password = os.getenv('DB_PASSWORD_POSTGRESQL')
-    host = os.getenv('DB_HOST_POSTGRESQL')
-    port = os.getenv('DB_PORT_POSTGRESQL')
-    logging.info("LOBBY - Credenciais obtidas")
-
-    credentials_source = {
-        'dbname': dbname_source,
-        'user': user,
-        'password': password,
-        'host': host,
-        'port': port
-    }
-    credentials_target = {
-        'dbname': dbname_target,
-        'user': user,
-        'password': password,
-        'host': host,
-        'port': port
-    }
-
-
     endpoint_source = EndpointFactory.create_endpoint(
-        database_type=DatabaseType.POSTGRESQL,
-        endpoint_type=EndpointType.SOURCE,
-        endpoint_name='Source_PostgreSQL',
-        credentials=credentials_source
+        **TaskSettings.TASK.get('source_endpoint')
     )
 
     endpoint_target = EndpointFactory.create_endpoint(
-        database_type=DatabaseType.POSTGRESQL,
-        endpoint_type=EndpointType.TARGET,
-        endpoint_name='Target_PostgreSQL',
-        credentials=credentials_target
+        **TaskSettings.TASK.get('target_endpoint')
     )
   
-    task = Task(task_name = 'fl-employees',
-                source_endpoint = endpoint_source,
+    task = Task(source_endpoint = endpoint_source,
                 target_endpoint = endpoint_target,
-                replication_type = TaskType.FULL_LOAD)
+                **TaskSettings.TASK.get('task'))
     
-    table_names = [{'schema_name': 'employees', 'table_name': 'salary', 'priority': 1},
-                   {'schema_name': 'employees', 'table_name': 'employee', 'priority': 0}]
-    task.add_tables(table_names)
+    task.add_tables(TaskSettings.TASK.get('tables'))
 
-    modify_table_name = Transformation(
-        transformation_type=TransformationType.MODIFY_TABLE_NAME,
-        description='Modificar nome da tabela adicionando o sufixo "_target"',
-        contract={'target_table_name': 'salary_target'})
+    for transformation in TaskSettings.TASK.get('transformations'):
+        transformation_config = Transformation(**transformation.get('settings'))
     
-    task.add_transformation(schema_name = 'employees', table_name = 'salary', transformation = modify_table_name)
+        schema_name = transformation.get('table_info').get('schema_name')
+        table_name  = transformation.get('table_info').get('table_name')
+        
+        task.add_transformation(schema_name = schema_name,
+                                table_name = table_name,
+                                transformation = transformation_config)
 
     task.run()
