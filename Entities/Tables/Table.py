@@ -1,7 +1,7 @@
 from Entities.Shared.Queries import PostgreSQLQueries
 from Entities.Transformations.Transformation import Transformation
 from Entities.Columns.Column import Column
-from typing import List
+from typing import List, Dict
 import polars as pl
 import logging
 
@@ -23,12 +23,12 @@ class Table:
         self.path_data: str = None
         self.data: pl.DataFrame = None
 
-        self.columns: List[Column] = []
+        self.columns: Dict[str, Column] = {}
         self.transformations: List[Transformation] = []
 
     def mount_columns_to_create_table(self) -> str:
         columns_sql = []
-        for column in self.columns:
+        for column in sorted(self.columns.values(), key=lambda col: col.ordinal_position):
             character_maximum_length = f'({column.character_maximum_length})' if column.character_maximum_length else ''
             column_str = f'{column.name} {column.data_type}{character_maximum_length} {"NOT NULL" if not column.nullable else "NULL"}'
             columns_sql.append(column_str)
@@ -44,6 +44,9 @@ class Table:
         new_table = Table(self.schema_name, self.table_name, self.estimated_row_count, self.table_size)
         new_table.columns = self.columns.copy()
         return new_table
+    
+    def find_column(self, column_name: str) -> Column:
+        return self.columns.get(column_name)
     
     def execute_transformations(self) -> None:
         for transformation in self.transformations:

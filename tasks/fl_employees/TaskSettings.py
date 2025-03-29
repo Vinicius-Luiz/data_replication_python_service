@@ -24,10 +24,65 @@ TASK = {
             },
             "settings": {
                 "transformation_type": TransformationType.MODIFY_TABLE_NAME,
-                "description": "Modificar nome da tabela adicionando o sufixo '_target'",
-                "contract": {"target_table_name": "salary_target"}
+                "description": "Alterando nome da tabela para português",
+                "contract": {"target_table_name": "salario"}
             }
-        }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "salary"
+            },
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_SCHEMA_NAME,
+                "description": "Alterando nome do schema para português",
+                "contract": {"target_schema_name": "funcionarios"}
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "salary"
+            },
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_COLUMN_NAME,
+                "description": "Modificando 'employee_id' para 'funcionario_id'",
+                "contract": {'column_name': 'employee_id', 'target_column_name': 'funcionario_id'}
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "salary"
+            },
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_COLUMN_NAME,
+                "description": "Modificando 'amount' para 'quantia'",
+                "contract": {'column_name': 'amount', 'target_column_name': 'quantia'}
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "salary"
+            },
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_COLUMN_NAME,
+                "description": "Modificando 'from_date' para 'data_inicio'",
+                "contract": {'column_name': 'from_date', 'target_column_name': 'data_inicio'}
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "salary"
+            },
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_COLUMN_NAME,
+                "description": "Modificando 'to_date' para 'data_fim'",
+                "contract": {'column_name': 'to_date', 'target_column_name': 'data_fim'}
+            }
+        },
     ],
     "source_endpoint": {
         "database_type": DatabaseType.POSTGRESQL,

@@ -116,15 +116,15 @@ class EndpointPostgreSQL(Endpoint):
                 for row in cursor.fetchall():
                     is_primary_key = row[2] in primary_keys
                     nullable = row[6] == 'YES'
-                    table.columns.append(Column(
-                        name=row[2],
-                        data_type=row[3],
-                        udt_name=row[4],
-                        character_maximum_length=row[5],
-                        nullable=nullable,
-                        ordinal_position=row[7],
-                        is_primary_key=is_primary_key
-                    ))
+                    table.columns[row[2]] = Column(
+                        name = row[2],
+                        data_type = row[3],
+                        udt_name = row[4],
+                        character_maximum_length = row[5],
+                        nullable = nullable,
+                        ordinal_position = row[7],
+                        is_primary_key = is_primary_key
+                    )
             return table
         except Exception as e:
             logging.critical(f"ENDPOINT - Erro ao obter as colunas da tabela: {e}")
@@ -225,9 +225,16 @@ class EndpointPostgreSQL(Endpoint):
             table: Table, (Table): Objeto representando a estrutura da tabela de origem.
         """
         try:
+            table_column_names = [
+                col.name 
+                for col in sorted(
+                    table.columns.values(),
+                    key=lambda col: col.ordinal_position
+                )
+            ]
             query = sql.SQL(PostgreSQLQueries.INSERT_FULL_LOAD_DATA.format(
-                schema=table.target_schema_name, table=table.target_table_name, columns=', '.join(table.data.columns)
-            ))
+                schema=table.target_schema_name, table=table.target_table_name, columns=', '.join(table_column_names)
+                ))
             
             records = [tuple(row) for row in table.data.iter_rows()]
       
