@@ -24,11 +24,10 @@ class EndpointPostgreSQL(Endpoint):
         super().__init__(DatabaseType.POSTGRESQL, endpoint_type, endpoint_name, periodicity_in_seconds_of_reading_from_source)
 
         try:
-            # Salva temporariamente as credenciais para tentar conectar
             temp_credentials = credentials.copy()
             self.connection = self.connect(temp_credentials)
         finally:
-            del temp_credentials  # Remove as credenciais para evitar exposição
+            del temp_credentials
         
         logging.info(f"ENDPOINT - {endpoint_name} conectado")
         logging.debug(self.connection.get_dsn_parameters())
