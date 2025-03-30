@@ -1,37 +1,37 @@
-2025-03-30 02:11:45,206 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-03-30 02:11:45,206 - INFO - ENDPOINT - Source_PostgreSQL válido
-2025-03-30 02:11:45,232 - INFO - ENDPOINT - Source_PostgreSQL conectado
-2025-03-30 02:11:45,232 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-03-30 02:11:45,232 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-03-30 02:11:45,232 - INFO - ENDPOINT - Target_PostgreSQL válido
-2025-03-30 02:11:45,274 - INFO - ENDPOINT - Target_PostgreSQL conectado
-2025-03-30 02:11:45,274 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-03-30 02:11:45,274 - INFO - TASK - fl-employees válido
-2025-03-30 02:11:45,274 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-03-30 02:11:45,284 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'id': 'employees_salary', 'target_schema_name': 'employees', 'target_table_name': 'salary', 'path_data': None, 'data': None, 'columns': {'employee_id': <Entities.Columns.Column.Column object at 0x00000241209F1CC0>, 'amount': <Entities.Columns.Column.Column object at 0x00000241209F1E40>, 'from_date': <Entities.Columns.Column.Column object at 0x00000241209F2350>, 'to_date': <Entities.Columns.Column.Column object at 0x00000241209F1ED0>}, 'transformations': []}
-2025-03-30 02:11:45,300 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-03-30 02:11:45,304 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'id': 'employees_employee', 'target_schema_name': 'employees', 'target_table_name': 'employee', 'path_data': None, 'data': None, 'columns': {'id': <Entities.Columns.Column.Column object at 0x00000241209F1DE0>, 'birth_date': <Entities.Columns.Column.Column object at 0x00000241209F1C60>, 'first_name': <Entities.Columns.Column.Column object at 0x00000241209F1C30>, 'last_name': <Entities.Columns.Column.Column object at 0x00000241209F1C00>, 'gender': <Entities.Columns.Column.Column object at 0x00000241209F1DB0>, 'hire_date': <Entities.Columns.Column.Column object at 0x00000241209F1D80>}, 'transformations': []}
-2025-03-30 02:11:45,304 - INFO - TASK - Obtendo dados da tabela employees.salary
-2025-03-30 02:11:48,622 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl-employees_employees_salary.parquet', 'time_elapsed': '3.10s'}
-2025-03-30 02:11:48,622 - INFO - TABLE - Aplicando transformação em employees.salary: Alterando nome da tabela para português
-2025-03-30 02:11:48,622 - INFO - TABLE - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-03-30 02:11:48,622 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-03-30 02:11:48,622 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia'
-2025-03-30 02:11:48,622 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-03-30 02:11:48,622 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-03-30 02:11:48,622 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
-2025-03-30 02:11:48,622 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
-2025-03-30 02:11:48,640 - INFO - ENDPOINT - Criando tabela funcionarios.salario
-2025-03-30 02:11:48,640 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
-2025-03-30 02:11:49,845 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
-2025-03-30 02:12:18,638 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '30.02s'}
-2025-03-30 02:12:18,638 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-03-30 02:12:19,200 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl-employees_employees_employee.parquet', 'time_elapsed': '0.52s'}
-2025-03-30 02:12:19,200 - INFO - TABLE - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-03-30 02:12:19,204 - INFO - TABLE - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-03-30 02:12:19,220 - INFO - TASK - Realizando carga completa da tabela employees.employee
-2025-03-30 02:12:19,220 - INFO - ENDPOINT - Removendo tabela employees.employee
-2025-03-30 02:12:19,220 - INFO - ENDPOINT - Criando tabela employees.employee
-2025-03-30 02:12:19,220 - INFO - ENDPOINT - Truncando tabela employees.employee
-2025-03-30 02:12:19,395 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee
-2025-03-30 02:12:23,910 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '4.69s'}
+2025-03-30 02:34:35,847 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-03-30 02:34:35,847 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-03-30 02:34:35,984 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-03-30 02:34:35,984 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-03-30 02:34:35,984 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-03-30 02:34:35,984 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-03-30 02:34:36,010 - INFO - ENDPOINT - Target_PostgreSQL conectado
+2025-03-30 02:34:36,010 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-03-30 02:34:36,010 - INFO - TASK - fl-employees válido
+2025-03-30 02:34:36,010 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-03-30 02:34:36,027 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'id': 'employees_salary', 'target_schema_name': 'employees', 'target_table_name': 'salary', 'path_data': None, 'data': None, 'columns': {'employee_id': <Entities.Columns.Column.Column object at 0x0000019602955660>, 'amount': <Entities.Columns.Column.Column object at 0x00000196029554E0>, 'from_date': <Entities.Columns.Column.Column object at 0x00000196029552A0>, 'to_date': <Entities.Columns.Column.Column object at 0x0000019602955540>}, 'transformations': []}
+2025-03-30 02:34:36,027 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-03-30 02:34:36,027 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'id': 'employees_employee', 'target_schema_name': 'employees', 'target_table_name': 'employee', 'path_data': None, 'data': None, 'columns': {'id': <Entities.Columns.Column.Column object at 0x0000019602955570>, 'birth_date': <Entities.Columns.Column.Column object at 0x0000019602955600>, 'first_name': <Entities.Columns.Column.Column object at 0x00000196029556F0>, 'last_name': <Entities.Columns.Column.Column object at 0x0000019602955720>, 'gender': <Entities.Columns.Column.Column object at 0x0000019602955750>, 'hire_date': <Entities.Columns.Column.Column object at 0x00000196029555A0>}, 'transformations': []}
+2025-03-30 02:34:36,027 - INFO - TASK - Obtendo dados da tabela employees.salary
+2025-03-30 02:34:39,409 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl-employees_employees_salary.parquet', 'time_elapsed': '3.14s'}
+2025-03-30 02:34:39,409 - INFO - TABLE - Aplicando transformação em employees.salary: Alterando nome da tabela para português
+2025-03-30 02:34:39,409 - INFO - TABLE - Aplicando transformação em employees.salary: Alterando nome do schema para português
+2025-03-30 02:34:39,409 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
+2025-03-30 02:34:39,409 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia'
+2025-03-30 02:34:39,409 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
+2025-03-30 02:34:39,409 - INFO - TABLE - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
+2025-03-30 02:34:39,409 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
+2025-03-30 02:34:39,409 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
+2025-03-30 02:34:39,435 - INFO - ENDPOINT - Criando tabela funcionarios.salario
+2025-03-30 02:34:39,435 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
+2025-03-30 02:34:40,676 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
+2025-03-30 02:35:09,821 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '30.41s'}
+2025-03-30 02:35:09,822 - INFO - TASK - Obtendo dados da tabela employees.employee
+2025-03-30 02:35:10,355 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl-employees_employees_employee.parquet', 'time_elapsed': '0.49s'}
+2025-03-30 02:35:10,355 - INFO - TABLE - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
+2025-03-30 02:35:10,371 - INFO - TABLE - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
+2025-03-30 02:35:10,371 - INFO - TASK - Realizando carga completa da tabela employees.employee
+2025-03-30 02:35:10,371 - INFO - ENDPOINT - Removendo tabela employees.employee
+2025-03-30 02:35:10,386 - INFO - ENDPOINT - Criando tabela employees.employee
+2025-03-30 02:35:10,386 - INFO - ENDPOINT - Truncando tabela employees.employee
+2025-03-30 02:35:10,557 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee
+2025-03-30 02:35:14,981 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '4.61s'}

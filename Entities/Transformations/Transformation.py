@@ -1,12 +1,18 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from Entities.Shared.Types import TransformationType
 import polars as pl
 import logging 
 
+if TYPE_CHECKING:
+    from Entities.Tables.Table import Table 
+
 class Transformation:
-    def __init__(self, transformation_type: TransformationType, description: str, contract: dict) -> None:
+    def __init__(self, transformation_type: TransformationType, description: str, contract: dict, priority: int) -> None:
         self.transformation_type = transformation_type
         self.description = description
         self.contract = contract
+        self.priority = priority
 
         self.validate()
     
@@ -46,7 +52,7 @@ class Transformation:
             case TransformationType.MODIFY_COLUMN_VALUE:
                 return {'column_name': None, 'target_column_value': None}
     
-    def execute(self, table = None) -> None:
+    def execute(self, table: Table = None) -> None:
         """
         Executa a transformação na tabela.
 

@@ -1,9 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from Entities.Shared.Queries import PostgreSQLQueries
 from Entities.Transformations.Transformation import Transformation
 from Entities.Columns.Column import Column
 from typing import List, Dict
 import polars as pl
 import logging
+
+if TYPE_CHECKING:
+    from Entities.Transformations.Transformation import Transformation
 
 class Table:
     def __init__(self, schema_name: str  = None,  
@@ -49,6 +54,6 @@ class Table:
         return self.columns.get(column_name)
     
     def execute_transformations(self) -> None:
-        for transformation in self.transformations:
+        for transformation in sorted(self.transformations, key=lambda x: x.priority):
             logging.info(f"TABLE - Aplicando transformação em {self.schema_name}.{self.table_name}: {transformation.description}")
             transformation.execute(self)
