@@ -17,4 +17,4 @@ class TransformationType(Enum):
     MODIFY_SCHEMA_NAME = 'Modificar nome do schema da tabela'
     MODIFY_TABLE_NAME = 'Modificar nome da tabela'
     MODIFY_COLUMN_NAME = 'Modificar nome de coluna'
-    MODIFY_COLUMN_VALUES = 'Modificar valores da coluna'
+    MODIFY_COLUMN_VALUE = 'Modificar valores da coluna'

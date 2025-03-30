@@ -30,6 +30,12 @@ class Task:
         self.validate()
 
     def validate(self) -> None:
+        """
+        Valida se o tipo da tarefa é válido.
+
+        Raises:
+            ValueError: Se o tipo da tarefa não for válido.
+        """
         if self.replication_type not in TaskType:
             logging.error(f"TASK - Tipo de tarefa {self.replication_type} inválido")
             raise ValueError(f"TASK - Tipo de tarefa {self.replication_type} inválido")
@@ -37,6 +43,16 @@ class Task:
         logging.info(f"TASK - {self.task_name} válido")
 
     def add_tables(self, table_names: List[dict]) -> dict:
+        """
+        Adiciona tabelas para a tarefa.
+
+        Args:
+            table_names (List[dict]): Lista de dicionários contendo o nome do esquema e da tabela.
+
+        Returns:
+            dict: Dicionário com uma chave 'success' booleana e uma chave 'tables' com a lista de
+                  objetos Table.
+        """
         try:
             tables_detail = []
             for idx, table in enumerate(table_names):
@@ -59,6 +75,14 @@ class Task:
             raise ValueError(f"TASK - Erro ao obter detalhes da tabela: {e}")
     
     def add_transformation(self, schema_name: str, table_name: str, transformation: Transformation) -> None:
+        """
+        Adiciona uma transformação a uma tabela.
+
+        Args:
+            schema_name (str): Nome do esquema da tabela.
+            table_name (str): Nome da tabela.
+            transformation (Transformation): Objeto de transformação a ser adicionado.
+        """
         try:
             table = self.find_table(schema_name, table_name)
             table.transformations.append(transformation)
@@ -67,12 +91,28 @@ class Task:
             raise ValueError(f"TASK - Erro ao adicionar transformação: {e}")
     
     def find_table(self, schema_name: str, table_name: str) -> Table:
+        """
+        Procura uma tabela na lista de tabelas da tarefa.
+
+        Args:
+            schema_name (str): Nome do esquema da tabela.
+            table_name (str): Nome da tabela.
+
+        Returns:
+            Table: Objeto representando a estrutura da tabela, caso seja encontrada.
+        """
         for table in self.tables:
             if table.schema_name == schema_name and table.table_name == table_name:
                 return table
     
 
     def run(self) -> dict:
+        """
+        Executa a tarefa de replicação de acordo com o tipo de replicação.
+
+        Returns:
+            dict: Dicionário com o resultado da execução da tarefa.
+        """
         if self.replication_type == TaskType.FULL_LOAD:
             return self._run_full_load()
         if self.replication_type == TaskType.CDC:
@@ -82,6 +122,12 @@ class Task:
             return self._run_cdc()
 
     def _run_full_load(self) -> dict:
+        """
+        Executa a tarefa de replicação no modo de carga completa (full load).
+
+        Returns:
+            dict: Dicionário com o resultado da execução da tarefa.
+        """
         try:
             for table in self.tables:
                 logging.info(f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}")
