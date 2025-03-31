@@ -55,5 +55,4 @@ class Table:
     
     def execute_transformations(self) -> None:
         for transformation in sorted(self.transformations, key=lambda x: x.priority):
-            logging.info(f"TABLE - Aplicando transformação em {self.schema_name}.{self.table_name}: {transformation.description}")
             transformation.execute(self)

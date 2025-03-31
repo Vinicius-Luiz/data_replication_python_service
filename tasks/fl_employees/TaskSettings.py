@@ -85,10 +85,7 @@ TASK = {
             "settings": {
                 "transformation_type": TransformationType.MODIFY_COLUMN_VALUE,
                 "description": "Formata coluna 'first_name' com tudo em maiúsculo",
-                "contract": {
-                    "column_name": "first_name",
-                    "operation": "uppercase"
-                },
+                "contract": {"column_name": "first_name", "operation": "uppercase"},
                 "priority": 6,
             },
         },
@@ -97,11 +94,49 @@ TASK = {
             "settings": {
                 "transformation_type": TransformationType.MODIFY_COLUMN_VALUE,
                 "description": "Formata coluna 'last_name' com tudo em maiúsculo",
-                "contract": {
-                    "column_name": "last_name",
-                    "operation": "uppercase"
-                },
+                "contract": {"column_name": "last_name", "operation": "uppercase"},
                 "priority": 7,
+            },
+        },
+        {
+            "table_info": {"schema_name": "employees", "table_name": "employee"},
+            "settings": {
+                "transformation_type": TransformationType.CREATE_COLUMN,
+                "description": "Cria coluna 'full_name'",
+                "contract": {
+                    "new_column_name": "full_name",
+                    "operation": "concat",
+                    "depends_on": ["first_name", "last_name"],
+                    "separator": " ",
+                },
+                "priority": 8,
+            },
+        },
+        {
+            "table_info": {"schema_name": "employees", "table_name": "employee"},
+            "settings": {
+                "transformation_type": TransformationType.CREATE_COLUMN,
+                "description": "Carimbar como python quem realizou a replicação dos dados",
+                "contract": {
+                    "new_column_name": "updated_by",
+                    "operation": "literal",
+                    "value": "PYTHON",
+                },
+                "priority": 9,
+            },
+        },
+        {
+            "table_info": {"schema_name": "employees", "table_name": "salary"},
+            "settings": {
+                "transformation_type": TransformationType.CREATE_COLUMN,
+                "description": "Obter diferença de anos entre o data_inicio e data_fim do salario",
+                "contract": {
+                    "new_column_name": "anos_de_trabalho",
+                    "operation": "date_diff_years",
+                    "depends_on": ["from_date", "to_date"],
+                    "round_result": True,
+                },
+                "priority": 10,
             },
         },
     ],
