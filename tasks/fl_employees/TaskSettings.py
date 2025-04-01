@@ -126,17 +126,38 @@ TASK = {
             },
         },
         {
+            "table_info": {"schema_name": "employees", "table_name": "employee"},
+            "settings": {
+                "transformation_type": TransformationType.CREATE_COLUMN,
+                "description": "Carimbar data de sincronização",
+                "contract": {
+                    "new_column_name": "sync_date",
+                    "operation": "date_now",
+                },
+                "priority": 10,
+            },
+        },
+        {
             "table_info": {"schema_name": "employees", "table_name": "salary"},
             "settings": {
                 "transformation_type": TransformationType.CREATE_COLUMN,
                 "description": "Obter diferença de anos entre o data_inicio e data_fim do salario",
                 "contract": {
-                    "new_column_name": "anos_de_trabalho",
+                    "new_column_name": "periodo_anos",
                     "operation": "date_diff_years",
                     "depends_on": ["from_date", "to_date"],
                     "round_result": True,
                 },
                 "priority": 10,
+            },
+        },
+        {
+            "table_info": {"schema_name": "employees", "table_name": "salary"},
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_COLUMN_VALUE,
+                "description": "Obter salário mensal",
+                "contract": {"column_name": "amount", "expression": "value / 12", "operation": "math_expression"},
+                "priority": 15,
             },
         },
     ],

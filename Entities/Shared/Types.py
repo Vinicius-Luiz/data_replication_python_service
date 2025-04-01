@@ -18,3 +18,7 @@ class TransformationType(Enum):
     MODIFY_TABLE_NAME = 'Modificar nome da tabela'
     MODIFY_COLUMN_NAME = 'Modificar nome de coluna'
     MODIFY_COLUMN_VALUE = 'Modificar valores da coluna'
+
+class OperationType(Enum):
+    # TODO
+    pass

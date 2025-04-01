@@ -5,7 +5,6 @@ from Entities.Transformations.Transformation import Transformation
 from Entities.Columns.Column import Column
 from typing import List, Dict
 import polars as pl
-import logging
 
 if TYPE_CHECKING:
     from Entities.Transformations.Transformation import Transformation

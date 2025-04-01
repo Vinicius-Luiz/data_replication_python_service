@@ -1,40 +1,42 @@
-2025-03-30 23:51:32,867 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-03-30 23:51:32,868 - INFO - ENDPOINT - Source_PostgreSQL vï¿½lido
-2025-03-30 23:51:32,902 - INFO - ENDPOINT - Source_PostgreSQL conectado
-2025-03-30 23:51:32,902 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-03-30 23:51:32,902 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-03-30 23:51:32,902 - INFO - ENDPOINT - Target_PostgreSQL vï¿½lido
-2025-03-30 23:51:32,933 - INFO - ENDPOINT - Target_PostgreSQL conectado
-2025-03-30 23:51:32,933 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-03-30 23:51:32,933 - INFO - TASK - fl-employees vï¿½lido
-2025-03-30 23:51:32,933 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-03-30 23:51:32,957 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'id': 'employees_salary', 'target_schema_name': 'employees', 'target_table_name': 'salary', 'path_data': None, 'data': None, 'columns': {'employee_id': <Entities.Columns.Column.Column object at 0x000001BB95889C60>, 'amount': <Entities.Columns.Column.Column object at 0x000001BB95889DE0>, 'from_date': <Entities.Columns.Column.Column object at 0x000001BB9588A3E0>, 'to_date': <Entities.Columns.Column.Column object at 0x000001BB95889E70>}, 'transformations': []}
-2025-03-30 23:51:32,958 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-03-30 23:51:32,962 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'id': 'employees_employee', 'target_schema_name': 'employees', 'target_table_name': 'employee', 'path_data': None, 'data': None, 'columns': {'id': <Entities.Columns.Column.Column object at 0x000001BB95889D80>, 'birth_date': <Entities.Columns.Column.Column object at 0x000001BB95889C00>, 'first_name': <Entities.Columns.Column.Column object at 0x000001BB95889BD0>, 'last_name': <Entities.Columns.Column.Column object at 0x000001BB95889BA0>, 'gender': <Entities.Columns.Column.Column object at 0x000001BB95889D50>, 'hire_date': <Entities.Columns.Column.Column object at 0x000001BB95889D20>}, 'transformations': []}
-2025-03-30 23:51:32,963 - INFO - TASK - Obtendo dados da tabela employees.salary
-2025-03-30 23:51:36,500 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl-employees_employees_salary.parquet', 'time_elapsed': '3.31s'}
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome da tabela para portuguï¿½s
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome do schema para portuguï¿½s
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'amount' para 'quantia'
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-03-30 23:51:36,500 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter diferenï¿½a de anos entre o data_inicio e data_fim do salario
-2025-03-30 23:51:36,528 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
-2025-03-30 23:51:36,528 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
-2025-03-30 23:51:37,547 - INFO - ENDPOINT - Criando tabela funcionarios.salario
-2025-03-30 23:51:37,549 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
-2025-03-30 23:51:39,010 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
-2025-03-30 23:52:12,354 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '35.83s'}
-2025-03-30 23:52:12,354 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-03-30 23:52:12,931 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl-employees_employees_employee.parquet', 'time_elapsed': '0.53s'}
-2025-03-30 23:52:12,932 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'first_name' com tudo em maiï¿½sculo
-2025-03-30 23:52:12,939 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'last_name' com tudo em maiï¿½sculo
-2025-03-30 23:52:12,949 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Cria coluna 'full_name'
-2025-03-30 23:52:12,961 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar como python quem realizou a replicaï¿½ï¿½o dos dados
-2025-03-30 23:52:12,962 - INFO - TASK - Realizando carga completa da tabela employees.employee
-2025-03-30 23:52:12,962 - INFO - ENDPOINT - Removendo tabela employees.employee
-2025-03-30 23:52:12,967 - INFO - ENDPOINT - Criando tabela employees.employee
-2025-03-30 23:52:12,971 - INFO - ENDPOINT - Truncando tabela employees.employee
-2025-03-30 23:52:13,229 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee
-2025-03-30 23:52:18,555 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '5.59s'}
+2025-04-01 00:26:00,023 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-01 00:26:00,023 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-01 00:26:00,055 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-01 00:26:00,055 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-01 00:26:00,055 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-04-01 00:26:00,055 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-01 00:26:00,084 - INFO - ENDPOINT - Target_PostgreSQL conectado
+2025-04-01 00:26:00,084 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-01 00:26:00,085 - INFO - TASK - fl-employees válido
+2025-04-01 00:26:00,085 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-04-01 00:26:00,101 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'id': 'employees_salary', 'target_schema_name': 'employees', 'target_table_name': 'salary', 'path_data': None, 'data': None, 'columns': {'employee_id': <Entities.Columns.Column.Column object at 0x000001614D661DE0>, 'amount': <Entities.Columns.Column.Column object at 0x000001614D661F60>, 'from_date': <Entities.Columns.Column.Column object at 0x000001614D6600A0>, 'to_date': <Entities.Columns.Column.Column object at 0x000001614D661FF0>}, 'transformations': []}
+2025-04-01 00:26:00,101 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-04-01 00:26:00,106 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'id': 'employees_employee', 'target_schema_name': 'employees', 'target_table_name': 'employee', 'path_data': None, 'data': None, 'columns': {'id': <Entities.Columns.Column.Column object at 0x000001614D661F00>, 'birth_date': <Entities.Columns.Column.Column object at 0x000001614D661D80>, 'first_name': <Entities.Columns.Column.Column object at 0x000001614D661D50>, 'last_name': <Entities.Columns.Column.Column object at 0x000001614D661D20>, 'gender': <Entities.Columns.Column.Column object at 0x000001614D661ED0>, 'hire_date': <Entities.Columns.Column.Column object at 0x000001614D661EA0>}, 'transformations': []}
+2025-04-01 00:26:00,106 - INFO - TASK - Obtendo dados da tabela employees.salary
+2025-04-01 00:26:03,554 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl-employees_employees_salary.parquet', 'time_elapsed': '3.22s'}
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia'
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
+2025-04-01 00:26:03,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
+2025-04-01 00:26:03,581 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
+2025-04-01 00:26:03,588 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
+2025-04-01 00:26:03,588 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
+2025-04-01 00:26:03,602 - INFO - ENDPOINT - Criando tabela funcionarios.salario
+2025-04-01 00:26:03,605 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
+2025-04-01 00:26:04,923 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
+2025-04-01 00:26:40,818 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '37.23s'}
+2025-04-01 00:26:40,818 - INFO - TASK - Obtendo dados da tabela employees.employee
+2025-04-01 00:26:41,369 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl-employees_employees_employee.parquet', 'time_elapsed': '0.51s'}
+2025-04-01 00:26:41,369 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
+2025-04-01 00:26:41,376 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
+2025-04-01 00:26:41,386 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
+2025-04-01 00:26:41,398 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
+2025-04-01 00:26:41,398 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
+2025-04-01 00:26:41,400 - INFO - TASK - Realizando carga completa da tabela employees.employee
+2025-04-01 00:26:41,400 - INFO - ENDPOINT - Removendo tabela employees.employee
+2025-04-01 00:26:41,403 - INFO - ENDPOINT - Criando tabela employees.employee
+2025-04-01 00:26:41,408 - INFO - ENDPOINT - Truncando tabela employees.employee
+2025-04-01 00:26:41,693 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee
+2025-04-01 00:26:48,174 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '6.77s'}
