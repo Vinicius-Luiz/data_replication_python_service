@@ -1,151 +1,24 @@
-from datetime import datetime
-from typing import List, Dict
+from Entities.Transformations.FunctionColumn import FunctionColumn
+from Entities.Shared.Types import OperationType
 import polars as pl
 import re
 
 
-class TransformationFunction:
+class FunctionColumnModifier(FunctionColumn):
     REQUIRED_COLUMN_TYPES = {
-        "format_date": [pl.Datetime, pl.Date],
-        "uppercase": [pl.Utf8],
-        "lowercase": [pl.Utf8],
-        "trim": [pl.Utf8],
-        "extract_day": [pl.Datetime, pl.Date],
-        "extract_month": [pl.Datetime, pl.Date],
-        "extract_year": [pl.Datetime, pl.Date],
-        "date_diff_years": [pl.Datetime, pl.Date],
-        "concat": {"depends_on": [pl.Utf8]},
-        "date_diff_years": {"depends_on": [pl.Datetime, pl.Date]},
+        OperationType.FORMAT_DATE: [pl.Datetime, pl.Date],
+        OperationType.UPPERCASE: [pl.Utf8],
+        OperationType.LOWERCASE: [pl.Utf8],
+        OperationType.TRIM: [pl.Utf8],
+        OperationType.EXTRACT_YEAR: [pl.Datetime, pl.Date],
+        OperationType.EXTRACT_MONTH: [pl.Datetime, pl.Date],
+        OperationType.EXTRACT_DAY: [pl.Datetime, pl.Date],
     }
 
     REQUIRED_PARAMS = {
-        "math_expression": ["expression"],
-        "format_date": ["format"],
-        "literal": ["value"],
-        "concat": ["depends_on"],
-        "date_diff_years": ["depends_on"],
+        OperationType.FORMAT_DATE: ["format"],
+        OperationType.MATH_EXPRESSION: ["expression"],
     }
-
-    @staticmethod
-    def get_required_column_types(function_name: str) -> List | Dict:
-        """Retorna as tipagens de coluna necess rias para execu o de uma
-        fun o de transforma o.
-
-        Parameters
-        ----------
-        function_name : str
-            Nome da fun o de transforma o.
-
-        Returns
-        -------
-        list
-            Tipagens de coluna necess rias para a execu o da fun o.
-        """
-        return TransformationFunction.REQUIRED_COLUMN_TYPES.get(function_name, [])
-
-    @staticmethod
-    def get_required_params(function_name: str) -> list:
-        """Retorna os par ametros necess rios para execu o de uma fun o de transforma o.
-
-        Parameters
-        ----------
-        function_name : str
-            Nome da fun o de transforma o.
-
-        Returns
-        -------
-        list
-            Par ametros necess rios para a execu o da fun o.
-        """
-
-        return TransformationFunction.REQUIRED_PARAMS.get(function_name, [])
-
-    @staticmethod
-    def date_diff_years(start_col: str, end_col: str, round_result: bool) -> pl.Expr:
-        """
-        Calcula a diferença em anos entre duas colunas de datas.
-
-        Parameters
-        ----------
-        start_col : str
-            Nome da coluna que representa a data de início.
-        end_col : str
-            Nome da coluna que representa a data de fim.
-        round_result : bool
-            Se True, o resultado será arredondado para o inteiro mais próximo.
-            Caso contrário, o resultado será um float64 com 6 casas decimais.
-
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que calcula a diferença em anos entre as colunas de datas.
-        """
-
-        days_in_year = 365.2425
-        return (
-            pl.when(pl.col(end_col).is_null() | pl.col(start_col).is_null())
-            .then(None)
-            .otherwise(
-                ((pl.col(end_col) - pl.col(start_col)).dt.total_days() / days_in_year)
-                .round(0 if round_result else 6)
-                .cast(pl.Int32 if round_result else pl.Float64)
-            )
-        )
-
-    @staticmethod
-    def date_now() -> pl.Expr:
-        """
-        Retorna a expressão Polars que representa a data e hora atuais.
-
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que contém a data e hora do momento atual.
-        """
-
-        return pl.lit(datetime.now()).cast(pl.Datetime)
-
-    @staticmethod
-    def concat(separator: str, depends_on: List[str]) -> pl.Expr:
-        """
-        Concatena as colunas especificadas na lista `depends_on` com o separador
-        especificado.
-
-        Parameters
-        ----------
-        separator : str
-            Separador a ser utilizado para concatenar as colunas.
-        depends_on : List[str]
-            Lista de nomes das colunas a serem concatenadas.
-
-        Returns
-        -------
-        polars.Expr
-            Express o Polars que concatena as colunas com o separador especificado.
-        """
-
-        return pl.concat_str(
-            [pl.col(col) for col in depends_on],
-            separator=separator,
-        )
-
-    @staticmethod
-    def literal(value: str) -> pl.Expr:
-        """
-        Retorna a express o Polars que representa um valor literal.
-
-        Parameters
-        ----------
-        value : str
-            Valor literal a ser representado como express o Polars.
-
-        Returns
-        -------
-        polars.Expr
-            Express o Polars que representa o valor literal.
-        """
-
-        return pl.lit(value)
 
     @staticmethod
     def format_date(column_name: str, format: str) -> pl.Expr:

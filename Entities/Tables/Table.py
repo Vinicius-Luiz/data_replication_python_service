@@ -53,5 +53,5 @@ class Table:
         return self.columns.get(column_name)
     
     def execute_transformations(self) -> None:
-        for transformation in sorted(self.transformations, key=lambda x: x.priority):
+        for transformation in sorted(self.transformations, key=lambda x: x.priority.value):
             transformation.execute(self)
