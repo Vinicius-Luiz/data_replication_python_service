@@ -1,6 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from typing import Dict, Any
+from Entities.Transformations.FunctionColumnModifier import (
+    FunctionColumnModifier as FCM,
+)
+from Entities.Shared.Types import OperationType
+from typing import Dict, Any, TYPE_CHECKING
 import logging
 
 if TYPE_CHECKING:
@@ -9,6 +12,52 @@ if TYPE_CHECKING:
 
 class ColumnModifier:
     """Classe responsável por validar e modificar colunas existentes."""
+
+    @staticmethod
+    def get_operations(column_name: str, contract: dict) -> Dict[str, Any]:
+        return {
+            OperationType.FORMAT_DATE: {
+                "func": lambda: FCM.format_date(column_name, contract["format"]),
+                "required_params": FCM.get_required_params(OperationType.FORMAT_DATE),
+                "column_type": FCM.get_required_column_types(OperationType.FORMAT_DATE),
+            },
+            OperationType.UPPERCASE: {
+                "func": lambda: FCM.uppercase(column_name),
+                "column_type": FCM.get_required_column_types(OperationType.UPPERCASE),
+            },
+            OperationType.LOWERCASE: {
+                "func": lambda: FCM.lowercase(column_name),
+                "column_type": FCM.get_required_column_types(OperationType.LOWERCASE),
+            },
+            OperationType.TRIM: {
+                "func": lambda: FCM.trim(column_name),
+                "column_type": FCM.get_required_column_types(OperationType.TRIM),
+            },
+            OperationType.EXTRACT_YEAR: {
+                "func": lambda: FCM.extract_year(column_name),
+                "column_type": FCM.get_required_column_types(
+                    OperationType.EXTRACT_YEAR
+                ),
+            },
+            OperationType.EXTRACT_MONTH: {
+                "func": lambda: FCM.extract_month(column_name),
+                "column_type": FCM.get_required_column_types(
+                    OperationType.EXTRACT_MONTH
+                ),
+            },
+            OperationType.EXTRACT_DAY: {
+                "func": lambda: FCM.extract_day(column_name),
+                "column_type": FCM.get_required_column_types(OperationType.EXTRACT_DAY),
+            },
+            OperationType.MATH_EXPRESSION: {
+                "func": lambda: FCM.math_expression(
+                    column_name, contract["expression"]
+                ),
+                "required_params": FCM.get_required_params(
+                    OperationType.MATH_EXPRESSION
+                ),
+            },
+        }
 
     @staticmethod
     def _validate_basic_contract(column_name: str, table: Table) -> None:
@@ -65,14 +114,15 @@ class ColumnModifier:
             )
 
     @classmethod
-    def modify_column(
-        cls, contract: Dict[str, Any], table: Table, operations: Dict[str, Any]
-    ) -> Table:
+    def modify_column(cls, contract: Dict[str, Any], table: Table) -> Table:
         """Fluxo principal para modificação de colunas."""
         try:
             # Extrai parâmetros do contrato
             column_name = contract.get("column_name")
             operation = contract.get("operation")
+
+            # Busca operações
+            operations = cls.get_operations(column_name, contract)
 
             # Validações
             cls._validate_basic_contract(column_name, table)

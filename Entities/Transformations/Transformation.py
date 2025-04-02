@@ -1,10 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from Entities.Transformations.FunctionColumnModifier import (
-    FunctionColumnModifier as FCM,
-)
-from Entities.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
-from Entities.Shared.Types import TransformationType, OperationType, PriorityType
+from Entities.Shared.Types import TransformationType, PriorityType
 from Entities.Transformations.ColumnModifier import ColumnModifier
 from Entities.Transformations.ColumnCreator import ColumnCreator
 import logging
@@ -124,95 +120,17 @@ class Transformation:
             Table: Objeto representando a estrutura da tabela de origem com a coluna de destino criada.
         """
 
-        depends_on = self.contract.get("depends_on", [])
-
-        operations = {
-            OperationType.LITERAL: {
-                "func": lambda: FCC.literal(value=self.contract["value"]),
-                "required_params": FCC.get_required_params(OperationType.LITERAL),
-            },
-            OperationType.DATE_NOW: {"func": lambda: FCC.date_now()},
-            OperationType.CONCAT: {
-                "func": lambda: FCC.concat(
-                    separator=self.contract.get("separator", ""),
-                    depends_on=depends_on,
-                ),
-                "required_params": FCC.get_required_params(OperationType.CONCAT),
-                "column_type": FCC.get_required_column_types(OperationType.CONCAT),
-            },
-            OperationType.DATE_DIFF_YEARS: {
-                "func": lambda: FCC.date_diff_years(
-                    start_col=depends_on[0],
-                    end_col=depends_on[1],
-                    round_result=self.contract.get("round_result", False),
-                ),
-                "required_params": FCC.get_required_params(
-                    OperationType.DATE_DIFF_YEARS
-                ),
-                "column_type": FCC.get_required_column_types(
-                    OperationType.DATE_DIFF_YEARS
-                ),
-            },
-        }
-
-        return ColumnCreator.create_column(self.contract, table, operations)
+        return ColumnCreator.create_column(self.contract, table)
 
     def execute_modify_column_value(self, table: Table) -> Table:
         """
-        Modifica o valor de uma coluna com base no contrato de transformação.
+        Modifica o valor da coluna de destino com base no contrato de transformação.
 
         Args:
             table (Table): Objeto representando a estrutura da tabela de origem.
 
         Returns:
-            Table: Objeto representando a estrutura da tabela de origem com o valor da
-                   coluna de destino atualizado.
+            Table: Objeto representando a estrutura da tabela de origem com o valor da coluna de destino atualizado.
         """
 
-        column_name = self.contract["column_name"]
-
-        operations = {
-            OperationType.FORMAT_DATE: {
-                "func": lambda: FCM.format_date(column_name, self.contract["format"]),
-                "required_params": FCM.get_required_params(OperationType.FORMAT_DATE),
-                "column_type": FCM.get_required_column_types(OperationType.FORMAT_DATE),
-            },
-            OperationType.UPPERCASE: {
-                "func": lambda: FCM.uppercase(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.UPPERCASE),
-            },
-            OperationType.LOWERCASE: {
-                "func": lambda: FCM.lowercase(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.LOWERCASE),
-            },
-            OperationType.TRIM: {
-                "func": lambda: FCM.trim(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.TRIM),
-            },
-            OperationType.EXTRACT_YEAR: {
-                "func": lambda: FCM.extract_year(column_name),
-                "column_type": FCM.get_required_column_types(
-                    OperationType.EXTRACT_YEAR
-                ),
-            },
-            OperationType.EXTRACT_MONTH: {
-                "func": lambda: FCM.extract_month(column_name),
-                "column_type": FCM.get_required_column_types(
-                    OperationType.EXTRACT_MONTH
-                ),
-            },
-            OperationType.EXTRACT_DAY: {
-                "func": lambda: FCM.extract_day(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.EXTRACT_DAY),
-            },
-            OperationType.MATH_EXPRESSION: {
-                "func": lambda: FCM.math_expression(
-                    column_name, self.contract["expression"]
-                ),
-                "required_params": FCM.get_required_params(
-                    OperationType.MATH_EXPRESSION
-                ),
-            },
-        }
-
-        return ColumnModifier.modify_column(self.contract, table, operations)
+        return ColumnModifier.modify_column(self.contract, table)

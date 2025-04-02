@@ -1,7 +1,8 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from Entities.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
+from Entities.Shared.Types import OperationType
 from Entities.Columns.Column import Column
-from typing import Dict, List, Any
+from typing import Dict, List, Any, TYPE_CHECKING
 import polars as pl
 import logging
 
@@ -26,6 +27,37 @@ class ColumnCreator:
         pl.Decimal: "numeric",
         pl.Null: "text",
     }
+
+    @staticmethod
+    def get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
+        return {
+            OperationType.LITERAL: {
+                "func": lambda: FCC.literal(value=contract["value"]),
+                "required_params": FCC.get_required_params(OperationType.LITERAL),
+            },
+            OperationType.DATE_NOW: {"func": lambda: FCC.date_now()},
+            OperationType.CONCAT: {
+                "func": lambda: FCC.concat(
+                    separator=contract.get("separator", ""),
+                    depends_on=depends_on,
+                ),
+                "required_params": FCC.get_required_params(OperationType.CONCAT),
+                "column_type": FCC.get_required_column_types(OperationType.CONCAT),
+            },
+            OperationType.DATE_DIFF_YEARS: {
+                "func": lambda: FCC.date_diff_years(
+                    start_col=depends_on[0],
+                    end_col=depends_on[1],
+                    round_result=contract.get("round_result", False),
+                ),
+                "required_params": FCC.get_required_params(
+                    OperationType.DATE_DIFF_YEARS
+                ),
+                "column_type": FCC.get_required_column_types(
+                    OperationType.DATE_DIFF_YEARS
+                ),
+            },
+        }
 
     @staticmethod
     def _validate_basic_contract(new_column_name: str, table: Table) -> None:
@@ -90,15 +122,16 @@ class ColumnCreator:
                 )
 
     @classmethod
-    def create_column(
-        cls, contract: Dict[str, Any], table: Table, operations: Dict[str, Any]
-    ) -> Table:
+    def create_column(cls, contract: Dict[str, Any], table: Table) -> Table:
         """Fluxo principal para criação de colunas."""
         try:
             # Extrai parâmetros do contrato
             new_column_name = contract.get("new_column_name")
             operation = contract.get("operation")
             depends_on = contract.get("depends_on", [])
+
+            # Busca operações
+            operations = cls.get_operations(depends_on, contract)
 
             # Validações
             cls._validate_basic_contract(new_column_name, table)
