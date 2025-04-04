@@ -2,12 +2,26 @@ from Entities.Endpoints.Endpoint import Endpoint
 from Entities.Transformations.Transformation import Transformation
 from Entities.Tables.Table import Table
 from Entities.Shared.Types import TaskType
-from typing import List, Dict
+from typing import List, Dict, Optional
 import polars as pl
 import logging
 
 
 class Task:
+    """
+    Classe que representa uma tarefa de replicação de dados.
+
+    Attributes:
+        task_name (str): O nome da tarefa.
+        source_endpoint (Endpoint): O ponto de entrada de dados da tarefa.
+        target_endpoint (Endpoint): O ponto de saída de dados da tarefa.
+        replication_type (TaskType): O tipo de replicação da tarefa.
+        create_table_if_not_exists (bool): Indica se a tabela deve ser criada se nao existir.
+        recreate_table_if_exists (bool): Indica se a tabela deve ser recriada se ja existir.
+        truncate_before_insert (bool): Indica se a tabela deve ser truncada antes de inserir os dados.
+        id (str): O identificador da tarefa.
+    """
+
     PATH_FULL_LOAD_STAGING_AREA = "data/full_load_data/"
     PATH_CDC_STAGING_AREA = "data/cdc_data/"
 
@@ -42,11 +56,18 @@ class Task:
 
     def validate(self) -> None:
         """
-        Valida se o tipo da tarefa é válido.
+        Realiza a validação do tipo da tarefa associada ao objeto.
+
+        Verifica se o tipo da tarefa está entre os valores permitidos e segue
+        as especificações definidas para o sistema.
 
         Raises:
-            ValueError: Se o tipo da tarefa não for válido.
+            ValueError: Se o tipo da tarefa for inválido ou não estiver entre
+                       os valores permitidos.
+            AttributeError: Se o objeto não possuir o atributo de tipo de tarefa.
+            TypeError: Se o tipo da tarefa for de um tipo inesperado.
         """
+
         if self.replication_type not in TaskType:
             logging.error(f"TASK - Tipo de tarefa {self.replication_type} inválido")
             raise ValueError(f"TASK - Tipo de tarefa {self.replication_type} inválido")
@@ -55,15 +76,22 @@ class Task:
 
     def add_tables(self, table_names: List[dict]) -> dict:
         """
-        Adiciona tabelas para a tarefa.
+        Adiciona múltiplas tabelas à tarefa atual a partir de uma lista de definições.
+
+        Cada tabela é criada e configurada com base nos dicionários fornecidos, que devem
+        conter as informações necessárias para identificação das tabelas no banco de dados.
 
         Args:
-            table_names (List[dict]): Lista de dicionários contendo o nome do esquema e da tabela.
+            table_names (List[dict]): Lista de dicionários contendo as especificações das tabelas.
+                Cada dicionário deve conter:
+                - 'schema_name': str - Nome do esquema da tabela
+                - 'table_name': str - Nome da tabela
+                - 'columns': List[dict] - Lista de colunas (opcional)
 
         Returns:
-            dict: Dicionário com uma chave 'success' booleana e uma chave 'tables' com a lista de
-                  objetos Table.
+            dict: Resultado da operação com a seguinte estrutura:
         """
+
         try:
             tables_detail = []
             for table in table_names:
@@ -77,7 +105,7 @@ class Task:
                 table_detail = self.source_endpoint.get_table_details(
                     schema=schema_name, table=table_name
                 )
-                logging.debug(table_detail.__dict__)
+                logging.debug(table_detail.to_dict())
 
                 tables_detail.append(
                     {"priority": priority, "table_detail": table_detail}
@@ -95,13 +123,20 @@ class Task:
         self, schema_name: str, table_name: str, transformation: Transformation
     ) -> None:
         """
-        Adiciona uma transformação a uma tabela.
+        Adiciona uma transformação à tabela especificada.
+
+        A transformação será aplicada à tabela durante o processamento, seguindo a ordem
+        de prioridade definida. A tabela deve existir previamente na tarefa.
 
         Args:
-            schema_name (str): Nome do esquema da tabela.
-            table_name (str): Nome da tabela.
-            transformation (Transformation): Objeto de transformação a ser adicionado.
+            schema_name (str): Nome do esquema onde a tabela está localizada.
+                Deve corresponder a um esquema existente no banco de dados.
+            table_name (str): Nome da tabela que receberá a transformação.
+                Deve corresponder a uma tabela existente no esquema especificado.
+            transformation (Transformation): Objeto contendo a definição completa da transformação,
+                incluindo tipo, parâmetros e prioridade.
         """
+
         try:
             table = self.find_table(schema_name, table_name)
             table.transformations.append(transformation)
@@ -109,28 +144,39 @@ class Task:
             logging.critical(f"TASK - Erro ao adicionar transformação: {e}")
             raise ValueError(f"TASK - Erro ao adicionar transformação: {e}")
 
-    def find_table(self, schema_name: str, table_name: str) -> Table:
+    def find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
-        Procura uma tabela na lista de tabelas da tarefa.
+        Busca e retorna uma tabela específica na lista de tabelas da tarefa atual.
+
+        Realiza uma busca exata (case-sensitive) pelo par (schema_name, table_name) na lista
+        de tabelas associadas à tarefa. A comparação considera espaços e caracteres especiais.
 
         Args:
-            schema_name (str): Nome do esquema da tabela.
-            table_name (str): Nome da tabela.
+            schema_name (str): Nome do esquema onde a tabela está registrada.
+                Não pode ser vazio ou conter apenas espaços em branco.
+            table_name (str): Nome da tabela a ser localizada.
+                Não pode ser vazio ou conter apenas espaços em branco.
 
         Returns:
-            Table: Objeto representando a estrutura da tabela, caso seja encontrada.
+            Optional[Table]: O objeto Table correspondente se encontrado, None caso a tabela
+                           não exista na tarefa.
         """
+
         for table in self.tables:
             if table.schema_name == schema_name and table.table_name == table_name:
                 return table
 
     def run(self) -> dict:
         """
-        Executa a tarefa de replicação de acordo com o tipo de replicação.
+        Executa a tarefa de replicação conforme configurado.
+
+        Coordena o fluxo completo de replicação dos dados desde a origem até o destino,
+        seguindo o tipo e parâmetros definidos na configuração da tarefa.
 
         Returns:
-            dict: Dicionário com o resultado da execução da tarefa.
+            dict: Dicionário contendo informações sobre o resultado da execução:
         """
+
         if self.replication_type == TaskType.FULL_LOAD:
             return self._run_full_load()
         if self.replication_type == TaskType.CDC:
@@ -141,11 +187,18 @@ class Task:
 
     def _run_full_load(self) -> dict:
         """
-        Executa a tarefa de replicação no modo de carga completa (full load).
+        Executa a replicação no modo carga completa (full load), recriando toda a estrutura
+        e dados no destino.
+
+        Realiza a carga inicial completa dos dados, incluindo:
+        - Criação da estrutura da tabela (se necessário)
+        - Carga de todos os registros da origem
+        - Aplicação de transformações configuradas
 
         Returns:
-            dict: Dicionário com o resultado da execução da tarefa.
+            dict: Dicionário contendo informações sobre o resultado da execução:
         """
+
         try:
             for table in self.tables:
                 logging.info(

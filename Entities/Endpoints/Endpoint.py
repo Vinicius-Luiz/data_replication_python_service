@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
-from Entities.Endpoints.Decorators.EndpointDecorators import source_method, target_method
+from Entities.Endpoints.Decorators.EndpointDecorators import (
+    source_method,
+    target_method,
+)
+from Entities.Tables.Table import Table
 from Entities.Shared.Types import DatabaseType, EndpointType
 import logging
+
 
 class Endpoint(ABC):
     """
@@ -18,7 +23,13 @@ class Endpoint(ABC):
         id (str): Identificador único do endpoint gerado a partir dos atributos.
     """
 
-    def __init__(self, database_type: DatabaseType, endpoint_type: EndpointType, endpoint_name: str, periodicity_in_seconds_of_reading_from_source: int) -> None:
+    def __init__(
+        self,
+        database_type: DatabaseType,
+        endpoint_type: EndpointType,
+        endpoint_name: str,
+        periodicity_in_seconds_of_reading_from_source: int,
+    ) -> None:
         """
         Inicializa um endpoint com os dados fornecidos.
 
@@ -33,10 +44,14 @@ class Endpoint(ABC):
         self.database_type = database_type
         self.endpoint_type = endpoint_type
         self.endpoint_name = endpoint_name
-        self.periodicity_in_seconds_of_reading_from_source = periodicity_in_seconds_of_reading_from_source
+        self.periodicity_in_seconds_of_reading_from_source = (
+            periodicity_in_seconds_of_reading_from_source
+        )
 
-        self.id = f'{self.database_type.name}_{self.endpoint_type.name}_{self.endpoint_name}'
-        
+        self.id = (
+            f"{self.database_type.name}_{self.endpoint_type.name}_{self.endpoint_name}"
+        )
+
         self.validate()
 
     def validate(self) -> None:
@@ -47,12 +62,18 @@ class Endpoint(ABC):
             ValueError: Se o tipo do banco de dados ou o tipo de endpoint não forem válidos.
         """
         if self.database_type not in DatabaseType:
-            logging.error(f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido.")
-            raise ValueError(f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido.")
+            logging.error(
+                f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido."
+            )
+            raise ValueError(
+                f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido."
+            )
 
         if self.endpoint_type not in EndpointType:
             logging.error(f"ENDPOINT - Tipo de endpoint {self.endpoint_type} inválido")
-            raise ValueError(f"ENDPOINT - Tipo de endpoint {self.endpoint_type} inválido")
+            raise ValueError(
+                f"ENDPOINT - Tipo de endpoint {self.endpoint_type} inválido"
+            )
 
         logging.info(f"ENDPOINT - {self.endpoint_name} válido")
 
@@ -70,22 +91,28 @@ class Endpoint(ABC):
     @abstractmethod
     @source_method
     def get_tables(self) -> list:
-        """
-        Obtém a lista de tabelas disponíveis no banco de dados.
+        """Obtém a lista de tabelas de um esquema específico.
+
+        Args:
+            schema (str): Nome do esquema.
 
         Returns:
-            list: Lista de tabelas disponíveis no banco de dados.
+            list: Lista de tabelas do esquema.
         """
         pass
 
     @abstractmethod
     @source_method
-    def get_table_details(self) -> list:
+    def get_table_details(self) -> Table:
         """
-        Obtém detalhes sobre as tabelas do banco de dados.
+        Obtém os detalhes de uma tabela específica.
+
+        Args:
+            schema (str): Nome do esquema da tabela.
+            table (str): Nome da tabela.
 
         Returns:
-            list: Lista com detalhes das tabelas.
+            Table: Objeto representando a estrutura da tabela.
         """
         pass
 
@@ -93,21 +120,29 @@ class Endpoint(ABC):
     @source_method
     def get_table_primary_key(self) -> list:
         """
-        Obtém a chave primária de uma tabela específica.
+        Obtém a lista de colunas que compõem a chave primária de uma tabela específica.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
 
         Returns:
-            list: Lista contendo as colunas que compõem a chave primária.
+            list: Lista de colunas que compõem a chave primária da tabela.
         """
         pass
 
     @abstractmethod
     @source_method
-    def get_table_columns(self) -> list:
+    def get_table_columns(self) -> Table:
         """
-        Obtém as colunas de uma tabela específica.
+        Obtém as colunas de uma tabela específica e atualiza o objeto Table com
+        os detalhes das colunas.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+            primary_keys (list): Lista de colunas que compõem a chave primária da tabela.
 
         Returns:
-            list: Lista contendo os nomes das colunas da tabela.
+            Table: Objeto Table atualizado com a estrutura das colunas da tabela.
         """
         pass
 
@@ -115,7 +150,10 @@ class Endpoint(ABC):
     @source_method
     def get_full_load_from_table(self) -> dict:
         """
-        Realiza a extração completa dos dados de uma tabela.
+        Realiza a extra o completa dos dados de uma tabela.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
 
         Returns:
             dict: Dicionário contendo o log de execução do método
@@ -128,7 +166,13 @@ class Endpoint(ABC):
         """
         Insere dados completos em uma tabela de destino.
 
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+            create_table_if_not_exists (bool): Se True, cria a tabela caso ela não exista.
+            recreate_table_if_exists (bool): Se True, recria a tabela caso ela já exista.
+            truncate_before_insert (bool): Se True, trunca a tabela antes da inserção dos dados.
+
         Returns:
-            dict: Dicionário contendo o log de execução do método
+            dict: Dicionário contendo o log de execução do método.
         """
         pass

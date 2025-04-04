@@ -10,6 +10,16 @@ if TYPE_CHECKING:
 
 
 class Transformation:
+    """
+    Representa uma transformação de dados em uma tabela.
+
+    Attributes:
+        transformation_type (TransformationType): O tipo da transformação.
+        description (str): A descrição da transformação.
+        contract (dict): O contrato de transformação.
+        priority (PriorityType): A prioridade da transformação.
+    """
+
     def __init__(
         self,
         transformation_type: TransformationType,

@@ -30,6 +30,27 @@ class ColumnCreator:
 
     @staticmethod
     def get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
+        """Retorna um dicionário de operações com base em tipos de operações definidos.
+
+        O dicionário retornado contém todas as operações disponíveis no sistema, cada uma com:
+        - Uma função lambda que executa a operação
+        - Parâmetros requeridos
+        - Tipos de colunas necessários (quando aplicável)
+
+        Args:
+            depends_on (list): Lista de colunas das quais as operações dependem.
+            contract (dict): Dicionário contendo detalhes específicos para cada operação,
+                como valores literais ou parâmetros de configuração.
+
+        Returns:
+            Dict[str, Any]: Dicionário de operações onde:
+                - Chave (str): Tipo de operação (valores do enum OperationType)
+                - Valor (dict): Contém:
+                    * 'func': Função lambda que executa a operação
+                    * 'required_params': Parâmetros obrigatórios (quando aplicável)
+                    * 'column_type': Tipos de coluna requeridos (quando aplicável)
+        """
+
         return {
             OperationType.LITERAL: {
                 "func": lambda: FCC.literal(value=contract["value"]),
@@ -61,7 +82,20 @@ class ColumnCreator:
 
     @staticmethod
     def _validate_basic_contract(new_column_name: str, table: Table) -> None:
-        """Validações básicas do contrato."""
+        """Valida os requisitos básicos do contrato de transformação.
+
+        Verifica se o nome da nova coluna é válido e único na tabela especificada.
+
+        Args:
+            new_column_name: Nome da coluna a ser criada. Não pode ser vazio ou nulo.
+            table: Tabela de origem onde a nova coluna será adicionada.
+
+        Raises:
+            ValueError: Se ocorrer algum dos seguintes casos:
+                - O nome da coluna for vazio ou nulo
+                - O nome da coluna já existir na tabela
+        """
+
         if not new_column_name:
             raise ValueError("O contrato deve conter 'new_column_name'")
 
@@ -70,7 +104,18 @@ class ColumnCreator:
 
     @staticmethod
     def _validate_dependent_columns(depends_on: List[str], table: Table) -> None:
-        """Valida colunas dependentes."""
+        """Valida a existência de todas as colunas dependentes na tabela especificada.
+
+        Args:
+            depends_on: Lista de nomes das colunas que a operação depende.
+                Cada nome deve corresponder a uma coluna existente na tabela.
+            table: Tabela de origem contendo os dados a serem validados.
+
+        Raises:
+            ValueError: Se alguma coluna da lista `depends_on` não for encontrada
+                na tabela. A mensagem de erro inclui a lista de colunas disponíveis.
+        """
+
         for col in depends_on:
             if col not in table.data.columns:
                 available = list(table.data.columns)
@@ -82,7 +127,23 @@ class ColumnCreator:
     def _validate_operation(
         operation: str, operations: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Valida se a operação é suportada."""
+        """Valida se uma operação está entre as operações suportadas.
+
+        Args:
+            operation: Nome da operação a ser validada (case-sensitive).
+            operations: Dicionário de operações suportadas, onde as chaves são os nomes
+                das operações e os valores são seus respectivos configurations.
+
+        Returns:
+            As configurações da operação validada, conforme definido no dicionário
+            de operações suportadas.
+
+        Raises:
+            ValueError: Se a operação especificada não for encontrada no dicionário
+                de operações suportadas. A mensagem de erro inclui a lista de
+                operações válidas.
+        """
+
         if operation not in operations:
             valid_ops = list(operations.keys())
             raise ValueError(
@@ -94,7 +155,24 @@ class ColumnCreator:
     def _validate_required_params(
         op_config: Dict[str, Any], contract: Dict[str, Any]
     ) -> None:
-        """Valida parâmetros obrigatórios."""
+        """Valida a presença de todos os parâmetros obrigatórios no contrato de transformação.
+
+        Args:
+            op_config: Configuração da operação contendo a lista de parâmetros obrigatórios
+                na chave 'required_params'. Exemplo: {'required_params': ['value', 'format']}
+            contract: Contrato de transformação contendo os parâmetros fornecidos pelo usuário.
+                Deve incluir todos os parâmetros listados em op_config['required_params'].
+
+        Raises:
+            ValueError: Se o contrato não contiver algum dos parâmetros listados como
+                obrigatórios na configuração da operação. A mensagem de erro especifica
+                qual parâmetro está faltando.
+
+        Note:
+            Esta função não valida o tipo ou conteúdo dos parâmetros, apenas sua existência
+            no contrato.
+        """
+
         for param in op_config.get("required_params", []):
             if param not in contract:
                 raise ValueError(f"Parâmetro obrigatório faltando: '{param}'")
@@ -103,7 +181,30 @@ class ColumnCreator:
     def _validate_column_types(
         depends_on: List[str], op_config: Dict[str, Any], table: Table
     ) -> None:
-        """Valida tipos das colunas de origem."""
+        """Valida se os tipos das colunas dependentes atendem aos requisitos da operação.
+
+        Args:
+            depends_on: Lista de nomes das colunas que serão validadas.
+            op_config: Configuração da operação contendo os tipos esperados na estrutura:
+                {
+                    "column_type": {
+                        "depends_on": [list, of, expected, types]  # Classes de tipo esperadas
+                    }
+                }
+            table: Objeto Table contendo os dados e schema a serem validados.
+
+        Raises:
+            ValueError: Quando o tipo real de alguma coluna não corresponde a nenhum dos
+                tipos esperados definidos na configuração da operação. A mensagem inclui:
+                - Nome da coluna com tipo inválido
+                - Tipos esperados
+                - Tipo recebido
+
+        Note:
+            - Retorna silenciosamente se a operação não definir tipos esperados
+            - A validação é feita usando isinstance(), permitindo herança de tipos
+        """
+
         if (
             "column_type" not in op_config
             or "depends_on" not in op_config["column_type"]
@@ -123,7 +224,34 @@ class ColumnCreator:
 
     @classmethod
     def create_column(cls, contract: Dict[str, Any], table: Table) -> Table:
-        """Fluxo principal para criação de colunas."""
+        """Cria e adiciona uma nova coluna à tabela conforme especificado no contrato.
+
+        O processo completo inclui:
+        1. Extração e validação dos parâmetros do contrato
+        2. Validação das dependências e tipos
+        3. Execução da operação de transformação
+        4. Atualização dos metadados da tabela
+
+        Args:
+            contract: Contrato de transformação contendo:
+                - new_column_name: Nome da nova coluna
+                - operation: Tipo de operação a ser aplicada
+                - depends_on: Lista de colunas dependentes (opcional)
+                - Demais parâmetros específicos da operação
+            table: Tabela de destino que receberá a nova coluna
+
+        Returns:
+            A tabela modificada com a nova coluna adicionada, incluindo:
+            - Os dados transformados
+            - Os metadados atualizados (schema)
+
+        Raises:
+            ValueError: Para qualquer inconsistência nos parâmetros ou contrato
+            TypeError: Se os tipos das colunas forem incompatíveis com a operação
+            KeyError: Se parâmetros obrigatórios estiverem faltando no contrato
+            Exception: Para erros inesperados durante a execução (registrado em log)
+        """
+
         try:
             # Extrai parâmetros do contrato
             new_column_name = contract.get("new_column_name")

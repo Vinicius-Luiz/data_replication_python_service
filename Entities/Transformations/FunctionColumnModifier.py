@@ -5,6 +5,8 @@ import re
 
 
 class FunctionColumnModifier(FunctionColumn):
+    """Classe que representa uma coluna de fun o de transforma o."""
+
     REQUIRED_COLUMN_TYPES = {
         OperationType.FORMAT_DATE: [pl.Datetime, pl.Date],
         OperationType.UPPERCASE: [pl.Utf8],
@@ -22,156 +24,127 @@ class FunctionColumnModifier(FunctionColumn):
 
     @staticmethod
     def format_date(column_name: str, format: str) -> pl.Expr:
-        """
-        Formata uma coluna de data para uma string conforme o formato especificado.
+        """Formata uma coluna de data/tempo para string usando o formato especificado.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de data a ser formatada.
-        format : str
-            Formato de string para a formatação da data.
+        Args:
+            column_name: Nome da coluna contendo valores de data/tempo.
+            format: String de formato (ex: "%Y-%m-%d" para "2023-01-01").
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa a coluna formatada como string.
+        Returns:
+            Expressão Polars que converte a coluna para string formatada.
         """
 
         return pl.col(column_name).dt.strftime(format)
 
     @staticmethod
     def extract_year(column_name: str) -> pl.Expr:
-        """
-        Extrai o ano de uma coluna de data.
+        """Extrai o componente ano de uma coluna de data/tempo.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de data a ser extrai o ano.
+        Args:
+            column_name: Nome da coluna contendo valores de data/tempo.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa o ano extraido da coluna de data.
+        Returns:
+            Expressão Polars que retorna o ano como valor numérico.
         """
 
         return pl.col(column_name).dt.year()
 
     @staticmethod
     def extract_month(column_name: str) -> pl.Expr:
-        """
-        Extrai o mês de uma coluna de data.
+        """Extrai o componente mês (1-12) de uma coluna de data/tempo.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de data a ser extrai o mês.
+        Args:
+            column_name: Nome da coluna contendo valores de data/tempo.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa o mês extraido da coluna de data.
+        Returns:
+            Expressão Polars que retorna o mês como valor numérico (1-12).
         """
 
         return pl.col(column_name).dt.month()
 
     @staticmethod
     def extract_day(column_name: str) -> pl.Expr:
-        """
-        Extrai o dia de uma coluna de data.
+        """Extrai o componente dia (1-31) de uma coluna de data/tempo.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de data a ser extrai o dia.
+        Args:
+            column_name: Nome da coluna contendo valores de data/tempo.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa o dia extraido da coluna de data.
+        Returns:
+            Expressão Polars que retorna o dia como valor numérico (1-31).
         """
 
         return pl.col(column_name).dt.day()
 
     @staticmethod
     def uppercase(column_name: str) -> pl.Expr:
-        """
-        Converte uma coluna de texto para maiúsculas.
+        """Converte todos os caracteres de uma coluna de texto para maiúsculas.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de texto a ser convertida.
+        Args:
+            column_name: Nome da coluna contendo strings.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa a coluna convertida para maiúsculas.
+        Returns:
+            Expressão Polars com strings em maiúsculas.
         """
 
         return pl.col(column_name).str.to_uppercase()
 
     @staticmethod
     def lowercase(column_name: str) -> pl.Expr:
-        """
-        Converte uma coluna de texto para minúsculas.
+        """Converte todos os caracteres de uma coluna de texto para minúsculas.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de texto a ser convertida.
+        Args:
+            column_name: Nome da coluna contendo strings.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa a coluna convertida para minúsculas.
+        Returns:
+            Expressão Polars com strings em minúsculas.
         """
 
         return pl.col(column_name).str.to_lowercase()
 
     @staticmethod
     def trim(column_name: str) -> pl.Expr:
-        """
-        Remove os espaços em branco de uma coluna de texto.
+        """Remove espaços em branco do início e fim de cada string na coluna.
 
-        Parameters
-        ----------
-        column_name : str
-            Nome da coluna de texto a ser tratada.
+        Args:
+            column_name: Nome da coluna contendo strings.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que representa a coluna sem espaços em branco.
+        Returns:
+            Expressão Polars com strings sem espaços extras nas extremidades.
         """
 
         return pl.col(column_name).str.strip()
 
     @staticmethod
     def math_expression(column_name: str, expression: str) -> pl.Expr:
-        """
-        Executa uma expressão matemática na coluna especificada de forma segura,
-        sem usar map_eval.
+        """Avalia uma expressão matemática segura em uma coluna usando Polars.
 
-        Parameters:
-        -----------
-        column_name : str
-            Nome da coluna alvo
-        expression : str
-            Expressão matemática usando 'value' como placeholder para o valor da coluna
-            Exemplo: "(value * 0.2) + 5"
+        Args:
+            column_name: Nome da coluna alvo para os cálculos.
+            expression: Expressão matemática usando 'value' como placeholder.
+                Exemplo válido: "(value * 0.2) + 5"
+                Operadores permitidos: +, -, *, /, ^
 
         Returns:
-        --------
-        pl.Expr
-            Expressão Polars resultante
+            Expressão Polars que aplica a transformação matemática.
 
         Raises:
-        -------
-        ValueError
-            Se a expressão contiver elementos não permitidos
+            ValueError: Em qualquer um destes casos:
+                - Expressão vazia ou não string
+                - Caracteres não permitidos na expressão
+                - Operadores não permitidos
+                - Sintaxe inválida
+                - Falha na avaliação
+
+        Example:
+            >>> math_expression("price", "value * 1.1")  # Aumento de 10%
+            # Retorna expressão Polars equivalente a: pl.col("price") * 1.1
+
+        Note:
+            - Implementação segura que não usa eval() diretamente na expressão original
+            - 'value' é substituído pela referência à coluna Polars
+            - Suporta apenas operações matemáticas básicas
         """
+
         # Dicionário de operadores permitidos
         OPERATORS = {
             "+": "__add__",

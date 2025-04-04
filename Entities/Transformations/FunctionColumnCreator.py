@@ -6,6 +6,8 @@ import polars as pl
 
 
 class FunctionColumnCreator(FunctionColumn):
+    """Classe que cria expressões Polars para as funções de transformação."""
+
     REQUIRED_COLUMN_TYPES = {
         OperationType.CONCAT: {"depends_on": [pl.Utf8]},
         OperationType.DATE_DIFF_YEARS: [pl.Datetime, pl.Date],
@@ -19,52 +21,41 @@ class FunctionColumnCreator(FunctionColumn):
 
     @staticmethod
     def literal(value: str) -> pl.Expr:
-        """
-        Retorna a express o Polars que representa um valor literal.
+        """Cria uma expressão Polars com um valor literal constante.
 
-        Parameters
-        ----------
-        value : str
-            Valor literal a ser representado como express o Polars.
+        Args:
+            value: Valor string que será convertido para expressão Polars.
 
-        Returns
-        -------
-        polars.Expr
-            Express o Polars que representa o valor literal.
+        Returns:
+            Expressão Polars contendo o valor literal fornecido.
         """
 
         return pl.lit(value)
 
     @staticmethod
     def date_now() -> pl.Expr:
-        """
-        Retorna a expressão Polars que representa a data e hora atuais.
+        """Cria uma expressão Polars com a data e hora atuais.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que contém a data e hora do momento atual.
+        Returns:
+            Expressão Polars do tipo Datetime contendo o timestamp atual.
         """
 
         return pl.lit(datetime.now()).cast(pl.Datetime)
 
     @staticmethod
     def concat(separator: str, depends_on: List[str]) -> pl.Expr:
-        """
-        Concatena as colunas especificadas na lista `depends_on` com o separador
-        especificado.
+        """Concatena múltiplas colunas em uma única string com separador.
 
-        Parameters
-        ----------
-        separator : str
-            Separador a ser utilizado para concatenar as colunas.
-        depends_on : List[str]
-            Lista de nomes das colunas a serem concatenadas.
+        Args:
+            separator: String que será usada para separar os valores.
+            depends_on: Lista de nomes de colunas a serem concatenadas.
 
-        Returns
-        -------
-        polars.Expr
-            Express o Polars que concatena as colunas com o separador especificado.
+        Returns:
+            Expressão Polars que produz a string concatenada.
+
+        Example:
+            >>> concat("-", ["first_name", "last_name"])
+            # Retorna expressão que concatena como "first_name-last_name"
         """
 
         return pl.concat_str(
@@ -74,23 +65,19 @@ class FunctionColumnCreator(FunctionColumn):
 
     @staticmethod
     def date_diff_years(start_col: str, end_col: str, round_result: bool) -> pl.Expr:
-        """
-        Calcula a diferença em anos entre duas colunas de datas.
+        """Calcula diferença em anos entre datas com opção de arredondamento.
 
-        Parameters
-        ----------
-        start_col : str
-            Nome da coluna que representa a data de início.
-        end_col : str
-            Nome da coluna que representa a data de fim.
-        round_result : bool
-            Se True, o resultado será arredondado para o inteiro mais próximo.
-            Caso contrário, o resultado será um float64 com 6 casas decimais.
+        Args:
+            start_col: Nome da coluna com data inicial.
+            end_col: Nome da coluna com data final.
+            round_result: Se True, retorna inteiro arredondado,
+                         se False, retorna float com 6 decimais.
 
-        Returns
-        -------
-        polars.Expr
-            Expressão Polars que calcula a diferença em anos entre as colunas de datas.
+        Returns:
+            Expressão Polars que calcula:
+            - None se alguma data for nula
+            - Diferença em anos (considerando 365.2425 dias/ano)
+            - Tipo Int32 se round_result=True, Float64 caso contrário
         """
 
         days_in_year = 365.2425
