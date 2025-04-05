@@ -41,6 +41,7 @@ class Transformation:
         Raises:
             ValueError: Se o tipo da transformação não for válido.
         """
+
         if self.transformation_type not in TransformationType:
             logging.error(
                 f"TRANSFORMATION - Tipo de transformação inválido: {self.transformation_type}"
@@ -71,17 +72,17 @@ class Transformation:
         )
         match self.transformation_type:
             case TransformationType.CREATE_COLUMN:
-                return self.execute_create_column(table)
+                return self._execute_create_column(table)
             case TransformationType.MODIFY_SCHEMA_NAME:
-                return self.execute_modify_schema_name(table)
+                return self._execute_modify_schema_name(table)
             case TransformationType.MODIFY_TABLE_NAME:
-                return self.execute_modify_table_name(table)
+                return self._execute_modify_table_name(table)
             case TransformationType.MODIFY_COLUMN_NAME:
-                return self.execute_modify_column_name(table)
+                return self._execute_modify_column_name(table)
             case TransformationType.MODIFY_COLUMN_VALUE:
-                return self.execute_modify_column_value(table)
+                return self._execute_modify_column_value(table)
 
-    def execute_modify_schema_name(self, table: Table) -> Table:
+    def _execute_modify_schema_name(self, table: Table) -> Table:
         """
         Modifica o nome do schema da tabela de destino com base no contrato de transformação.
 
@@ -93,7 +94,7 @@ class Transformation:
         table.target_schema_name = self.contract["target_schema_name"]
         return table
 
-    def execute_modify_table_name(self, table: Table) -> Table:
+    def _execute_modify_table_name(self, table: Table) -> Table:
         """
         Modifica o nome da tabela de destino com base no contrato de transformação.
 
@@ -105,7 +106,7 @@ class Transformation:
         table.target_table_name = self.contract["target_table_name"]
         return table
 
-    def execute_modify_column_name(self, table: Table) -> Table:
+    def _execute_modify_column_name(self, table: Table) -> Table:
         """
         Modifica o nome da coluna de destino com base no contrato de transformação.
 
@@ -119,7 +120,7 @@ class Transformation:
         ]
         return table
 
-    def execute_create_column(self, table: Table) -> Table:
+    def _execute_create_column(self, table: Table) -> Table:
         """
         Cria uma nova coluna com base no contrato de transformação.
 
@@ -132,7 +133,7 @@ class Transformation:
 
         return ColumnCreator.create_column(self.contract, table)
 
-    def execute_modify_column_value(self, table: Table) -> Table:
+    def _execute_modify_column_value(self, table: Table) -> Table:
         """
         Modifica o valor da coluna de destino com base no contrato de transformação.
 

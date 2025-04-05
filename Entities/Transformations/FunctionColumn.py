@@ -1,5 +1,5 @@
 from typing import List, Dict
-from Entities.Shared.Types import OperationType
+from Entities.Shared.Types import TransformationOperationType
 
 
 class FunctionColumn:
@@ -9,11 +9,11 @@ class FunctionColumn:
     REQUIRED_PARAMS = {}
 
     @classmethod
-    def get_required_column_types(cls, function: OperationType) -> List | Dict:
+    def get_required_column_types(cls, function: TransformationOperationType) -> List | Dict:
         """Retorna os tipos de coluna necessários para executar uma transformação.
 
         Args:
-            function: Tipo de operação de transformação (enum OperationType)
+            function: Tipo de operação de transformação (enum TransformationOperationType)
 
         Returns:
             Union[List[type], Dict[str, type]]: Tipos de coluna aceitos pela operação.
@@ -22,24 +22,24 @@ class FunctionColumn:
                 - Um dicionário com tipos específicos para diferentes parâmetros
 
         Example:
-            >>> get_required_column_types(OperationType.FORMAT_DATE)
+            >>> get_required_column_types(TransformationOperationType.FORMAT_DATE)
             [datetime.date, datetime.datetime]
         """
 
         return cls.REQUIRED_COLUMN_TYPES.get(function, [])
 
     @classmethod
-    def get_required_params(cls, function: OperationType) -> list:
+    def get_required_params(cls, function: TransformationOperationType) -> list:
         """Retorna os parâmetros obrigatórios para executar uma transformação.
 
         Args:
-            function: Tipo de operação de transformação (enum OperationType)
+            function: Tipo de operação de transformação (enum TransformationOperationType)
 
         Returns:
             List[str]: Nomes dos parâmetros obrigatórios para a operação especificada.
 
         Example:
-            >>> get_required_params(OperationType.MATH_EXPRESSION)
+            >>> get_required_params(TransformationOperationType.MATH_EXPRESSION)
             ['expression']
         """
 

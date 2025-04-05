@@ -13,10 +13,58 @@ TASK = {
         "recreate_table_if_exists": True,
     },
     "tables": [
-        {"schema_name": "employees", "table_name": "salary", "priority": PriorityType.HIGH},
-        {"schema_name": "employees", "table_name": "employee", "priority": PriorityType.NORMAL},
+        {
+            "schema_name": "employees",
+            "table_name": "salary",
+            "priority": PriorityType.HIGH,
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "employee",
+            "priority": PriorityType.NORMAL,
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department_manager",
+            "priority": PriorityType.VERY_HIGH,
+        },
+    ],
+    "filters": [
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "department_manager",
+            },
+            "settings": {
+                "filter_type": FilterType.DATE_EQUALS,
+                "description": "Filtrando data de inicio igual a 9999-01-01",
+                "column_name": "to_date",
+                "value": "9999-01-01",
+            },
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "employee",
+            },
+            "settings": {
+                "filter_type": FilterType.EQUALS,
+                "description": "Filtrando gênero feminino",
+                "column_name": "gender",
+                "value": "F",
+            },
+        },
     ],
     "transformations": [
+        {
+            "table_info": {"schema_name": "employees", "table_name": "employee"},
+            "settings": {
+                "transformation_type": TransformationType.MODIFY_TABLE_NAME,
+                "description": "Alterando nome da tabela para considerar somente funcionários do gênero feminino",
+                "contract": {"target_table_name": "employee_female"},
+                "priority": PriorityType.VERY_HIGH,
+            },
+        },
         {
             "table_info": {"schema_name": "employees", "table_name": "salary"},
             "settings": {
@@ -86,7 +134,7 @@ TASK = {
                 "transformation_type": TransformationType.CREATE_COLUMN,
                 "description": "Obter diferença de anos entre o data_inicio e data_fim do salario",
                 "contract": {
-                    "operation": OperationType.DATE_DIFF_YEARS,
+                    "operation": TransformationOperationType.DATE_DIFF_YEARS,
                     "new_column_name": "periodo_anos",
                     "depends_on": ["from_date", "to_date"],
                     "round_result": True,
@@ -100,7 +148,7 @@ TASK = {
                 "transformation_type": TransformationType.MODIFY_COLUMN_VALUE,
                 "description": "Obter salário mensal",
                 "contract": {
-                    "operation": OperationType.MATH_EXPRESSION,
+                    "operation": TransformationOperationType.MATH_EXPRESSION,
                     "column_name": "amount",
                     "expression": "value / 12",
                 },
@@ -113,7 +161,7 @@ TASK = {
                 "transformation_type": TransformationType.MODIFY_COLUMN_VALUE,
                 "description": "Formata coluna 'first_name' com tudo em maiúsculo",
                 "contract": {
-                    "operation": OperationType.UPPERCASE,
+                    "operation": TransformationOperationType.UPPERCASE,
                     "column_name": "first_name",
                 },
                 "priority": PriorityType.NORMAL,
@@ -125,7 +173,7 @@ TASK = {
                 "transformation_type": TransformationType.MODIFY_COLUMN_VALUE,
                 "description": "Formata coluna 'last_name' com tudo em maiúsculo",
                 "contract": {
-                    "operation": OperationType.UPPERCASE,
+                    "operation": TransformationOperationType.UPPERCASE,
                     "column_name": "last_name",
                 },
                 "priority": PriorityType.NORMAL,
@@ -137,7 +185,7 @@ TASK = {
                 "transformation_type": TransformationType.CREATE_COLUMN,
                 "description": "Cria coluna 'full_name'",
                 "contract": {
-                    "operation": OperationType.CONCAT,
+                    "operation": TransformationOperationType.CONCAT,
                     "new_column_name": "full_name",
                     "depends_on": ["first_name", "last_name"],
                     "separator": " ",
@@ -151,7 +199,7 @@ TASK = {
                 "transformation_type": TransformationType.CREATE_COLUMN,
                 "description": "Carimbar como python quem realizou a replicação dos dados",
                 "contract": {
-                    "operation": OperationType.LITERAL,
+                    "operation": TransformationOperationType.LITERAL,
                     "new_column_name": "updated_by",
                     "value": "PYTHON",
                 },
@@ -164,7 +212,7 @@ TASK = {
                 "transformation_type": TransformationType.CREATE_COLUMN,
                 "description": "Carimbar data de sincronização",
                 "contract": {
-                    "operation": OperationType.DATE_NOW,
+                    "operation": TransformationOperationType.DATE_NOW,
                     "new_column_name": "sync_date",
                 },
                 "priority": PriorityType.NORMAL,

@@ -1,5 +1,5 @@
 from Entities.Transformations.FunctionColumn import FunctionColumn
-from Entities.Shared.Types import OperationType
+from Entities.Shared.Types import TransformationOperationType
 from datetime import datetime
 from typing import List
 import polars as pl
@@ -9,14 +9,14 @@ class FunctionColumnCreator(FunctionColumn):
     """Classe que cria expressões Polars para as funções de transformação."""
 
     REQUIRED_COLUMN_TYPES = {
-        OperationType.CONCAT: {"depends_on": [pl.Utf8]},
-        OperationType.DATE_DIFF_YEARS: [pl.Datetime, pl.Date],
+        TransformationOperationType.CONCAT: {"depends_on": [pl.Utf8]},
+        TransformationOperationType.DATE_DIFF_YEARS: [pl.Datetime, pl.Date],
     }
 
     REQUIRED_PARAMS = {
-        OperationType.LITERAL: ["value"],
-        OperationType.CONCAT: ["depends_on"],
-        OperationType.DATE_DIFF_YEARS: ["depends_on"],
+        TransformationOperationType.LITERAL: ["value"],
+        TransformationOperationType.CONCAT: ["depends_on"],
+        TransformationOperationType.DATE_DIFF_YEARS: ["depends_on"],
     }
 
     @staticmethod

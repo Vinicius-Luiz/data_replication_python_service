@@ -2,7 +2,7 @@ from __future__ import annotations
 from Entities.Transformations.FunctionColumnModifier import (
     FunctionColumnModifier as FCM,
 )
-from Entities.Shared.Types import OperationType
+from Entities.Shared.Types import TransformationOperationType
 from typing import Dict, Any, TYPE_CHECKING
 import logging
 
@@ -37,45 +37,45 @@ class ColumnModifier:
         """
 
         return {
-            OperationType.FORMAT_DATE: {
+            TransformationOperationType.FORMAT_DATE: {
                 "func": lambda: FCM.format_date(column_name, contract["format"]),
-                "required_params": FCM.get_required_params(OperationType.FORMAT_DATE),
-                "column_type": FCM.get_required_column_types(OperationType.FORMAT_DATE),
+                "required_params": FCM.get_required_params(TransformationOperationType.FORMAT_DATE),
+                "column_type": FCM.get_required_column_types(TransformationOperationType.FORMAT_DATE),
             },
-            OperationType.UPPERCASE: {
+            TransformationOperationType.UPPERCASE: {
                 "func": lambda: FCM.uppercase(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.UPPERCASE),
+                "column_type": FCM.get_required_column_types(TransformationOperationType.UPPERCASE),
             },
-            OperationType.LOWERCASE: {
+            TransformationOperationType.LOWERCASE: {
                 "func": lambda: FCM.lowercase(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.LOWERCASE),
+                "column_type": FCM.get_required_column_types(TransformationOperationType.LOWERCASE),
             },
-            OperationType.TRIM: {
+            TransformationOperationType.TRIM: {
                 "func": lambda: FCM.trim(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.TRIM),
+                "column_type": FCM.get_required_column_types(TransformationOperationType.TRIM),
             },
-            OperationType.EXTRACT_YEAR: {
+            TransformationOperationType.EXTRACT_YEAR: {
                 "func": lambda: FCM.extract_year(column_name),
                 "column_type": FCM.get_required_column_types(
-                    OperationType.EXTRACT_YEAR
+                    TransformationOperationType.EXTRACT_YEAR
                 ),
             },
-            OperationType.EXTRACT_MONTH: {
+            TransformationOperationType.EXTRACT_MONTH: {
                 "func": lambda: FCM.extract_month(column_name),
                 "column_type": FCM.get_required_column_types(
-                    OperationType.EXTRACT_MONTH
+                    TransformationOperationType.EXTRACT_MONTH
                 ),
             },
-            OperationType.EXTRACT_DAY: {
+            TransformationOperationType.EXTRACT_DAY: {
                 "func": lambda: FCM.extract_day(column_name),
-                "column_type": FCM.get_required_column_types(OperationType.EXTRACT_DAY),
+                "column_type": FCM.get_required_column_types(TransformationOperationType.EXTRACT_DAY),
             },
-            OperationType.MATH_EXPRESSION: {
+            TransformationOperationType.MATH_EXPRESSION: {
                 "func": lambda: FCM.math_expression(
                     column_name, contract["expression"]
                 ),
                 "required_params": FCM.get_required_params(
-                    OperationType.MATH_EXPRESSION
+                    TransformationOperationType.MATH_EXPRESSION
                 ),
             },
         }

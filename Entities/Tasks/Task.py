@@ -1,5 +1,6 @@
 from Entities.Endpoints.Endpoint import Endpoint
 from Entities.Transformations.Transformation import Transformation
+from Entities.Filters.Filter import Filter
 from Entities.Tables.Table import Table
 from Entities.Shared.Types import TaskType
 from typing import List, Dict, Optional
@@ -143,6 +144,28 @@ class Task:
         except Exception as e:
             logging.critical(f"TASK - Erro ao adicionar transformação: {e}")
             raise ValueError(f"TASK - Erro ao adicionar transformação: {e}")
+    
+    def add_filter(self, schema_name: str, table_name: str, filter: Filter) -> None:
+        """
+        Adiciona um filtro à tabela especificada.
+
+        A tabela deve existir previamente na tarefa.
+
+        Args:
+            schema_name (str): Nome do esquema onde a tabela está localizada.
+                Deve corresponder a um esquema existente no banco de dados.
+            table_name (str): Nome da tabela que receberá o filtro.
+                Deve corresponder a uma tabela existente no esquema especificado.
+            filter (Filter): Objeto contendo a definição completa do filtro, incluindo
+                coluna, tipo, parâmetros e prioridade.
+        """
+
+        try:
+            table = self.find_table(schema_name, table_name)
+            table.filters.append(filter)
+        except Exception as e:
+            logging.critical(f"TASK - Erro ao adicionar filtro: {e}")
+            raise ValueError(f"TASK - Erro ao adicionar filtro: {e}")
 
     def find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
@@ -211,6 +234,7 @@ class Task:
                 table.data = pl.read_parquet(table.path_data)
                 logging.debug(table_get_full_load)
 
+                table.execute_filters()
                 table.execute_transformations()
 
                 logging.info(

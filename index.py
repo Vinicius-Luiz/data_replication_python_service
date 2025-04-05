@@ -1,5 +1,6 @@
 from Entities.Endpoints.Factory.EndpointFactory import EndpointFactory
 from Entities.Transformations.Transformation import Transformation
+from Entities.Filters.Filter import Filter
 from Entities.Tasks.Task import Task
 from tasks.fl_employees import TaskSettings
 from dotenv import load_dotenv
@@ -26,6 +27,16 @@ if __name__ == "__main__":
                 **TaskSettings.TASK.get('task'))
     
     task.add_tables(TaskSettings.TASK.get('tables'))
+
+    for filter in TaskSettings.TASK.get('filters'):
+        filter_config = Filter(**filter.get('settings'))
+    
+        schema_name = filter.get('table_info').get('schema_name')
+        table_name  = filter.get('table_info').get('table_name')
+        
+        task.add_filter(schema_name = schema_name,
+                        table_name = table_name,
+                        filter = filter_config)
 
     for transformation in TaskSettings.TASK.get('transformations'):
         transformation_config = Transformation(**transformation.get('settings'))

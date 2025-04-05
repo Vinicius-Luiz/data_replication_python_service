@@ -1,5 +1,5 @@
 from Entities.Transformations.FunctionColumn import FunctionColumn
-from Entities.Shared.Types import OperationType
+from Entities.Shared.Types import TransformationOperationType
 import polars as pl
 import re
 
@@ -8,18 +8,18 @@ class FunctionColumnModifier(FunctionColumn):
     """Classe que representa uma coluna de fun o de transforma o."""
 
     REQUIRED_COLUMN_TYPES = {
-        OperationType.FORMAT_DATE: [pl.Datetime, pl.Date],
-        OperationType.UPPERCASE: [pl.Utf8],
-        OperationType.LOWERCASE: [pl.Utf8],
-        OperationType.TRIM: [pl.Utf8],
-        OperationType.EXTRACT_YEAR: [pl.Datetime, pl.Date],
-        OperationType.EXTRACT_MONTH: [pl.Datetime, pl.Date],
-        OperationType.EXTRACT_DAY: [pl.Datetime, pl.Date],
+        TransformationOperationType.FORMAT_DATE: [pl.Datetime, pl.Date],
+        TransformationOperationType.UPPERCASE: [pl.Utf8],
+        TransformationOperationType.LOWERCASE: [pl.Utf8],
+        TransformationOperationType.TRIM: [pl.Utf8],
+        TransformationOperationType.EXTRACT_YEAR: [pl.Datetime, pl.Date],
+        TransformationOperationType.EXTRACT_MONTH: [pl.Datetime, pl.Date],
+        TransformationOperationType.EXTRACT_DAY: [pl.Datetime, pl.Date],
     }
 
     REQUIRED_PARAMS = {
-        OperationType.FORMAT_DATE: ["format"],
-        OperationType.MATH_EXPRESSION: ["expression"],
+        TransformationOperationType.FORMAT_DATE: ["format"],
+        TransformationOperationType.MATH_EXPRESSION: ["expression"],
     }
 
     @staticmethod

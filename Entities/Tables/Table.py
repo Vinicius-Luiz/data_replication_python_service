@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from Entities.Shared.Queries import PostgreSQLQueries
 from Entities.Transformations.Transformation import Transformation
+from Entities.Filters.Filter import Filter
 from Entities.Columns.Column import Column
 from typing import List, Dict, Optional
 import polars as pl
@@ -41,6 +42,7 @@ class Table:
         self.data: pl.DataFrame = None
 
         self.columns: Dict[str, Column] = {}
+        self.filters: List[Filter] = []
         self.transformations: List[Transformation] = []
 
     def mount_columns_to_create_table(self) -> str:
@@ -174,6 +176,28 @@ class Table:
             self.transformations, key=lambda x: x.priority.value
         ):
             transformation.execute(self)
+
+    def execute_filters(self) -> None:
+        """
+        Executa todos os filtros definidos para a tabela.
+
+        Os filtros são processados em ordem de prioridade, das mais altas para as mais baixas.
+        Todas as alterações realizadas pelos filtros são aplicadas diretamente na tabela atual.
+
+        Args:
+            self: Instância da tabela que contém os filtros a serem aplicados.
+
+        Returns:
+            None: Este método não retorna valores, apenas modifica a tabela atual.
+
+        Raises:
+            ValueError: Se algum filtro contiver valores inválidos.
+            TypeError: Se algum filtro for de um tipo não suportado.
+            RuntimeError: Se ocorrer um erro durante a execução dos filtros.
+        """
+
+        for filter in self.filters:
+            filter.execute(self)
 
     def to_dict(self) -> dict:
         """
