@@ -55,3 +55,40 @@ contract = {
 
 # Obter Enum com base no valor
 # TransformationOperationType('trim')
+
+
+import subprocess
+import sys
+
+# Inicia o processo e não espera (não-bloqueante)
+processo = subprocess.Popen(
+    [sys.executable, "outro_arquivo.py"],
+    stdout=subprocess.PIPE,  # Opcional: capturar saída
+    stderr=subprocess.PIPE,
+    text=True
+)
+
+print("Processo iniciado em background (PID: %d)" % processo.pid)
+# O código aqui continua executando imediatamente, sem esperar.
+
+
+import subprocess
+import sys
+
+# Com Popen + wait() (controle mais detalhado)
+processo = subprocess.Popen(
+    [sys.executable, "outro_arquivo.py"],  # Mesmo interpretador
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True
+)
+
+# Aguarda a finalização (wait() bloqueia até terminar)
+codigo_saida = processo.wait()
+
+# Captura a saída (opcional)
+saida, erros = processo.communicate()
+
+print(f"Código de saída: {codigo_saida}")
+if saida: print("Saída:", saida)
+if erros: print("Erros:", erros)

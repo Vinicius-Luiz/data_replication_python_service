@@ -2,8 +2,8 @@ from Entities.Endpoints.Endpoint import Endpoint
 from Entities.Transformations.Transformation import Transformation
 from Entities.Filters.Filter import Filter
 from Entities.Tables.Table import Table
-from Entities.Shared.Types import TaskType, PriorityType
-from typing import List, Dict, Optional
+from Entities.Shared.Types import TaskType, PriorityType, EndpointType
+from typing import List, Optional
 import polars as pl
 import logging
 
@@ -29,25 +29,24 @@ class Task:
     def __init__(
         self,
         task_name: str,
-        source_endpoint: Endpoint,
-        target_endpoint: Endpoint,
         replication_type: str,
+        interval_seconds: int = 60,
+        source_endpoint: Endpoint = None,
+        target_endpoint: Endpoint = None,
         create_table_if_not_exists: bool = False,
         recreate_table_if_exists: bool = False,
         truncate_before_insert: bool = False,
     ) -> None:
         self.task_name = task_name
+        self.replication_type = TaskType(replication_type)
+        self.interval_seconds = interval_seconds
+        
         self.source_endpoint = source_endpoint
         self.target_endpoint = target_endpoint
-        self.replication_type = TaskType(replication_type)
 
         self.create_table_if_not_exists = create_table_if_not_exists
         self.recreate_table_if_exists = recreate_table_if_exists
         self.truncate_before_insert = truncate_before_insert
-
-        self.id = (
-            f"{self.source_endpoint.id}_{self.target_endpoint.id}_{self.task_name}"
-        )
 
         self.tables: List[Table] = []
 
@@ -74,6 +73,32 @@ class Task:
             raise ValueError(f"TASK - Tipo de tarefa {self.replication_type} inválido")
 
         logging.info(f"TASK - {self.task_name} válido")
+
+    def clean_endpoints(self) -> None:
+        """
+        Limpa os endpoints da tarefa.
+
+        Deve ser chamado quando a tarefa terminar de ser executada, para liberar
+        recursos, disponibilizar variável para exportação via pickle e evitar problemas de concorrência.
+        """
+        self.source_endpoint = None
+        self.target_endpoint = None
+
+    def add_endpoint(self, endpoint: Endpoint) -> None:
+        """
+        Adiciona um endpoint à tarefa atual.
+
+        Caso o tipo do endpoint seja SOURCE, ele é adicionado como endpoint de origem.
+        Caso o tipo do endpoint seja TARGET, ele é adicionado como endpoint de destino.
+
+        Args:
+            endpoint (Endpoint): Endpoint a ser adicionado à tarefa.
+        """
+
+        if endpoint.endpoint_type == EndpointType.SOURCE:
+            self.source_endpoint = endpoint
+        elif endpoint.endpoint_type == EndpointType.TARGET:
+            self.target_endpoint = endpoint
 
     def add_tables(self, table_names: List[dict]) -> dict:
         """
@@ -144,7 +169,7 @@ class Task:
         except Exception as e:
             logging.critical(f"TASK - Erro ao adicionar transformação: {e}")
             raise ValueError(f"TASK - Erro ao adicionar transformação: {e}")
-    
+
     def add_filter(self, schema_name: str, table_name: str, filter: Filter) -> None:
         """
         Adiciona um filtro à tabela especificada.
@@ -208,20 +233,19 @@ class Task:
             self._run_full_load()
             return self._run_cdc()
 
-    def _run_full_load(self) -> dict:
-        """
-        Executa a replicação no modo carga completa (full load), recriando toda a estrutura
-        e dados no destino.
+    def execute_source(self) -> dict:
+        if self.replication_type == TaskType.FULL_LOAD:
+            return self._execute_source_full_load()
+        if self.replication_type == TaskType.CDC:
+            return self._execute_source_cdc()
 
-        Realiza a carga inicial completa dos dados, incluindo:
-        - Criação da estrutura da tabela (se necessário)
-        - Carga de todos os registros da origem
-        - Aplicação de transformações configuradas
+    def execute_target(self) -> dict:
+        if self.replication_type == TaskType.FULL_LOAD:
+            return self._execute_target_full_load()
+        if self.replication_type == TaskType.CDC:
+            return self._execute_target_cdc()
 
-        Returns:
-            dict: Dicionário contendo informações sobre o resultado da execução:
-        """
-
+    def _execute_source_full_load(self) -> dict:
         try:
             for table in self.tables:
                 logging.info(
@@ -231,8 +255,15 @@ class Task:
                 table_get_full_load = self.source_endpoint.get_full_load_from_table(
                     table=table
                 )
-                table.data = pl.read_parquet(table.path_data)
                 logging.debug(table_get_full_load)
+        except Exception as e:
+            logging.critical(e)
+            raise ValueError(e)
+
+    def _execute_target_full_load(self) -> dict:
+        try:
+            for table in self.tables:
+                table.data = pl.read_parquet(table.path_data)
 
                 table.execute_filters()
                 table.execute_transformations()
@@ -253,5 +284,56 @@ class Task:
             logging.critical(e)
             raise ValueError(e)
 
-    def _run_cdc(self) -> dict:
+    def _execute_source_cdc(self) -> dict:
         raise NotImplementedError
+
+    def _execute_target_cdc(self) -> dict:
+        raise NotImplementedError
+
+    def _run_full_load(self) -> dict:
+        """
+        Executa a replicação no modo carga completa (full load), recriando toda a estrutura
+        e dados no destino.
+
+        Realiza a carga inicial completa dos dados, incluindo:
+        - Criação da estrutura da tabela (se necessário)
+        - Carga de todos os registros da origem
+        - Aplicação de transformações configuradas
+
+        Returns:
+            dict: Dicionário contendo informações sobre o resultado da execução:
+        """
+
+        raise NotImplementedError
+
+        try:
+            for table in self.tables:
+                logging.info(
+                    f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}"
+                )
+                table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
+                table_get_full_load = self.source_endpoint.get_full_load_from_table(
+                    table=table
+                )
+                logging.debug(table_get_full_load)
+
+                table.data = pl.read_parquet(table.path_data)
+
+                table.execute_filters()
+                table.execute_transformations()
+
+                logging.info(
+                    f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}"
+                )
+                table_full_load = self.target_endpoint.insert_full_load_into_table(
+                    table=table,
+                    create_table_if_not_exists=self.create_table_if_not_exists,
+                    recreate_table_if_exists=self.recreate_table_if_exists,
+                    truncate_before_insert=self.truncate_before_insert,
+                )
+                logging.debug(table_full_load)
+
+            return table_full_load
+        except Exception as e:
+            logging.critical(e)
+            raise ValueError(e)
