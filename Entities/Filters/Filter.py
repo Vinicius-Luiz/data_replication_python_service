@@ -27,7 +27,7 @@ class Filter:
     def __init__(
         self,
         column_name: str,
-        filter_type: FilterType,
+        filter_type: str,
         description: str,
         value: Union[str, int, float, List] = None,
         values: List[Union[str, int, float]] = None,
@@ -35,7 +35,7 @@ class Filter:
         upper: Union[int, float] = None,
     ) -> None:
         self.column_name = column_name
-        self.filter_type = filter_type
+        self.filter_type = FilterType(filter_type)
         self.description = description
         self.value = value
         self.values = values

@@ -39,20 +39,30 @@ class ColumnModifier:
         return {
             TransformationOperationType.FORMAT_DATE: {
                 "func": lambda: FCM.format_date(column_name, contract["format"]),
-                "required_params": FCM.get_required_params(TransformationOperationType.FORMAT_DATE),
-                "column_type": FCM.get_required_column_types(TransformationOperationType.FORMAT_DATE),
+                "required_params": FCM.get_required_params(
+                    TransformationOperationType.FORMAT_DATE
+                ),
+                "column_type": FCM.get_required_column_types(
+                    TransformationOperationType.FORMAT_DATE
+                ),
             },
             TransformationOperationType.UPPERCASE: {
                 "func": lambda: FCM.uppercase(column_name),
-                "column_type": FCM.get_required_column_types(TransformationOperationType.UPPERCASE),
+                "column_type": FCM.get_required_column_types(
+                    TransformationOperationType.UPPERCASE
+                ),
             },
             TransformationOperationType.LOWERCASE: {
                 "func": lambda: FCM.lowercase(column_name),
-                "column_type": FCM.get_required_column_types(TransformationOperationType.LOWERCASE),
+                "column_type": FCM.get_required_column_types(
+                    TransformationOperationType.LOWERCASE
+                ),
             },
             TransformationOperationType.TRIM: {
                 "func": lambda: FCM.trim(column_name),
-                "column_type": FCM.get_required_column_types(TransformationOperationType.TRIM),
+                "column_type": FCM.get_required_column_types(
+                    TransformationOperationType.TRIM
+                ),
             },
             TransformationOperationType.EXTRACT_YEAR: {
                 "func": lambda: FCM.extract_year(column_name),
@@ -68,7 +78,9 @@ class ColumnModifier:
             },
             TransformationOperationType.EXTRACT_DAY: {
                 "func": lambda: FCM.extract_day(column_name),
-                "column_type": FCM.get_required_column_types(TransformationOperationType.EXTRACT_DAY),
+                "column_type": FCM.get_required_column_types(
+                    TransformationOperationType.EXTRACT_DAY
+                ),
             },
             TransformationOperationType.MATH_EXPRESSION: {
                 "func": lambda: FCM.math_expression(
@@ -229,7 +241,7 @@ class ColumnModifier:
         try:
             # Extrai parâmetros do contrato
             column_name = contract.get("column_name")
-            operation = contract.get("operation")
+            operation = TransformationOperationType(contract.get("operation"))
 
             # Busca operações
             operations = cls.get_operations(column_name, contract)

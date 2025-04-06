@@ -1,23 +1,23 @@
 from enum import Enum
 
 class DatabaseType(Enum):
-    POSTGRESQL = 'PostgreSQL'
+    POSTGRESQL = 'postgresql'
 
 class EndpointType(Enum):
-    SOURCE = 'Source'
-    TARGET = 'Target'
+    SOURCE = 'source'
+    TARGET = 'target'
 
 class TaskType(Enum):
-    FULL_LOAD = 'Full Load'
-    CDC = 'CDC'
-    FULL_LOAD_CDC = 'Full Load e CDC'
+    FULL_LOAD = 'full_load'
+    CDC = 'cdc'
+    FULL_LOAD_CDC = 'full_load_and_cdc'
 
 class TransformationType(Enum):
-    CREATE_COLUMN = 'Criar coluna'
-    MODIFY_SCHEMA_NAME = 'Modificar nome do schema da tabela'
-    MODIFY_TABLE_NAME = 'Modificar nome da tabela'
-    MODIFY_COLUMN_NAME = 'Modificar nome de coluna'
-    MODIFY_COLUMN_VALUE = 'Modificar valores da coluna'
+    CREATE_COLUMN = 'create_column'
+    MODIFY_SCHEMA_NAME = 'modify_schema_name'
+    MODIFY_TABLE_NAME = 'modify_table_name'
+    MODIFY_COLUMN_NAME = 'modify_column_name'
+    MODIFY_COLUMN_VALUE = 'modify_column_value'
 
 class TransformationOperationType(Enum):
     FORMAT_DATE = 'format_date'

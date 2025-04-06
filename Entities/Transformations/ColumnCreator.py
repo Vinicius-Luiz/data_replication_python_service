@@ -54,7 +54,9 @@ class ColumnCreator:
         return {
             TransformationOperationType.LITERAL: {
                 "func": lambda: FCC.literal(value=contract["value"]),
-                "required_params": FCC.get_required_params(TransformationOperationType.LITERAL),
+                "required_params": FCC.get_required_params(
+                    TransformationOperationType.LITERAL
+                ),
             },
             TransformationOperationType.DATE_NOW: {"func": lambda: FCC.date_now()},
             TransformationOperationType.CONCAT: {
@@ -62,8 +64,12 @@ class ColumnCreator:
                     separator=contract.get("separator", ""),
                     depends_on=depends_on,
                 ),
-                "required_params": FCC.get_required_params(TransformationOperationType.CONCAT),
-                "column_type": FCC.get_required_column_types(TransformationOperationType.CONCAT),
+                "required_params": FCC.get_required_params(
+                    TransformationOperationType.CONCAT
+                ),
+                "column_type": FCC.get_required_column_types(
+                    TransformationOperationType.CONCAT
+                ),
             },
             TransformationOperationType.DATE_DIFF_YEARS: {
                 "func": lambda: FCC.date_diff_years(
@@ -255,7 +261,7 @@ class ColumnCreator:
         try:
             # Extrai parâmetros do contrato
             new_column_name = contract.get("new_column_name")
-            operation = contract.get("operation")
+            operation = TransformationOperationType(contract.get("operation"))
             depends_on = contract.get("depends_on", [])
 
             # Busca operações

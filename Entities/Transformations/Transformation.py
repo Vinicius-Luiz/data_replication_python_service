@@ -14,23 +14,23 @@ class Transformation:
     Representa uma transformação de dados em uma tabela.
 
     Attributes:
-        transformation_type (TransformationType): O tipo da transformação.
+        transformation_type (str): O tipo da transformação.
         description (str): A descrição da transformação.
         contract (dict): O contrato de transformação.
-        priority (PriorityType): A prioridade da transformação.
+        priority (str): A prioridade da transformação.
     """
 
     def __init__(
         self,
-        transformation_type: TransformationType,
+        transformation_type: str,
         description: str,
         contract: dict,
-        priority: PriorityType,
+        priority: str,
     ) -> None:
-        self.transformation_type = transformation_type
+        self.transformation_type = TransformationType(transformation_type)
         self.description = description
         self.contract = contract
-        self.priority = priority
+        self.priority = PriorityType(priority)
 
         self.validate()
 

@@ -2,7 +2,7 @@ from Entities.Endpoints.Endpoint import Endpoint
 from Entities.Transformations.Transformation import Transformation
 from Entities.Filters.Filter import Filter
 from Entities.Tables.Table import Table
-from Entities.Shared.Types import TaskType
+from Entities.Shared.Types import TaskType, PriorityType
 from typing import List, Dict, Optional
 import polars as pl
 import logging
@@ -31,7 +31,7 @@ class Task:
         task_name: str,
         source_endpoint: Endpoint,
         target_endpoint: Endpoint,
-        replication_type: TaskType,
+        replication_type: str,
         create_table_if_not_exists: bool = False,
         recreate_table_if_exists: bool = False,
         truncate_before_insert: bool = False,
@@ -39,7 +39,7 @@ class Task:
         self.task_name = task_name
         self.source_endpoint = source_endpoint
         self.target_endpoint = target_endpoint
-        self.replication_type = replication_type
+        self.replication_type = TaskType(replication_type)
 
         self.create_table_if_not_exists = create_table_if_not_exists
         self.recreate_table_if_exists = recreate_table_if_exists
@@ -98,7 +98,7 @@ class Task:
             for table in table_names:
                 schema_name = table.get("schema_name")
                 table_name = table.get("table_name")
-                priority = table.get("priority")
+                priority = PriorityType(table.get("priority"))
 
                 logging.info(
                     f"TASK - Obtendo detalhes da tabela {schema_name}.{table_name}"

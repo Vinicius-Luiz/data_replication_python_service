@@ -51,3 +51,7 @@ contract = {
     "depends_on": ["data_inicio", "data_fim"],
     "round_result": True  # Opcional - arredonda o resultado
 }
+
+
+# Obter Enum com base no valor
+# TransformationOperationType('trim')
