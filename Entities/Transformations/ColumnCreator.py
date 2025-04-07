@@ -294,5 +294,6 @@ class ColumnCreator:
             return table
 
         except Exception as e:
-            logging.critical(f"Falha ao criar coluna: {str(e)}")
-            raise
+            raise_msg = f"Falha ao criar coluna: {str(e)}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)

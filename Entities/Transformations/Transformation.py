@@ -43,12 +43,9 @@ class Transformation:
         """
 
         if self.transformation_type not in TransformationType:
-            logging.error(
-                f"TRANSFORMATION - Tipo de transformação inválido: {self.transformation_type}"
-            )
-            raise ValueError(
-                f"TRANSFORMATION - Tipo de transformação inválido: {self.transformation_type}"
-            )
+            raise_msg = f"TRANSFORMATION - Tipo de transformação inválido: {self.transformation_type}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def execute(self, table: Table = None) -> None:
         """

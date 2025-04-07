@@ -40,7 +40,7 @@ class Task:
         self.task_name = task_name
         self.replication_type = TaskType(replication_type)
         self.interval_seconds = interval_seconds
-        
+
         self.source_endpoint = source_endpoint
         self.target_endpoint = target_endpoint
 
@@ -69,8 +69,9 @@ class Task:
         """
 
         if self.replication_type not in TaskType:
-            logging.error(f"TASK - Tipo de tarefa {self.replication_type} inválido")
-            raise ValueError(f"TASK - Tipo de tarefa {self.replication_type} inválido")
+            raise_msg = f"TASK - Tipo de tarefa {self.replication_type} inválido"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
         logging.info(f"TASK - {self.task_name} válido")
 
@@ -142,8 +143,9 @@ class Task:
 
             return {"success": True, "tables": self.tables}
         except Exception as e:
-            logging.critical(f"TASK - Erro ao obter detalhes da tabela: {e}")
-            raise ValueError(f"TASK - Erro ao obter detalhes da tabela: {e}")
+            raise_msg = f"TASK - Erro ao obter detalhes da tabela: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def add_transformation(
         self, schema_name: str, table_name: str, transformation: Transformation
@@ -167,8 +169,9 @@ class Task:
             table = self.find_table(schema_name, table_name)
             table.transformations.append(transformation)
         except Exception as e:
-            logging.critical(f"TASK - Erro ao adicionar transformação: {e}")
-            raise ValueError(f"TASK - Erro ao adicionar transformação: {e}")
+            raise_msg = f"TASK - Erro ao adicionar transformação: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def add_filter(self, schema_name: str, table_name: str, filter: Filter) -> None:
         """
@@ -189,8 +192,9 @@ class Task:
             table = self.find_table(schema_name, table_name)
             table.filters.append(filter)
         except Exception as e:
-            logging.critical(f"TASK - Erro ao adicionar filtro: {e}")
-            raise ValueError(f"TASK - Erro ao adicionar filtro: {e}")
+            raise_msg = f"TASK - Erro ao adicionar filtro: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
@@ -257,7 +261,6 @@ class Task:
                 )
                 logging.debug(table_get_full_load)
         except Exception as e:
-            logging.critical(e)
             raise ValueError(e)
 
     def _execute_target_full_load(self) -> dict:
@@ -281,7 +284,6 @@ class Task:
 
             return table_full_load
         except Exception as e:
-            logging.critical(e)
             raise ValueError(e)
 
     def _execute_source_cdc(self) -> dict:
@@ -289,51 +291,3 @@ class Task:
 
     def _execute_target_cdc(self) -> dict:
         raise NotImplementedError
-
-    def _run_full_load(self) -> dict:
-        """
-        Executa a replicação no modo carga completa (full load), recriando toda a estrutura
-        e dados no destino.
-
-        Realiza a carga inicial completa dos dados, incluindo:
-        - Criação da estrutura da tabela (se necessário)
-        - Carga de todos os registros da origem
-        - Aplicação de transformações configuradas
-
-        Returns:
-            dict: Dicionário contendo informações sobre o resultado da execução:
-        """
-
-        raise NotImplementedError
-
-        try:
-            for table in self.tables:
-                logging.info(
-                    f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}"
-                )
-                table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
-                table_get_full_load = self.source_endpoint.get_full_load_from_table(
-                    table=table
-                )
-                logging.debug(table_get_full_load)
-
-                table.data = pl.read_parquet(table.path_data)
-
-                table.execute_filters()
-                table.execute_transformations()
-
-                logging.info(
-                    f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}"
-                )
-                table_full_load = self.target_endpoint.insert_full_load_into_table(
-                    table=table,
-                    create_table_if_not_exists=self.create_table_if_not_exists,
-                    recreate_table_if_exists=self.recreate_table_if_exists,
-                    truncate_before_insert=self.truncate_before_insert,
-                )
-                logging.debug(table_full_load)
-
-            return table_full_load
-        except Exception as e:
-            logging.critical(e)
-            raise ValueError(e)

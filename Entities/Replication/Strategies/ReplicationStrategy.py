@@ -58,4 +58,4 @@ class ReplicationStrategy(ABC):
         if output:
             logging.info(f"{script_name} - Saída: {output}")
         if errors:
-            logging.error(f"{script_name} - Erros: {errors}")
+            logging.critical(f"{script_name} - Erros: {errors}")

@@ -257,5 +257,6 @@ class ColumnModifier:
             return table
 
         except Exception as e:
-            logging.critical(f"Falha ao modificar coluna: {str(e)}")
-            raise
+            raise_msg = f"Falha ao modificar coluna: {str(e)}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)

@@ -56,7 +56,7 @@ class Filter:
 
         if self.filter_type not in FilterType:
             raise_msg = f"FILTER - Tipo de filtro inválido: {self.filter_type}"
-            logging.error(raise_msg)
+            logging.critical(raise_msg)
             raise ValueError(raise_msg)
 
     def _validate_column_exists(self, table: Table) -> None:

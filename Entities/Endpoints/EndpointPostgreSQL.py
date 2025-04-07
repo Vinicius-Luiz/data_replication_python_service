@@ -61,8 +61,9 @@ class EndpointPostgreSQL(Endpoint):
         try:
             return psycopg2.connect(**credentials)
         except Exception as e:
-            logging.critical(f"ENDPOINT - Erro ao conectar ao banco de dados: {e}")
-            raise ValueError(f"ENDPOINT - Erro ao conectar ao banco de dados: {e}")
+            raise_msg = f"ENDPOINT - Erro ao conectar ao banco de dados: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def cursor(self) -> psycopg2.extensions.cursor:
         """
@@ -106,7 +107,8 @@ class EndpointPostgreSQL(Endpoint):
                 cursor.execute(PostgreSQLQueries.GET_SCHEMAS)
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
-            logging.critical(f"ENDPOINT - Erro ao obter os esquemas: {e}")
+            raise_msg = f"ENDPOINT - Erro ao obter os esquemas: {e}"
+            logging.critical(raise_msg)
             return []
 
     def get_tables(self, schema: str) -> list:
@@ -124,7 +126,8 @@ class EndpointPostgreSQL(Endpoint):
                 cursor.execute(PostgreSQLQueries.GET_TABLES, (schema,))
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
-            logging.critical(f"ENDPOINT - Erro ao obter as tabelas: {e}")
+            raise_msg = f"ENDPOINT - Erro ao obter as tabelas: {e}"
+            logging.critical(raise_msg)
             return []
 
     def get_table_details(self, schema: str, table: str) -> Table:
@@ -156,8 +159,9 @@ class EndpointPostgreSQL(Endpoint):
                 primary_keys = self.get_table_primary_key(table_obj)
                 return self.get_table_columns(table_obj, primary_keys)
         except Exception as e:
-            logging.critical(f"ENDPOINT - Erro ao obter os detalhes da tabela: {e}")
-            raise ValueError(f"ENDPOINT - Erro ao obter os detalhes da tabela: {e}")
+            raise_msg = f"ENDPOINT - Erro ao obter os detalhes da tabela: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def get_table_primary_key(self, table: Table) -> list:
         """
@@ -178,12 +182,9 @@ class EndpointPostgreSQL(Endpoint):
                 )
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
-            logging.critical(
-                f"ENDPOINT - Erro ao obter as chaves primárias da tabela: {e}"
-            )
-            raise ValueError(
-                f"ENDPOINT - Erro ao obter as chaves primárias da tabela: {e}"
-            )
+            raise_msg = f"ENDPOINT - Erro ao obter as chaves primárias da tabela: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def get_table_columns(self, table: Table, primary_keys: list) -> Table:
         """
@@ -218,8 +219,9 @@ class EndpointPostgreSQL(Endpoint):
                     )
             return table
         except Exception as e:
-            logging.critical(f"ENDPOINT - Erro ao obter as colunas da tabela: {e}")
-            raise ValueError(f"ENDPOINT - Erro ao obter as colunas da tabela: {e}")
+            raise_msg = f"ENDPOINT - Erro ao obter as colunas da tabela: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def get_full_load_from_table(self, table: Table) -> dict:
         """
@@ -255,8 +257,9 @@ class EndpointPostgreSQL(Endpoint):
                     "time_elapsed": f"{time() - initial_time:.2f}s",
                 }
         except Exception as e:
-            logging.critical(f"ENDPOINT - Erro ao obter a carga completa: {e}")
-            raise ValueError(f"ENDPOINT - Erro ao obter a carga completa: {e}")
+            raise_msg = f"ENDPOINT - Erro ao obter a carga completa: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def insert_full_load_into_table(
         self,
@@ -302,8 +305,9 @@ class EndpointPostgreSQL(Endpoint):
                 }
         except Exception as e:
             self.rollback()
-            logging.critical(f"ENDPOINT - Erro ao inserir dados: {e}")
-            raise ValueError(f"ENDPOINT - Erro ao inserir dados: {e}")
+            raise_msg = f"ENDPOINT - Erro ao inserir dados: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def _manage_table(
         self,
@@ -368,12 +372,9 @@ class EndpointPostgreSQL(Endpoint):
                     )
                 )
         except Exception as e:
-            logging.error(
-                f"ENDPOINT - Erro ao gerenciar tabela {table.target_schema_name}.{table.target_table_name}: {e}"
-            )
-            raise ValueError(
-                f"ENDPOINT - Erro ao gerenciar tabela {table.target_schema_name}.{table.target_table_name}: {e}"
-            )
+            raise_msg = f"ENDPOINT - Erro ao gerenciar tabela {table.target_schema_name}.{table.target_table_name}: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
 
     def _insert_data(self, cursor: psycopg2.extensions.cursor, table: Table) -> None:
         """
@@ -409,7 +410,7 @@ class EndpointPostgreSQL(Endpoint):
             )
             execute_values(cursor, query, records, page_size=10000)
         except Exception as e:
-            logging.error(
+            logging.critical(
                 f"ENDPOINT - Erro ao inserir dados na tabela {table.target_schema_name}.{table.target_table_name}: {e}"
             )
             raise

@@ -123,7 +123,7 @@ class ReplicationManager:
         Raises:
             Exception: Qualquer erro ocorrido durante a execução é registrado e relançado.
         """
-        
+
         Utils.configure_logging()
         load_dotenv()
 
@@ -138,5 +138,6 @@ class ReplicationManager:
 
             strategy.execute(task=self.task)
         except Exception as e:
-            logging.error(f"Erro durante a execução: {str(e)}")
-            raise
+            msg_raise = f"Erro durante a execução: {str(e)}"
+            logging.critical(msg_raise)
+            raise ValueError(msg_raise)
