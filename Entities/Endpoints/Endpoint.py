@@ -62,9 +62,7 @@ class Endpoint(ABC):
             ValueError: Se o tipo do banco de dados ou o tipo de endpoint não forem válidos.
         """
         if self.database_type not in DatabaseType:
-            raise_msg = (
-                f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido."
-            )
+            raise_msg = f"ENDPOINT - Tipo de banco de dados {self.database_type} inválido."
             logging.critical(raise_msg)
             raise ValueError(raise_msg)
 
