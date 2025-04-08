@@ -18,3 +18,22 @@ database → Nome do banco de dados associado ao slot.
 active → Indica se o slot está ativo (true ou false).
 restart_lsn → Última posição LSN do WAL que pode ser reproduzida pelo slot.
 */
+
+
+-- Comandos de Teste
+INSERT INTO employees.department (id, dept_name) 
+  VALUES ('d008', 'Logistic'),
+         ('d009', 'Relationship'),
+		 ('d010', 'Architecture');
+
+DELETE INTO employees.department 
+  WHERE id in ('d008', 'd009', 'd010');
+
+
+UPDATE employees.department_manager
+  SET to_date = from_date + INTERVAL '2 years 2 days'
+  WHERE EXTRACT(YEAR FROM to_date) = 9999;
+
+UPDATE employees.department_manager
+  SET to_date = '9999-01-01'
+ WHERE EXTRACT(YEAR FROM to_date) = 9999;

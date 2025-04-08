@@ -2,10 +2,12 @@ from Entities.Endpoints.Endpoint import Endpoint
 from Entities.Transformations.Transformation import Transformation
 from Entities.Filters.Filter import Filter
 from Entities.Tables.Table import Table
-from Entities.Shared.Types import TaskType, PriorityType, EndpointType
+from Entities.Shared.Types import TaskType, PriorityType, EndpointType, DatabaseType
 from typing import List, Optional
+from datetime import datetime
 import polars as pl
 import logging
+import re
 
 
 class Task:
@@ -70,6 +72,14 @@ class Task:
 
         if self.replication_type not in TaskType:
             raise_msg = f"TASK - Tipo de tarefa {self.replication_type} inválido"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
+
+        partner = re.compile(r"^[a-z0-9_]+$")
+        task_name_valid = bool(partner.match(self.task_name))
+
+        if not task_name_valid:
+            raise_msg = f"TASK - Nome da tarefa {self.task_name} inválido"
             logging.critical(raise_msg)
             raise ValueError(raise_msg)
 
@@ -287,7 +297,26 @@ class Task:
             raise ValueError(e)
 
     def _execute_source_cdc(self) -> dict:
-        raise NotImplementedError
+        # TODO Estruturar a mensagem lida como json
 
-    def _execute_target_cdc(self) -> dict:
+        match self.source_endpoint.database_type:
+            case DatabaseType.POSTGRESQL:
+                kargs = {
+                    "slot_name": self.task_name,
+                }
+            case _:
+                raise ValueError(
+                    f"TASK - Banco de dados {self.source_endpoint.database_type} nao implementado"
+                )
+            
+        changes_captured = self.source_endpoint.capture_changes(**kargs)
+        changes_captured.write_csv(f"_anotacoes/{self.task_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv")
         raise NotImplementedError
+        changes_structured = self.source_endpoint.structure_capture_changes(
+            changes_captured
+        )
+
+        return changes_structured
+
+    def _execute_target_cdc(self) -> bool:
+        raise False

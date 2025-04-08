@@ -6,7 +6,7 @@ class PostgreSQLQueries:
       FROM information_schema.tables 
      WHERE table_type   = 'BASE TABLE'
        AND table_schema = %s"""
-    
+
     GET_TABLE_DETAILS = """
     SELECT schemaname                           AS schema_name,
            relname                              AS table_name,
@@ -17,7 +17,7 @@ class PostgreSQLQueries:
        AND relname = %s
      ORDER BY schemaname, relname
       """
-    
+
     GET_TABLE_COLUMNS = """
     SELECT table_schema AS schema_name,
            table_name,
@@ -34,7 +34,7 @@ class PostgreSQLQueries:
               table_name,
               ordinal_position
       """
-    
+
     GET_TABLE_PRIMARY_KEY = """
     SELECT kcu.column_name AS primary_key_column
       FROM information_schema.table_constraints tc
@@ -77,4 +77,21 @@ class PostgreSQLQueries:
 
     DROP_TABLE = """
     DROP TABLE IF EXISTS {schema}.{table}
+    """
+
+    CREATE_REPLICATION_SLOT = """
+    SELECT pg_create_logical_replication_slot(%s, 'test_decoding')
+    """
+
+    VERIFY_IF_EXISTS_A_REPLICATION_SLOT = """
+    SELECT COUNT(*) FROM pg_replication_slots WHERE slot_name = %s
+    """
+
+    DROP_REPLICATION_SLOT = """
+    SELECT pg_drop_replication_slot(%s)
+    """
+
+    GET_CHANGES = """
+    SELECT *
+      FROM pg_logical_slot_get_changes(%s, NULL, NULL);
     """

@@ -1,0 +1,33 @@
+lsn,xid,data
+4/1386E718,1173,BEGIN 1173
+4/1386E718,1173,table employees.department: INSERT: id[character]:'d010' dept_name[character varying]:'Logistic'
+4/1386ED50,1173,table employees.department: INSERT: id[character]:'d011' dept_name[character varying]:'Relationship'
+4/1386EE28,1173,table employees.department: INSERT: id[character]:'d012' dept_name[character varying]:'Architecture'
+4/1386EF30,1173,COMMIT 1173
+4/1386EF30,1174,BEGIN 1174
+4/1386EF30,1174,table employees.department: DELETE: id[character]:'d010'
+4/1386EF78,1174,table employees.department: DELETE: id[character]:'d011'
+4/1386EFC0,1174,table employees.department: DELETE: id[character]:'d012'
+4/1386F038,1174,COMMIT 1174
+4/1386F038,1175,BEGIN 1175
+4/1386F038,1175,table employees.department_manager: UPDATE: employee_id[bigint]:110039 department_id[character]:'d001' from_date[date]:'1991-10-01' to_date[date]:'1993-10-03'
+4/1386F970,1175,table employees.department_manager: UPDATE: employee_id[bigint]:110114 department_id[character]:'d002' from_date[date]:'1989-12-17' to_date[date]:'1991-12-19'
+4/1386F9D0,1175,table employees.department_manager: UPDATE: employee_id[bigint]:110228 department_id[character]:'d003' from_date[date]:'1992-03-21' to_date[date]:'1994-03-23'
+4/1386FA30,1175,table employees.department_manager: UPDATE: employee_id[bigint]:110420 department_id[character]:'d004' from_date[date]:'1996-08-30' to_date[date]:'1998-09-01'
+4/1386FA90,1175,table employees.department_manager: UPDATE: employee_id[bigint]:110567 department_id[character]:'d005' from_date[date]:'1992-04-25' to_date[date]:'1994-04-27'
+4/1386FAF0,1175,table employees.department_manager: UPDATE: employee_id[bigint]:110854 department_id[character]:'d006' from_date[date]:'1994-06-28' to_date[date]:'1996-06-30'
+4/1386FB50,1175,table employees.department_manager: UPDATE: employee_id[bigint]:111133 department_id[character]:'d007' from_date[date]:'1991-03-07' to_date[date]:'1993-03-09'
+4/1386FBB0,1175,table employees.department_manager: UPDATE: employee_id[bigint]:111534 department_id[character]:'d008' from_date[date]:'1991-04-08' to_date[date]:'1993-04-10'
+4/1386FC10,1175,table employees.department_manager: UPDATE: employee_id[bigint]:111939 department_id[character]:'d009' from_date[date]:'1996-01-03' to_date[date]:'1998-01-05'
+4/1386FCA0,1175,COMMIT 1175
+4/1386FCA0,1176,BEGIN 1176
+4/1386FCA0,1176,table employees.department_manager: UPDATE: employee_id[bigint]:110039 department_id[character]:'d001' from_date[date]:'1991-10-01' to_date[date]:'9999-01-01'
+4/138707C0,1176,table employees.department_manager: UPDATE: employee_id[bigint]:110114 department_id[character]:'d002' from_date[date]:'1989-12-17' to_date[date]:'9999-01-01'
+4/13870820,1176,table employees.department_manager: UPDATE: employee_id[bigint]:110228 department_id[character]:'d003' from_date[date]:'1992-03-21' to_date[date]:'9999-01-01'
+4/13870880,1176,table employees.department_manager: UPDATE: employee_id[bigint]:110420 department_id[character]:'d004' from_date[date]:'1996-08-30' to_date[date]:'9999-01-01'
+4/138708E0,1176,table employees.department_manager: UPDATE: employee_id[bigint]:110567 department_id[character]:'d005' from_date[date]:'1992-04-25' to_date[date]:'9999-01-01'
+4/13870940,1176,table employees.department_manager: UPDATE: employee_id[bigint]:110854 department_id[character]:'d006' from_date[date]:'1994-06-28' to_date[date]:'9999-01-01'
+4/138709A0,1176,table employees.department_manager: UPDATE: employee_id[bigint]:111133 department_id[character]:'d007' from_date[date]:'1991-03-07' to_date[date]:'9999-01-01'
+4/13870A00,1176,table employees.department_manager: UPDATE: employee_id[bigint]:111534 department_id[character]:'d008' from_date[date]:'1991-04-08' to_date[date]:'9999-01-01'
+4/13870A60,1176,table employees.department_manager: UPDATE: employee_id[bigint]:111939 department_id[character]:'d009' from_date[date]:'1996-01-03' to_date[date]:'9999-01-01'
+4/13870AF0,1176,COMMIT 1176

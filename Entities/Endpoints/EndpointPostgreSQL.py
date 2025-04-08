@@ -414,3 +414,43 @@ class EndpointPostgreSQL(Endpoint):
                 f"ENDPOINT - Erro ao inserir dados na tabela {table.target_schema_name}.{table.target_table_name}: {e}"
             )
             raise
+
+    def capture_changes(self, **kargs) -> pl.DataFrame:
+        try:
+            slot_name = kargs.get("slot_name")
+            with self.connection.cursor() as cursor:
+                cursor.execute(
+                    PostgreSQLQueries.VERIFY_IF_EXISTS_A_REPLICATION_SLOT, (slot_name,)
+                )
+
+                exists_replication_slot = cursor.fetchone()
+                exists_replication_slot = exists_replication_slot[0]
+
+                if not exists_replication_slot:
+                    logging.info(f"ENDPOINT - Criando slot de replicação {slot_name}")
+                    cursor.execute(
+                        PostgreSQLQueries.CREATE_REPLICATION_SLOT, (slot_name,)
+                    )
+        except Exception as e:
+            raise_msg = f"ENDPOINT - Erro ao obter/criar slot de replicação: {e}"
+            raise ValueError(raise_msg)
+
+        try:
+            with self.connection.cursor() as cursor:
+                logging.info(f"ENDPOINT - Capturando alterações de dados")
+                cursor.execute(PostgreSQLQueries.GET_CHANGES, (slot_name,))
+
+                data = cursor.fetchall()
+
+                df = pl.DataFrame(
+                    data, schema=[desc[0] for desc in cursor.description], orient="row"
+                )
+
+            return df
+
+        except Exception as e:
+            raise_msg = f"ENDPOINT - Erro ao capturar alterações de dados: {e}"
+            raise ValueError(raise_msg)
+
+    def structure_capture_changes(self, changes_structured) -> dict:
+        raise NotImplementedError

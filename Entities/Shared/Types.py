@@ -10,7 +10,6 @@ class EndpointType(Enum):
 class TaskType(Enum):
     FULL_LOAD = 'full_load'
     CDC = 'cdc'
-    FULL_LOAD_CDC = 'full_load_and_cdc'
 
 class TransformationType(Enum):
     CREATE_COLUMN = 'create_column'

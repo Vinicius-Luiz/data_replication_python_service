@@ -5,6 +5,7 @@ from Entities.Endpoints.Decorators.EndpointDecorators import (
 )
 from Entities.Tables.Table import Table
 from Entities.Shared.Types import DatabaseType, EndpointType
+import polars as pl
 import logging
 
 
@@ -171,4 +172,14 @@ class Endpoint(ABC):
         Returns:
             dict: Dicionário contendo o log de execução do método.
         """
+        pass
+
+    @abstractmethod
+    @source_method
+    def capture_changes(self, **kargs) -> pl.DataFrame:
+        pass
+
+    @abstractmethod
+    @source_method
+    def structure_capture_changes(self) -> dict:
         pass
