@@ -1,0 +1,63 @@
+{
+    "id": "ee3d5d",
+    "creted_at": "2025-04-09 00:55:03",
+    "data": [
+        {
+            "xid": 1233,
+            "operations": [
+                {
+                    "schema_name": "employees",
+                    "table_name": "the_office",
+                    "operation": "insert",
+                    "columns": [
+                        {
+                            "name": "name",
+                            "type": "character varying",
+                            "value": "[Michael Scott"
+                        },
+                        {
+                            "name": "created_date",
+                            "type": "timestamp without time zone",
+                            "value": "2025-04-09 00:00:00"
+                        }
+                    ]
+                },
+                {
+                    "schema_name": "employees",
+                    "table_name": "the_office",
+                    "operation": "insert",
+                    "columns": [
+                        {
+                            "name": "name",
+                            "type": "character varying",
+                            "value": "[Pam Beesly]"
+                        },
+                        {
+                            "name": "created_date",
+                            "type": "timestamp without time zone",
+                            "value": "2025-04-09 00:00:00"
+                        }
+                    ]
+                },
+                {
+                    "schema_name": "employees",
+                    "table_name": "the_office",
+                    "operation": "insert",
+                    "columns": [
+                        {
+                            "name": "name",
+                            "type": "character varying",
+                            "value": "Jim Halpert]"
+                        },
+                        {
+                            "name": "created_date",
+                            "type": "timestamp without time zone",
+                            "value": "2025-04-09 00:00:00"
+                        }
+                    ]
+                }
+            ],
+            "commit_lsn": "4/14D0F338"
+        }
+    ]
+}

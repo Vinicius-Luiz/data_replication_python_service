@@ -1,5 +1,6 @@
 import logging
 import pickle
+import uuid
 from Entities.Tasks.Task import Task
 
 
@@ -45,7 +46,15 @@ class Utils:
         retorna um objeto Task.
         """
 
-        logging.debug("Carregando settings.pickle")
         with open("task/settings.pickle", "rb") as f:
             task: Task = pickle.load(f)
         return task
+
+    @staticmethod
+    def hash_6_chars() -> str:
+        """
+        Gera um hash MD5 a partir do texto passado e retorna apenas
+        os 6 primeiros caracteres do hash em hexadecimal.
+        """
+
+        return uuid.uuid4().hex[:6].lower()

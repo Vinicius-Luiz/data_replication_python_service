@@ -26,7 +26,7 @@ INSERT INTO employees.department (id, dept_name)
          ('d009', 'Relationship'),
 		 ('d010', 'Architecture');
 
-DELETE INTO employees.department 
+DELETE FROM employees.department 
   WHERE id in ('d008', 'd009', 'd010');
 
 

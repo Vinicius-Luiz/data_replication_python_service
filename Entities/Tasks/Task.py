@@ -4,7 +4,6 @@ from Entities.Filters.Filter import Filter
 from Entities.Tables.Table import Table
 from Entities.Shared.Types import TaskType, PriorityType, EndpointType, DatabaseType
 from typing import List, Optional
-from datetime import datetime
 import polars as pl
 import logging
 import re
@@ -297,8 +296,7 @@ class Task:
             raise ValueError(e)
 
     def _execute_source_cdc(self) -> dict:
-        # TODO Estruturar a mensagem lida como json
-
+        # TODO enviar mensagem via RabbitMQ
         match self.source_endpoint.database_type:
             case DatabaseType.POSTGRESQL:
                 kargs = {
@@ -306,17 +304,21 @@ class Task:
                 }
             case _:
                 raise ValueError(
-                    f"TASK - Banco de dados {self.source_endpoint.database_type} nao implementado"
+                    f"TASK - Banco de dados {self.source_endpoint.database_type} não implementado"
                 )
-            
+
         changes_captured = self.source_endpoint.capture_changes(**kargs)
-        changes_captured.write_csv(f"_anotacoes/{self.task_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}.csv")
-        raise NotImplementedError
+
         changes_structured = self.source_endpoint.structure_capture_changes(
-            changes_captured
+            changes_captured, save_files=True
         )
 
         return changes_structured
 
     def _execute_target_cdc(self) -> bool:
+        # TODO receber mensagem via RabbitMQ
+        # TODO estruturar json em pl.DataFrame
+        # TODO executar filtros
+        # TODO executar transformações
+        # TODO executar carga no destino
         raise False

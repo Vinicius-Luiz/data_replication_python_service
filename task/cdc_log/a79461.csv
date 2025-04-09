@@ -1,0 +1,6 @@
+lsn,xid,data
+4/14D0F338,1234,BEGIN 1234
+4/14D0F338,1234,table employees.the_office: DELETE: (no-tuple-data)
+4/14D0F370,1234,table employees.the_office: DELETE: (no-tuple-data)
+4/14D0F3A8,1234,table employees.the_office: DELETE: (no-tuple-data)
+4/14D0F410,1234,COMMIT 1234

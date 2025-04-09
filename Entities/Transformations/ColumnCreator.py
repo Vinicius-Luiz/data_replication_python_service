@@ -1,5 +1,6 @@
 from __future__ import annotations
 from Entities.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
+from Entities.Endpoints.DataTypes import EndpointDataTypePostgreSQL
 from Entities.Shared.Types import TransformationOperationType
 from Entities.Columns.Column import Column
 from typing import Dict, List, Any, TYPE_CHECKING
@@ -13,20 +14,8 @@ if TYPE_CHECKING:
 class ColumnCreator:
     """Classe responsável por validar e criar novas colunas."""
 
-    TYPE_MAPPING = {
-        pl.Int8: "smallint",
-        pl.Int16: "smallint",
-        pl.Int32: "integer",
-        pl.Int64: "bigint",
-        pl.Float32: "real",
-        pl.Float64: "double precision",
-        pl.Utf8: "character varying",
-        pl.Boolean: "boolean",
-        pl.Date: "date",
-        pl.Datetime: "timestamp",
-        pl.Decimal: "numeric",
-        pl.Null: "text",
-    }
+    # TODO: eu tenho que saber qual o endpoint de destino pra salvar as colunas no tipo certo
+    TYPE_POLARS_TO_DATABASE = EndpointDataTypePostgreSQL.DataTypes.TYPE_POLARS_TO_DATABASE
 
     @staticmethod
     def get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
@@ -281,7 +270,7 @@ class ColumnCreator:
 
             # Atualiza metadados
             new_column_type = table.data.schema[new_column_name]
-            sql_type = cls.TYPE_MAPPING.get(type(new_column_type), "text")
+            sql_type = cls.TYPE_POLARS_TO_DATABASE.get(type(new_column_type), "text")
 
             table.columns[new_column_name] = Column(
                 name=new_column_name,

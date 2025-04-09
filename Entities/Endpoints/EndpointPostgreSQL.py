@@ -1,15 +1,19 @@
 from Entities.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
 from Entities.Shared.Queries import PostgreSQLQueries
+from Entities.Shared.Utils import Utils
 from Entities.Tables.Table import Table
 from Entities.Columns.Column import Column
 from psycopg2 import sql
 from psycopg2.extras import execute_values
+from datetime import datetime
 from time import time
+from typing import Dict, Any
 import polars as pl
 import psycopg2
 import logging
 import os
-
+import re
+import json
 
 class EndpointPostgreSQL(Endpoint):
 
@@ -452,5 +456,104 @@ class EndpointPostgreSQL(Endpoint):
             raise_msg = f"ENDPOINT - Erro ao capturar alterações de dados: {e}"
             raise ValueError(raise_msg)
 
-    def structure_capture_changes(self, changes_structured) -> dict:
-        raise NotImplementedError
+    def structure_capture_changes(self, df_changes_captured: pl.DataFrame, save_files: bool = False) -> Dict[str, Any]:
+        df_changes_captured = df_changes_captured.sort('lsn')
+        
+        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        id = Utils.hash_6_chars()
+
+        changes_structured = []
+        for xid, group in df_changes_captured.group_by('xid'):
+            transactions = self._process_transaction(group)
+            changes_structured.extend(transactions)
+        
+        changes_structured = {
+            "id": id,
+            "creted_at": created_at,
+            "data": changes_structured
+        }
+
+        if changes_structured.get("data"):
+            if save_files:
+                with open(f"task/cdc_log/{id}.json", "w") as f:
+                    json.dump(changes_structured, f, indent=4)
+
+                df_changes_captured.write_csv(f"task/cdc_log/{id}.csv")
+                
+            return changes_structured
+        
+        return None
+    
+    def _process_transaction(self, group: pl.DataFrame) -> Dict[str, Any]:
+        transactions = []
+        current_transaction = None
+        
+        for row in group.iter_rows(named=True):
+            data_info = self._parse_data_line(row['data'])
+            
+            if data_info is None:
+                continue
+                
+            if data_info['operation'] in ('begin', 'commit'):
+                if data_info['operation'] == 'begin':
+                    current_transaction = {
+                        'xid': data_info['xid'],
+                        'operations': []
+                    }
+                elif data_info['operation'] == 'commit' and current_transaction:
+                    current_transaction['commit_lsn'] = row['lsn']
+                    transactions.append(current_transaction)
+                    current_transaction = None
+            else:
+                if current_transaction is not None:
+                    # Filtra apenas operações DML válidas
+                    if data_info['operation'] in ('insert', 'update', 'delete'):
+                        current_transaction['operations'].append(data_info)
+        
+        return transactions
+
+    def _parse_data_line(self, line: str) -> Dict[str, Any]:
+        if line.startswith(('BEGIN', 'COMMIT')):
+            return {'operation': line.split()[0].lower(), 'xid': int(line.split()[1])}
+        
+        # Extrai informações da operação DML
+        pattern = r"table\s+([^.]+)\.([^:]+):\s+(INSERT|UPDATE|DELETE):\s+(.+)"
+        match = re.match(pattern, line)
+        if not match:
+            return None
+        
+        schema_name, table_name, operation, rest = match.groups()
+        
+        result = {
+            'schema_name': schema_name,
+            'table_name': table_name,
+            'operation': operation.lower(),
+            'columns': []
+        }
+        
+        if operation.upper() == 'DELETE' and rest.strip() == '(no-tuple-data)':
+            return result
+        
+        # Parseia as colunas e valores
+        if operation.upper() in ('INSERT', 'UPDATE'):
+            # Para INSERT e UPDATE, temos valores
+            column_pattern = r"([^\s]+)\[([^\]]+)\]:'([^']*)'"
+            columns = re.findall(column_pattern, rest)
+            for col_name, col_type, col_value in columns:
+                result['columns'].append({
+                    'name': col_name,
+                    'type': col_type,
+                    'value': col_value
+                })
+        elif operation.upper() == 'DELETE':
+            # Para DELETE, só temos a condição (normalmente a PK)
+            column_pattern = r"([^\s]+)\[([^\]]+)\]:'([^']*)'"
+            columns = re.findall(column_pattern, rest)
+            for col_name, col_type, col_value in columns:
+                result['columns'].append({
+                    'name': col_name,
+                    'type': col_type,
+                    'value': col_value
+                })
+        
+        return result
