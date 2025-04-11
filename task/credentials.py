@@ -1,4 +1,4 @@
-from Entities.Shared.Types import *
+from trempy.Shared.Types import *
 from dotenv import load_dotenv
 import os
 

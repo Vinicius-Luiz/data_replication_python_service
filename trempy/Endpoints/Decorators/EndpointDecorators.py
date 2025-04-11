@@ -1,4 +1,4 @@
-from Entities.Shared.Types import DatabaseType, EndpointType
+from trempy.Shared.Types import DatabaseType, EndpointType
 from functools import wraps
 
 def source_method(func):

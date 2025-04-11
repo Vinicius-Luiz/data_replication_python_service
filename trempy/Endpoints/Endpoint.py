@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from Entities.Endpoints.Decorators.EndpointDecorators import (
+from trempy.Endpoints.Decorators.EndpointDecorators import (
     source_method,
     target_method,
 )
-from Entities.Tables.Table import Table
-from Entities.Shared.Types import DatabaseType, EndpointType
+from trempy.Tables.Table import Table
+from trempy.Shared.Types import DatabaseType, EndpointType
 import polars as pl
 import logging
 
@@ -175,6 +175,20 @@ class Endpoint(ABC):
         pass
 
     @abstractmethod
+    @target_method
+    def insert_cdc_into_table(self) -> dict:
+        """
+        Insere dados de alterações em uma tabela de destino.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+            create_table_if_not_exists (bool): Se True, cria a tabela caso ela não exista.
+        
+        Returns:
+            dict: Dicionário contendo o log de execução do método.
+        """
+    
+    @abstractmethod
     @source_method
     def capture_changes(self, **kargs) -> pl.DataFrame:
         pass
@@ -182,4 +196,9 @@ class Endpoint(ABC):
     @abstractmethod
     @source_method
     def structure_capture_changes(self) -> dict:
+        pass
+
+    @abstractmethod
+    @target_method
+    def structure_capture_changes_to_dataframe(self) -> pl.DataFrame:
         pass

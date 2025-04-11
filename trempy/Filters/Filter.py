@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from Entities.Shared.Types import FilterType
+from trempy.Shared.Types import FilterType
 from typing import Union, List, Type, get_args, get_origin
 from datetime import datetime
 import polars as pl
@@ -8,7 +8,7 @@ import polars as pl
 import logging
 
 if TYPE_CHECKING:
-    from Entities.Tables.Table import Table
+    from trempy.Tables.Table import Table
 
 
 class Filter:

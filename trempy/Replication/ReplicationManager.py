@@ -2,12 +2,12 @@ import json
 import logging
 from dotenv import load_dotenv
 from task.credentials import credentials
-from Entities.Tasks.Task import Task
-from Entities.Filters.Filter import Filter
-from Entities.Shared.Utils import Utils
-from Entities.Transformations.Transformation import Transformation
-from Entities.Endpoints.Factory.EndpointFactory import EndpointFactory
-from Entities.Replication.Factory.ReplicationStrategyFactory import (
+from trempy.Tasks.Task import Task
+from trempy.Filters.Filter import Filter
+from trempy.Shared.Utils import Utils
+from trempy.Transformations.Transformation import Transformation
+from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
+from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
 

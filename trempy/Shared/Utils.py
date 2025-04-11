@@ -1,7 +1,7 @@
 import logging
 import pickle
 import uuid
-from Entities.Tasks.Task import Task
+from trempy.Tasks.Task import Task
 
 
 class Utils:

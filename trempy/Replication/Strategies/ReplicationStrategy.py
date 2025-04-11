@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import logging
-from Entities.Tasks.Task import Task
+from trempy.Tasks.Task import Task
 from abc import ABC, abstractmethod
 
 

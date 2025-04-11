@@ -1,14 +1,14 @@
 from __future__ import annotations
-from Entities.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
-from Entities.Endpoints.DataTypes import EndpointDataTypePostgreSQL
-from Entities.Shared.Types import TransformationOperationType
-from Entities.Columns.Column import Column
+from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
+from trempy.Endpoints.DataTypes import EndpointDataTypePostgreSQL
+from trempy.Shared.Types import TransformationOperationType
+from trempy.Columns.Column import Column
 from typing import Dict, List, Any, TYPE_CHECKING
 import polars as pl
 import logging
 
 if TYPE_CHECKING:
-    from Entities.Tables.Table import Table
+    from trempy.Tables.Table import Table
 
 
 class ColumnCreator:

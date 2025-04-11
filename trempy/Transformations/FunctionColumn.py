@@ -1,5 +1,5 @@
 from typing import List, Dict
-from Entities.Shared.Types import TransformationOperationType
+from trempy.Shared.Types import TransformationOperationType
 
 
 class FunctionColumn:

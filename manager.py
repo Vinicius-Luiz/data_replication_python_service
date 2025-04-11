@@ -1,4 +1,4 @@
-from Entities.Replication.ReplicationManager import ReplicationManager
+from trempy.Replication.ReplicationManager import ReplicationManager
 
 
 if __name__ == "__main__":

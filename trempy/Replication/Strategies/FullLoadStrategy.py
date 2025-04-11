@@ -1,7 +1,7 @@
 import logging
-from Entities.Shared.Utils import Utils
-from Entities.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
-from Entities.Tasks.Task import Task
+from trempy.Shared.Utils import Utils
+from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
+from trempy.Tasks.Task import Task
 
 
 class FullLoadStrategy(ReplicationStrategy):

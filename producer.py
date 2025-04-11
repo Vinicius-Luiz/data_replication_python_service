@@ -1,6 +1,6 @@
-from Entities.Endpoints.Factory.EndpointFactory import EndpointFactory
-from Entities.Shared.Utils import Utils
-from Entities.Tasks.Task import Task
+from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
+from trempy.Shared.Utils import Utils
+from trempy.Tasks.Task import Task
 from task.credentials import credentials
 
 Utils.configure_logging()

@@ -1,6 +1,6 @@
-from Entities.Shared.Types import TaskType
-from Entities.Replication.Strategies.FullLoadStrategy import FullLoadStrategy
-from Entities.Replication.Strategies.CDCStrategy import CDCStrategy
+from trempy.Shared.Types import TaskType
+from trempy.Replication.Strategies.FullLoadStrategy import FullLoadStrategy
+from trempy.Replication.Strategies.CDCStrategy import CDCStrategy
 
 
 class ReplicationStrategyFactory:

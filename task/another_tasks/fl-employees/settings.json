@@ -4,8 +4,10 @@
         "replication_type": "full_load",
         "interval_seconds": 60,
         "create_table_if_not_exists": true,
-        "truncate_before_insert": true,
-        "recreate_table_if_exists": true
+        "full_load_settings": {
+            "recreate_table_if_exists": true,
+            "truncate_before_insert": true
+        }
     },
     "tables": [
         {

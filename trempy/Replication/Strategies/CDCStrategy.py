@@ -2,9 +2,9 @@ import logging
 import subprocess
 import sys
 from time import sleep
-from Entities.Shared.Utils import Utils
-from Entities.Tasks.Task import Task
-from Entities.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
+from trempy.Shared.Utils import Utils
+from trempy.Tasks.Task import Task
+from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
 
 
 class CDCStrategy(ReplicationStrategy):

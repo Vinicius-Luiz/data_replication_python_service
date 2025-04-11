@@ -1,8 +1,8 @@
-from Entities.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
-from Entities.Shared.Queries import PostgreSQLQueries
-from Entities.Shared.Utils import Utils
-from Entities.Tables.Table import Table
-from Entities.Columns.Column import Column
+from trempy.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
+from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Shared.Utils import Utils
+from trempy.Tables.Table import Table
+from trempy.Columns.Column import Column
 from psycopg2 import sql
 from psycopg2.extras import execute_values
 from datetime import datetime
@@ -14,6 +14,7 @@ import logging
 import os
 import re
 import json
+
 
 class EndpointPostgreSQL(Endpoint):
 
@@ -297,7 +298,7 @@ class EndpointPostgreSQL(Endpoint):
                     truncate_before_insert,
                 )
 
-                self._insert_data(cursor, table)
+                self._insert_full_load_data(cursor, table)
 
                 self.commit()
                 os.remove(table.path_data)
@@ -313,13 +314,43 @@ class EndpointPostgreSQL(Endpoint):
             logging.critical(raise_msg)
             raise ValueError(raise_msg)
 
+    def insert_cdc_into_table(
+        self, table: Table, create_table_if_not_exists: bool = False
+    ):
+        """
+        Insere dados de alterações em uma tabela de destino.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+            create_table_if_not_exists (bool): Se True, cria a tabela caso ela não exista.
+
+        Returns:
+            dict: Dicionário contendo o log de execução do método.
+        """
+
+        try:
+            with self.connection.cursor() as cursor:
+                self._manage_table(cursor, table, create_table_if_not_exists)
+
+                self._insert_cdc_data(cursor, table)
+
+                self.commit()
+
+                return {"message": "Cdc data inserted successfully", "success": True}
+
+        except Exception as e:
+            self.rollback()
+            raise_msg = f"ENDPOINT - Erro ao inserir dados: {e}"
+            logging.critical(raise_msg)
+            raise ValueError(raise_msg)
+
     def _manage_table(
         self,
         cursor: psycopg2.extensions.cursor,
         table: Table,
-        create_if_not_exists: bool,
-        recreate_if_exists: bool,
-        truncate_before_insert: bool,
+        create_if_not_exists: bool = False,
+        recreate_if_exists: bool = False,
+        truncate_before_insert: bool = False,
     ) -> None:
         """
         Gerencia a tabela de destino antes de inserir os dados.
@@ -380,7 +411,9 @@ class EndpointPostgreSQL(Endpoint):
             logging.critical(raise_msg)
             raise ValueError(raise_msg)
 
-    def _insert_data(self, cursor: psycopg2.extensions.cursor, table: Table) -> None:
+    def _insert_full_load_data(
+        self, cursor: psycopg2.extensions.cursor, table: Table
+    ) -> None:
         """
         Insere dados completos na tabela de destino.
 
@@ -419,6 +452,11 @@ class EndpointPostgreSQL(Endpoint):
             )
             raise
 
+    def _insert_cdc_data(
+        self, cursor: psycopg2.extensions.cursor, table: Table
+    ) -> None:
+        raise NotImplementedError
+
     def capture_changes(self, **kargs) -> pl.DataFrame:
         try:
             slot_name = kargs.get("slot_name")
@@ -456,21 +494,23 @@ class EndpointPostgreSQL(Endpoint):
             raise_msg = f"ENDPOINT - Erro ao capturar alterações de dados: {e}"
             raise ValueError(raise_msg)
 
-    def structure_capture_changes(self, df_changes_captured: pl.DataFrame, save_files: bool = False) -> Dict[str, Any]:
-        df_changes_captured = df_changes_captured.sort('lsn')
-        
+    def structure_capture_changes(
+        self, df_changes_captured: pl.DataFrame, save_files: bool = False
+    ) -> Dict[str, Any]:
+        df_changes_captured = df_changes_captured.sort("lsn")
+
         created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         id = Utils.hash_6_chars()
 
         changes_structured = []
-        for xid, group in df_changes_captured.group_by('xid'):
+        for xid, group in df_changes_captured.group_by("xid"):
             transactions = self._process_transaction(group)
             changes_structured.extend(transactions)
-        
+
         changes_structured = {
             "id": id,
             "creted_at": created_at,
-            "data": changes_structured
+            "data": changes_structured,
         }
 
         if changes_structured.get("data"):
@@ -479,81 +519,77 @@ class EndpointPostgreSQL(Endpoint):
                     json.dump(changes_structured, f, indent=4)
 
                 df_changes_captured.write_csv(f"task/cdc_log/{id}.csv")
-                
+
             return changes_structured
-        
+
         return None
     
+    def structure_capture_changes_to_dataframe(self, changes_strucuted: dict) -> pl.DataFrame:
+        raise NotImplementedError
+
     def _process_transaction(self, group: pl.DataFrame) -> Dict[str, Any]:
         transactions = []
         current_transaction = None
-        
+
         for row in group.iter_rows(named=True):
-            data_info = self._parse_data_line(row['data'])
-            
+            data_info = self._parse_data_line(row["data"])
+
             if data_info is None:
                 continue
-                
-            if data_info['operation'] in ('begin', 'commit'):
-                if data_info['operation'] == 'begin':
-                    current_transaction = {
-                        'xid': data_info['xid'],
-                        'operations': []
-                    }
-                elif data_info['operation'] == 'commit' and current_transaction:
-                    current_transaction['commit_lsn'] = row['lsn']
+
+            if data_info["operation"] in ("begin", "commit"):
+                if data_info["operation"] == "begin":
+                    current_transaction = {"xid": data_info["xid"], "operations": []}
+                elif data_info["operation"] == "commit" and current_transaction:
+                    current_transaction["commit_lsn"] = row["lsn"]
                     transactions.append(current_transaction)
                     current_transaction = None
             else:
                 if current_transaction is not None:
                     # Filtra apenas operações DML válidas
-                    if data_info['operation'] in ('insert', 'update', 'delete'):
-                        current_transaction['operations'].append(data_info)
-        
+                    if data_info["operation"] in ("insert", "update", "delete"):
+                        current_transaction["operations"].append(data_info)
+
         return transactions
 
     def _parse_data_line(self, line: str) -> Dict[str, Any]:
-        if line.startswith(('BEGIN', 'COMMIT')):
-            return {'operation': line.split()[0].lower(), 'xid': int(line.split()[1])}
-        
+        if line.startswith(("BEGIN", "COMMIT")):
+            return {"operation": line.split()[0].lower(), "xid": int(line.split()[1])}
+
         # Extrai informações da operação DML
         pattern = r"table\s+([^.]+)\.([^:]+):\s+(INSERT|UPDATE|DELETE):\s+(.+)"
         match = re.match(pattern, line)
         if not match:
             return None
-        
+
         schema_name, table_name, operation, rest = match.groups()
-        
+
         result = {
-            'schema_name': schema_name,
-            'table_name': table_name,
-            'operation': operation.lower(),
-            'columns': []
+            "schema_name": schema_name,
+            "table_name": table_name,
+            "operation": operation.lower(),
+            "columns": [],
         }
-        
-        if operation.upper() == 'DELETE' and rest.strip() == '(no-tuple-data)':
+
+        if operation.upper() == "DELETE" and rest.strip() == "(no-tuple-data)":
             return result
-        
+
         # Parseia as colunas e valores
-        if operation.upper() in ('INSERT', 'UPDATE'):
+        if operation.upper() in ("INSERT", "UPDATE"):
             # Para INSERT e UPDATE, temos valores
             column_pattern = r"([^\s]+)\[([^\]]+)\]:'([^']*)'"
             columns = re.findall(column_pattern, rest)
             for col_name, col_type, col_value in columns:
-                result['columns'].append({
-                    'name': col_name,
-                    'type': col_type,
-                    'value': col_value
-                })
-        elif operation.upper() == 'DELETE':
+                result["columns"].append(
+                    {"name": col_name, "type": col_type, "value": col_value}
+                )
+        elif operation.upper() == "DELETE":
             # Para DELETE, só temos a condição (normalmente a PK)
             column_pattern = r"([^\s]+)\[([^\]]+)\]:'([^']*)'"
             columns = re.findall(column_pattern, rest)
             for col_name, col_type, col_value in columns:
-                result['columns'].append({
-                    'name': col_name,
-                    'type': col_type,
-                    'value': col_value
-                })
-        
+                result["columns"].append(
+                    {"name": col_name, "type": col_type, "value": col_value}
+                )
+
         return result

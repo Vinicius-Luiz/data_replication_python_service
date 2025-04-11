@@ -1,5 +1,5 @@
-from Entities.Endpoints.Endpoint import DatabaseType, EndpointType
-from Entities.Endpoints.EndpointPostgreSQL import EndpointPostgreSQL
+from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
+from trempy.Endpoints.EndpointPostgreSQL import EndpointPostgreSQL
 import logging
 
 

@@ -1,14 +1,14 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from Entities.Shared.Queries import PostgreSQLQueries
-from Entities.Transformations.Transformation import Transformation
-from Entities.Filters.Filter import Filter
-from Entities.Columns.Column import Column
+from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Transformations.Transformation import Transformation
+from trempy.Filters.Filter import Filter
+from trempy.Columns.Column import Column
 from typing import List, Dict, Optional
 import polars as pl
 
 if TYPE_CHECKING:
-    from Entities.Transformations.Transformation import Transformation
+    from trempy.Transformations.Transformation import Transformation
 
 
 class Table:

@@ -1,8 +1,8 @@
-from Entities.Endpoints.Endpoint import Endpoint
-from Entities.Transformations.Transformation import Transformation
-from Entities.Filters.Filter import Filter
-from Entities.Tables.Table import Table
-from Entities.Shared.Types import TaskType, PriorityType, EndpointType, DatabaseType
+from trempy.Endpoints.Endpoint import Endpoint
+from trempy.Transformations.Transformation import Transformation
+from trempy.Filters.Filter import Filter
+from trempy.Tables.Table import Table
+from trempy.Shared.Types import TaskType, PriorityType, EndpointType, DatabaseType
 from typing import List, Optional
 import polars as pl
 import logging
@@ -34,9 +34,8 @@ class Task:
         interval_seconds: int = 60,
         source_endpoint: Endpoint = None,
         target_endpoint: Endpoint = None,
+        full_load_settings: dict = {},
         create_table_if_not_exists: bool = False,
-        recreate_table_if_exists: bool = False,
-        truncate_before_insert: bool = False,
     ) -> None:
         self.task_name = task_name
         self.replication_type = TaskType(replication_type)
@@ -46,8 +45,12 @@ class Task:
         self.target_endpoint = target_endpoint
 
         self.create_table_if_not_exists = create_table_if_not_exists
-        self.recreate_table_if_exists = recreate_table_if_exists
-        self.truncate_before_insert = truncate_before_insert
+        self.recreate_table_if_exists: bool = full_load_settings.get(
+            "recreate_table_if_exists", False
+        )
+        self.truncate_before_insert: bool = full_load_settings.get(
+            "truncate_before_insert", False
+        )
 
         self.tables: List[Table] = []
 
@@ -317,8 +320,24 @@ class Task:
 
     def _execute_target_cdc(self) -> bool:
         # TODO receber mensagem via RabbitMQ
+        changes_structured = None
         # TODO estruturar json em pl.DataFrame
-        # TODO executar filtros
-        # TODO executar transformações
-        # TODO executar carga no destino
-        raise False
+        for table in self.tables:
+            df_changes_structured = (
+                self.target_endpoint.structure_capture_changes_to_dataframe(
+                    changes_structured
+                )
+            )
+            table.data = df_changes_structured
+
+            # TODO executar filtros
+            table.execute_filters()
+            # TODO executar transformações
+            table.execute_transformations()
+
+            # TODO executar carga no destino
+            table_cdc = self.target_endpoint.insert_cdc_into_table(
+                table,
+                create_table_if_not_exists=self.create_table_if_not_exists,
+            )
+            raise NotImplementedError

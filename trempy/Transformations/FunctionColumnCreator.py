@@ -1,5 +1,5 @@
-from Entities.Transformations.FunctionColumn import FunctionColumn
-from Entities.Shared.Types import TransformationOperationType
+from trempy.Transformations.FunctionColumn import FunctionColumn
+from trempy.Shared.Types import TransformationOperationType
 from datetime import datetime
 from typing import List
 import polars as pl

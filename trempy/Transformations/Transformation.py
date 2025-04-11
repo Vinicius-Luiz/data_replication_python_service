@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from Entities.Shared.Types import TransformationType, PriorityType
-from Entities.Transformations.ColumnModifier import ColumnModifier
-from Entities.Transformations.ColumnCreator import ColumnCreator
+from trempy.Shared.Types import TransformationType, PriorityType
+from trempy.Transformations.ColumnModifier import ColumnModifier
+from trempy.Transformations.ColumnCreator import ColumnCreator
 import logging
 
 if TYPE_CHECKING:
-    from Entities.Tables.Table import Table
+    from trempy.Tables.Table import Table
 
 
 class Transformation:
