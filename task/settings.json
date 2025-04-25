@@ -2,7 +2,7 @@
     "task": {
         "task_name": "cdc_department",
         "replication_type": "cdc",
-        "interval_seconds": 5,
+        "interval_seconds": 5000,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,
@@ -12,20 +12,50 @@
     "tables": [
         {
             "schema_name": "employees",
-            "table_name": "department",
+            "table_name": "the_office",
             "priority": 1
         },
         {
             "schema_name": "employees",
-            "table_name": "department_employee",
+            "table_name": "department_manager",
             "priority": 2
         },
         {
             "schema_name": "employees",
-            "table_name": "department_manager",
+            "table_name": "department",
             "priority": 0
         }
     ],
-    "filters": [],
-    "transformations": []
+    "filters": [
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "department_manager"
+            },
+            "settings": {
+                "filter_type": "date_between",
+                "description": "Filtrando from_date somente do ano de 1992",
+                "column_name": "from_date",
+                "lower": "1992-01-01",
+                "upper": "1992-12-31"
+            }
+        }
+    ],
+    "transformations": [
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "the_office"
+            },
+            "settings": {
+                "transformation_type": "create_column",
+                "description": "Carimbar data de sincronização",
+                "contract": {
+                    "operation": "date_now",
+                    "new_column_name": "sync_date"
+                },
+                "priority": 2
+            }
+        }
+    ]
 }

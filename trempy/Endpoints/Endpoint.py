@@ -5,6 +5,7 @@ from trempy.Endpoints.Decorators.EndpointDecorators import (
 )
 from trempy.Tables.Table import Table
 from trempy.Shared.Types import DatabaseType, EndpointType
+from typing import Dict, List
 import polars as pl
 import logging
 
@@ -200,5 +201,5 @@ class Endpoint(ABC):
 
     @abstractmethod
     @target_method
-    def structure_capture_changes_to_dataframe(self) -> pl.DataFrame:
+    def structure_capture_changes_to_dataframe(self) -> dict:
         pass

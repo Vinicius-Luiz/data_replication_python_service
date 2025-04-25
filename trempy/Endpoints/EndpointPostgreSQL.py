@@ -1,4 +1,5 @@
 from trempy.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
+from trempy.Endpoints.DataTypes.EndpointDataTypePostgreSQL import DataTypes
 from trempy.Shared.Queries import PostgreSQLQueries
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
@@ -524,8 +525,80 @@ class EndpointPostgreSQL(Endpoint):
 
         return None
     
-    def structure_capture_changes_to_dataframe(self, changes_strucuted: dict) -> pl.DataFrame:
-        raise NotImplementedError
+    def structure_capture_changes_to_dataframe(self, changes_strucuted: dict) -> dict:
+    # Dicionário para armazenar DataFrames por schema.table
+        tables_data = {}
+        
+        # Processar cada entrada de dados
+        for entry in changes_strucuted.get("data", []):
+            # Usar enumerate para manter a ordem original com índice
+            for op_index, operation in enumerate(entry.get("operations", [])):
+                schema_name = operation.get("schema_name")
+                table_name = operation.get("table_name")
+                op_type = operation.get("operation", "").upper()
+                
+                # Pular DELETE com colunas vazias
+                if op_type == "DELETE" and not operation.get("columns"):
+                    continue
+                    
+                # Chave para agrupamento
+                key = f"{schema_name}.{table_name}"
+                
+                # Dados da linha
+                row_data = {
+                    "$TREM_OPERATION": op_type,
+                    "$TREM_ROWNUM": op_index  # Usando o índice do enumerate
+                }
+                
+                # Processar colunas
+                for column in operation.get("columns", []):
+                    col_name = column["name"]
+                    col_type = column["type"]
+                    col_value = column["value"]
+                    
+                    # Conversão de tipo
+                    if col_type in DataTypes.TYPE_DATABASE_TO_POLARS:
+                        polars_type = DataTypes.TYPE_DATABASE_TO_POLARS[col_type]
+                        if polars_type == pl.Date:
+                            col_value = pl.Series([col_value]).str.strptime(pl.Date, "%Y-%m-%d")[0]
+                        elif polars_type == pl.Datetime:
+                            col_value = pl.Series([col_value]).str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S")[0]
+                    
+                    row_data[col_name] = col_value
+                
+                # Adicionar aos dados da tabela
+                if key not in tables_data:
+                    tables_data[key] = {
+                        "schema_name": schema_name,
+                        "table_name": table_name,
+                        "rows": []
+                    }
+                
+                tables_data[key]["rows"].append(row_data)
+        
+        # Converter para DataFrames
+        result = dict()
+        for key, table_info in tables_data.items():
+            if not table_info["rows"]:
+                continue
+                
+            # Criar DataFrame
+            df = pl.DataFrame(table_info["rows"])
+            
+            # Garantir a ordem das colunas
+            cols = df.columns
+            cols.remove("$TREM_OPERATION")
+            cols.remove("$TREM_ROWNUM")
+            df = df.select(["$TREM_ROWNUM", "$TREM_OPERATION"] + cols)
+            
+            # result.append({
+            #     "id": f'{table_info["schema_name"]}.{table_info["table_name"]}',
+            #     "data": df
+            # })
+
+            result[f'{table_info["schema_name"]}.{table_info["table_name"]}'] = df
+        
+        return result
 
     def _process_transaction(self, group: pl.DataFrame) -> Dict[str, Any]:
         transactions = []

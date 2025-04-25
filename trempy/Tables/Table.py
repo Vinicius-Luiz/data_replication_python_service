@@ -33,7 +33,7 @@ class Table:
         self.table_name = table_name
         self.estimated_row_count = estimated_row_count
         self.table_size = table_size
-        self.id = f"{self.schema_name}_{self.table_name}"
+        self.id = f"{self.schema_name}.{self.table_name}"
 
         self.target_schema_name = self.schema_name
         self.target_table_name = self.table_name

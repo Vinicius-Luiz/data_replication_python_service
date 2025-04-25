@@ -6,6 +6,7 @@ from trempy.Shared.Types import TaskType, PriorityType, EndpointType, DatabaseTy
 from typing import List, Optional
 import polars as pl
 import logging
+import json
 import re
 
 
@@ -320,24 +321,40 @@ class Task:
 
     def _execute_target_cdc(self) -> bool:
         # TODO receber mensagem via RabbitMQ
-        changes_structured = None
-        # TODO estruturar json em pl.DataFrame
-        for table in self.tables:
+        for hash in ["ba3916", "ee3d5d", "80cb69", "a79461"]:
+            with open(rf"task\cdc_log\{hash}.json", "r", encoding="utf-8") as f:
+                changes_structured = json.load(f)
+            # TODO estruturar json em pl.DataFrame
+            logging.info(f"TASK - Estruturando alterações de dados")
             df_changes_structured = (
                 self.target_endpoint.structure_capture_changes_to_dataframe(
                     changes_structured
                 )
             )
-            table.data = df_changes_structured
+            df_changes_structured
+            for table in self.tables:
+                data: pl.DataFrame = df_changes_structured.get(table.id)
+                table.data = data
 
-            # TODO executar filtros
-            table.execute_filters()
-            # TODO executar transformações
-            table.execute_transformations()
+                try:
+                    table.data.write_csv(rf'task\cdc_log\{hash}_before_{table.id}.csv')
+                except Exception as e:
+                    pass
 
-            # TODO executar carga no destino
-            table_cdc = self.target_endpoint.insert_cdc_into_table(
-                table,
-                create_table_if_not_exists=self.create_table_if_not_exists,
-            )
-            raise NotImplementedError
+                if table.id in df_changes_structured.keys():
+                    table.execute_filters()
+                    table.execute_transformations()
+
+                try:
+                    table.data.write_csv(rf'task\cdc_log\{hash}_after_{table.id}.csv')
+                except Exception as e:
+                    pass
+
+                # # TODO executar carga no destino
+                # table_cdc = self.target_endpoint.insert_cdc_into_table(
+                #     table,
+                #     create_table_if_not_exists=self.create_table_if_not_exists,
+                # )
+                # raise NotImplementedError
+        
+        raise NotImplementedError
