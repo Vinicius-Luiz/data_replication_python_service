@@ -1,9 +1,8 @@
 {
-    "id": "ee3d5d",
-    "creted_at": "2025-04-09 00:55:03",
+    "id": "e71b1f",
+    "creted_at": "2025-04-26 01:20:51",
     "data": [
         {
-            "xid": 1233,
             "operations": [
                 {
                     "schema_name": "employees",
@@ -18,7 +17,7 @@
                         {
                             "name": "created_date",
                             "type": "timestamp without time zone",
-                            "value": "2025-04-09 00:00:00"
+                            "value": "2025-04-26 00:00:00"
                         }
                     ]
                 },
@@ -35,7 +34,7 @@
                         {
                             "name": "created_date",
                             "type": "timestamp without time zone",
-                            "value": "2025-04-09 00:00:00"
+                            "value": "2025-04-26 00:00:00"
                         }
                     ]
                 },
@@ -52,12 +51,11 @@
                         {
                             "name": "created_date",
                             "type": "timestamp without time zone",
-                            "value": "2025-04-09 00:00:00"
+                            "value": "2025-04-26 00:00:00"
                         }
                     ]
                 }
-            ],
-            "commit_lsn": "4/14D0F338"
+            ]
         }
     ]
 }

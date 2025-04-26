@@ -1,9 +1,8 @@
 {
-    "id": "80cb69",
-    "creted_at": "2025-04-09 00:54:52",
+    "id": "827087",
+    "creted_at": "2025-04-26 01:20:37",
     "data": [
         {
-            "xid": 1230,
             "operations": [
                 {
                     "schema_name": "employees",
@@ -56,8 +55,7 @@
                         }
                     ]
                 }
-            ],
-            "commit_lsn": "4/14D0BCC8"
+            ]
         }
     ]
 }

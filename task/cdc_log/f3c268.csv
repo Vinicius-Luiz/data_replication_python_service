@@ -1,0 +1,12 @@
+lsn,xid,data
+4/14D25208,1257,BEGIN 1257
+4/14D25208,1257,table employees.department_manager: UPDATE: employee_id[bigint]:110039 department_id[character]:'d001' from_date[date]:'1991-10-01' to_date[date]:'9999-01-01'
+4/14D25268,1257,table employees.department_manager: UPDATE: employee_id[bigint]:110114 department_id[character]:'d002' from_date[date]:'1989-12-17' to_date[date]:'9999-01-01'
+4/14D252C8,1257,table employees.department_manager: UPDATE: employee_id[bigint]:110228 department_id[character]:'d003' from_date[date]:'1992-03-21' to_date[date]:'9999-01-01'
+4/14D25328,1257,table employees.department_manager: UPDATE: employee_id[bigint]:110420 department_id[character]:'d004' from_date[date]:'1996-08-30' to_date[date]:'9999-01-01'
+4/14D25388,1257,table employees.department_manager: UPDATE: employee_id[bigint]:110567 department_id[character]:'d005' from_date[date]:'1992-04-25' to_date[date]:'9999-01-01'
+4/14D253E8,1257,table employees.department_manager: UPDATE: employee_id[bigint]:110854 department_id[character]:'d006' from_date[date]:'1994-06-28' to_date[date]:'9999-01-01'
+4/14D25448,1257,table employees.department_manager: UPDATE: employee_id[bigint]:111133 department_id[character]:'d007' from_date[date]:'1991-03-07' to_date[date]:'9999-01-01'
+4/14D254D8,1257,COMMIT 1257
+4/14D27668,1258,BEGIN 1258
+4/14D28868,1258,COMMIT 1258

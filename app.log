@@ -1,34 +1,157 @@
-2025-04-25 00:49:22,281 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-04-25 00:49:22,281 - INFO - ENDPOINT - Source_PostgreSQL válido
-2025-04-25 00:49:22,315 - INFO - ENDPOINT - Source_PostgreSQL conectado
-2025-04-25 00:49:22,315 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-04-25 00:49:22,315 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-04-25 00:49:22,315 - INFO - ENDPOINT - Target_PostgreSQL válido
-2025-04-25 00:49:22,345 - INFO - ENDPOINT - Target_PostgreSQL conectado
-2025-04-25 00:49:22,345 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-04-25 00:49:22,345 - INFO - TASK - cdc_department válido
-2025-04-25 00:49:22,345 - INFO - TASK - Obtendo detalhes da tabela employees.the_office
-2025-04-25 00:49:22,362 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'name', 'age', 'created_date']), 'transformations': []}
-2025-04-25 00:49:22,362 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-04-25 00:49:22,367 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': dict_keys(['employee_id', 'department_id', 'from_date', 'to_date']), 'transformations': []}
-2025-04-25 00:49:22,367 - INFO - TASK - Obtendo detalhes da tabela employees.department
-2025-04-25 00:49:22,371 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'dept_name']), 'transformations': []}
-2025-04-25 00:49:22,371 - DEBUG - Salvando configuração da tarefa em settings.pickle
-2025-04-25 00:49:22,629 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-04-25 00:49:22,629 - INFO - ENDPOINT - Source_PostgreSQL válido
-2025-04-25 00:49:22,629 - INFO - ENDPOINT - Target_PostgreSQL válido
-2025-04-25 00:49:22,665 - INFO - ENDPOINT - Target_PostgreSQL conectado
-2025-04-25 00:49:22,665 - INFO - ENDPOINT - Source_PostgreSQL conectado
- 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-04-25 00:49:22,665 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-04-25 00:49:22,665 - INFO - TASK - Estruturando alterações de dados
-2025-04-25 00:49:22,668 - INFO - ENDPOINT - Capturando alterações de dados
-2025-04-25 00:49:22,674 - INFO - FILTER - Aplicando filtro em employees.department_manager from_date: Filtrando from_date somente do ano de 1992
-2025-04-25 00:49:22,674 - DEBUG - Salvando configuração da tarefa em settings.pickle
-2025-04-25 00:49:22,679 - INFO - TASK - Estruturando alterações de dados
-2025-04-25 00:49:22,680 - INFO - TRANSFORMATION - Aplicando transformação em employees.the_office: Carimbar data de sincronização
-2025-04-25 00:49:22,681 - INFO - TASK - Estruturando alterações de dados
-2025-04-25 00:49:22,683 - INFO - TASK - Estruturando alterações de dados
-2025-04-25 00:49:22,700 - INFO - producer.py - Código de saída: 0
-2025-04-25 00:49:22,700 - DEBUG - Aguardando 5000 segundos para próxima execução...
-2025-04-25 00:49:47,618 - INFO - Interrompendo processo CDC...
+2025-04-26 01:20:27,090 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:27,090 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:27,125 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:27,125 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:27,125 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-04-26 01:20:27,125 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-26 01:20:27,155 - INFO - ENDPOINT - Target_PostgreSQL conectado
+2025-04-26 01:20:27,155 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:27,155 - INFO - TASK - cdc_department válido
+2025-04-26 01:20:27,155 - INFO - TASK - Obtendo detalhes da tabela employees.the_office
+2025-04-26 01:20:27,173 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'name', 'age', 'created_date']), 'transformations': []}
+2025-04-26 01:20:27,173 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-04-26 01:20:27,179 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': dict_keys(['employee_id', 'department_id', 'from_date', 'to_date']), 'transformations': []}
+2025-04-26 01:20:27,179 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-04-26 01:20:27,183 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'dept_name']), 'transformations': []}
+2025-04-26 01:20:27,183 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:27,455 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:27,455 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-26 01:20:27,455 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:27,493 - INFO - ENDPOINT - Target_PostgreSQL conectado
+2025-04-26 01:20:27,493 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:27,493 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:27,493 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:27,495 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:27,505 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:27,526 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:27,526 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:30,803 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:30,803 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:30,939 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:30,939 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:30,941 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:30,952 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:30,975 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:30,975 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:34,245 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:34,245 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:34,279 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:34,279 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:34,281 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:34,287 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:34,308 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:34,309 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:37,571 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:37,571 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:37,605 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:37,605 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:37,607 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:37,616 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:37,637 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:37,637 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:39,541 - DEBUG - changes_structured: 1 linhas
+2025-04-26 01:20:39,541 - INFO - TASK - Estruturando alterações de dados
+2025-04-26 01:20:39,545 - WARNING - Arquivo "827087.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:39,545 - WARNING - Arquivo "827087.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:39,545 - WARNING - Arquivo "827087.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:39,545 - WARNING - Arquivo "827087.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:40,925 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:40,925 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:40,960 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:40,960 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:40,962 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:40,973 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:40,997 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:40,997 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:42,551 - DEBUG - changes_structured: 2 linhas
+2025-04-26 01:20:42,551 - INFO - TASK - Estruturando alterações de dados
+2025-04-26 01:20:42,555 - WARNING - Arquivo "f5daec.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:42,555 - WARNING - Arquivo "f5daec.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:42,557 - INFO - FILTER - Aplicando filtro em employees.department_manager from_date: Filtrando from_date somente do ano de 1992
+2025-04-26 01:20:44,285 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:44,285 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:44,320 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:44,320 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:44,322 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:44,328 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:44,352 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:44,352 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:47,619 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:47,620 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:47,654 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:47,654 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:47,656 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:47,673 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:47,697 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:47,697 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:48,571 - DEBUG - changes_structured: 2 linhas
+2025-04-26 01:20:48,571 - INFO - TASK - Estruturando alterações de dados
+2025-04-26 01:20:48,573 - WARNING - Arquivo "f3c268.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:48,573 - WARNING - Arquivo "f3c268.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:48,573 - WARNING - Arquivo "f3c268.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:48,573 - WARNING - Arquivo "f3c268.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:48,574 - INFO - FILTER - Aplicando filtro em employees.department_manager from_date: Filtrando from_date somente do ano de 1992
+2025-04-26 01:20:50,969 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:50,970 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:51,003 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:51,003 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:51,004 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:51,014 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:51,036 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:51,036 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:51,587 - DEBUG - changes_structured: 1 linhas
+2025-04-26 01:20:51,587 - INFO - TASK - Estruturando alterações de dados
+2025-04-26 01:20:51,587 - WARNING - Arquivo "e71b1f.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:51,588 - WARNING - Arquivo "e71b1f.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:51,588 - INFO - TRANSFORMATION - Aplicando transformação em employees.the_office: Carimbar data de sincronização
+2025-04-26 01:20:51,590 - WARNING - Arquivo "e71b1f.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:51,590 - WARNING - Arquivo "e71b1f.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:54,348 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:54,348 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:54,384 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:54,384 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:54,386 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:54,396 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:54,423 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:54,423 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:20:54,604 - DEBUG - changes_structured: 1 linhas
+2025-04-26 01:20:54,604 - INFO - TASK - Estruturando alterações de dados
+2025-04-26 01:20:54,604 - WARNING - Arquivo "ebe8ce.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:54,604 - WARNING - Arquivo "ebe8ce.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:54,604 - WARNING - Arquivo "ebe8ce.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:54,604 - WARNING - Arquivo "ebe8ce.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:54,604 - WARNING - Arquivo "ebe8ce.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:54,604 - WARNING - Arquivo "ebe8ce.json" não foi processado: 'NoneType' object has no attribute 'write_csv'
+2025-04-26 01:20:57,689 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:20:57,689 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:20:57,722 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:20:57,722 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:20:57,724 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:20:57,730 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:20:57,750 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:20:57,751 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:21:01,018 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:21:01,018 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:21:01,052 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:21:01,052 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:21:01,053 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:21:01,059 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:21:01,079 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:21:01,079 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:21:04,352 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:21:04,352 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:21:04,388 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:21:04,388 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:21:04,391 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:21:04,396 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:21:04,420 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:21:04,421 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:21:07,689 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-26 01:21:07,689 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-26 01:21:07,722 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-26 01:21:07,722 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-26 01:21:07,723 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-26 01:21:07,729 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-26 01:21:07,751 - INFO - producer.py - Código de saída: 0
+2025-04-26 01:21:07,751 - DEBUG - Aguardando 3 segundos para próxima execução...
+2025-04-26 01:21:08,200 - INFO - Interrompendo processo CDC...

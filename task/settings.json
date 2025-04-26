@@ -2,7 +2,7 @@
     "task": {
         "task_name": "cdc_department",
         "replication_type": "cdc",
-        "interval_seconds": 5000,
+        "interval_seconds": 3,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,

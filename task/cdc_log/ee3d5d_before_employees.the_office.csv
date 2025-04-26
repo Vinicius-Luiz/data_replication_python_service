@@ -1,4 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,name,created_date
-0,INSERT,[Michael Scott,2025-04-09 00:00:00
-1,INSERT,[Pam Beesly],2025-04-09 00:00:00
-2,INSERT,Jim Halpert],2025-04-09 00:00:00

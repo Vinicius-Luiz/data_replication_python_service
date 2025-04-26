@@ -196,7 +196,7 @@ class Endpoint(ABC):
 
     @abstractmethod
     @source_method
-    def structure_capture_changes(self) -> dict:
+    def structure_capture_changes_to_json(self) -> dict:
         pass
 
     @abstractmethod

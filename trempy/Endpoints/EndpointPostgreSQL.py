@@ -495,7 +495,7 @@ class EndpointPostgreSQL(Endpoint):
             raise_msg = f"ENDPOINT - Erro ao capturar alterações de dados: {e}"
             raise ValueError(raise_msg)
 
-    def structure_capture_changes(
+    def structure_capture_changes_to_json(
         self, df_changes_captured: pl.DataFrame, save_files: bool = False
     ) -> Dict[str, Any]:
         df_changes_captured = df_changes_captured.sort("lsn")
@@ -524,11 +524,11 @@ class EndpointPostgreSQL(Endpoint):
             return changes_structured
 
         return None
-    
+
     def structure_capture_changes_to_dataframe(self, changes_strucuted: dict) -> dict:
-    # Dicionário para armazenar DataFrames por schema.table
+        # Dicionário para armazenar DataFrames por schema.table
         tables_data = {}
-        
+
         # Processar cada entrada de dados
         for entry in changes_strucuted.get("data", []):
             # Usar enumerate para manter a ordem original com índice
@@ -536,68 +536,67 @@ class EndpointPostgreSQL(Endpoint):
                 schema_name = operation.get("schema_name")
                 table_name = operation.get("table_name")
                 op_type = operation.get("operation", "").upper()
-                
+
                 # Pular DELETE com colunas vazias
                 if op_type == "DELETE" and not operation.get("columns"):
                     continue
-                    
+
                 # Chave para agrupamento
                 key = f"{schema_name}.{table_name}"
-                
+
                 # Dados da linha
                 row_data = {
                     "$TREM_OPERATION": op_type,
-                    "$TREM_ROWNUM": op_index  # Usando o índice do enumerate
+                    "$TREM_ROWNUM": op_index,  # Usando o índice do enumerate
                 }
-                
+
                 # Processar colunas
                 for column in operation.get("columns", []):
                     col_name = column["name"]
                     col_type = column["type"]
                     col_value = column["value"]
-                    
+
                     # Conversão de tipo
                     if col_type in DataTypes.TYPE_DATABASE_TO_POLARS:
                         polars_type = DataTypes.TYPE_DATABASE_TO_POLARS[col_type]
                         if polars_type == pl.Date:
-                            col_value = pl.Series([col_value]).str.strptime(pl.Date, "%Y-%m-%d")[0]
+                            col_value = pl.Series([col_value]).str.strptime(
+                                pl.Date, "%Y-%m-%d"
+                            )[0]
                         elif polars_type == pl.Datetime:
-                            col_value = pl.Series([col_value]).str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S")[0]
-                    
+                            col_value = pl.Series([col_value]).str.strptime(
+                                pl.Datetime, "%Y-%m-%d %H:%M:%S"
+                            )[0]
+
                     row_data[col_name] = col_value
-                
+
                 # Adicionar aos dados da tabela
                 if key not in tables_data:
                     tables_data[key] = {
                         "schema_name": schema_name,
                         "table_name": table_name,
-                        "rows": []
+                        "rows": [],
                     }
-                
+
                 tables_data[key]["rows"].append(row_data)
-        
+
         # Converter para DataFrames
         result = dict()
         for key, table_info in tables_data.items():
             if not table_info["rows"]:
                 continue
-                
+
             # Criar DataFrame
             df = pl.DataFrame(table_info["rows"])
-            
+
             # Garantir a ordem das colunas
             cols = df.columns
             cols.remove("$TREM_OPERATION")
             cols.remove("$TREM_ROWNUM")
             df = df.select(["$TREM_ROWNUM", "$TREM_OPERATION"] + cols)
-            
-            # result.append({
-            #     "id": f'{table_info["schema_name"]}.{table_info["table_name"]}',
-            #     "data": df
-            # })
 
             result[f'{table_info["schema_name"]}.{table_info["table_name"]}'] = df
-        
+
         return result
 
     def _process_transaction(self, group: pl.DataFrame) -> Dict[str, Any]:
@@ -612,9 +611,10 @@ class EndpointPostgreSQL(Endpoint):
 
             if data_info["operation"] in ("begin", "commit"):
                 if data_info["operation"] == "begin":
-                    current_transaction = {"xid": data_info["xid"], "operations": []}
+                    current_transaction = {"operations": []}
+                    # current_transaction = {"xid": data_info["xid"], "operations": []} # TODO excluir depois
                 elif data_info["operation"] == "commit" and current_transaction:
-                    current_transaction["commit_lsn"] = row["lsn"]
+                    # current_transaction["commit_lsn"] = row["lsn"] # TODO excluir depois
                     transactions.append(current_transaction)
                     current_transaction = None
             else:
@@ -627,7 +627,8 @@ class EndpointPostgreSQL(Endpoint):
 
     def _parse_data_line(self, line: str) -> Dict[str, Any]:
         if line.startswith(("BEGIN", "COMMIT")):
-            return {"operation": line.split()[0].lower(), "xid": int(line.split()[1])}
+            # return {"operation": line.split()[0].lower(), "xid": int(line.split()[1])} # TODO excluir depois
+            return {"operation": line.split()[0].lower()}
 
         # Extrai informações da operação DML
         pattern = r"table\s+([^.]+)\.([^:]+):\s+(INSERT|UPDATE|DELETE):\s+(.+)"

@@ -6,8 +6,10 @@ from trempy.Shared.Types import TaskType, PriorityType, EndpointType, DatabaseTy
 from typing import List, Optional
 import polars as pl
 import logging
+import shutil
 import json
 import re
+import os
 
 
 class Task:
@@ -313,7 +315,7 @@ class Task:
 
         changes_captured = self.source_endpoint.capture_changes(**kargs)
 
-        changes_structured = self.source_endpoint.structure_capture_changes(
+        changes_structured = self.source_endpoint.structure_capture_changes_to_json(
             changes_captured, save_files=True
         )
 
@@ -321,40 +323,64 @@ class Task:
 
     def _execute_target_cdc(self) -> bool:
         # TODO receber mensagem via RabbitMQ
-        for hash in ["ba3916", "ee3d5d", "80cb69", "a79461"]:
-            with open(rf"task\cdc_log\{hash}.json", "r", encoding="utf-8") as f:
-                changes_structured = json.load(f)
-            # TODO estruturar json em pl.DataFrame
-            logging.info(f"TASK - Estruturando alterações de dados")
-            df_changes_structured = (
-                self.target_endpoint.structure_capture_changes_to_dataframe(
-                    changes_structured
+
+        # Cria a pasta de destino se não existir
+        processed_dir = r"task\processed_cdc_log"
+        os.makedirs(processed_dir, exist_ok=True)
+
+        # Lista todos os arquivos JSON na pasta cdc_log
+        cdc_log_dir = r"task\cdc_log"
+        for filename in os.listdir(cdc_log_dir):
+            if filename.endswith(".json"):
+                file_path = os.path.join(cdc_log_dir, filename)
+
+                # Lê o arquivo JSON
+                with open(file_path, "r", encoding="utf-8") as f:
+                    changes_structured = json.load(f)
+                    logging.debug(
+                        f'changes_structured: {len(changes_structured.get("data"))} linhas'
+                    )
+
+                # TODO somente isso será necessário no futuro
+                logging.info(f"TASK - Estruturando alterações de dados")
+                df_changes_structured = (
+                    self.target_endpoint.structure_capture_changes_to_dataframe(
+                        changes_structured
+                    )
                 )
-            )
-            df_changes_structured
-            for table in self.tables:
-                data: pl.DataFrame = df_changes_structured.get(table.id)
-                table.data = data
+                for table in self.tables:
+                    data: pl.DataFrame = df_changes_structured.get(table.id)
+                    table.data = data
 
-                try:
-                    table.data.write_csv(rf'task\cdc_log\{hash}_before_{table.id}.csv')
-                except Exception as e:
-                    pass
+                    try:
+                        table.data.write_csv(
+                            rf"task\cdc_log\{filename}_before_{table.id}.csv"
+                        )  # TODO temporário
+                    except Exception as e:
+                        logging.warning(f'Arquivo "{filename}" não foi processado: {e}')
 
-                if table.id in df_changes_structured.keys():
-                    table.execute_filters()
-                    table.execute_transformations()
+                    if table.id in df_changes_structured.keys():
+                        table.execute_filters()
+                        table.execute_transformations()
 
-                try:
-                    table.data.write_csv(rf'task\cdc_log\{hash}_after_{table.id}.csv')
-                except Exception as e:
-                    pass
+                    try:
+                        table.data.write_csv(
+                            rf"task\cdc_log\{filename}_after_{table.id}.csv"
+                        )  # TODO temporário
+                    except Exception as e:
+                        logging.warning(f'Arquivo "{filename}" não foi processado: {e}')
 
-                # # TODO executar carga no destino
-                # table_cdc = self.target_endpoint.insert_cdc_into_table(
-                #     table,
-                #     create_table_if_not_exists=self.create_table_if_not_exists,
-                # )
-                # raise NotImplementedError
-        
-        raise NotImplementedError
+                    # # TODO executar carga no destino
+                    # table_cdc = self.target_endpoint.insert_cdc_into_table(
+                    #     table,
+                    #     create_table_if_not_exists=self.create_table_if_not_exists,
+                    # )
+                    # raise NotImplementedError
+                # TODO somente isso será necessário no futuro
+
+                # Move o arquivo para a pasta processada
+                dest_path = os.path.join(processed_dir, filename)
+                shutil.move(file_path, dest_path)
+                print(f"Arquivo {filename} processado e movido para {processed_dir}")
+
+        return True

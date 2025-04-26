@@ -1,6 +1,0 @@
-lsn,xid,data
-4/14D0A800,1230,BEGIN 1230
-4/14D0A800,1230,table employees.department: INSERT: id[character]:'d008' dept_name[character varying]:'Logistic'
-4/14D0BAE8,1230,table employees.department: INSERT: id[character]:'d009' dept_name[character varying]:'Relationship'
-4/14D0BBC0,1230,table employees.department: INSERT: id[character]:'d010' dept_name[character varying]:'Architecture'
-4/14D0BCC8,1230,COMMIT 1230
