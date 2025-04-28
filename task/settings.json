@@ -7,14 +7,12 @@
         "full_load_settings": {
             "recreate_table_if_exists": true,
             "truncate_before_insert": true
+        },
+        "cdc_settings": {
+            "mode": "default"
         }
     },
     "tables": [
-        {
-            "schema_name": "employees",
-            "table_name": "the_office",
-            "priority": 1
-        },
         {
             "schema_name": "employees",
             "table_name": "department_manager",
@@ -23,6 +21,16 @@
         {
             "schema_name": "employees",
             "table_name": "department",
+            "priority": 0
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office",
+            "priority": 1
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office_season",
             "priority": 0
         }
     ],
@@ -49,7 +57,7 @@
             },
             "settings": {
                 "transformation_type": "create_column",
-                "description": "Carimbar data de sincronização",
+                "description": "Carimbando data de sincronização",
                 "contract": {
                     "operation": "date_now",
                     "new_column_name": "sync_date"

@@ -337,7 +337,7 @@ class EndpointPostgreSQL(Endpoint):
 
                 self.commit()
 
-                return {"message": "Cdc data inserted successfully", "success": True}
+                return {"message": "CDC data inserted successfully", "success": True}
 
         except Exception as e:
             self.rollback()
@@ -434,7 +434,7 @@ class EndpointPostgreSQL(Endpoint):
                 )
             ]
             query = sql.SQL(
-                PostgreSQLQueries.INSERT_FULL_LOAD_DATA.format(
+                PostgreSQLQueries.FULL_LOAD_INSERT_DATA.format(
                     schema=table.target_schema_name,
                     table=table.target_table_name,
                     columns=", ".join(table_column_names),
@@ -456,7 +456,104 @@ class EndpointPostgreSQL(Endpoint):
     def _insert_cdc_data(
         self, cursor: psycopg2.extensions.cursor, table: Table
     ) -> None:
-        raise NotImplementedError
+        # Obter schema e nome da tabela
+        schema = table.target_schema_name
+        table_name = table.target_table_name
+
+        # Processar cada operação separadamente para agrupar por tipo
+        operations = {"INSERT": [], "UPDATE": [], "DELETE": []}
+
+        for row in table.data.iter_rows(named=True):
+            operation = row["$TREM_OPERATION"]
+            operations[operation].append(row)
+
+        # Processar INSERTs
+        if operations["INSERT"]:
+            # Filtrar colunas que não são metadados do CDC
+            data_columns = [
+                col
+                for col in operations["INSERT"][0].keys()
+                if not col.startswith("$TREM_")
+            ]
+
+            # Preparar registros para insert
+            insert_records = [
+                [row[col] for col in data_columns] for row in operations["INSERT"]
+            ]
+
+            query = sql.SQL(PostgreSQLQueries.CDC_INSERT_DATA).format(
+                schema=sql.Identifier(schema),
+                table=sql.Identifier(table_name),
+                columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
+            )
+
+            execute_values(cursor, query, insert_records, page_size=10000)
+
+        # Processar UPDATEs
+        if operations["UPDATE"]:
+            # Identificar PKs para cláusula WHERE
+            pk_columns = [col.name for col in table.columns.values() if col.is_primary_key]
+            if not pk_columns:
+                raise ValueError(
+                    f"Nenhuma PK encontrada para tabela {schema}.{table_name}"
+                )
+
+            # Filtrar colunas que não são metadados do CDC
+            data_columns = [
+                col
+                for col in operations["UPDATE"][0].keys()
+                if not col.startswith("$TREM_")
+            ]
+
+            for row in operations["UPDATE"]:
+                # Criar parte SET do UPDATE
+                set_parts = []
+                where_parts = []
+                set_values = []
+                where_values = []
+
+                for col in data_columns:
+                    if col in pk_columns:
+                        where_parts.append(
+                            sql.SQL("{col} = %s").format(col=sql.Identifier(col))
+                        )
+                        where_values.append(row[col])
+                    else:
+                        set_parts.append(
+                            sql.SQL("{col} = %s").format(col=sql.Identifier(col))
+                        )
+                        set_values.append(row[col])
+
+                query = sql.SQL(PostgreSQLQueries.CDC_UPDATE_DATA).format(
+                    schema=sql.Identifier(schema),
+                    table=sql.Identifier(table_name),
+                    set_clause=sql.SQL(", ").join(set_parts),
+                    where_clause=sql.SQL(" AND ").join(where_parts),
+                )
+
+                cursor.execute(query, set_values + where_values)
+
+        # Processar DELETEs
+        if operations["DELETE"]:
+            # Identificar PKs para cláusula WHERE
+            pk_columns = [col.name for col in table.columns.values() if col.is_primary_key]
+            if not pk_columns:
+                raise ValueError(
+                    f"Nenhuma PK encontrada para tabela {schema}.{table_name}"
+                )
+
+            # Para DELETE, podemos agrupar operações com os mesmos critérios
+            delete_records = []
+            for row in operations["DELETE"]:
+                delete_records.append([row[col] for col in pk_columns])
+
+            query = sql.SQL(PostgreSQLQueries.CDC_DELETE_DATA).format(
+                schema=sql.Identifier(schema),
+                table=sql.Identifier(table_name),
+                pk_columns=sql.SQL(", ").join(map(sql.Identifier, pk_columns)),
+            )
+
+            execute_values(cursor, query, delete_records, page_size=10000)
 
     def capture_changes(self, **kargs) -> pl.DataFrame:
         try:
@@ -556,17 +653,8 @@ class EndpointPostgreSQL(Endpoint):
                     col_type = column["type"]
                     col_value = column["value"]
 
-                    # Conversão de tipo
-                    if col_type in DataTypes.TYPE_DATABASE_TO_POLARS:
-                        polars_type = DataTypes.TYPE_DATABASE_TO_POLARS[col_type]
-                        if polars_type == pl.Date:
-                            col_value = pl.Series([col_value]).str.strptime(
-                                pl.Date, "%Y-%m-%d"
-                            )[0]
-                        elif polars_type == pl.Datetime:
-                            col_value = pl.Series([col_value]).str.strptime(
-                                pl.Datetime, "%Y-%m-%d %H:%M:%S"
-                            )[0]
+                    # Conversão de tipo numérico e data
+                    col_value = DataTypes.convert_value(col_value, col_type)
 
                     row_data[col_name] = col_value
 
@@ -649,19 +737,15 @@ class EndpointPostgreSQL(Endpoint):
             return result
 
         # Parseia as colunas e valores
-        if operation.upper() in ("INSERT", "UPDATE"):
-            # Para INSERT e UPDATE, temos valores
-            column_pattern = r"([^\s]+)\[([^\]]+)\]:'([^']*)'"
+        if operation.upper() in ("INSERT", "UPDATE", "DELETE"):
+            column_pattern = (
+                r"([^\s\[]+)\[([^\]]+)\]:([^'\s]*(?:'[^']*'[^'\s]*)*)(?=\s|$)"
+            )
             columns = re.findall(column_pattern, rest)
             for col_name, col_type, col_value in columns:
-                result["columns"].append(
-                    {"name": col_name, "type": col_type, "value": col_value}
-                )
-        elif operation.upper() == "DELETE":
-            # Para DELETE, só temos a condição (normalmente a PK)
-            column_pattern = r"([^\s]+)\[([^\]]+)\]:'([^']*)'"
-            columns = re.findall(column_pattern, rest)
-            for col_name, col_type, col_value in columns:
+                # Remove aspas extras do valor se existirem
+                if col_value.startswith("'") and col_value.endswith("'"):
+                    col_value = col_value[1:-1]
                 result["columns"].append(
                     {"name": col_name, "type": col_type, "value": col_value}
                 )

@@ -51,10 +51,26 @@ class PostgreSQLQueries:
       FROM {schema}.{table}
     """
 
-    INSERT_FULL_LOAD_DATA = """
+    FULL_LOAD_INSERT_DATA = """
     INSERT INTO {schema}.{table}
     ({columns})
     VALUES %s
+    """
+
+    CDC_INSERT_DATA = """
+    INSERT INTO {schema}.{table} ({columns})
+    VALUES %s
+    """
+
+    CDC_UPDATE_DATA = """
+    UPDATE {schema}.{table}
+       SET {set_clause}
+     WHERE {where_clause}
+    """
+
+    CDC_DELETE_DATA = """
+    DELETE FROM {schema}.{table}
+     WHERE ({pk_columns}) IN (%s)
     """
 
     TRUNCATE_TABLE = """
@@ -72,6 +88,7 @@ class PostgreSQLQueries:
     CREATE TABLE {schema}.{table}
     (
         {columns}
+        {primary_key}
     )
     """
 

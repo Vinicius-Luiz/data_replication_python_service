@@ -74,3 +74,24 @@ where
   id in (1, 2, 3);
 
 -- SELECT * FROM pg_logical_slot_get_changes('cdc_department', NULL, NULL);
+
+
+------------- CRIAR TABELA COM PK COMPOSTA
+CREATE TABLE employees.the_office_season (
+    id     INT,
+    season_number   INT,
+    description varchar(255),
+    PRIMARY KEY (id, season_number)
+);
+
+INSERT INTO employees.the_office_season (id, season_number, description)
+VALUES
+  (0, 1, 'Temporada sofrível'),
+  (1, 2, 'Melhor desenvolvimento do Michael Scott'),
+  (2, 3, 'Melhor desenvolvimento do casal Jim e Pam');
+
+DELETE FROM employees.the_office_season
+WHERE id = 0;
+
+DELETE FROM employees.the_office_season
+WHERE id in (1, 2);

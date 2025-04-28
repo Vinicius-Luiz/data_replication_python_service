@@ -98,3 +98,6 @@ Entidade de definição de regras de uma determinada transformação na relicaç
    - Modificar valores da coluna: nome da coluna; novo valor
 #### FUNCIONALIDADES
 - Aplicar transformações nas tabelas conforme especificado no contrato
+
+referência
+- https://www.thoughtspot.com/data-trends/data-modeling/slowly-changing-dimensions-in-data-warehouse

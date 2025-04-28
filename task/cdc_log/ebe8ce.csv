@@ -1,6 +1,0 @@
-lsn,xid,data
-4/14D29050,1260,BEGIN 1260
-4/14D29050,1260,table employees.the_office: DELETE: (no-tuple-data)
-4/14D29088,1260,table employees.the_office: DELETE: (no-tuple-data)
-4/14D290C0,1260,table employees.the_office: DELETE: (no-tuple-data)
-4/14D29128,1260,COMMIT 1260

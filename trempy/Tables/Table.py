@@ -79,6 +79,40 @@ class Table:
         columns_sql = ", ".join(columns_sql)
         return columns_sql
 
+    def mount_primary_key_to_create_table(self) -> str:
+        """
+        Monta a string de chave primária para criação de uma tabela no banco de dados.
+
+        A string é formada por uma lista de colunas, onde cada coluna é representada por uma string
+        no formato adequado para o banco de dados. As colunas sao separadas por vírgula
+        e seguem a mesma ordem de aparição na lista de colunas do objeto.
+
+        Args:
+            self: A instância atual do objeto contendo a lista de colunas.
+
+        Returns:
+            str: String formatada com as colunas para criação da tabela, pronta para ser usada em comandos SQL.
+
+        Raises:
+            AttributeError: Se o objeto não possuir a lista de colunas esperada.
+            ValueError: Se a lista de colunas estiver vazia.
+        """
+
+        primary_key_sql = []
+        for column in sorted(
+            self.columns.values(), key=lambda col: col.ordinal_position
+        ):
+            if column.is_primary_key:
+                primary_key_sql.append(column.name)
+
+        if primary_key_sql:
+            primary_key_sql = ", ".join(primary_key_sql)
+            primary_key_sql = ", PRIMARY KEY ({})".format(primary_key_sql)
+        else:
+            primary_key_sql = ""
+            
+        return primary_key_sql
+
     def mount_create_table(self) -> str:
         """
         Monta o comando SQL completo para criação de uma tabela no banco de dados.
@@ -101,10 +135,12 @@ class Table:
         """
 
         columns_sql = self.mount_columns_to_create_table()
+        primary_key_sql = self.mount_primary_key_to_create_table()
         return PostgreSQLQueries.CREATE_TABLE.format(
             schema=self.target_schema_name,
             table=self.target_table_name,
             columns=columns_sql,
+            primary_key=primary_key_sql,
         )
 
     def copy(self) -> "Table":

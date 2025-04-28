@@ -325,11 +325,11 @@ class Task:
         # TODO receber mensagem via RabbitMQ
 
         # Cria a pasta de destino se não existir
-        processed_dir = r"task\processed_cdc_log"
+        processed_dir = r"data\cdc_data\processed"
         os.makedirs(processed_dir, exist_ok=True)
 
         # Lista todos os arquivos JSON na pasta cdc_log
-        cdc_log_dir = r"task\cdc_log"
+        cdc_log_dir = r"data\cdc_data"
         for filename in os.listdir(cdc_log_dir):
             if filename.endswith(".json"):
                 file_path = os.path.join(cdc_log_dir, filename)
@@ -354,28 +354,31 @@ class Task:
 
                     try:
                         table.data.write_csv(
-                            rf"task\cdc_log\{filename}_before_{table.id}.csv"
+                            rf"{cdc_log_dir}\{filename}_before_{table.id}.csv"
                         )  # TODO temporário
+
+                        logging.debug(f'{table.id} - {table.data.schema}')
                     except Exception as e:
-                        logging.warning(f'Arquivo "{filename}" não foi processado: {e}')
+                        pass
 
                     if table.id in df_changes_structured.keys():
                         table.execute_filters()
                         table.execute_transformations()
 
+                        table_cdc = self.target_endpoint.insert_cdc_into_table(
+                            table,
+                            create_table_if_not_exists=self.create_table_if_not_exists,
+                        )
                     try:
                         table.data.write_csv(
-                            rf"task\cdc_log\{filename}_after_{table.id}.csv"
+                            rf"{cdc_log_dir}\{filename}_after_{table.id}.csv"
                         )  # TODO temporário
                     except Exception as e:
-                        logging.warning(f'Arquivo "{filename}" não foi processado: {e}')
+                        pass
 
-                    # # TODO executar carga no destino
-                    # table_cdc = self.target_endpoint.insert_cdc_into_table(
-                    #     table,
-                    #     create_table_if_not_exists=self.create_table_if_not_exists,
-                    # )
-                    # raise NotImplementedError
+                    
+                    # logging.debug(table_cdc)
+
                 # TODO somente isso será necessário no futuro
 
                 # Move o arquivo para a pasta processada

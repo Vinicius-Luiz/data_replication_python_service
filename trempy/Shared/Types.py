@@ -11,6 +11,11 @@ class TaskType(Enum):
     FULL_LOAD = 'full_load'
     CDC = 'cdc'
 
+class CdcModeType(Enum):
+    DEFAULT = 'default'
+    UPSERT = 'upsert'
+    SCD2 = 'scd2'
+
 class TransformationType(Enum):
     CREATE_COLUMN = 'create_column'
     MODIFY_SCHEMA_NAME = 'modify_schema_name'
