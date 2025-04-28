@@ -7,9 +7,6 @@
         "full_load_settings": {
             "recreate_table_if_exists": true,
             "truncate_before_insert": true
-        },
-        "cdc_settings": {
-            "mode": "default"
         }
     },
     "tables": [

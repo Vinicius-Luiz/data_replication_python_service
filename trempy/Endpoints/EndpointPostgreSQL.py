@@ -613,10 +613,10 @@ class EndpointPostgreSQL(Endpoint):
 
         if changes_structured.get("data"):
             if save_files:
-                with open(f"task/cdc_log/{id}.json", "w") as f:
+                with open(f"data/cdc_data/{id}.json", "w") as f:
                     json.dump(changes_structured, f, indent=4)
 
-                df_changes_captured.write_csv(f"task/cdc_log/{id}.csv")
+                df_changes_captured.write_csv(f"data/cdc_data/{id}.csv")
 
             return changes_structured
 
@@ -700,9 +700,7 @@ class EndpointPostgreSQL(Endpoint):
             if data_info["operation"] in ("begin", "commit"):
                 if data_info["operation"] == "begin":
                     current_transaction = {"operations": []}
-                    # current_transaction = {"xid": data_info["xid"], "operations": []} # TODO excluir depois
                 elif data_info["operation"] == "commit" and current_transaction:
-                    # current_transaction["commit_lsn"] = row["lsn"] # TODO excluir depois
                     transactions.append(current_transaction)
                     current_transaction = None
             else:
@@ -715,7 +713,6 @@ class EndpointPostgreSQL(Endpoint):
 
     def _parse_data_line(self, line: str) -> Dict[str, Any]:
         if line.startswith(("BEGIN", "COMMIT")):
-            # return {"operation": line.split()[0].lower(), "xid": int(line.split()[1])} # TODO excluir depois
             return {"operation": line.split()[0].lower()}
 
         # Extrai informações da operação DML
@@ -746,6 +743,9 @@ class EndpointPostgreSQL(Endpoint):
                 # Remove aspas extras do valor se existirem
                 if col_value.startswith("'") and col_value.endswith("'"):
                     col_value = col_value[1:-1]
+                # Identificando valor nulo
+                if col_value == "null":
+                    col_value = None
                 result["columns"].append(
                     {"name": col_name, "type": col_type, "value": col_value}
                 )
