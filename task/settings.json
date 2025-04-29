@@ -7,6 +7,9 @@
         "full_load_settings": {
             "recreate_table_if_exists": true,
             "truncate_before_insert": true
+        },
+        "cdc_settings": {
+            "mode": "default"
         }
     },
     "tables": [
@@ -22,12 +25,17 @@
         },
         {
             "schema_name": "employees",
-            "table_name": "the_office",
-            "priority": 1
+            "table_name": "the_office_season",
+            "priority": 0
         },
         {
             "schema_name": "employees",
-            "table_name": "the_office_season",
+            "table_name": "eletronic_history",
+            "priority": 0
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office",
             "priority": 0
         }
     ],

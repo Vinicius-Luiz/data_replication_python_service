@@ -8,7 +8,7 @@ from psycopg2 import sql
 from psycopg2.extras import execute_values
 from datetime import datetime
 from time import time
-from typing import Dict, Any
+from typing import Dict, List, Any
 import polars as pl
 import psycopg2
 import logging
@@ -316,7 +316,7 @@ class EndpointPostgreSQL(Endpoint):
             raise ValueError(raise_msg)
 
     def insert_cdc_into_table(
-        self, table: Table, create_table_if_not_exists: bool = False
+        self, mode: str, table: Table, create_table_if_not_exists: bool = False
     ):
         """
         Insere dados de alterações em uma tabela de destino.
@@ -333,7 +333,7 @@ class EndpointPostgreSQL(Endpoint):
             with self.connection.cursor() as cursor:
                 self._manage_table(cursor, table, create_table_if_not_exists)
 
-                self._insert_cdc_data(cursor, table)
+                self._insert_cdc_data(cursor, table, mode)
 
                 self.commit()
 
@@ -454,6 +454,15 @@ class EndpointPostgreSQL(Endpoint):
             raise
 
     def _insert_cdc_data(
+        self, cursor: psycopg2.extensions.cursor, table: Table, mode: str
+    ) -> None:
+        match mode:
+            case "default":
+                self._insert_cdc_data_default(cursor, table)
+            case _:
+                raise NotImplementedError  # TODO
+
+    def _insert_cdc_data_default(
         self, cursor: psycopg2.extensions.cursor, table: Table
     ) -> None:
         # Obter schema e nome da tabela
@@ -492,7 +501,9 @@ class EndpointPostgreSQL(Endpoint):
         # Processar UPDATEs
         if operations["UPDATE"]:
             # Identificar PKs para cláusula WHERE
-            pk_columns = [col.name for col in table.columns.values() if col.is_primary_key]
+            pk_columns = [
+                col.name for col in table.columns.values() if col.is_primary_key
+            ]
             if not pk_columns:
                 raise ValueError(
                     f"Nenhuma PK encontrada para tabela {schema}.{table_name}"
@@ -536,7 +547,9 @@ class EndpointPostgreSQL(Endpoint):
         # Processar DELETEs
         if operations["DELETE"]:
             # Identificar PKs para cláusula WHERE
-            pk_columns = [col.name for col in table.columns.values() if col.is_primary_key]
+            pk_columns = [
+                col.name for col in table.columns.values() if col.is_primary_key
+            ]
             if not pk_columns:
                 raise ValueError(
                     f"Nenhuma PK encontrada para tabela {schema}.{table_name}"
@@ -593,7 +606,10 @@ class EndpointPostgreSQL(Endpoint):
             raise ValueError(raise_msg)
 
     def structure_capture_changes_to_json(
-        self, df_changes_captured: pl.DataFrame, save_files: bool = False
+        self,
+        df_changes_captured: pl.DataFrame,
+        task_tables: List[Table],
+        save_files: bool = False,
     ) -> Dict[str, Any]:
         df_changes_captured = df_changes_captured.sort("lsn")
 
@@ -604,15 +620,29 @@ class EndpointPostgreSQL(Endpoint):
         for xid, group in df_changes_captured.group_by("xid"):
             transactions = self._process_transaction(group)
             changes_structured.extend(transactions)
+        changes_structured = changes_structured[0] if changes_structured else []
 
-        changes_structured = {
-            "id": id,
-            "creted_at": created_at,
-            "data": changes_structured,
-        }
+        filtered_changes_structured = []
+        if changes_structured:
+            for operation in changes_structured.get("operations"):
+                operation
+                schema_name = operation.get("schema_name")
+                table_name = operation.get("table_name")
+                idx = f"{schema_name}.{table_name}"
 
-        if changes_structured.get("data"):
-            if save_files:
+                table_ok = True if idx in [table.id for table in task_tables] else False
+
+                if table_ok:
+                    filtered_changes_structured.append(operation)
+
+        if filtered_changes_structured:
+            changes_structured = {
+                "id": id,
+                "creted_at": created_at,
+                "operations": filtered_changes_structured,
+            }
+
+            if save_files: # TODO CARATER TEMPORÁRIO
                 with open(f"data/cdc_data/{id}.json", "w") as f:
                     json.dump(changes_structured, f, indent=4)
 
@@ -622,51 +652,48 @@ class EndpointPostgreSQL(Endpoint):
 
         return None
 
-    def structure_capture_changes_to_dataframe(self, changes_strucuted: dict) -> dict:
+    def structure_capture_changes_to_dataframe(self, changes_structured: dict) -> dict:
         # Dicionário para armazenar DataFrames por schema.table
         tables_data = {}
 
-        # Processar cada entrada de dados
-        for entry in changes_strucuted.get("data", []):
-            # Usar enumerate para manter a ordem original com índice
-            for op_index, operation in enumerate(entry.get("operations", [])):
-                schema_name = operation.get("schema_name")
-                table_name = operation.get("table_name")
-                op_type = operation.get("operation", "").upper()
+        for op_index, operation in enumerate(changes_structured.get("operations", [])):
+            schema_name = operation.get("schema_name")
+            table_name = operation.get("table_name")
+            op_type = operation.get("operation", "").upper()
 
-                # Pular DELETE com colunas vazias
-                if op_type == "DELETE" and not operation.get("columns"):
-                    continue
+            # Pular DELETE com colunas vazias
+            if op_type == "DELETE" and not operation.get("columns"):
+                continue
 
-                # Chave para agrupamento
-                key = f"{schema_name}.{table_name}"
+            # Chave para agrupamento
+            key = f"{schema_name}.{table_name}"
 
-                # Dados da linha
-                row_data = {
-                    "$TREM_OPERATION": op_type,
-                    "$TREM_ROWNUM": op_index,  # Usando o índice do enumerate
+            # Dados da linha
+            row_data = {
+                "$TREM_OPERATION": op_type,
+                "$TREM_ROWNUM": op_index,  # Usando o índice do enumerate
+            }
+
+            # Processar colunas
+            for column in operation.get("columns", []):
+                col_name = column["name"]
+                col_type = column["type"]
+                col_value = column["value"]
+
+                # Conversão de tipo numérico e data
+                col_value = DataTypes.convert_value(col_value, col_type)
+
+                row_data[col_name] = col_value
+
+            # Adicionar aos dados da tabela
+            if key not in tables_data:
+                tables_data[key] = {
+                    "schema_name": schema_name,
+                    "table_name": table_name,
+                    "rows": [],
                 }
 
-                # Processar colunas
-                for column in operation.get("columns", []):
-                    col_name = column["name"]
-                    col_type = column["type"]
-                    col_value = column["value"]
-
-                    # Conversão de tipo numérico e data
-                    col_value = DataTypes.convert_value(col_value, col_type)
-
-                    row_data[col_name] = col_value
-
-                # Adicionar aos dados da tabela
-                if key not in tables_data:
-                    tables_data[key] = {
-                        "schema_name": schema_name,
-                        "table_name": table_name,
-                        "rows": [],
-                    }
-
-                tables_data[key]["rows"].append(row_data)
+            tables_data[key]["rows"].append(row_data)
 
         # Converter para DataFrames
         result = dict()

@@ -95,3 +95,20 @@ WHERE id = 0;
 
 DELETE FROM employees.the_office_season
 WHERE id in (1, 2);
+
+------------- CRIAR TABELA COM PK DO TIPO DATE
+CREATE TABLE employees.eletronic_history (
+    id     INT,
+    date_acquisition   DATE,
+    PRIMARY KEY (id, date_acquisition)
+)
+
+
+INSERT INTO employees.eletronic_history (id, date_acquisition)
+VALUES
+  (0, '2022-05-14'),
+  (1, '2023-05-13'),
+  (2, '2025-04-28');
+
+DELETE FROM employees.eletronic_history
+WHERE id = 0;

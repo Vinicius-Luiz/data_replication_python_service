@@ -4,7 +4,6 @@ from trempy.Endpoints.DataTypes import EndpointDataTypePostgreSQL
 from trempy.Shared.Types import TransformationOperationType
 from trempy.Columns.Column import Column
 from typing import Dict, List, Any, TYPE_CHECKING
-import polars as pl
 import logging
 
 if TYPE_CHECKING:
@@ -95,7 +94,7 @@ class ColumnCreator:
             raise ValueError("O contrato deve conter 'new_column_name'")
 
         if new_column_name in table.data.columns:
-            raise ValueError(f"A coluna '{new_column_name}' já existe no DataFrame")
+            raise ValueError(f"A coluna '{new_column_name}' já existe no DataFrame") # TODO : no cdc não pode dar esse erro a partir da 2a vez
 
     @staticmethod
     def _validate_dependent_columns(depends_on: List[str], table: Table) -> None:

@@ -38,6 +38,7 @@ class Task:
         source_endpoint: Endpoint = None,
         target_endpoint: Endpoint = None,
         full_load_settings: dict = {},
+        cdc_settings: dict = {},
         create_table_if_not_exists: bool = False,
     ) -> None:
         self.task_name = task_name
@@ -54,6 +55,8 @@ class Task:
         self.truncate_before_insert: bool = full_load_settings.get(
             "truncate_before_insert", False
         )
+
+        self.cdc_mode: str = cdc_settings.get("mode", "default")
 
         self.tables: List[Table] = []
 
@@ -316,7 +319,7 @@ class Task:
         changes_captured = self.source_endpoint.capture_changes(**kargs)
 
         changes_structured = self.source_endpoint.structure_capture_changes_to_json(
-            changes_captured, save_files=True
+            changes_captured, task_tables=self.tables, save_files=True
         )
 
         return changes_structured
@@ -338,7 +341,7 @@ class Task:
                 with open(file_path, "r", encoding="utf-8") as f:
                     changes_structured = json.load(f)
                     logging.debug(
-                        f'changes_structured: {len(changes_structured.get("data"))} linhas'
+                        f'changes_structured: {len(changes_structured.get("operations"))} linhas'
                     )
 
                 # TODO somente isso será necessário no futuro
@@ -357,7 +360,7 @@ class Task:
                             rf"{cdc_log_dir}\{filename}_before_{table.id}.csv"
                         )  # TODO temporário
 
-                        logging.debug(f'{table.id} - {table.data.schema}')
+                        logging.debug(f"{table.id} - {table.data.schema}")
                     except Exception as e:
                         pass
 
@@ -366,7 +369,8 @@ class Task:
                         table.execute_transformations()
 
                         table_cdc = self.target_endpoint.insert_cdc_into_table(
-                            table,
+                            mode=self.cdc_mode,
+                            table=table,
                             create_table_if_not_exists=self.create_table_if_not_exists,
                         )
                     try:
@@ -376,7 +380,6 @@ class Task:
                     except Exception as e:
                         pass
 
-                    
                     # logging.debug(table_cdc)
 
                 # TODO somente isso será necessário no futuro

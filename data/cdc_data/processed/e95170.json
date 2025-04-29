@@ -1,0 +1,93 @@
+{
+    "id": "e95170",
+    "creted_at": "2025-04-29 00:03:24",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d008"
+                },
+                {
+                    "name": "dept_name",
+                    "type": "character varying",
+                    "value": "Logistic"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d009"
+                },
+                {
+                    "name": "dept_name",
+                    "type": "character varying",
+                    "value": "Relationship"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d010"
+                },
+                {
+                    "name": "dept_name",
+                    "type": "character varying",
+                    "value": "Architecture"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d008"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d009"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d010"
+                }
+            ]
+        }
+    ]
+}
