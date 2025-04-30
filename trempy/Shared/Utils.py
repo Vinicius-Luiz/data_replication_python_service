@@ -1,8 +1,11 @@
 import logging
 import pickle
 import uuid
-from trempy.Tasks.Task import Task
+import sys
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from trempy.Tasks.Task import Task
 
 class Utils:
     """
@@ -28,9 +31,17 @@ class Utils:
         )
 
         return True
+    
+    def log_exception_and_exit(e: Exception):
+        """Loga a exceção no formato desejado e encerra o programa"""
+        error_type = f"{type(e).__module__}.{type(e).__name__}"
+        log_message = f"{error_type}: {str(e)}"
+        
+        logging.critical(log_message)
+        sys.exit(1)  # Encerra o programa com código de erro
 
     @staticmethod
-    def write_task_pickle(task: Task) -> None:
+    def write_task_pickle(task: 'Task') -> None:
         """
         Salva a configuração da tarefa no arquivo "settings.pickle".
         """
@@ -40,7 +51,7 @@ class Utils:
             pickle.dump(task, f)
 
     @staticmethod
-    def read_task_pickle() -> Task:
+    def read_task_pickle() -> 'Task':
         """
         Carrega a configura o da tarefa salva no arquivo "settings.pickle" e
         retorna um objeto Task.

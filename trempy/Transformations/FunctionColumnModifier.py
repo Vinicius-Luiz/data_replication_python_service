@@ -1,5 +1,6 @@
 from trempy.Transformations.FunctionColumn import FunctionColumn
 from trempy.Shared.Types import TransformationOperationType
+from trempy.Transformations.Exceptions.Exception import *
 import polars as pl
 import re
 
@@ -128,7 +129,7 @@ class FunctionColumnModifier(FunctionColumn):
             Expressão Polars que aplica a transformação matemática.
 
         Raises:
-            ValueError: Em qualquer um destes casos:
+            MathExpressionError: Em qualquer um destes casos:
                 - Expressão vazia ou não string
                 - Caracteres não permitidos na expressão
                 - Operadores não permitidos
@@ -156,18 +157,23 @@ class FunctionColumnModifier(FunctionColumn):
 
         # Validação básica da expressão
         if not isinstance(expression, str) or not expression.strip():
-            raise ValueError("Expressão deve ser uma string não vazia")
+            raise MathExpressionError(
+                "Expressão deve ser uma string não vazia", expression
+            )
 
         # Remove espaços e valida caracteres
         clean_expr = expression.replace(" ", "")
         if not re.match(r"^[\d+\-*/\^().value]+$", clean_expr):
-            raise ValueError("Expressão contém caracteres não permitidos")
+            raise MathExpressionError(
+                "Expressão contém caracteres não permitidos", expression
+            )
 
         # Verifica operadores permitidos
         used_ops = set(re.findall(r"[\+\-\*/^]", clean_expr))
         if not used_ops.issubset(OPERATORS.keys()):
-            raise ValueError(
-                f"Operadores não permitidos: {used_ops - set(OPERATORS.keys())}"
+            raise MathExpressionError(
+                f"Operadores não permitidos: {used_ops - set(OPERATORS.keys())}",
+                expression,
             )
 
         # Substitui 'value' pela coluna Polars
@@ -201,4 +207,6 @@ class FunctionColumnModifier(FunctionColumn):
             # Avalia a expressão convertida
             return eval(parsed_expr, safe_globals, {})
         except Exception as e:
-            raise ValueError(f"Falha ao processar expressão: {str(e)}")
+            raise MathExpressionError(
+                f"Falha na avaliação da expressão: {str(e)}", expression
+            )

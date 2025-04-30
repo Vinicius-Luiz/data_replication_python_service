@@ -1,0 +1,184 @@
+2025-04-30 00:49:11,237 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:11,237 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:11,272 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:11,272 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:11,272 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-04-30 00:49:11,272 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-30 00:49:11,305 - INFO - ENDPOINT - Target_PostgreSQL conectado
+2025-04-30 00:49:11,305 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:11,305 - INFO - TASK - cdc_department válido
+2025-04-30 00:49:11,305 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-04-30 00:49:11,326 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 18, 'table_size': '40 kB', 'columns': dict_keys(['employee_id', 'department_id', 'from_date', 'to_date']), 'transformations': []}
+2025-04-30 00:49:11,326 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-04-30 00:49:11,330 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 7, 'table_size': '40 kB', 'columns': dict_keys(['id', 'dept_name']), 'transformations': []}
+2025-04-30 00:49:11,331 - INFO - TASK - Obtendo detalhes da tabela employees.the_office_season
+2025-04-30 00:49:11,335 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office_season', 'estimated_row_count': 2, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'season_number', 'description']), 'transformations': []}
+2025-04-30 00:49:11,335 - INFO - TASK - Obtendo detalhes da tabela employees.eletronic_history
+2025-04-30 00:49:11,339 - DEBUG - {'schema_name': 'employees', 'table_name': 'eletronic_history', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'date_acquisition']), 'transformations': []}
+2025-04-30 00:49:11,339 - INFO - TASK - Obtendo detalhes da tabela employees.the_office
+2025-04-30 00:49:11,343 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'estimated_row_count': 1, 'table_size': '8192 bytes', 'columns': dict_keys(['id', 'name', 'age', 'created_date']), 'transformations': []}
+2025-04-30 00:49:11,343 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:11,345 - INFO - Iniciando CDC com intervalo de 3s
+2025-04-30 00:49:11,349 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:11,614 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-04-30 00:49:11,614 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-30 00:49:11,629 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:11,629 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:11,650 - INFO - ENDPOINT - Target_PostgreSQL conectado
+2025-04-30 00:49:11,650 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:11,664 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:11,664 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:11,666 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:11,672 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:11,697 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:11,697 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:14,711 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:14,968 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:14,968 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:15,003 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:15,003 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:15,005 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:15,011 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:15,032 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:15,032 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:18,033 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:18,289 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:18,290 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:18,323 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:18,323 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:18,325 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:18,331 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:18,352 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:18,352 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:21,356 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:21,616 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:21,616 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:21,658 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:21,658 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:21,661 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:21,667 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:21,689 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:21,689 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:24,700 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:24,993 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:24,993 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:25,029 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:25,029 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:25,031 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:25,038 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:25,062 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:25,062 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:28,065 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:28,327 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:28,327 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:28,361 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:28,362 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:28,363 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:28,369 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:28,390 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:28,391 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:31,403 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:31,660 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:31,660 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:31,695 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:31,695 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:31,697 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:31,703 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:31,723 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:31,724 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:34,727 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:35,000 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:35,000 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:35,036 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:35,036 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:35,038 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:35,044 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:35,071 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:35,071 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:38,086 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:38,345 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:38,345 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:38,380 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:38,380 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:38,382 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:38,388 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:38,411 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:38,412 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:41,415 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:41,673 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:41,673 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:41,707 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:41,707 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:41,709 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:41,715 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:41,736 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:41,737 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:44,739 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:44,997 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:44,997 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:45,032 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:45,032 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:45,034 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:45,041 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:45,070 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:45,070 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:48,074 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:48,344 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:48,345 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:48,379 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:48,379 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:48,381 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:48,398 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:48,419 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:48,419 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:50,760 - DEBUG - changes_structured: 2 linhas
+2025-04-30 00:49:50,760 - INFO - TASK - Estruturando alterações de dados
+2025-04-30 00:49:50,764 - DEBUG - employees.the_office - Schema([('$TREM_ROWNUM', Int64), ('$TREM_OPERATION', String), ('id', Int64), ('name', String), ('age', Int64), ('created_date', String)])
+2025-04-30 00:49:50,764 - INFO - TRANSFORMATION - Aplicando transformação em employees.the_office: Carimbando data de sincronização
+2025-04-30 00:49:51,434 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:51,702 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:51,702 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:51,737 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:51,738 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:51,739 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:51,746 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:51,772 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:51,772 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:54,776 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:55,035 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:55,035 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:55,071 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:55,071 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:55,073 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:55,079 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:55,101 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:55,101 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:49:58,116 - DEBUG - Executando ciclo do producer
+2025-04-30 00:49:58,373 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:49:58,373 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:49:58,408 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:49:58,408 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:49:58,410 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:49:58,416 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:49:58,436 - INFO - producer.py - Exit code: 0
+2025-04-30 00:49:58,437 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:50:01,438 - DEBUG - Executando ciclo do producer
+2025-04-30 00:50:01,735 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:50:01,735 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:50:01,770 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:50:01,770 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:50:01,772 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:50:01,779 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:50:01,802 - INFO - producer.py - Exit code: 0
+2025-04-30 00:50:01,802 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:50:04,803 - DEBUG - Executando ciclo do producer
+2025-04-30 00:50:05,069 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-04-30 00:50:05,069 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-30 00:50:05,104 - INFO - ENDPOINT - Source_PostgreSQL conectado
+2025-04-30 00:50:05,104 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-04-30 00:50:05,106 - INFO - ENDPOINT - Capturando alterações de dados
+2025-04-30 00:50:05,112 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-30 00:50:05,133 - INFO - producer.py - Exit code: 0
+2025-04-30 00:50:05,133 - DEBUG - Aguardando 3 segundos...
+2025-04-30 00:50:06,671 - INFO - Interrompendo processo CDC...
+2025-04-30 00:50:06,672 - INFO - CDC encerrado com sucesso

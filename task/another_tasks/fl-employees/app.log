@@ -1,36 +1,36 @@
 2025-04-06 02:25:10,771 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-04-06 02:25:10,771 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-06 02:25:10,771 - INFO - ENDPOINT - Source_PostgreSQL vï¿½lido
 2025-04-06 02:25:10,804 - INFO - ENDPOINT - Source_PostgreSQL conectado
 2025-04-06 02:25:10,804 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
 2025-04-06 02:25:10,804 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-04-06 02:25:10,804 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-06 02:25:10,804 - INFO - ENDPOINT - Target_PostgreSQL vï¿½lido
 2025-04-06 02:25:10,834 - INFO - ENDPOINT - Target_PostgreSQL conectado
 2025-04-06 02:25:10,834 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-04-06 02:25:10,834 - INFO - TASK - fl-employees válido
+2025-04-06 02:25:10,834 - INFO - TASK - fl_employees vï¿½lido
 2025-04-06 02:25:10,834 - INFO - TASK - Obtendo detalhes da tabela employees.salary
 2025-04-06 02:25:10,852 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '142 MB', 'columns': dict_keys(['employee_id', 'amount', 'from_date', 'to_date']), 'transformations': []}
 2025-04-06 02:25:10,852 - INFO - TASK - Obtendo detalhes da tabela employees.employee
 2025-04-06 02:25:10,857 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '20 MB', 'columns': dict_keys(['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']), 'transformations': []}
 2025-04-06 02:25:10,857 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
 2025-04-06 02:25:10,861 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': dict_keys(['employee_id', 'department_id', 'from_date', 'to_date']), 'transformations': []}
-2025-04-06 02:25:10,861 - DEBUG - Salvando configuração da tarefa em settings.pickle
+2025-04-06 02:25:10,861 - DEBUG - Salvando configuraï¿½ï¿½o da tarefa em settings.pickle
 2025-04-06 02:25:10,862 - DEBUG - Executando producer.py
 2025-04-06 02:25:11,120 - DEBUG - Carregando settings.pickle
 2025-04-06 02:25:11,121 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-04-06 02:25:11,121 - INFO - ENDPOINT - Source_PostgreSQL válido
+2025-04-06 02:25:11,121 - INFO - ENDPOINT - Source_PostgreSQL vï¿½lido
 2025-04-06 02:25:11,154 - INFO - ENDPOINT - Source_PostgreSQL conectado
 2025-04-06 02:25:11,154 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
 2025-04-06 02:25:11,155 - INFO - TASK - Obtendo dados da tabela employees.department_manager
-2025-04-06 02:25:11,159 - DEBUG - {'success': True, 'rowcount': 24, 'statusmessage': 'SELECT 24', 'path_data': 'data/full_load_data/fl-employees_employees_department_manager.parquet', 'time_elapsed': '0.00s'}
+2025-04-06 02:25:11,159 - DEBUG - {'success': True, 'rowcount': 24, 'statusmessage': 'SELECT 24', 'path_data': 'data/full_load_data/fl_employees_employees_department_manager.parquet', 'time_elapsed': '0.00s'}
 2025-04-06 02:25:11,159 - INFO - TASK - Obtendo dados da tabela employees.salary
-2025-04-06 02:25:14,567 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl-employees_employees_salary.parquet', 'time_elapsed': '3.19s'}
+2025-04-06 02:25:14,567 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl_employees_employees_salary.parquet', 'time_elapsed': '3.19s'}
 2025-04-06 02:25:14,567 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-04-06 02:25:15,098 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl-employees_employees_employee.parquet', 'time_elapsed': '0.50s'}
-2025-04-06 02:25:15,098 - DEBUG - Salvando configuração da tarefa em settings.pickle
-2025-04-06 02:25:15,132 - INFO - producer.py - Código de saída: 0
+2025-04-06 02:25:15,098 - DEBUG - {'success': True, 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'path_data': 'data/full_load_data/fl_employees_employees_employee.parquet', 'time_elapsed': '0.50s'}
+2025-04-06 02:25:15,098 - DEBUG - Salvando configuraï¿½ï¿½o da tarefa em settings.pickle
+2025-04-06 02:25:15,132 - INFO - producer.py - Cï¿½digo de saï¿½da: 0
 2025-04-06 02:25:15,398 - DEBUG - Carregando settings.pickle
 2025-04-06 02:25:15,399 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-04-06 02:25:15,399 - INFO - ENDPOINT - Target_PostgreSQL válido
+2025-04-06 02:25:15,399 - INFO - ENDPOINT - Target_PostgreSQL vï¿½lido
 2025-04-06 02:25:15,432 - INFO - ENDPOINT - Target_PostgreSQL conectado
 2025-04-06 02:25:15,432 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
 2025-04-06 02:25:15,434 - INFO - FILTER - Aplicando filtro em employees.department_manager to_date: Filtrando data de inicio igual a 9999-01-01
@@ -40,31 +40,31 @@
 2025-04-06 02:25:15,454 - INFO - ENDPOINT - Truncando tabela employees.department_manager
 2025-04-06 02:25:15,454 - INFO - ENDPOINT - Inserindo 9 registros na tabela employees.department_manager
 2025-04-06 02:25:15,457 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '0.02s'}
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia'
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-04-06 02:25:15,497 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome da tabela para portuguï¿½s
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome do schema para portuguï¿½s
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'amount' para 'quantia'
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'from_date' para 'data_inicio'
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'to_date' para 'data_fim'
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'employee_id' para 'funcionario_id'
+2025-04-06 02:25:15,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter diferenï¿½a de anos entre o data_inicio e data_fim do salario
+2025-04-06 02:25:15,497 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter salï¿½rio mensal
 2025-04-06 02:25:15,503 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
 2025-04-06 02:25:15,504 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
 2025-04-06 02:25:15,505 - INFO - ENDPOINT - Criando tabela funcionarios.salario
 2025-04-06 02:25:15,506 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
 2025-04-06 02:25:16,812 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
 2025-04-06 02:25:51,564 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '36.06s'}
-2025-04-06 02:25:51,574 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando gênero feminino
-2025-04-06 02:25:51,577 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para considerar somente funcionários do gênero feminino
-2025-04-06 02:25:51,577 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-04-06 02:25:51,581 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-04-06 02:25:51,584 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-04-06 02:25:51,590 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-04-06 02:25:51,591 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
+2025-04-06 02:25:51,574 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando gï¿½nero feminino
+2025-04-06 02:25:51,577 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Alterando nome da tabela para considerar somente funcionï¿½rios do gï¿½nero feminino
+2025-04-06 02:25:51,577 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'first_name' com tudo em maiï¿½sculo
+2025-04-06 02:25:51,581 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'last_name' com tudo em maiï¿½sculo
+2025-04-06 02:25:51,584 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Cria coluna 'full_name'
+2025-04-06 02:25:51,590 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar como python quem realizou a replicaï¿½ï¿½o dos dados
+2025-04-06 02:25:51,591 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar data de sincronizaï¿½ï¿½o
 2025-04-06 02:25:51,592 - INFO - TASK - Realizando carga completa da tabela employees.employee_female
 2025-04-06 02:25:51,592 - INFO - ENDPOINT - Removendo tabela employees.employee_female
 2025-04-06 02:25:51,596 - INFO - ENDPOINT - Criando tabela employees.employee_female
 2025-04-06 02:25:51,600 - INFO - ENDPOINT - Truncando tabela employees.employee_female
 2025-04-06 02:25:51,723 - INFO - ENDPOINT - Inserindo 120051 registros na tabela employees.employee_female
 2025-04-06 02:25:54,376 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '2.78s'}
-2025-04-06 02:25:54,410 - INFO - consumer.py - Código de saída: 0
+2025-04-06 02:25:54,410 - INFO - consumer.py - Cï¿½digo de saï¿½da: 0

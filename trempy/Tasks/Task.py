@@ -236,25 +236,6 @@ class Task:
             if table.schema_name == schema_name and table.table_name == table_name:
                 return table
 
-    def run(self) -> dict:
-        """
-        Executa a tarefa de replicação conforme configurado.
-
-        Coordena o fluxo completo de replicação dos dados desde a origem até o destino,
-        seguindo o tipo e parâmetros definidos na configuração da tarefa.
-
-        Returns:
-            dict: Dicionário contendo informações sobre o resultado da execução:
-        """
-
-        if self.replication_type == TaskType.FULL_LOAD:
-            return self._run_full_load()
-        if self.replication_type == TaskType.CDC:
-            return self._run_cdc()
-        if self.replication_type == TaskType.FULL_LOAD_CDC:
-            self._run_full_load()
-            return self._run_cdc()
-
     def execute_source(self) -> dict:
         if self.replication_type == TaskType.FULL_LOAD:
             return self._execute_source_full_load()
@@ -281,7 +262,7 @@ class Task:
         except Exception as e:
             raise ValueError(e)
 
-    def _execute_target_full_load(self) -> dict:
+    def _execute_target_full_load(self) -> None:
         try:
             for table in self.tables:
                 table.data = pl.read_parquet(table.path_data)
@@ -300,7 +281,6 @@ class Task:
                 )
                 logging.debug(table_full_load)
 
-            return table_full_load
         except Exception as e:
             raise ValueError(e)
 

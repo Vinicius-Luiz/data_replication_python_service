@@ -1,61 +1,72 @@
 import subprocess
-import sys
 import logging
+import sys
+from typing import Optional
 from trempy.Tasks.Task import Task
 from abc import ABC, abstractmethod
 
 
 class ReplicationStrategy(ABC):
     """
-    Classe abstrata que define a interface para todas as estratégias de replicação.
-    Fornece métodos utilitários comuns para execução e log de subprocessos.
+    Interface base para estratégias de replicação com métodos utilitários comuns.
     """
 
     @abstractmethod
-    def execute(self, task: Task):
-        """
-        Método abstrato que deve ser implementado pelas subclasses para executar
-        a estratégia específica de replicação.
-
-        Args:
-            task (Task): Objeto Task contendo a configuração da tarefa de replicação.
-        """
+    def execute(self, task: Task) -> None:
+        """Método principal para execução da estratégia."""
         pass
 
-    def _run_process(self, script_name):
+    def _run_process(self, script_name: str) -> bool:
         """
-        Executa um script Python como subprocesso e monitora sua execução.
+        Executa um script Python como subprocesso.
 
         Args:
-            script_name (str): Nome do script Python a ser executado.
+            script_name: Nome do script a ser executado.
 
         Returns:
-            bool: True se o processo foi executado com sucesso (código de saída 0), False caso contrário.
+            True se executou com sucesso, False caso contrário.
         """
-        processo = subprocess.Popen(
+        try:
+            process = self._create_subprocess(script_name)
+            exit_code = self._monitor_process(process, script_name)
+            return exit_code == 0
+        except Exception as e:
+            logging.error(f"Erro ao executar {script_name}: {str(e)}")
+            return False
+
+    def _create_subprocess(self, script_name: str) -> subprocess.Popen:
+        """Cria um subprocesso para o script."""
+        return subprocess.Popen(
             [sys.executable, script_name],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
         )
-        codigo_saida = processo.wait()
-        saida, erros = processo.communicate()
 
-        self._log_process_output(script_name, codigo_saida, saida, erros)
-        return codigo_saida == 0
+    def _monitor_process(self, process: subprocess.Popen, script_name: str) -> int:
+        """Monitora a execução do processo e registra logs."""
+        exit_code = process.wait()
+        output, errors = process.communicate()
 
-    def _log_process_output(self, script_name, exit_code, output, errors):
-        """
-        Registra os resultados da execução de um subprocesso no log.
+        self._log_output(script_name, exit_code, output, errors)
+        return exit_code
 
-        Args:
-            script_name (str): Nome do script executado.
-            exit_code (int): Código de saída do processo.
-            output (str): Saída padrão do processo.
-            errors (str): Saída de erro do processo.
-        """
-        logging.info(f"{script_name} - Código de saída: {exit_code}")
+    def _log_output(
+        self,
+        script_name: str,
+        exit_code: int,
+        output: Optional[str],
+        errors: Optional[str],
+    ) -> None:
+        """Registra os resultados da execução."""
+        log_message = f"{script_name} - Exit code: {exit_code}"
+
+        if exit_code == 0:
+            logging.info(log_message)
+        else:
+            logging.error(log_message)
+
         if output:
-            logging.info(f"{script_name} - Saída: {output}")
+            logging.debug(f"{script_name} - Output: {output.strip()}")
         if errors:
-            logging.critical(f"{script_name} - Erros: {errors}")
+            logging.error(f"{script_name} - Errors: {errors.strip()}")

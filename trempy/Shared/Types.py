@@ -22,6 +22,8 @@ class TransformationType(Enum):
     MODIFY_TABLE_NAME = 'modify_table_name'
     MODIFY_COLUMN_NAME = 'modify_column_name'
     MODIFY_COLUMN_VALUE = 'modify_column_value'
+    ADD_PRIMARY_KEY = 'add_primary_key'
+    REMOVE_PRIMARY_KEY = 'remove_primary_key'
 
 class TransformationOperationType(Enum):
     FORMAT_DATE = 'format_date'

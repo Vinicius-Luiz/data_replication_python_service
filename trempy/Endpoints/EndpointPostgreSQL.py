@@ -460,7 +460,7 @@ class EndpointPostgreSQL(Endpoint):
             case "default":
                 self._insert_cdc_data_default(cursor, table)
             case _:
-                raise NotImplementedError  # TODO
+                raise NotImplementedError # TODO implementar outros modos
 
     def _insert_cdc_data_default(
         self, cursor: psycopg2.extensions.cursor, table: Table

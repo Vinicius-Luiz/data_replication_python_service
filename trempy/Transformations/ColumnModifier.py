@@ -2,9 +2,9 @@ from __future__ import annotations
 from trempy.Transformations.FunctionColumnModifier import (
     FunctionColumnModifier as FCM,
 )
+from trempy.Transformations.Exceptions.Exception import *
 from trempy.Shared.Types import TransformationOperationType
 from typing import Dict, Any, TYPE_CHECKING
-import logging
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table
@@ -33,7 +33,6 @@ class ColumnModifier:
 
         Raises:
             KeyError: Se parâmetros obrigatórios estiverem faltando no contrato
-            ValueError: Se os valores do contrato forem inválidos
         """
 
         return {
@@ -104,19 +103,19 @@ class ColumnModifier:
                 Deve conter um atributo 'data' com um DataFrame válido.
 
         Raises:
-            ValueError: Com mensagens específicas para cada caso de erro:
+            ColumnNameError: Com mensagens específicas para cada caso de erro:
                 - Quando column_name é vazio
                 - Quando a coluna não existe na tabela
-                (inclui lista de colunas disponíveis neste caso)
         """
 
         if not column_name:
-            raise ValueError("O contrato deve conter 'column_name'")
+            raise ColumnNameError("O contrato deve conter 'column_name'", None)
 
         if column_name not in table.data.columns:
             available = list(table.data.columns)
-            raise ValueError(
-                f"Coluna '{column_name}' não encontrada. Disponíveis: {available}"
+            raise ColumnNameError(
+                f"A coluna não existe no DataFrame. Disponíveis: {available}",
+                column_name,
             )
 
     @staticmethod
@@ -138,14 +137,14 @@ class ColumnModifier:
             - column_type: Tipos de coluna suportados (quando aplicável)
 
         Raises:
-            ValueError: Se a operação não for encontrada no dicionário de operações.
+            InvalidOperationError: Se a operação não for encontrada no dicionário de operações.
                 A mensagem inclui a lista de operações disponíveis.
         """
 
         if operation not in operations:
             valid_ops = list(operations.keys())
-            raise ValueError(
-                f"Operação '{operation}' não suportada. Válidas: {valid_ops}"
+            raise InvalidOperationError(
+                f"Operação não suportada. Válidas: {valid_ops}", operation
             )
         return operations[operation]
 
@@ -161,13 +160,13 @@ class ColumnModifier:
             contract: Contrato de transformação contendo os parâmetros fornecidos
 
         Raises:
-            ValueError: Para cada parâmetro obrigatório ausente no contrato.
+            RequiredParameterError: Para cada parâmetro obrigatório ausente no contrato.
                 A mensagem especifica qual parâmetro está faltando.
         """
 
         for param in op_config.get("required_params", []):
             if param not in contract:
-                raise ValueError(f"Parâmetro obrigatório faltando: '{param}'")
+                raise RequiredParameterError("Parâmetro obrigatório faltando", param)
 
     @staticmethod
     def _validate_column_type(
@@ -183,7 +182,7 @@ class ColumnModifier:
                 - data.schema: Dicionário mapeando nomes de colunas para seus tipos
 
         Raises:
-            ValueError: Quando o tipo real da coluna não corresponde a nenhum dos tipos
+            InvalidColumnTypeError: Quando o tipo real da coluna não corresponde a nenhum dos tipos
                 esperados. A mensagem inclui:
                 - Nome da coluna
                 - Tipos esperados
@@ -206,10 +205,12 @@ class ColumnModifier:
 
         if not any(isinstance(actual_type, t) for t in expected_types):
             expected_names = [t.__name__ for t in expected_types]
-            raise ValueError(
-                f"Tipo inválido para coluna '{column_name}'. "
-                f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}"
-            )
+            raise InvalidColumnTypeError(
+                    f"Tipo inválido para coluna. "
+                    f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}",
+                    column_name,
+                    type(actual_type).__name__,
+                )
 
     @classmethod
     def modify_column(cls, contract: Dict[str, Any], table: Table) -> Table:
@@ -230,33 +231,21 @@ class ColumnModifier:
 
         Returns:
             A mesma tabela de entrada com os valores da coluna atualizados
-
-        Raises:
-            ValueError: Para erros de validação nos parâmetros
-            TypeError: Se os tipos dos dados forem incompatíveis
-            KeyError: Se parâmetros obrigatórios estiverem faltando
-            Exception: Erros inesperados durante a execução (registrados em log)
         """
 
-        try:
-            # Extrai parâmetros do contrato
-            column_name = contract.get("column_name")
-            operation = TransformationOperationType(contract.get("operation"))
+        # Extrai parâmetros do contrato
+        column_name = contract.get("column_name")
+        operation = TransformationOperationType(contract.get("operation"))
 
-            # Busca operações
-            operations = cls.get_operations(column_name, contract)
+        # Busca operações
+        operations = cls.get_operations(column_name, contract)
 
-            # Validações
-            cls._validate_basic_contract(column_name, table)
-            op_config = cls._validate_operation(operation, operations)
-            cls._validate_required_params(op_config, contract)
-            cls._validate_column_type(column_name, op_config, table)
+        # Validações
+        cls._validate_basic_contract(column_name, table)
+        op_config = cls._validate_operation(operation, operations)
+        cls._validate_required_params(op_config, contract)
+        cls._validate_column_type(column_name, op_config, table)
 
-            # Execução
-            table.data = table.data.with_columns(op_config["func"]().alias(column_name))
-            return table
-
-        except Exception as e:
-            raise_msg = f"Falha ao modificar coluna ({table.id}): {str(e)}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+        # Execução
+        table.data = table.data.with_columns(op_config["func"]().alias(column_name))
+        return table

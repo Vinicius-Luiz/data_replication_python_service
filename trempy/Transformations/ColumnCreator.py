@@ -1,10 +1,11 @@
 from __future__ import annotations
 from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
+from trempy.Transformations.Exceptions.Exception import *
 from trempy.Endpoints.DataTypes import EndpointDataTypePostgreSQL
 from trempy.Shared.Types import TransformationOperationType
+from trempy.Shared.Utils import Utils
 from trempy.Columns.Column import Column
 from typing import Dict, List, Any, TYPE_CHECKING
-import logging
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table
@@ -14,7 +15,9 @@ class ColumnCreator:
     """Classe responsável por validar e criar novas colunas."""
 
     # TODO: eu tenho que saber qual o endpoint de destino pra salvar as colunas no tipo certo
-    TYPE_POLARS_TO_DATABASE = EndpointDataTypePostgreSQL.DataTypes.TYPE_POLARS_TO_DATABASE
+    TYPE_POLARS_TO_DATABASE = (
+        EndpointDataTypePostgreSQL.DataTypes.TYPE_POLARS_TO_DATABASE
+    )
 
     @staticmethod
     def get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
@@ -85,16 +88,20 @@ class ColumnCreator:
             table: Tabela de origem onde a nova coluna será adicionada.
 
         Raises:
-            ValueError: Se ocorrer algum dos seguintes casos:
+            NewColumnNameError: Se ocorrer algum dos seguintes casos:
                 - O nome da coluna for vazio ou nulo
                 - O nome da coluna já existir na tabela
         """
 
         if not new_column_name:
-            raise ValueError("O contrato deve conter 'new_column_name'")
+            raise NewColumnNameError(
+                "O contrato deve conter 'new_column_name'", None
+            )
 
         if new_column_name in table.data.columns:
-            raise ValueError(f"A coluna '{new_column_name}' já existe no DataFrame") # TODO : no cdc não pode dar esse erro a partir da 2a vez
+            raise NewColumnNameError(
+                "A coluna já existe no DataFrame", new_column_name
+            )
 
     @staticmethod
     def _validate_dependent_columns(depends_on: List[str], table: Table) -> None:
@@ -106,15 +113,16 @@ class ColumnCreator:
             table: Tabela de origem contendo os dados a serem validados.
 
         Raises:
-            ValueError: Se alguma coluna da lista `depends_on` não for encontrada
+            InvalidDependencyError: Se alguma coluna da lista `depends_on` não for encontrada
                 na tabela. A mensagem de erro inclui a lista de colunas disponíveis.
         """
 
         for col in depends_on:
             if col not in table.data.columns:
                 available = list(table.data.columns)
-                raise ValueError(
-                    f"Coluna dependente '{col}' não encontrada. Disponíveis: {available}"
+                raise InvalidDependencyError(
+                    f"Coluna dependente não encontrada. Disponíveis: {available}",
+                    col,
                 )
 
     @staticmethod
@@ -133,15 +141,15 @@ class ColumnCreator:
             de operações suportadas.
 
         Raises:
-            ValueError: Se a operação especificada não for encontrada no dicionário
+            InvalidOperationError: Se a operação especificada não for encontrada no dicionário
                 de operações suportadas. A mensagem de erro inclui a lista de
                 operações válidas.
         """
 
         if operation not in operations:
             valid_ops = list(operations.keys())
-            raise ValueError(
-                f"Operação '{operation}' não suportada. Válidas: {valid_ops}"
+            raise InvalidOperationError(
+                f"Operação não suportada. Válidas: {valid_ops}", operation
             )
         return operations[operation]
 
@@ -158,7 +166,7 @@ class ColumnCreator:
                 Deve incluir todos os parâmetros listados em op_config['required_params'].
 
         Raises:
-            ValueError: Se o contrato não contiver algum dos parâmetros listados como
+            RequiredParameterError: Se o contrato não contiver algum dos parâmetros listados como
                 obrigatórios na configuração da operação. A mensagem de erro especifica
                 qual parâmetro está faltando.
 
@@ -169,7 +177,7 @@ class ColumnCreator:
 
         for param in op_config.get("required_params", []):
             if param not in contract:
-                raise ValueError(f"Parâmetro obrigatório faltando: '{param}'")
+                raise RequiredParameterError("Parâmetro obrigatório faltando", param)
 
     @staticmethod
     def _validate_column_types(
@@ -188,7 +196,7 @@ class ColumnCreator:
             table: Objeto Table contendo os dados e schema a serem validados.
 
         Raises:
-            ValueError: Quando o tipo real de alguma coluna não corresponde a nenhum dos
+            InvalidColumnTypeError: Quando o tipo real de alguma coluna não corresponde a nenhum dos
                 tipos esperados definidos na configuração da operação. A mensagem inclui:
                 - Nome da coluna com tipo inválido
                 - Tipos esperados
@@ -211,10 +219,46 @@ class ColumnCreator:
 
             if not any(isinstance(actual_type, t) for t in expected_types):
                 expected_names = [t.__name__ for t in expected_types]
-                raise ValueError(
-                    f"Tipo inválido para coluna '{col}'. "
-                    f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}"
+                raise InvalidColumnTypeError(
+                    f"Tipo inválido para coluna. "
+                    f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}",
+                    col,
+                    type(actual_type).__name__,
                 )
+
+    @classmethod
+    def _update_metadata(cls, table: Table, new_column_name: str) -> Table:
+        """Atualiza os metadados da tabela para incluir a nova coluna.
+
+        Args:
+            table: Objeto Table contendo os dados e schema a serem atualizados.
+            new_column_name: Nome da nova coluna a ser adicionada.
+
+        Returns:
+            A mesma tabela de entrada com os metadados atualizados.
+
+        Raises:
+            UpdateMetadataError: Se ocorrer algum erro ao atualizar os metadados.
+        """
+
+        try:
+            new_column_type = table.data.schema[new_column_name]
+            sql_type = cls.TYPE_POLARS_TO_DATABASE.get(type(new_column_type), "text")
+
+            table.columns[new_column_name] = Column(
+                name=new_column_name,
+                data_type=sql_type,
+                nullable=True,
+                ordinal_position=len(table.columns) + 1,
+                is_primary_key=False,
+            )
+        except Exception as e:
+            raise UpdateMetadataError(
+                f"Erro ao atualizar metadados: {e}",
+                f"{table.target_schema_name}.{table.target_table_name}",
+            )
+
+        return table
 
     @classmethod
     def create_column(cls, contract: Dict[str, Any], table: Table) -> Table:
@@ -238,14 +282,7 @@ class ColumnCreator:
             A tabela modificada com a nova coluna adicionada, incluindo:
             - Os dados transformados
             - Os metadados atualizados (schema)
-
-        Raises:
-            ValueError: Para qualquer inconsistência nos parâmetros ou contrato
-            TypeError: Se os tipos das colunas forem incompatíveis com a operação
-            KeyError: Se parâmetros obrigatórios estiverem faltando no contrato
-            Exception: Para erros inesperados durante a execução (registrado em log)
         """
-
         try:
             # Extrai parâmetros do contrato
             new_column_name = contract.get("new_column_name")
@@ -263,25 +300,12 @@ class ColumnCreator:
             cls._validate_column_types(depends_on, op_config, table)
 
             # Execução
-            table.data = table.data.with_columns(
-                op_config["func"]().alias(new_column_name)
-            )
+            table.data = table.data.with_columns(op_config["func"]().alias(new_column_name))
 
             # Atualiza metadados
-            new_column_type = table.data.schema[new_column_name]
-            sql_type = cls.TYPE_POLARS_TO_DATABASE.get(type(new_column_type), "text")
-
-            table.columns[new_column_name] = Column(
-                name=new_column_name,
-                data_type=sql_type,
-                nullable=True,
-                ordinal_position=len(table.columns) + 1,
-                is_primary_key=False,
-            )
+            table = cls._update_metadata(table, new_column_name)
 
             return table
-
+        
         except Exception as e:
-            raise_msg = f"Falha ao criar coluna ({table.id}): {str(e)}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            Utils.log_exception_and_exit(e)

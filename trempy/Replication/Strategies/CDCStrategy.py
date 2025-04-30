@@ -9,44 +9,92 @@ from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrateg
 
 class CDCStrategy(ReplicationStrategy):
     """
-    Estratégia de replicação para CDC (Change Data Capture) que mantém o consumer
-    rodando continuamente enquanto executa o producer em intervalos regulares.
-
-    Args:
-        interval_seconds (int): Intervalo em segundos entre execuções do producer.
+    Estratégia de replicação para CDC (Change Data Capture) com:
+    - Consumer rodando continuamente
+    - Producer executando em intervalos regulares
     """
 
-    def __init__(self, interval_seconds):
+    def __init__(self, interval_seconds: int):
         self.interval_seconds = interval_seconds
+        self._validate_interval()
 
-    def execute(self, task: Task):
+    def execute(self, task: Task) -> None:
         """
-        Executa a estratégia CDC, mantendo o consumer em execução contínua e
-        acionando o producer periodicamente.
+        Executa a estratégia CDC em loop até interrupção.
 
         Args:
-            task (Task): Objeto Task contendo a configuração da tarefa de replicação.
+            task (Task): Configuração da tarefa de replicação.
 
-        O método executa indefinidamente até ser interrompido por KeyboardInterrupt.
+        Raises:
+            SystemExit: Em caso de falha nos processos ou interrupção.
         """
-        Utils.write_task_pickle(task)
+        self._setup_environment(task)
+        self._start_consumer()
 
-        consumer_process = subprocess.Popen(
+        try:
+            self._run_cdc_loop()
+        except KeyboardInterrupt:
+            self._graceful_shutdown()
+        except Exception as e:
+            logging.critical(f"Erro inesperado: {str(e)}")
+            self._emergency_shutdown()
+            raise
+
+    def _validate_interval(self) -> None:
+        """Valida se o intervalo é positivo."""
+        if self.interval_seconds <= 0:
+            raise ValueError("Intervalo deve ser maior que zero")
+
+    def _setup_environment(self, task: Task) -> None:
+        """Configura o ambiente para execução."""
+        Utils.write_task_pickle(task)
+        Utils.configure_logging()
+        logging.info(f"Iniciando CDC com intervalo de {self.interval_seconds}s")
+
+    def _start_consumer(self) -> None:
+        """Inicia o processo do consumer em segundo plano."""
+        self.consumer_process = subprocess.Popen(
             [sys.executable, "consumer.py"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
         )
 
-        try:
-            while True:
-                # Executa o producer periodicamente
-                self._run_process("producer.py")
-                logging.debug(
-                    f"Aguardando {self.interval_seconds} segundos para próxima execução..."
-                )
-                sleep(self.interval_seconds)
-        except KeyboardInterrupt:
-            logging.info("Interrompendo processo CDC...")
-            consumer_process.terminate()
-            consumer_process.wait()
+    def _run_cdc_loop(self) -> None:
+        """Executa o loop principal do CDC."""
+        while True:
+            if not self._run_producer():
+                raise RuntimeError("Falha no producer")
+
+            self._check_consumer_status()
+            self._wait_next_cycle()
+
+    def _run_producer(self) -> bool:
+        """Executa o producer e retorna o status."""
+        logging.debug("Executando ciclo do producer")
+        return self._run_process("producer.py")
+
+    def _check_consumer_status(self) -> None:
+        """Verifica se o consumer está rodando corretamente."""
+        if self.consumer_process.poll() is not None:
+            exit_code = self.consumer_process.returncode
+            raise RuntimeError(
+                f"Consumer terminou inesperadamente (código: {exit_code})"
+            )
+
+    def _wait_next_cycle(self) -> None:
+        """Aguarda o próximo ciclo de execução."""
+        logging.debug(f"Aguardando {self.interval_seconds} segundos...")
+        sleep(self.interval_seconds)
+
+    def _graceful_shutdown(self) -> None:
+        """Encerra os processos de forma controlada."""
+        logging.info("Interrompendo processo CDC...")
+        self.consumer_process.terminate()
+        self.consumer_process.wait()
+        logging.info("CDC encerrado com sucesso")
+
+    def _emergency_shutdown(self) -> None:
+        """Encerra os processos em caso de erro."""
+        self.consumer_process.kill()
+        sys.exit(1)
