@@ -14,8 +14,10 @@ task.add_endpoint(target_endpoint)
 
 while True: # TODO while em caráter temporário
     task.execute_target()
-    sleep(task.interval_seconds)
 
+    if task.replication_type.value == 'cdc':
+        sleep(task.interval_seconds)
+        
     if task.replication_type.value == 'full_load':
         break
 

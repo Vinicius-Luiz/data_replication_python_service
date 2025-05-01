@@ -38,7 +38,7 @@ class Utils:
         log_message = f"{error_type}: {str(e)}"
         
         logging.critical(log_message)
-        sys.exit(1)  # Encerra o programa com código de erro
+        sys.exit(1)
 
     @staticmethod
     def write_task_pickle(task: 'Task') -> None:

@@ -62,7 +62,7 @@ class ReplicationStrategy(ABC):
         log_message = f"{script_name} - Exit code: {exit_code}"
 
         if exit_code == 0:
-            logging.info(log_message)
+            logging.debug(log_message)
         else:
             logging.error(log_message)
 

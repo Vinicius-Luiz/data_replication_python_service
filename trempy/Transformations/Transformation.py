@@ -39,8 +39,8 @@ class Transformation:
         """
         Valida se o tipo da transformação é válido.
 
-        InvalidTransformationTypeError:
-            ValueError: Se o tipo da transformação não for válido.
+        Raises:
+            InvalidTransformationTypeError: Se o tipo da transformação não for válido.
         """
 
         if self.transformation_type not in TransformationType:
@@ -63,24 +63,29 @@ class Transformation:
         Returns:
             None
         """
+        
         logging.info(
             f"TRANSFORMATION - Aplicando transformação em {table.schema_name}.{table.table_name}: {self.description}"
         )
-        match self.transformation_type:
-            case TransformationType.CREATE_COLUMN:
-                return self._execute_create_column(table)
-            case TransformationType.MODIFY_SCHEMA_NAME:
-                return self._execute_modify_schema_name(table)
-            case TransformationType.MODIFY_TABLE_NAME:
-                return self._execute_modify_table_name(table)
-            case TransformationType.MODIFY_COLUMN_NAME:
-                return self._execute_modify_column_name(table)
-            case TransformationType.MODIFY_COLUMN_VALUE:
-                return self._execute_modify_column_value(table)
-            case TransformationType.ADD_PRIMARY_KEY:
-                return self._execute_add_primary_key(table)
-            case TransformationType.REMOVE_PRIMARY_KEY:
-                return self._execute_remove_primary_key(table)
+
+        try:
+            match self.transformation_type:
+                case TransformationType.CREATE_COLUMN:
+                    return self._execute_create_column(table)
+                case TransformationType.MODIFY_SCHEMA_NAME:
+                    return self._execute_modify_schema_name(table)
+                case TransformationType.MODIFY_TABLE_NAME:
+                    return self._execute_modify_table_name(table)
+                case TransformationType.MODIFY_COLUMN_NAME:
+                    return self._execute_modify_column_name(table)
+                case TransformationType.MODIFY_COLUMN_VALUE:
+                    return self._execute_modify_column_value(table)
+                case TransformationType.ADD_PRIMARY_KEY:
+                    return self._execute_add_primary_key(table)
+                case TransformationType.REMOVE_PRIMARY_KEY:
+                    return self._execute_remove_primary_key(table)
+        except Exception as e:
+            raise TransformationError(str(e))
 
     def _execute_modify_schema_name(self, table: Table) -> Table:
         """

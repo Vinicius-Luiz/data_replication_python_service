@@ -2,7 +2,7 @@
     "task": {
         "task_name": "fl_employees",
         "replication_type": "full_load",
-        "interval_seconds": 60,
+        "interval_seconds": 1,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,

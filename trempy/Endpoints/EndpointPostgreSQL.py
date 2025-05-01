@@ -1,5 +1,6 @@
 from trempy.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
 from trempy.Endpoints.DataTypes.EndpointDataTypePostgreSQL import DataTypes
+from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Shared.Queries import PostgreSQLQueries
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
@@ -24,7 +25,6 @@ class EndpointPostgreSQL(Endpoint):
         endpoint_type: EndpointType,
         endpoint_name: str,
         credentials: dict,
-        periodicity_in_seconds_of_reading_from_source: int = 10,
     ):
         """
         Inicializa um endpoint para PostgreSQL, gerenciando a conexão.
@@ -38,7 +38,6 @@ class EndpointPostgreSQL(Endpoint):
             DatabaseType.POSTGRESQL,
             endpoint_type,
             endpoint_name,
-            periodicity_in_seconds_of_reading_from_source,
         )
 
         try:
@@ -61,15 +60,13 @@ class EndpointPostgreSQL(Endpoint):
             psycopg2.extensions.connection: Conexão estabelecida com o banco de dados.
 
         Raises:
-            ValueError: Se houver um erro ao conectar ao banco de dados.
+            EndpointError: Se houver um erro ao conectar ao banco de dados.
         """
 
         try:
             return psycopg2.connect(**credentials)
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao conectar ao banco de dados: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao conectar ao banco de dados: {e}")
 
     def cursor(self) -> psycopg2.extensions.cursor:
         """
@@ -136,28 +133,38 @@ class EndpointPostgreSQL(Endpoint):
             logging.critical(raise_msg)
             return []
 
-    def get_table_details(self, schema: str, table: str) -> Table:
+    def get_table_details(self, table: dict) -> Table:
         """
         Obtém os detalhes de uma tabela específica.
 
         Args:
-            schema (str): Nome do esquema da tabela.
-            table (str): Nome da tabela.
+            table (dict): Informações da tabela.
 
         Returns:
             Table: Objeto representando a estrutura da tabela.
+
+        Raises:
+            TableNotFoundError: Se a tabela nao for encontrada.
+            EndpointError: Se houver um erro ao obter os detalhes da tabela.
         """
 
         try:
+            schema_name = table.get("schema_name")
+            table_name = table.get("table_name")
+            priority = table.get("priority")
+
             with self.connection.cursor() as cursor:
-                cursor.execute(PostgreSQLQueries.GET_TABLE_DETAILS, (schema, table))
+                cursor.execute(PostgreSQLQueries.GET_TABLE_DETAILS, (schema_name, table_name))
                 metadata_table = cursor.fetchone()
                 if not metadata_table:
-                    raise ValueError(f"Tabela {schema}.{table} não encontrada.")
+                    raise TableNotFoundError(
+                        f"Tabela não encontrada.", f"{schema_name}.{table_name}"
+                    )
 
                 table_obj = Table(
                     schema_name=metadata_table[0],
                     table_name=metadata_table[1],
+                    priority=priority,
                     estimated_row_count=metadata_table[2],
                     table_size=metadata_table[3],
                 )
@@ -165,9 +172,7 @@ class EndpointPostgreSQL(Endpoint):
                 primary_keys = self.get_table_primary_key(table_obj)
                 return self.get_table_columns(table_obj, primary_keys)
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao obter os detalhes da tabela: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao obter os detalhes da tabela: {e}")
 
     def get_table_primary_key(self, table: Table) -> list:
         """
@@ -178,6 +183,9 @@ class EndpointPostgreSQL(Endpoint):
 
         Returns:
             list: Lista de colunas que compõem a chave primária da tabela.
+
+        Raises:
+            EndpointError: Se houver um erro ao obter as chaves primarias da tabela.
         """
 
         try:
@@ -188,9 +196,7 @@ class EndpointPostgreSQL(Endpoint):
                 )
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao obter as chaves primárias da tabela: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao obter as chaves primárias da tabela: {e}")
 
     def get_table_columns(self, table: Table, primary_keys: list) -> Table:
         """
@@ -203,6 +209,9 @@ class EndpointPostgreSQL(Endpoint):
 
         Returns:
             Table: Objeto Table atualizado com a estrutura das colunas da tabela.
+
+        Raises:
+            EndpointError: Se houver um erro ao obter as colunas da tabela.
         """
 
         try:
@@ -225,9 +234,93 @@ class EndpointPostgreSQL(Endpoint):
                     )
             return table
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao obter as colunas da tabela: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao obter as colunas da tabela: {e}")
+
+    def _mount_columns_to_create_table(self, table: Table) -> str:
+        """
+        Monta a string de colunas para criação de uma tabela no banco de dados.
+
+        A string é formada por uma lista de colunas, onde cada coluna é representada por uma string
+        no formato adequado para o banco de dados. As colunas são separadas por vírgula
+        e seguem a mesma ordem de aparição na lista de colunas do objeto.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+
+        Returns:
+            str: String formatada com as colunas para criação da tabela, pronta para ser usada em comandos SQL.
+        """
+
+        columns_sql = []
+        for column in sorted(
+            table.columns.values(), key=lambda col: col.ordinal_position
+        ):
+            character_maximum_length = (
+                f"({column.character_maximum_length})"
+                if column.character_maximum_length
+                else ""
+            )
+            column_str = f'{column.name} {column.data_type}{character_maximum_length} {"NOT NULL" if not column.nullable else "NULL"}'
+            columns_sql.append(column_str)
+
+        columns_sql = ", ".join(columns_sql)
+        return columns_sql
+
+    def _mount_primary_key_to_create_table(self, table: Table) -> str:
+        """
+        Monta a string de chave primária para criação de uma tabela no banco de dados.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+
+        A string é formada por uma lista de colunas, onde cada coluna é representada por uma string
+        no formato adequado para o banco de dados. As colunas sao separadas por vírgula
+        e seguem a mesma ordem de aparição na lista de colunas do objeto.
+
+        Returns:
+            str: String formatada com as colunas para criação da tabela, pronta para ser usada em comandos SQL.
+        """
+
+        primary_key_sql = []
+        for column in sorted(
+            table.columns.values(), key=lambda col: col.ordinal_position
+        ):
+            if column.is_primary_key:
+                primary_key_sql.append(column.name)
+
+        if primary_key_sql:
+            primary_key_sql = ", ".join(primary_key_sql)
+            primary_key_sql = ", PRIMARY KEY ({})".format(primary_key_sql)
+        else:
+            primary_key_sql = ""
+
+        return primary_key_sql
+
+    def mount_create_table(self, table: Table) -> str:
+        """
+        Monta a string para criação da tabela no banco de dados.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+
+        Returns:
+            str: String formatada com as colunas para cria o da tabela, pronta para ser usada em comandos SQL.
+
+        Raises:
+            EndpointError: Se houver um erro ao montar a string de criação da tabela.
+        """
+
+        try:
+            columns_sql = self._mount_columns_to_create_table(table)
+            primary_key_sql = self._mount_primary_key_to_create_table(table)
+            return PostgreSQLQueries.CREATE_TABLE.format(
+                schema=table.target_schema_name,
+                table=table.target_table_name,
+                columns=columns_sql,
+                primary_key=primary_key_sql,
+            )
+        except Exception as e:
+            raise EndpointError(f"Erro ao montar a string de criação da tabela: {e}")
 
     def get_full_load_from_table(self, table: Table) -> dict:
         """
@@ -238,6 +331,9 @@ class EndpointPostgreSQL(Endpoint):
 
         Returns:
             dict: Dicionário contendo o log de execução do método
+
+        Raises:
+            EndpointError: Se houver um erro ao obter a carga completa.
         """
 
         try:
@@ -263,9 +359,7 @@ class EndpointPostgreSQL(Endpoint):
                     "time_elapsed": f"{time() - initial_time:.2f}s",
                 }
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao obter a carga completa: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao obter a carga completa: {e}")
 
     def insert_full_load_into_table(
         self,
@@ -285,6 +379,9 @@ class EndpointPostgreSQL(Endpoint):
 
         Returns:
             dict: Dicionário contendo o log de execução do método.
+
+        Raises:
+            EndpointError: Se houver um erro ao inserir os dados.
         """
 
         try:
@@ -311,9 +408,7 @@ class EndpointPostgreSQL(Endpoint):
                 }
         except Exception as e:
             self.rollback()
-            raise_msg = f"ENDPOINT - Erro ao inserir dados: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao inserir dados no modo full load: {e}")
 
     def insert_cdc_into_table(
         self, mode: str, table: Table, create_table_if_not_exists: bool = False
@@ -327,6 +422,9 @@ class EndpointPostgreSQL(Endpoint):
 
         Returns:
             dict: Dicionário contendo o log de execução do método.
+
+        Raises:
+            EndpointError: Se houver um erro ao inserir os dados.
         """
 
         try:
@@ -341,9 +439,7 @@ class EndpointPostgreSQL(Endpoint):
 
         except Exception as e:
             self.rollback()
-            raise_msg = f"ENDPOINT - Erro ao inserir dados: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise EndpointError(f"Erro ao inserir dados no modo CDC ({mode}): {e}")
 
     def _manage_table(
         self,
@@ -371,10 +467,11 @@ class EndpointPostgreSQL(Endpoint):
             None: Este método não retorna valores.
 
         Raises:
-            psycopg2.Error: Se ocorrer um erro durante a execução dos comandos SQL.
+            ManageTableError: Se ocorrer um erro durante a execução dos comandos SQL.
         """
 
         try:
+            step = "recreate_if_exists"
             if recreate_if_exists:
                 create_if_not_exists = True
                 logging.info(
@@ -386,18 +483,20 @@ class EndpointPostgreSQL(Endpoint):
                     )
                 )
 
+            step = "create_if_not_exists"
             if create_if_not_exists:
                 cursor.execute(
                     PostgreSQLQueries.CHECK_TABLE_EXISTS,
                     (table.target_schema_name, table.target_table_name),
                 )
                 if cursor.fetchone()[0] == 0:
-                    create_table_sql = table.mount_create_table()
+                    create_table_sql = self.mount_create_table(table)
                     logging.info(
                         f"ENDPOINT - Criando tabela {table.target_schema_name}.{table.target_table_name}"
                     )
                     cursor.execute(create_table_sql)
 
+            step = "truncate_before_insert"
             if truncate_before_insert:
                 logging.info(
                     f"ENDPOINT - Truncando tabela {table.target_schema_name}.{table.target_table_name}"
@@ -408,9 +507,10 @@ class EndpointPostgreSQL(Endpoint):
                     )
                 )
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao gerenciar tabela {table.target_schema_name}.{table.target_table_name}: {e}"
-            logging.critical(raise_msg)
-            raise ValueError(raise_msg)
+            raise ManageTableError(
+                f"Erro ao gerenciar tabela {table.target_schema_name}.{table.target_table_name}: {e}",
+                step,
+            )
 
     def _insert_full_load_data(
         self, cursor: psycopg2.extensions.cursor, table: Table
@@ -424,6 +524,9 @@ class EndpointPostgreSQL(Endpoint):
 
         Returns:
             None
+
+        Raises:
+            InsertFullLoadError: Se ocorrer um erro ao inserir os dados.
         """
 
         try:
@@ -448,24 +551,57 @@ class EndpointPostgreSQL(Endpoint):
             )
             execute_values(cursor, query, records, page_size=10000)
         except Exception as e:
-            logging.critical(
-                f"ENDPOINT - Erro ao inserir dados na tabela {table.target_schema_name}.{table.target_table_name}: {e}"
+            raise InsertFullLoadError(
+                f"Erro ao inserir dados na tabela: {e}",
+                table.target_table_name,
             )
-            raise
 
     def _insert_cdc_data(
         self, cursor: psycopg2.extensions.cursor, table: Table, mode: str
     ) -> None:
-        match mode:
-            case "default":
-                self._insert_cdc_data_default(cursor, table)
-            case _:
-                raise NotImplementedError # TODO implementar outros modos
+        """
+        Insere dados de altera es em uma tabela de destino.
+
+        Insere dados de altera es em uma tabela de destino, considerando o modo
+        de inser o especificado. Atualmente, o nico modo implementado  o
+        "default", que simplesmente insere todos os dados da tabela.
+
+        Args:
+            cursor (psycopg2.extensions.cursor): Cursor do banco de dados para execu o de comandos SQL.
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+            mode (str): Modo de inser o. Atualmente, o nico modo implementado  o "default".
+
+        Raises:
+            InsertCDCError: Se ocorrer um erro ao inserir os dados.
+        """
+
+        try:
+            match mode:
+                case "default":
+                    self._insert_cdc_data_default(cursor, table)
+                case _:
+                    raise NotImplementedError  # TODO implementar outros modos
+        except Exception as e:
+            raise InsertCDCError(f"Erro ao inserir dados no modo CDC ({mode}): {e}")
 
     def _insert_cdc_data_default(
         self, cursor: psycopg2.extensions.cursor, table: Table
     ) -> None:
-        # Obter schema e nome da tabela
+        """
+        Insere dados de altera es em uma tabela de destino, considerando o modo
+        de inser o "default".
+
+        O modo "default" insere todos os dados da tabela, sem considerar o tipo
+        de opera o (INSERT, UPDATE, DELETE).
+
+        Args:
+            cursor (psycopg2.extensions.cursor): Cursor do banco de dados para execu o de comandos SQL.
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+
+        Raises:
+            InsertCDCError: Se ocorrer um erro ao inserir os dados.
+        """
+
         schema = table.target_schema_name
         table_name = table.target_table_name
 
@@ -505,8 +641,8 @@ class EndpointPostgreSQL(Endpoint):
                 col.name for col in table.columns.values() if col.is_primary_key
             ]
             if not pk_columns:
-                raise ValueError(
-                    f"Nenhuma PK encontrada para tabela {schema}.{table_name}"
+                raise InsertCDCError(
+                    f"Nenhuma PK encontrada para tabela", f"{schema}.{table_name}"
                 )
 
             # Filtrar colunas que não são metadados do CDC
@@ -551,8 +687,8 @@ class EndpointPostgreSQL(Endpoint):
                 col.name for col in table.columns.values() if col.is_primary_key
             ]
             if not pk_columns:
-                raise ValueError(
-                    f"Nenhuma PK encontrada para tabela {schema}.{table_name}"
+                raise InsertCDCError(
+                    f"Nenhuma PK encontrada para tabela", f"{schema}.{table_name}"
                 )
 
             # Para DELETE, podemos agrupar operações com os mesmos critérios
@@ -569,6 +705,24 @@ class EndpointPostgreSQL(Endpoint):
             execute_values(cursor, query, delete_records, page_size=10000)
 
     def capture_changes(self, **kargs) -> pl.DataFrame:
+        """
+        Captura as alterações de dados de um slot de replicação lógico.
+
+        Este método verifica se existe um slot de replicação com o nome fornecido nos argumentos.
+        Se o slot não existir, ele cria um novo slot de replicação. Em seguida, captura as
+        alterações de dados do slot de replicação e retorna como um DataFrame.
+
+        Args:
+            **kargs: Argumentos que incluem:
+                - slot_name (str): Nome do slot de replicação.
+
+        Returns:
+            pl.DataFrame: DataFrame contendo as alterações capturadas do slot de replicação.
+
+        Raises:
+            CaptureChangesError: Se ocorrer um erro ao criar ou ler o slot de replicação.
+        """
+
         try:
             slot_name = kargs.get("slot_name")
             with self.connection.cursor() as cursor:
@@ -585,8 +739,9 @@ class EndpointPostgreSQL(Endpoint):
                         PostgreSQLQueries.CREATE_REPLICATION_SLOT, (slot_name,)
                     )
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao obter/criar slot de replicação: {e}"
-            raise ValueError(raise_msg)
+            raise CaptureChangesError(
+                f"Erro ao criar slot de replicação: {e}", slot_name
+            )
 
         try:
             with self.connection.cursor() as cursor:
@@ -602,8 +757,7 @@ class EndpointPostgreSQL(Endpoint):
             return df
 
         except Exception as e:
-            raise_msg = f"ENDPOINT - Erro ao capturar alterações de dados: {e}"
-            raise ValueError(raise_msg)
+            raise CaptureChangesError(f"Erro ao ler slot de replicação: {e}", slot_name)
 
     def structure_capture_changes_to_json(
         self,
@@ -611,110 +765,169 @@ class EndpointPostgreSQL(Endpoint):
         task_tables: List[Table],
         save_files: bool = False,
     ) -> Dict[str, Any]:
-        df_changes_captured = df_changes_captured.sort("lsn")
+        """
+        Processa as mudanças capturadas em um dataframe e as transforma em um dicionário
+        com as alterações de cada tabela separadas por schema_name e table_name.
 
-        created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        id = Utils.hash_6_chars()
+        Args:
+            df_changes_captured (pl.DataFrame): DataFrame com as mudanças capturadas
+            task_tables (List[Table]): Lista com as tabelas que devem ser processadas
+            save_files (bool, optional): Flag para salvar as mudanças em arquivos. Defaults to False.
 
-        changes_structured = []
-        for xid, group in df_changes_captured.group_by("xid"):
-            transactions = self._process_transaction(group)
-            changes_structured.extend(transactions)
-        changes_structured = changes_structured[0] if changes_structured else []
+        Returns:
+            Dict[str, Any]: Dicionário com as alterações de cada tabela separadas por schema_name e table_name
 
-        filtered_changes_structured = []
-        if changes_structured:
-            for operation in changes_structured.get("operations"):
-                operation
-                schema_name = operation.get("schema_name")
-                table_name = operation.get("table_name")
-                idx = f"{schema_name}.{table_name}"
+        Raises:
+            StructureCaptureChangesToJsonError: Se ocorrer um erro ao estruturar as mudanças capturadas
+        """
 
-                table_ok = True if idx in [table.id for table in task_tables] else False
+        try:
+            df_changes_captured = df_changes_captured.sort("lsn")
 
-                if table_ok:
-                    filtered_changes_structured.append(operation)
+            created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            id = Utils.hash_6_chars()
 
-        if filtered_changes_structured:
-            changes_structured = {
-                "id": id,
-                "creted_at": created_at,
-                "operations": filtered_changes_structured,
-            }
+            changes_structured = []
+            for xid, group in df_changes_captured.group_by("xid"):
+                transactions = self._process_transaction(group)
+                changes_structured.extend(transactions)
+            changes_structured = changes_structured[0] if changes_structured else []
 
-            if save_files: # TODO CARATER TEMPORÁRIO
-                with open(f"data/cdc_data/{id}.json", "w") as f:
-                    json.dump(changes_structured, f, indent=4)
+            filtered_changes_structured = []
+            if changes_structured:
+                for operation in changes_structured.get("operations"):
+                    operation
+                    schema_name = operation.get("schema_name")
+                    table_name = operation.get("table_name")
+                    idx = f"{schema_name}.{table_name}"
 
-                df_changes_captured.write_csv(f"data/cdc_data/{id}.csv")
+                    table_ok = (
+                        True if idx in [table.id for table in task_tables] else False
+                    )
 
-            return changes_structured
+                    if table_ok:
+                        filtered_changes_structured.append(operation)
 
-        return None
-
-    def structure_capture_changes_to_dataframe(self, changes_structured: dict) -> dict:
-        # Dicionário para armazenar DataFrames por schema.table
-        tables_data = {}
-
-        for op_index, operation in enumerate(changes_structured.get("operations", [])):
-            schema_name = operation.get("schema_name")
-            table_name = operation.get("table_name")
-            op_type = operation.get("operation", "").upper()
-
-            # Pular DELETE com colunas vazias
-            if op_type == "DELETE" and not operation.get("columns"):
-                continue
-
-            # Chave para agrupamento
-            key = f"{schema_name}.{table_name}"
-
-            # Dados da linha
-            row_data = {
-                "$TREM_OPERATION": op_type,
-                "$TREM_ROWNUM": op_index,  # Usando o índice do enumerate
-            }
-
-            # Processar colunas
-            for column in operation.get("columns", []):
-                col_name = column["name"]
-                col_type = column["type"]
-                col_value = column["value"]
-
-                # Conversão de tipo numérico e data
-                col_value = DataTypes.convert_value(col_value, col_type)
-
-                row_data[col_name] = col_value
-
-            # Adicionar aos dados da tabela
-            if key not in tables_data:
-                tables_data[key] = {
-                    "schema_name": schema_name,
-                    "table_name": table_name,
-                    "rows": [],
+            if filtered_changes_structured:
+                changes_structured = {
+                    "id": id,
+                    "creted_at": created_at,
+                    "operations": filtered_changes_structured,
                 }
 
-            tables_data[key]["rows"].append(row_data)
+                if save_files:  # TODO CARATER TEMPORÁRIO
+                    with open(f"data/cdc_data/{id}.json", "w") as f:
+                        json.dump(changes_structured, f, indent=4)
 
-        # Converter para DataFrames
-        result = dict()
-        for key, table_info in tables_data.items():
-            if not table_info["rows"]:
-                continue
+                    df_changes_captured.write_csv(f"data/cdc_data/{id}.csv")
 
-            # Criar DataFrame
-            df = pl.DataFrame(table_info["rows"])
+                return changes_structured
 
-            # Garantir a ordem das colunas
-            cols = df.columns
-            cols.remove("$TREM_OPERATION")
-            cols.remove("$TREM_ROWNUM")
-            df = df.select(["$TREM_ROWNUM", "$TREM_OPERATION"] + cols)
+            return None
 
-            result[f'{table_info["schema_name"]}.{table_info["table_name"]}'] = df
+        except Exception as e:
+            raise StructureCaptureChangesToJsonError(
+                f"Erro ao estruturar as mudanças para json: {e}"
+            )
 
-        return result
+    def structure_capture_changes_to_dataframe(self, changes_structured: dict) -> dict:
+        """
+        Processa as mudanças capturadas em um dicionário e as transforma em um dicionário de DataFrames
+        com as alterações de cada tabela separadas por schema_name e table_name.
+
+        Args:
+            changes_structured (dict): Dicionário com as mudanças capturadas
+
+        Returns:
+            Dict[str, pl.DataFrame]: Dicionário com as alterações de cada tabela separadas por schema_name e table_name
+
+        Raises:
+            StructureCaptureChangesToDataFrameError: Se ocorrer um erro ao estruturar as mudanças capturadas
+        """
+
+        try:
+            tables_data = {}
+
+            for op_index, operation in enumerate(
+                changes_structured.get("operations", [])
+            ):
+                schema_name = operation.get("schema_name")
+                table_name = operation.get("table_name")
+                op_type = operation.get("operation", "").upper()
+
+                # Pular DELETE com colunas vazias
+                if op_type == "DELETE" and not operation.get("columns"):
+                    continue
+
+                # Chave para agrupamento
+                key = f"{schema_name}.{table_name}"
+
+                # Dados da linha
+                row_data = {
+                    "$TREM_OPERATION": op_type,
+                    "$TREM_ROWNUM": op_index,  # Usando o índice do enumerate
+                }
+
+                # Processar colunas
+                for column in operation.get("columns", []):
+                    col_name = column["name"]
+                    col_type = column["type"]
+                    col_value = column["value"]
+
+                    # Conversão de tipo numérico e data
+                    col_value = DataTypes.convert_value(col_value, col_type)
+
+                    row_data[col_name] = col_value
+
+                # Adicionar aos dados da tabela
+                if key not in tables_data:
+                    tables_data[key] = {
+                        "schema_name": schema_name,
+                        "table_name": table_name,
+                        "rows": [],
+                    }
+
+                tables_data[key]["rows"].append(row_data)
+
+            # Converter para DataFrames
+            result = dict()
+            for key, table_info in tables_data.items():
+                if not table_info["rows"]:
+                    continue
+
+                # Criar DataFrame
+                df = pl.DataFrame(table_info["rows"])
+
+                # Garantir a ordem das colunas
+                cols = df.columns
+                cols.remove("$TREM_OPERATION")
+                cols.remove("$TREM_ROWNUM")
+                df = df.select(["$TREM_ROWNUM", "$TREM_OPERATION"] + cols)
+
+                result[f'{table_info["schema_name"]}.{table_info["table_name"]}'] = df
+
+            return result
+
+        except Exception as e:
+            raise StructureCaptureChangesToDataFrame(
+                f"Erro ao estruturar as mudanças para dataframe: {e}"
+            )
 
     def _process_transaction(self, group: pl.DataFrame) -> Dict[str, Any]:
+        """
+        Processa um grupo de transações para extrair operações DML.
+
+        Este método percorre as linhas de um DataFrame, interpretando cada linha como parte de uma transação
+        lógica, começando com uma operação "begin" e terminando com uma operação "commit". Durante o percurso,
+        operações DML válidas ("insert", "update", "delete") são coletadas em uma lista de operações.
+
+        Args:
+            group (pl.DataFrame): DataFrame contendo as linhas de dados a serem processadas.
+
+        Returns:
+            Dict[str, Any]: Um dicionário contendo transações processadas, cada uma incluindo suas operações DML.
+        """
+
         transactions = []
         current_transaction = None
 
@@ -739,6 +952,16 @@ class EndpointPostgreSQL(Endpoint):
         return transactions
 
     def _parse_data_line(self, line: str) -> Dict[str, Any]:
+        """
+        Analisa uma linha do log de mudanças e extrai as informações sobre a operação DML
+
+        Args:
+            line (str): Linha do log de mudanças
+
+        Returns:
+            Dict[str, Any]: Dicionário com as informações sobre a operação DML
+        """
+
         if line.startswith(("BEGIN", "COMMIT")):
             return {"operation": line.split()[0].lower()}
 

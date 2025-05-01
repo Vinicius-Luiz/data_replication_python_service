@@ -16,7 +16,6 @@ class CDCStrategy(ReplicationStrategy):
 
     def __init__(self, interval_seconds: int):
         self.interval_seconds = interval_seconds
-        self._validate_interval()
 
     def execute(self, task: Task) -> None:
         """
@@ -40,16 +39,11 @@ class CDCStrategy(ReplicationStrategy):
             self._emergency_shutdown()
             raise
 
-    def _validate_interval(self) -> None:
-        """Valida se o intervalo é positivo."""
-        if self.interval_seconds <= 0:
-            raise ValueError("Intervalo deve ser maior que zero")
-
     def _setup_environment(self, task: Task) -> None:
         """Configura o ambiente para execução."""
         Utils.write_task_pickle(task)
         Utils.configure_logging()
-        logging.info(f"Iniciando CDC com intervalo de {self.interval_seconds}s")
+        logging.info(f"STRATEGY - Iniciando CDC com intervalo de {self.interval_seconds}s")
 
     def _start_consumer(self) -> None:
         """Inicia o processo do consumer em segundo plano."""
@@ -89,10 +83,10 @@ class CDCStrategy(ReplicationStrategy):
 
     def _graceful_shutdown(self) -> None:
         """Encerra os processos de forma controlada."""
-        logging.info("Interrompendo processo CDC...")
+        logging.info("STRATEGY - Interrompendo processo CDC")
         self.consumer_process.terminate()
         self.consumer_process.wait()
-        logging.info("CDC encerrado com sucesso")
+        logging.info("STRATEGY - CDC encerrado com sucesso")
 
     def _emergency_shutdown(self) -> None:
         """Encerra os processos em caso de erro."""

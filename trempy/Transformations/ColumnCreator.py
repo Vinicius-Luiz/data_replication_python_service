@@ -3,7 +3,6 @@ from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator a
 from trempy.Transformations.Exceptions.Exception import *
 from trempy.Endpoints.DataTypes import EndpointDataTypePostgreSQL
 from trempy.Shared.Types import TransformationOperationType
-from trempy.Shared.Utils import Utils
 from trempy.Columns.Column import Column
 from typing import Dict, List, Any, TYPE_CHECKING
 
@@ -94,14 +93,10 @@ class ColumnCreator:
         """
 
         if not new_column_name:
-            raise NewColumnNameError(
-                "O contrato deve conter 'new_column_name'", None
-            )
+            raise NewColumnNameError("O contrato deve conter 'new_column_name'", None)
 
         if new_column_name in table.data.columns:
-            raise NewColumnNameError(
-                "A coluna já existe no DataFrame", new_column_name
-            )
+            raise NewColumnNameError("A coluna já existe no DataFrame", new_column_name)
 
     @staticmethod
     def _validate_dependent_columns(depends_on: List[str], table: Table) -> None:
@@ -283,29 +278,26 @@ class ColumnCreator:
             - Os dados transformados
             - Os metadados atualizados (schema)
         """
-        try:
-            # Extrai parâmetros do contrato
-            new_column_name = contract.get("new_column_name")
-            operation = TransformationOperationType(contract.get("operation"))
-            depends_on = contract.get("depends_on", [])
 
-            # Busca operações
-            operations = cls.get_operations(depends_on, contract)
+        # Extrai parâmetros do contrato
+        new_column_name = contract.get("new_column_name")
+        operation = TransformationOperationType(contract.get("operation"))
+        depends_on = contract.get("depends_on", [])
 
-            # Validações
-            cls._validate_basic_contract(new_column_name, table)
-            cls._validate_dependent_columns(depends_on, table)
-            op_config = cls._validate_operation(operation, operations)
-            cls._validate_required_params(op_config, contract)
-            cls._validate_column_types(depends_on, op_config, table)
+        # Busca operações
+        operations = cls.get_operations(depends_on, contract)
 
-            # Execução
-            table.data = table.data.with_columns(op_config["func"]().alias(new_column_name))
+        # Validações
+        cls._validate_basic_contract(new_column_name, table)
+        cls._validate_dependent_columns(depends_on, table)
+        op_config = cls._validate_operation(operation, operations)
+        cls._validate_required_params(op_config, contract)
+        cls._validate_column_types(depends_on, op_config, table)
 
-            # Atualiza metadados
-            table = cls._update_metadata(table, new_column_name)
+        # Execução
+        table.data = table.data.with_columns(op_config["func"]().alias(new_column_name))
 
-            return table
-        
-        except Exception as e:
-            Utils.log_exception_and_exit(e)
+        # Atualiza metadados
+        table = cls._update_metadata(table, new_column_name)
+
+        return table
