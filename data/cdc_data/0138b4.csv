@@ -1,4 +1,0 @@
-lsn,xid,data
-4/14FC0698,1414,BEGIN 1414
-4/14FC0698,1414,table employees.the_office: INSERT: id[integer]:3 name[character varying]:'Jim Halpert]' age[integer]:26 created_date[timestamp without time zone]:'2025-04-30 00:00:00'
-4/14FC0720,1414,COMMIT 1414

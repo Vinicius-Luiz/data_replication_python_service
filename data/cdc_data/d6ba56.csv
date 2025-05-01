@@ -1,4 +1,0 @@
-lsn,xid,data
-4/E1A9FE08,1476,BEGIN 1476
-4/E1A9FE08,1476,table employees.the_office_season: DELETE: id[integer]:0 season_number[integer]:1
-4/E1A9FE80,1476,COMMIT 1476

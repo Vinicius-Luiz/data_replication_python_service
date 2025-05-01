@@ -5,6 +5,7 @@ from time import sleep
 from trempy.Shared.Utils import Utils
 from trempy.Tasks.Task import Task
 from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
+from trempy.Replication.Exceptions.Exception import *
 
 
 class CDCStrategy(ReplicationStrategy):
@@ -35,9 +36,9 @@ class CDCStrategy(ReplicationStrategy):
         except KeyboardInterrupt:
             self._graceful_shutdown()
         except Exception as e:
-            logging.critical(f"Erro inesperado: {str(e)}")
             self._emergency_shutdown()
-            raise
+            e = UnsportedExceptionError(f"Erro inesperado: {str(e)}")
+            Utils.log_exception_and_exit(e)
 
     def _setup_environment(self, task: Task) -> None:
         """Configura o ambiente para execução."""
@@ -58,7 +59,8 @@ class CDCStrategy(ReplicationStrategy):
         """Executa o loop principal do CDC."""
         while True:
             if not self._run_producer():
-                raise RuntimeError("Falha no producer")
+                e = ReplicationRuntimeError("Erro ao executar o producer")
+                Utils.log_exception_and_exit(e)
 
             self._check_consumer_status()
             self._wait_next_cycle()
@@ -72,9 +74,8 @@ class CDCStrategy(ReplicationStrategy):
         """Verifica se o consumer está rodando corretamente."""
         if self.consumer_process.poll() is not None:
             exit_code = self.consumer_process.returncode
-            raise RuntimeError(
-                f"Consumer terminou inesperadamente (código: {exit_code})"
-            )
+            e = ReplicationRuntimeError(f"Consumer encerrado inesperadamente (código: {exit_code})")
+            Utils.log_exception_and_exit(e)
 
     def _wait_next_cycle(self) -> None:
         """Aguarda o próximo ciclo de execução."""

@@ -1,5 +1,7 @@
 from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
-from trempy.Endpoints.EndpointPostgreSQL import EndpointPostgreSQL
+from trempy.Endpoints.Databases.PostgreSQL.Endpoint import EndpointPostgreSQL
+from trempy.Endpoints.Exceptions.Exception import *
+from trempy.Shared.Utils import Utils
 import logging
 
 
@@ -38,4 +40,5 @@ class EndpointFactory:
                 endpoint_type, endpoint_name, credentials
             )
         else:
-            raise ValueError(f"Database type {database_type} inválido")
+            e = InvalidDatabaseTypeError("Tipo de banco de dados inválido", database_type)
+            Utils.log_exception_and_exit(e)

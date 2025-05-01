@@ -1,4 +1,0 @@
-lsn,xid,data
-4/E1AA0090,1480,BEGIN 1480
-4/E1AA0090,1480,table employees.eletronic_history: DELETE: id[integer]:0 date_acquisition[date]:'2022-05-14'
-4/E1AA0108,1480,COMMIT 1480

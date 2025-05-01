@@ -4,6 +4,7 @@ from trempy.Transformations.FunctionColumnModifier import (
 )
 from trempy.Transformations.Exceptions.Exception import *
 from trempy.Shared.Types import TransformationOperationType
+from trempy.Shared.Utils import Utils
 from typing import Dict, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -109,14 +110,16 @@ class ColumnModifier:
         """
 
         if not column_name:
-            raise ColumnNameError("O contrato deve conter 'column_name'", None)
+            e = ColumnNameError("O contrato deve conter 'column_name'", None)
+            Utils.log_exception_and_exit(e)
 
         if column_name not in table.data.columns:
             available = list(table.data.columns)
-            raise ColumnNameError(
+            e = ColumnNameError(
                 f"A coluna não existe no DataFrame. Disponíveis: {available}",
                 column_name,
             )
+            Utils.log_exception_and_exit(e)
 
     @staticmethod
     def _validate_operation(
@@ -143,9 +146,10 @@ class ColumnModifier:
 
         if operation not in operations:
             valid_ops = list(operations.keys())
-            raise InvalidOperationError(
+            e = InvalidOperationError(
                 f"Operação não suportada. Válidas: {valid_ops}", operation
             )
+            Utils.log_exception_and_exit(e)
         return operations[operation]
 
     @staticmethod
@@ -166,7 +170,8 @@ class ColumnModifier:
 
         for param in op_config.get("required_params", []):
             if param not in contract:
-                raise RequiredParameterError("Parâmetro obrigatório faltando", param)
+                e = RequiredParameterError("Parâmetro obrigatório faltando", param)
+                Utils.log_exception_and_exit(e)
 
     @staticmethod
     def _validate_column_type(
@@ -205,12 +210,13 @@ class ColumnModifier:
 
         if not any(isinstance(actual_type, t) for t in expected_types):
             expected_names = [t.__name__ for t in expected_types]
-            raise InvalidColumnTypeError(
-                    f"Tipo inválido para coluna. "
-                    f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}",
-                    column_name,
-                    type(actual_type).__name__,
-                )
+            e = InvalidColumnTypeError(
+                f"Tipo inválido para coluna. "
+                f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}",
+                column_name,
+                type(actual_type).__name__,
+            )
+            Utils.log_exception_and_exit(e)
 
     @classmethod
     def modify_column(cls, contract: Dict[str, Any], table: Table) -> Table:

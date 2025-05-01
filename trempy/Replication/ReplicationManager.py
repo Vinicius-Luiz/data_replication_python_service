@@ -10,6 +10,7 @@ from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
+from trempy.Replication.Exceptions.Exception import *
 
 
 class ReplicationManager:
@@ -138,6 +139,5 @@ class ReplicationManager:
 
             strategy.execute(task=self.task)
         except Exception as e:
-            msg_raise = f"Erro durante a execução: {str(e)}"
-            logging.critical(msg_raise)
-            raise ValueError(msg_raise)
+            e = ReplicationRunError(f"Erro durante a execução: {str(e)}")
+            Utils.log_exception_and_exit(e)

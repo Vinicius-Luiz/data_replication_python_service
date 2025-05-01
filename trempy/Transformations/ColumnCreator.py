@@ -4,6 +4,7 @@ from trempy.Transformations.Exceptions.Exception import *
 from trempy.Endpoints.DataTypes import EndpointDataTypePostgreSQL
 from trempy.Shared.Types import TransformationOperationType
 from trempy.Columns.Column import Column
+from trempy.Shared.Utils import Utils
 from typing import Dict, List, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -93,10 +94,12 @@ class ColumnCreator:
         """
 
         if not new_column_name:
-            raise NewColumnNameError("O contrato deve conter 'new_column_name'", None)
+            e = NewColumnNameError("O contrato deve conter 'new_column_name'", None)
+            Utils.log_exception_and_exit(e)
 
         if new_column_name in table.data.columns:
-            raise NewColumnNameError("A coluna já existe no DataFrame", new_column_name)
+            e = NewColumnNameError("A coluna já existe no DataFrame", new_column_name)
+            Utils.log_exception_and_exit(e)
 
     @staticmethod
     def _validate_dependent_columns(depends_on: List[str], table: Table) -> None:
@@ -115,10 +118,11 @@ class ColumnCreator:
         for col in depends_on:
             if col not in table.data.columns:
                 available = list(table.data.columns)
-                raise InvalidDependencyError(
+                e = InvalidDependencyError(
                     f"Coluna dependente não encontrada. Disponíveis: {available}",
                     col,
                 )
+                Utils.log_exception_and_exit(e)
 
     @staticmethod
     def _validate_operation(
@@ -143,9 +147,10 @@ class ColumnCreator:
 
         if operation not in operations:
             valid_ops = list(operations.keys())
-            raise InvalidOperationError(
+            e = InvalidOperationError(
                 f"Operação não suportada. Válidas: {valid_ops}", operation
             )
+            Utils.log_exception_and_exit(e)
         return operations[operation]
 
     @staticmethod
@@ -172,7 +177,8 @@ class ColumnCreator:
 
         for param in op_config.get("required_params", []):
             if param not in contract:
-                raise RequiredParameterError("Parâmetro obrigatório faltando", param)
+                e = RequiredParameterError("Parâmetro obrigatório faltando", param)
+                Utils.log_exception_and_exit(e)
 
     @staticmethod
     def _validate_column_types(
@@ -214,12 +220,13 @@ class ColumnCreator:
 
             if not any(isinstance(actual_type, t) for t in expected_types):
                 expected_names = [t.__name__ for t in expected_types]
-                raise InvalidColumnTypeError(
+                e = InvalidColumnTypeError(
                     f"Tipo inválido para coluna. "
                     f"Esperado: {expected_names}, Recebido: {type(actual_type).__name__}",
                     col,
                     type(actual_type).__name__,
                 )
+                Utils.log_exception_and_exit(e)
 
     @classmethod
     def _update_metadata(cls, table: Table, new_column_name: str) -> Table:
@@ -248,10 +255,11 @@ class ColumnCreator:
                 is_primary_key=False,
             )
         except Exception as e:
-            raise UpdateMetadataError(
+            e = UpdateMetadataError(
                 f"Erro ao atualizar metadados: {e}",
                 f"{table.target_schema_name}.{table.target_table_name}",
             )
+            Utils.log_exception_and_exit(e)
 
         return table
 

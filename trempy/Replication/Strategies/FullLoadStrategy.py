@@ -4,6 +4,7 @@ from trempy.Tasks.Task import Task
 import logging
 import sys
 
+
 class FullLoadStrategy(ReplicationStrategy):
     """
     Estratégia de replicação para Full Load que executa sequencialmente:
@@ -22,17 +23,15 @@ class FullLoadStrategy(ReplicationStrategy):
             SystemExit: Se qualquer um dos processos falhar.
         """
         self._setup_environment(task)
-        
+
         logging.info("STRATEGY - Iniciando processo de Full Load")
-        
+
         if not self._run_extraction():
-            logging.critical("STRATEGY - Falha na extração de dados")
             sys.exit(1)
-            
+
         if not self._run_loading():
-            logging.critical("STRATEGY - Falha no carregamento de dados")
             sys.exit(1)
-            
+
         logging.info("STRATEGY - Full Load concluído com sucesso")
 
     def _setup_environment(self, task: Task) -> None:

@@ -1,0 +1,87 @@
+{
+    "id": "cb17b8",
+    "creted_at": "2025-05-01 19:02:32",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "the_office",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "1"
+                },
+                {
+                    "name": "name",
+                    "type": "character varying",
+                    "value": "[Michael Scott"
+                },
+                {
+                    "name": "age",
+                    "type": "integer",
+                    "value": "40"
+                },
+                {
+                    "name": "created_date",
+                    "type": "timestamp without time zone",
+                    "value": "2025-05-01 00:00:00"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "2"
+                },
+                {
+                    "name": "name",
+                    "type": "character varying",
+                    "value": "[Pam Beesly]"
+                },
+                {
+                    "name": "age",
+                    "type": "integer",
+                    "value": "24"
+                },
+                {
+                    "name": "created_date",
+                    "type": "timestamp without time zone",
+                    "value": "2025-05-01 00:00:00"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "3"
+                },
+                {
+                    "name": "name",
+                    "type": "character varying",
+                    "value": "Jim Halpert]"
+                },
+                {
+                    "name": "age",
+                    "type": "integer",
+                    "value": "26"
+                },
+                {
+                    "name": "created_date",
+                    "type": "timestamp without time zone",
+                    "value": "2025-05-01 00:00:00"
+                }
+            ]
+        }
+    ]
+}

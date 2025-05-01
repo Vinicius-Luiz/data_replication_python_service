@@ -1,0 +1,72 @@
+{
+    "id": "899cab",
+    "creted_at": "2025-05-01 19:02:29",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "the_office_season",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "0"
+                },
+                {
+                    "name": "season_number",
+                    "type": "integer",
+                    "value": "1"
+                },
+                {
+                    "name": "description",
+                    "type": "character varying",
+                    "value": "Temporada sofr\u00edvel"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office_season",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "1"
+                },
+                {
+                    "name": "season_number",
+                    "type": "integer",
+                    "value": "2"
+                },
+                {
+                    "name": "description",
+                    "type": "character varying",
+                    "value": "Melhor desenvolvimento do Michael Scott"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "the_office_season",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "2"
+                },
+                {
+                    "name": "season_number",
+                    "type": "integer",
+                    "value": "3"
+                },
+                {
+                    "name": "description",
+                    "type": "character varying",
+                    "value": "Melhor desenvolvimento do casal Jim e Pam"
+                }
+            ]
+        }
+    ]
+}

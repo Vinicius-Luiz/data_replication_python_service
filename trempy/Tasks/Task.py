@@ -2,6 +2,7 @@ from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Transformations.Transformation import Transformation
 from trempy.Tasks.Exceptions.Exception import *
 from trempy.Filters.Filter import Filter
+from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 from trempy.Shared.Types import TaskType, EndpointType, DatabaseType
 from typing import List, Optional
@@ -79,18 +80,21 @@ class Task:
         """
 
         if self.replication_type not in TaskType:
-            raise InvalidTaskTypeError("Tipo de tarefa inválido", self.replication_type)
+            e = InvalidTaskTypeError("Tipo de tarefa inválido", self.replication_type)
+            Utils.log_exception_and_exit(e)
 
         if self.interval_seconds <= 0:
-            raise InvalidIntervalSecondsError(
+            e = InvalidIntervalSecondsError(
                 "Intervalo de execução da tarefa inválido", self.interval_seconds
             )
+            Utils.log_exception_and_exit(e)
 
         partner = re.compile(r"^[a-z0-9_]+$")
         task_name_valid = bool(partner.match(self.task_name))
 
         if not task_name_valid:
-            raise InvalidTaskNameError("Nome da tarefa inválido", self.task_name)
+            e = InvalidTaskNameError("Nome da tarefa inválido", self.task_name)
+            Utils.log_exception_and_exit(e)
 
         logging.info(f"TASK - {self.task_name} válido")
 
@@ -161,9 +165,10 @@ class Task:
 
             return {"success": True, "tables": self.tables}
         except Exception as e:
-            raise AddTablesError(
+            e = AddTablesError(
                 f"Erro ao adicionar tabelas: {e}", f"{schema_name}.{table_name}"
             )
+            Utils.log_exception_and_exit(e)
 
     def add_transformation(
         self, schema_name: str, table_name: str, transformation: Transformation
@@ -190,9 +195,10 @@ class Task:
             table = self.find_table(schema_name, table_name)
             table.transformations.append(transformation)
         except Exception as e:
-            raise AddTransformationError(
+            e = AddTransformationError(
                 f"Erro ao adicionar transformação: {e}", f"{schema_name}.{table_name}"
             )
+            Utils.log_exception_and_exit(e)
 
     def add_filter(self, schema_name: str, table_name: str, filter: Filter) -> None:
         """
@@ -213,9 +219,10 @@ class Task:
             table = self.find_table(schema_name, table_name)
             table.filters.append(filter)
         except Exception as e:
-            raise AddFilterError(
+            e = AddFilterError(
                 f"Erro ao adicionar filtro: {e}", f"{schema_name}.{table_name}"
             )
+            Utils.log_exception_and_exit(e)
 
     def find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
@@ -331,10 +338,11 @@ class Task:
                     "slot_name": self.task_name,
                 }
             case _:
-                raise DatabaseNotImplementedError(
+                e = DatabaseNotImplementedError(
                     "Banco de dados não implementado",
                     self.source_endpoint.database_type,
                 )
+                Utils.log_exception_and_exit(e)
 
         changes_captured = self.source_endpoint.capture_changes(**kargs)
 

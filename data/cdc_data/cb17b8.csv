@@ -1,0 +1,6 @@
+lsn,xid,data
+4/FEEAE050,1497,BEGIN 1497
+4/FEEAE050,1497,table employees.the_office: INSERT: id[integer]:1 name[character varying]:'[Michael Scott' age[integer]:40 created_date[timestamp without time zone]:'2025-05-01 00:00:00'
+4/FEEAE0A8,1497,table employees.the_office: INSERT: id[integer]:2 name[character varying]:'[Pam Beesly]' age[integer]:24 created_date[timestamp without time zone]:'2025-05-01 00:00:00'
+4/FEEAE100,1497,table employees.the_office: INSERT: id[integer]:3 name[character varying]:'Jim Halpert]' age[integer]:26 created_date[timestamp without time zone]:'2025-05-01 00:00:00'
+4/FEEAE188,1497,COMMIT 1497

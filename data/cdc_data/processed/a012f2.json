@@ -1,0 +1,23 @@
+{
+    "id": "a012f2",
+    "creted_at": "2025-05-01 19:26:08",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "the_office_season",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "integer",
+                    "value": "0"
+                },
+                {
+                    "name": "season_number",
+                    "type": "integer",
+                    "value": "1"
+                }
+            ]
+        }
+    ]
+}

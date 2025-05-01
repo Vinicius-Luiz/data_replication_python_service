@@ -4,6 +4,7 @@ from trempy.Shared.Types import TransformationType, PriorityType
 from trempy.Transformations.Exceptions.Exception import *
 from trempy.Transformations.ColumnModifier import ColumnModifier
 from trempy.Transformations.ColumnCreator import ColumnCreator
+from trempy.Shared.Utils import Utils
 import logging
 
 if TYPE_CHECKING:
@@ -44,7 +45,8 @@ class Transformation:
         """
 
         if self.transformation_type not in TransformationType:
-            raise InvalidTransformationTypeError('Tipo de transformação inválido', self.transformation_type)
+            e = InvalidTransformationTypeError('Tipo de transformação inválido', self.transformation_type)
+            Utils.log_exception_and_exit(e)
 
     def execute(self, table: Table = None) -> None:
         """
@@ -85,7 +87,8 @@ class Transformation:
                 case TransformationType.REMOVE_PRIMARY_KEY:
                     return self._execute_remove_primary_key(table)
         except Exception as e:
-            raise TransformationError(str(e))
+            e = TransformationError(str(e))
+            Utils.log_exception_and_exit(e)
 
     def _execute_modify_schema_name(self, table: Table) -> Table:
         """

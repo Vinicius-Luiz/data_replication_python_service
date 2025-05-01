@@ -6,8 +6,8 @@ from trempy.Endpoints.Decorators.EndpointDecorators import (
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
 from trempy.Shared.Types import DatabaseType, EndpointType
+from trempy.Shared.Utils import Utils
 import polars as pl
-import logging
 
 
 class Endpoint(ABC):
@@ -58,14 +58,16 @@ class Endpoint(ABC):
             InvalidEndpointTypeError: Se o tipo do endpoint for inválido.
         """
         if self.database_type not in DatabaseType:
-            raise InvalidDatabaseTypeError(
+            e = InvalidDatabaseTypeError(
                 "Tipo de banco de dados inválido", self.database_type
             )
+            Utils.log_exception_and_exit(e)
 
         if self.endpoint_type not in EndpointType:
-            raise InvalidEndpointTypeError(
+            e = InvalidEndpointTypeError(
                 "Tipo de endpoint inválido", self.endpoint_type
             )
+            Utils.log_exception_and_exit(e)
 
     @abstractmethod
     @source_method

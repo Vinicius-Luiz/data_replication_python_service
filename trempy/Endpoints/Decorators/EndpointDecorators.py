@@ -1,4 +1,6 @@
-from trempy.Shared.Types import DatabaseType, EndpointType
+from trempy.Endpoints.Exceptions.Exception import *
+from trempy.Shared.Types import EndpointType
+from trempy.Shared.Utils import Utils
 from functools import wraps
 
 def source_method(func):
@@ -14,7 +16,8 @@ def source_method(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self.endpoint_type != EndpointType.SOURCE:
-            raise ValueError(f'O método {func.__name__} está disponível apenas para endpoints do tipo Source.')
+            e = MethodNotSupportedError(f"O método está disponível apenas para endpoints do tipo Source.", func.__name__)
+            Utils.log_exception_and_exit(e)
         return func(self, *args, **kwargs)
     return wrapper
 
@@ -31,6 +34,7 @@ def target_method(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self.endpoint_type != EndpointType.TARGET:
-            raise ValueError(f'O método {func.__name__} está disponível apenas para endpoints do tipo Target.')
+            e = MethodNotSupportedError(f"O método está disponível apenas para endpoints do tipo Target.", func.__name__)
+            Utils.log_exception_and_exit(e)
         return func(self, *args, **kwargs)
     return wrapper

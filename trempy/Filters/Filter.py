@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from trempy.Shared.Types import FilterType
 from trempy.Filters.Exceptions.Exception import *
 from typing import Union, List, Type, get_args, get_origin
+from trempy.Shared.Utils import Utils
 from datetime import datetime
 import polars as pl
 
@@ -56,7 +57,8 @@ class Filter:
         """
 
         if self.filter_type not in FilterType:
-            raise InvalidFilterTypeError("Tipo de filtro inválido", self.filter_type)
+            e = InvalidFilterTypeError("Tipo de filtro inválido", self.filter_type)
+            Utils.log_exception_and_exit(e)
 
     def _validate_column_exists(self, table: Table) -> None:
         """Valida se a coluna existe no DataFrame.
@@ -69,11 +71,12 @@ class Filter:
         """
         if self.column_name not in table.data.columns:
             available = list(table.data.columns)
-            raise ColumnNotFoundError(
+            e = ColumnNotFoundError(
                 f"Coluna '{self.column_name}' não encontrada"
                 f"Colunas disponíveis: {available}",
                 self.column_name,
             )
+            Utils.log_exception_and_exit(e)
 
     def _validate_type(self, type_required: Type, value_param: str = None) -> None:
         """Valida se o tipo do valor do filtro corresponde ao tipo requerido.
@@ -105,10 +108,11 @@ class Filter:
             issubclass(value_type, t) for t in allowed_types if isinstance(t, type)
         ):
             allowed_names = [t.__name__ for t in allowed_types]
-            raise InvalidTypeValueError(
+            e = InvalidTypeValueError(
                 f"Tipo inválido para o valor do filtro. Esperado: {allowed_names}",
                 value_type.__name__,
             )
+            Utils.log_exception_and_exit(e)
 
     def _validate_filter_date(self, table: Table, value_param: str) -> None:
         """Valida se o tipo do valor do filtro corresponde ao tipo requerido.
@@ -132,16 +136,18 @@ class Filter:
         self.col_type = table.data.schema[self.column_name]
 
         if not isinstance(self.col_type, (pl.Date, pl.Datetime)):
-            raise InvalidTypeDateError(
+            e = InvalidTypeDateError(
                 f"Coluna {self.column_name} deve ser do tipo Date ou Datetime",
                 self.col_type.__class__.__name__,
             )
+            Utils.log_exception_and_exit(e)
 
         if not isinstance(value_param, str):
-            raise InvalidTypeValueError(
+            e = InvalidTypeValueError(
                 f"Valor para comparação de datas deve ser string, ",
                 type(value_param).__name__,
             )
+            Utils.log_exception_and_exit(e)
 
     def execute(self, table: Table) -> Table:
         """Aplica o filtro no DataFrame da tabela conforme o tipo especificado.
@@ -208,7 +214,8 @@ class Filter:
                 case FilterType.DATE_NOT_BETWEEN:
                     return self._execute_date_not_between(table)
         except Exception as e:
-            raise FilterError(str(e))
+            e = FilterError(str(e))
+            Utils.log_exception_and_exit(e)
 
     def _convert_str_to_date(self, value: str):
         """Converte string para Date ou Datetime conforme o tipo da coluna.
@@ -234,11 +241,12 @@ class Filter:
                 )
 
         except Exception as e:
-            raise ValueError(
+            e = ValueError(
                 f"Falha ao converter valor '{value}'. "
                 f"Formato esperado: {'YYYY-MM-DD' if isinstance(self.col_type, pl.Date) else 'YYYY-MM-DD HH:MM:SS'}. "
                 f"Erro: {str(e)}"
             )
+            Utils.log_exception_and_exit(e)
 
         return date_value
 
