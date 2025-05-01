@@ -1,0 +1,6 @@
+lsn,xid,data
+4/E1A9CF38,1472,BEGIN 1472
+4/E1A9CF38,1472,table employees.eletronic_history: INSERT: id[integer]:0 date_acquisition[date]:'2022-05-14'
+4/E1A9D0D8,1472,table employees.eletronic_history: INSERT: id[integer]:1 date_acquisition[date]:'2023-05-13'
+4/E1A9D158,1472,table employees.eletronic_history: INSERT: id[integer]:2 date_acquisition[date]:'2025-04-28'
+4/E1A9D208,1472,COMMIT 1472

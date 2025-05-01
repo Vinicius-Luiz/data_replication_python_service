@@ -1,0 +1,6 @@
+lsn,xid,data
+4/E1A54488,1468,BEGIN 1468
+4/E1A54488,1468,table employees.department: INSERT: id[character]:'d008' dept_name[character varying]:'Logistic'
+4/E1A55AE0,1468,table employees.department: INSERT: id[character]:'d009' dept_name[character varying]:'Relationship'
+4/E1A55BB8,1468,table employees.department: INSERT: id[character]:'d010' dept_name[character varying]:'Architecture'
+4/E1A55CC0,1468,COMMIT 1468

@@ -1,0 +1,5 @@
+lsn,xid,data
+4/E1A9FE80,1477,BEGIN 1477
+4/E1A9FE80,1477,table employees.the_office_season: DELETE: id[integer]:1 season_number[integer]:2
+4/E1A9FEC8,1477,table employees.the_office_season: DELETE: id[integer]:2 season_number[integer]:3
+4/E1A9FF40,1477,COMMIT 1477

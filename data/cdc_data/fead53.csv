@@ -1,0 +1,5 @@
+lsn,xid,data
+4/14FC4C80,1417,BEGIN 1417
+4/14FC4C80,1417,table employees.the_office: INSERT: id[integer]:1 name[character varying]:'[Michael Scott' age[integer]:40 created_date[timestamp without time zone]:'2025-04-30 00:00:00'
+4/14FC4D70,1417,table employees.the_office: INSERT: id[integer]:2 name[character varying]:'[Pam Beesly]' age[integer]:24 created_date[timestamp without time zone]:'2025-04-30 00:00:00'
+4/14FC4DF8,1417,COMMIT 1417

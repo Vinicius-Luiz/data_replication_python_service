@@ -1,0 +1,6 @@
+lsn,xid,data
+4/E1A7A500,1470,BEGIN 1470
+4/E1A7A500,1470,table employees.the_office_season: INSERT: id[integer]:0 season_number[integer]:1 description[character varying]:'Temporada sofrível'
+4/E1A7A5F8,1470,table employees.the_office_season: INSERT: id[integer]:1 season_number[integer]:2 description[character varying]:'Melhor desenvolvimento do Michael Scott'
+4/E1A7A6A0,1470,table employees.the_office_season: INSERT: id[integer]:2 season_number[integer]:3 description[character varying]:'Melhor desenvolvimento do casal Jim e Pam'
+4/E1A7A780,1470,COMMIT 1470

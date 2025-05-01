@@ -172,5 +172,3 @@ cython_debug/
 
 # Personalizado
 tst.py
-data/full_load_data/*.csv
-data/cdc_data/*.csv

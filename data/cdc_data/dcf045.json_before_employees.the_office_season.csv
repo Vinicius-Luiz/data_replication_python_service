@@ -1,0 +1,4 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,season_number,description
+0,INSERT,0,1,Temporada sofrível
+1,INSERT,1,2,Melhor desenvolvimento do Michael Scott
+2,INSERT,2,3,Melhor desenvolvimento do casal Jim e Pam

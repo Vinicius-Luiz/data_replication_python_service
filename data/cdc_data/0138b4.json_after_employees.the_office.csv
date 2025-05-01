@@ -1,0 +1,2 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,name,age,created_date,sync_date
+0,INSERT,3,Jim Halpert],26,2025-04-30 00:00:00,2025-04-30T00:22:52.397833
