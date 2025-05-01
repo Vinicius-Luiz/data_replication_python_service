@@ -1,0 +1,16 @@
+lsn,xid,data
+4/E1A9FBF8,1474,BEGIN 1474
+4/E1A9FBF8,1474,table employees.department: DELETE: id[character]:'d008'
+4/E1A9FC40,1474,table employees.department: DELETE: id[character]:'d009'
+4/E1A9FC88,1474,table employees.department: DELETE: id[character]:'d010'
+4/E1A9FD00,1474,COMMIT 1474
+4/E1A9FE08,1476,BEGIN 1476
+4/E1A9FE08,1476,table employees.the_office_season: DELETE: id[integer]:0 season_number[integer]:1
+4/E1A9FE80,1476,COMMIT 1476
+4/E1A9FE80,1477,BEGIN 1477
+4/E1A9FE80,1477,table employees.the_office_season: DELETE: id[integer]:1 season_number[integer]:2
+4/E1A9FEC8,1477,table employees.the_office_season: DELETE: id[integer]:2 season_number[integer]:3
+4/E1A9FF40,1477,COMMIT 1477
+4/E1AA0090,1480,BEGIN 1480
+4/E1AA0090,1480,table employees.eletronic_history: DELETE: id[integer]:0 date_acquisition[date]:'2022-05-14'
+4/E1AA0108,1480,COMMIT 1480

@@ -67,8 +67,6 @@ class Endpoint(ABC):
                 "Tipo de endpoint inválido", self.endpoint_type
             )
 
-        logging.info(f"ENDPOINT - {self.endpoint_name} válido")
-
     @abstractmethod
     @source_method
     def get_schemas(self) -> list:

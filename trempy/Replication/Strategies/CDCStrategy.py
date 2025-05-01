@@ -78,7 +78,6 @@ class CDCStrategy(ReplicationStrategy):
 
     def _wait_next_cycle(self) -> None:
         """Aguarda o próximo ciclo de execução."""
-        logging.debug(f"Aguardando {self.interval_seconds} segundos...")
         sleep(self.interval_seconds)
 
     def _graceful_shutdown(self) -> None:

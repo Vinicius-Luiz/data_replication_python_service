@@ -8,7 +8,7 @@ Utils.configure_logging()
 
 task: Task = Utils.read_task_pickle()
 
-target_endpoint = EndpointFactory.create_endpoint(**credentials.get("target_endpoint"))
+target_endpoint = EndpointFactory.create_endpoint(**credentials.get("target_endpoint")) # TODO criar endpoint somente quando vinher uma mensagem
 
 task.add_endpoint(target_endpoint)
 

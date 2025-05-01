@@ -18,8 +18,7 @@ class Utils:
         Configura o logging do aplicativo.
 
         Remove todos os handlers existentes e configura um novo handler
-        para gravar mensagens de log no arquivo "app.log" com nível de
-        detalhamento DEBUG.
+        para gravar mensagens de log no arquivo "app.log"
         """
         for handler in logging.root.handlers[:]:
             logging.root.removeHandler(handler)
@@ -46,7 +45,6 @@ class Utils:
         Salva a configuração da tarefa no arquivo "settings.pickle".
         """
 
-        logging.debug("Salvando configuração da tarefa em settings.pickle")
         with open("task/settings.pickle", "wb") as f:
             pickle.dump(task, f)
 
