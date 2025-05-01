@@ -2,7 +2,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 
@@ -29,7 +29,7 @@ class TableCreator:
         try:
             columns_sql = self._mount_columns_to_create_table(table)
             primary_key_sql = self._mount_primary_key_to_create_table(table)
-            return PostgreSQLQueries.CREATE_TABLE.format(
+            return Query.CREATE_TABLE.format(
                 schema=table.target_schema_name,
                 table=table.target_table_name,
                 columns=columns_sql,

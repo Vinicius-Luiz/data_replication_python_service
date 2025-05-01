@@ -5,7 +5,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
 from trempy.Shared.Utils import Utils
-from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
 from psycopg2.extras import execute_values
@@ -127,7 +127,7 @@ class CDCOperationsHandler:
                 [row[col] for col in data_columns] for row in operations["INSERT"]
             ]
 
-            query = sql.SQL(PostgreSQLQueries.CDC_INSERT_DATA).format(
+            query = sql.SQL(Query.CDC_INSERT_DATA).format(
                 schema=sql.Identifier(schema),
                 table=sql.Identifier(table_name),
                 columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
@@ -174,7 +174,7 @@ class CDCOperationsHandler:
                         )
                         set_values.append(row[col])
 
-                query = sql.SQL(PostgreSQLQueries.CDC_UPDATE_DATA).format(
+                query = sql.SQL(Query.CDC_UPDATE_DATA).format(
                     schema=sql.Identifier(schema),
                     table=sql.Identifier(table_name),
                     set_clause=sql.SQL(", ").join(set_parts),
@@ -201,7 +201,7 @@ class CDCOperationsHandler:
             for row in operations["DELETE"]:
                 delete_records.append([row[col] for col in pk_columns])
 
-            query = sql.SQL(PostgreSQLQueries.CDC_DELETE_DATA).format(
+            query = sql.SQL(Query.CDC_DELETE_DATA).format(
                 schema=sql.Identifier(schema),
                 table=sql.Identifier(table_name),
                 pk_columns=sql.SQL(", ").join(map(sql.Identifier, pk_columns)),

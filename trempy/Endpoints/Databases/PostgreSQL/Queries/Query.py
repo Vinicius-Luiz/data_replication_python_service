@@ -1,4 +1,4 @@
-class PostgreSQLQueries:
+class Query:
     GET_SCHEMAS = "SELECT schema_name FROM information_schema.schemata"
 
     GET_TABLES = """

@@ -4,7 +4,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableCreator import (
     TableCreator,
 )
-from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
@@ -58,7 +58,7 @@ class TableManager:
                         f"ENDPOINT - Removendo tabela {table.target_schema_name}.{table.target_table_name}"
                     )
                     cursor.execute(
-                        PostgreSQLQueries.DROP_TABLE.format(
+                        Query.DROP_TABLE.format(
                             schema=table.target_schema_name,
                             table=table.target_table_name,
                         )
@@ -67,7 +67,7 @@ class TableManager:
                 step = "create_if_not_exists"
                 if create_if_not_exists:
                     cursor.execute(
-                        PostgreSQLQueries.CHECK_TABLE_EXISTS,
+                        Query.CHECK_TABLE_EXISTS,
                         (table.target_schema_name, table.target_table_name),
                     )
                     if cursor.fetchone()[0] == 0:
@@ -83,7 +83,7 @@ class TableManager:
                         f"ENDPOINT - Truncando tabela {table.target_schema_name}.{table.target_table_name}"
                     )
                     cursor.execute(
-                        PostgreSQLQueries.TRUNCATE_TABLE.format(
+                        Query.TRUNCATE_TABLE.format(
                             schema=table.target_schema_name,
                             table=table.target_table_name,
                         )

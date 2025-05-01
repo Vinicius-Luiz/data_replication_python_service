@@ -1,9 +1,9 @@
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
-from trempy.Endpoints.DataTypes.EndpointDataTypePostgreSQL import DataTypes
+from trempy.Endpoints.Databases.PostgreSQL.DataTypes.DataType import DataTypes
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 from datetime import datetime
@@ -51,7 +51,7 @@ class CDCManager:
             slot_name = kargs.get("slot_name")
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    PostgreSQLQueries.VERIFY_IF_EXISTS_A_REPLICATION_SLOT, (slot_name,)
+                    Query.VERIFY_IF_EXISTS_A_REPLICATION_SLOT, (slot_name,)
                 )
 
                 exists_replication_slot = cursor.fetchone()
@@ -60,7 +60,7 @@ class CDCManager:
                 if not exists_replication_slot:
                     logging.info(f"ENDPOINT - Criando slot de replicação {slot_name}")
                     cursor.execute(
-                        PostgreSQLQueries.CREATE_REPLICATION_SLOT, (slot_name,)
+                        Query.CREATE_REPLICATION_SLOT, (slot_name,)
                     )
         except Exception as e:
             e = CaptureChangesError(f"Erro ao criar slot de replicação: {e}", slot_name)
@@ -69,7 +69,7 @@ class CDCManager:
         try:
             with self.connection_manager.cursor() as cursor:
                 logging.info(f"ENDPOINT - Capturando alterações de dados")
-                cursor.execute(PostgreSQLQueries.GET_CHANGES, (slot_name,))
+                cursor.execute(Query.GET_CHANGES, (slot_name,))
 
                 data = cursor.fetchall()
 

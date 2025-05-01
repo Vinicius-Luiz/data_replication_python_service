@@ -1,7 +1,7 @@
 from __future__ import annotations
 from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
 from trempy.Transformations.Exceptions.Exception import *
-from trempy.Endpoints.DataTypes import EndpointDataTypePostgreSQL
+from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
 from trempy.Shared.Types import TransformationOperationType
 from trempy.Columns.Column import Column
 from trempy.Shared.Utils import Utils
@@ -16,7 +16,7 @@ class ColumnCreator:
 
     # TODO: eu tenho que saber qual o endpoint de destino pra salvar as colunas no tipo certo
     TYPE_POLARS_TO_DATABASE = (
-        EndpointDataTypePostgreSQL.DataTypes.TYPE_POLARS_TO_DATABASE
+        DataType.DataTypes.TYPE_POLARS_TO_DATABASE
     )
 
     @staticmethod

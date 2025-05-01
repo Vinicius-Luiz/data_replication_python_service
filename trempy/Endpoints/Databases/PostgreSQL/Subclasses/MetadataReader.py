@@ -2,7 +2,7 @@ from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
-from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Columns.Column import Column
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
@@ -24,7 +24,7 @@ class MetadataReader:
 
         try:
             with self.connection_manager.cursor() as cursor:
-                cursor.execute(PostgreSQLQueries.GET_SCHEMAS)
+                cursor.execute(Query.GET_SCHEMAS)
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
             e = GetSchemaError(f"Erro ao obter os esquemas: {e}")
@@ -42,7 +42,7 @@ class MetadataReader:
 
         try:
             with self.connection_manager.cursor() as cursor:
-                cursor.execute(PostgreSQLQueries.GET_TABLES, (schema_name,))
+                cursor.execute(Query.GET_TABLES, (schema_name,))
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
             e = GetTablesError(f"Erro ao obter as tabelas: {e}")
@@ -70,7 +70,7 @@ class MetadataReader:
 
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    PostgreSQLQueries.GET_TABLE_DETAILS, (schema_name, table_name)
+                    Query.GET_TABLE_DETAILS, (schema_name, table_name)
                 )
                 metadata_table = cursor.fetchone()
                 if not metadata_table:
@@ -110,7 +110,7 @@ class MetadataReader:
         try:
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    PostgreSQLQueries.GET_TABLE_PRIMARY_KEY,
+                    Query.GET_TABLE_PRIMARY_KEY,
                     (table.schema_name, table.table_name),
                 )
                 return [row[0] for row in cursor.fetchall()]
@@ -137,7 +137,7 @@ class MetadataReader:
         try:
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    PostgreSQLQueries.GET_TABLE_COLUMNS,
+                    Query.GET_TABLE_COLUMNS,
                     (table.schema_name, table.table_name),
                 )
                 for row in cursor.fetchall():

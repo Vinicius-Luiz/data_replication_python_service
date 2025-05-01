@@ -5,7 +5,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Queries import PostgreSQLQueries
+from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Tables.Table import Table
 from trempy.Shared.Utils import Utils
 from time import time
@@ -44,7 +44,7 @@ class FullLoadHandler:
 
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    PostgreSQLQueries.GET_FULL_LOAD_FROM_TABLE.format(
+                    Query.GET_FULL_LOAD_FROM_TABLE.format(
                         schema=table.schema_name, table=table.table_name
                     )
                 )
@@ -138,7 +138,7 @@ class FullLoadHandler:
                 )
             ]
             query = sql.SQL(
-                PostgreSQLQueries.FULL_LOAD_INSERT_DATA.format(
+                Query.FULL_LOAD_INSERT_DATA.format(
                     schema=table.target_schema_name,
                     table=table.target_table_name,
                     columns=", ".join(table_column_names),
