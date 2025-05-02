@@ -39,9 +39,32 @@ class InsertFullLoadError(EndpointError):
 class InsertCDCError(EndpointError):
     """Exceção lançada quando ocorre um erro ao inserir dados do CDC."""
 
+    def __init__(self, message: str, table_name: str, query: str):
+        super().__init__(f"{message} | {table_name} | {query}")
+
+class UpdateCDCError(EndpointError):
+    """Exceção lançada quando ocorre um erro ao atualizar dados do CDC."""
+
+    def __init__(self, message: str, table_name: str, query: str):
+        super().__init__(f"{message} | {table_name} | {query}")
+
+class DeleteCDCError(EndpointError):
+    """Exceção lançada quando ocorre um erro ao remover dados do CDC."""
+
+    def __init__(self, message: str, table_name: str, query: str):
+        super().__init__(f"{message} | {table_name} | {query}")
+
+class UpsertCDCError(EndpointError):
+    """Exceção lançada quando ocorre um erro ao remover dados do CDC."""
+
+    def __init__(self, message: str, table_name: str, query: str):
+        super().__init__(f"{message} | {table_name} | {query}")
+
+class CDCDataError(EndpointError):
+    """Exceção lançada quando ocorre um erro ao remover dados do CDC."""
+
     def __init__(self, message: str, table_name: str):
         super().__init__(f"{message} | {table_name}")
-
 
 class CaptureChangesError(EndpointError):
     """Exceção lançada quando ocorre um erro ao capturar as mudanças do banco de dados"""

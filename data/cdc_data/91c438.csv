@@ -1,5 +1,0 @@
-lsn,xid,data
-4/FEEB9C10,1500,BEGIN 1500
-4/FEEB9C10,1500,table employees.the_office: UPDATE: id[integer]:1 name[character varying]:'Michael Scott' age[integer]:40 created_date[timestamp without time zone]:'2025-05-01 00:00:00'
-4/FEEB9C78,1500,table employees.the_office: UPDATE: id[integer]:2 name[character varying]:'Pam Beesly' age[integer]:24 created_date[timestamp without time zone]:'2025-05-01 00:00:00'
-4/FEEB9D10,1500,COMMIT 1500

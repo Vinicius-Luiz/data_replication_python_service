@@ -6,7 +6,6 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
 )
 from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Endpoints.Exceptions.Exception import *
-from psycopg2.extras import execute_values
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 from psycopg2 import sql
@@ -51,7 +50,7 @@ class CDCOperationsHandler:
 
         except Exception as e:
             self.connection_manager.rollback()
-            e = EndpointError(f"Erro ao inserir dados no modo CDC ({mode}): {e}")
+            e = EndpointError(f"Erro ao inserir dados ({mode}): {e}")
             Utils.log_exception_and_exit(e)
 
     def _insert_cdc_data(self, table: Table, mode: str) -> None:
@@ -75,11 +74,11 @@ class CDCOperationsHandler:
                 case "default":
                     self._insert_cdc_data_default(table)
                 case "upsert":
-                    raise NotImplementedError  # TODO
+                    self._insert_cdc_data_upsert(table)
                 case "scd2":
                     raise NotImplementedError  # TODO
         except Exception as e:
-            e = InsertCDCError(
+            e = CDCDataError(
                 f"Erro ao inserir dados no modo CDC ({mode}): {e}",
                 f"{table.target_schema_name}.{table.target_table_name}",
             )
@@ -98,111 +97,222 @@ class CDCOperationsHandler:
 
         Raises:
             InsertCDCError: Se ocorrer um erro ao inserir os dados.
+            UpdateCDCError: Se ocorrer um erro ao atualizar os dados.
+            DeleteCDCError: Se ocorrer um erro ao remover os dados.
         """
-
-        schema = table.target_schema_name
-        table_name = table.target_table_name
-
-        # Processar cada operação separadamente para agrupar por tipo
-        operations = {"INSERT": [], "UPDATE": [], "DELETE": []}
 
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
-            operations[operation].append(row)
+            match operation:
+                case "INSERT":
+                    self._operation_insert(table, row)
+                case "UPDATE":
+                    self._operation_update(table, row)
+                case "DELETE":
+                    self._operation_delete(table, row)
 
-        # Processar INSERTs
-        if operations["INSERT"]:
-            # Filtrar colunas que não são metadados do CDC
-            data_columns = [
-                col
-                for col in operations["INSERT"][0].keys()
-                if not col.startswith("$TREM_")
-            ]
+    def _insert_cdc_data_upsert(self, table: Table) -> None:
+        """
+        Insere dados de altera es em uma tabela de destino, considerando o modo
+        de inser o "upsert".
 
-            # Preparar registros para insert
-            insert_records = [
-                [row[col] for col in data_columns] for row in operations["INSERT"]
-            ]
+        O modo "upsert" insere todos os dados da tabela, considerando o tipo
+        de opera o (INSERT, UPDATE, DELETE). Quando uma opera o de UPDATE
+        ocorre, o sistema verifica se a linha j  existe na tabela de destino.
+        Se sim, a linha  atualizada. Caso contr rio, a linha  inserida.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+
+        Raises:
+            InsertCDCError: Se ocorrer um erro ao inserir os dados.
+            UpdateCDCError: Se ocorrer um erro ao atualizar os dados.
+            DeleteCDCError: Se ocorrer um erro ao remover os dados.
+        """
+
+        for row in table.data.iter_rows(named=True):
+            operation = row["$TREM_OPERATION"]
+            match operation:
+                case "INSERT":
+                    self._operation_upsert(table, row)
+                case "UPDATE":
+                    self._operation_upsert(table, row)
+                case "DELETE":
+                    self._operation_delete(table, row)
+
+    def _operation_insert(self, table: Table, row: dict) -> None:
+        """
+        Insere um registro em uma tabela de destino, considerando o modo de opera o "INSERT".
+
+        Recebe um registro em formato de dicionário, onde as chaves são os nomes das colunas
+        e os valores são os valores a serem inseridos nas respectivas colunas.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+            row (dict): Dicionário contendo o registro a ser inserido.
+        """
+
+        try:
+            data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
+            insert_values = [row[col] for col in data_columns]
+
+            value_placeholders = sql.SQL(", ").join(
+                [sql.Placeholder()] * len(data_columns)
+            )
 
             query = sql.SQL(Query.CDC_INSERT_DATA).format(
-                schema=sql.Identifier(schema),
-                table=sql.Identifier(table_name),
+                schema=sql.Identifier(table.target_schema_name),
+                table=sql.Identifier(table.target_table_name),
                 columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
+                values=value_placeholders,
             )
 
             with self.connection_manager.cursor() as cursor:
-                execute_values(cursor, query, insert_records, page_size=10000)
+                cursor.execute(query, insert_values)
 
-        # Processar UPDATEs
-        if operations["UPDATE"]:
-            # Identificar PKs para cláusula WHERE
-            pk_columns = [
-                col.name for col in table.columns.values() if col.is_primary_key
-            ]
-            if not pk_columns:
-                e = InsertCDCError(
-                    f"Nenhuma PK encontrada para tabela", f"{schema}.{table_name}"
-                )
-                Utils.log_exception_and_exit(e)
+        except Exception as e:
+            error = InsertCDCError(
+                f"Erro ao inserir dados: {e}",
+                f"{table.target_schema_name}.{table.target_table_name}",
+                cursor.query.decode("utf-8") if cursor.query else "",
+            )
+            Utils.log_exception(error)
 
-            # Filtrar colunas que não são metadados do CDC
-            data_columns = [
-                col
-                for col in operations["UPDATE"][0].keys()
-                if not col.startswith("$TREM_")
-            ]
+    def _operation_update(self, table: Table, row: dict) -> None:
+        """
+        Atualiza um registro em uma tabela de destino, considerando o modo de opera o "UPDATE".
 
-            for row in operations["UPDATE"]:
-                # Criar parte SET do UPDATE
-                set_parts = []
-                where_parts = []
-                set_values = []
-                where_values = []
+        Recebe um registro em formato de dicionário, onde as chaves são os nomes das colunas
+        e os valores são os valores a serem atualizados nas respectivas colunas.
 
-                for col in data_columns:
-                    if col in pk_columns:
-                        where_parts.append(
-                            sql.SQL("{col} = %s").format(col=sql.Identifier(col))
-                        )
-                        where_values.append(row[col])
-                    else:
-                        set_parts.append(
-                            sql.SQL("{col} = %s").format(col=sql.Identifier(col))
-                        )
-                        set_values.append(row[col])
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem atualizados.
+            row (dict): Dicion rio contendo o registro a ser atualizado.
+        """
+        try:
+            pk_columns = table.get_pk_columns()
 
-                query = sql.SQL(Query.CDC_UPDATE_DATA).format(
-                    schema=sql.Identifier(schema),
-                    table=sql.Identifier(table_name),
-                    set_clause=sql.SQL(", ").join(set_parts),
-                    where_clause=sql.SQL(" AND ").join(where_parts),
-                )
+            data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
+
+            set_parts = []
+            where_parts = []
+            set_values = []
+            where_values = []
+
+            for col in data_columns:
+                if col in pk_columns:
+                    where_parts.append(
+                        sql.SQL("{col} = %s").format(col=sql.Identifier(col))
+                    )
+                    where_values.append(row[col])
+                else:
+                    set_parts.append(
+                        sql.SQL("{col} = %s").format(col=sql.Identifier(col))
+                    )
+                    set_values.append(row[col])
+
+            query = sql.SQL(Query.CDC_UPDATE_DATA).format(
+                schema=sql.Identifier(table.target_schema_name),
+                table=sql.Identifier(table.target_table_name),
+                set_clause=sql.SQL(", ").join(set_parts),
+                where_clause=sql.SQL(" AND ").join(where_parts),
+            )
 
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(query, set_values + where_values)
 
-        # Processar DELETEs
-        if operations["DELETE"]:
-            # Identificar PKs para cláusula WHERE
-            pk_columns = [
-                col.name for col in table.columns.values() if col.is_primary_key
-            ]
-            if not pk_columns:
-                e = InsertCDCError(
-                    f"Nenhuma PK encontrada para tabela", f"{schema}.{table_name}"
-                )
-                Utils.log_exception_and_exit(e)
+        except Exception as e:
+            e = UpdateCDCError(
+                f"Erro ao atualizar dados: {e}",
+                f"{table.target_schema_name}.{table.target_table_name}",
+                cursor.query.decode("utf-8") if cursor.query else "",
+            )
+            Utils.log_exception(e)
 
-            # Para DELETE, podemos agrupar operações com os mesmos critérios
-            delete_records = []
-            for row in operations["DELETE"]:
-                delete_records.append([row[col] for col in pk_columns])
+    def _operation_delete(self, table: Table, row: dict) -> None:
+        """
+        Remove um registro de uma tabela de destino com base na chave primária.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem.
+            row (dict): Dicionário contendo o registro a ser removido.
+        """
+
+        try:
+            pk_columns = table.get_pk_columns()
+
+            pk_values = [row[col] for col in pk_columns]
+
+            where_parts = [
+                sql.SQL("{col} = %s").format(col=sql.Identifier(col))
+                for col in pk_columns
+            ]
 
             query = sql.SQL(Query.CDC_DELETE_DATA).format(
-                schema=sql.Identifier(schema),
-                table=sql.Identifier(table_name),
-                pk_columns=sql.SQL(", ").join(map(sql.Identifier, pk_columns)),
+                schema=sql.Identifier(table.target_schema_name),
+                table=sql.Identifier(table.target_table_name),
+                where_clause=sql.SQL(" AND ").join(where_parts),
             )
 
             with self.connection_manager.cursor() as cursor:
-                execute_values(cursor, query, delete_records, page_size=10000)
+                cursor.execute(query, pk_values)
+
+        except Exception as e:
+            e = DeleteCDCError(
+                f"Erro ao remover dados: {e}",
+                f"{table.target_schema_name}.{table.target_table_name}",
+                cursor.query.decode("utf-8") if cursor.query else "",
+            )
+            Utils.log_exception(e)
+
+    def _operation_upsert(self, table: Table, row: dict) -> None:
+        """
+        Realiza um UPSERT (INSERT ou UPDATE condicional) em uma tabela de destino usando ON CONFLICT.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados.
+            row (dict): Dicionário contendo o registro a ser upserted.
+        """
+
+        try:
+            pk_columns = table.get_pk_columns()
+
+            if len(pk_columns) < len(table.columns):
+                data_columns = [
+                    col for col in row.keys() if not col.startswith("$TREM_")
+                ]
+
+                values = [row[col] for col in data_columns]
+                value_placeholders = sql.SQL(", ").join(
+                    [sql.Placeholder()] * len(data_columns)
+                )
+
+                set_parts = [
+                    sql.SQL("{col} = EXCLUDED.{col}").format(col=sql.Identifier(col))
+                    for col in data_columns
+                    if col not in pk_columns
+                ]
+
+                query = sql.SQL(Query.CDC_UPSERT_DATA).format(
+                    schema=sql.Identifier(table.target_schema_name),
+                    table=sql.Identifier(table.target_table_name),
+                    columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
+                    values=value_placeholders,
+                    pk_columns=sql.SQL(", ").join(map(sql.Identifier, pk_columns)),
+                    set_clause=sql.SQL(", ").join(set_parts),
+                )
+
+                with self.connection_manager.cursor() as cursor:
+                    cursor.execute(query, values)
+
+            else:
+                self._operation_delete(table, row)
+                self._operation_insert(table, row)
+
+        except Exception as e:
+            e = UpsertCDCError(
+                f"Erro ao realizar UPSERT: {e}",
+                f"{table.target_schema_name}.{table.target_table_name}",
+                cursor.query.decode("utf-8") if cursor.query else "",
+            )
+            Utils.log_exception(e)

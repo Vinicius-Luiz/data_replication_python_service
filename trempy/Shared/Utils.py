@@ -38,6 +38,13 @@ class Utils:
         
         logging.critical(log_message)
         sys.exit(1)
+    
+    def log_exception(e: Exception):
+        """Loga a exceção no formato desejado"""
+        error_type = f"{type(e).__module__}.{type(e).__name__}"
+        log_message = f"{error_type}: {str(e)}"
+        
+        logging.error(log_message)
 
     @staticmethod
     def write_task_pickle(task: 'Task') -> None:

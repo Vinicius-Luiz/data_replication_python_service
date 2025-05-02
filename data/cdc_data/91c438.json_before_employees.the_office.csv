@@ -1,3 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,id,name,age,created_date
-0,UPDATE,1,Michael Scott,40,2025-05-01 00:00:00
-1,UPDATE,2,Pam Beesly,24,2025-05-01 00:00:00

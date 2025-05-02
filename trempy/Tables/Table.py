@@ -1,10 +1,12 @@
 from __future__ import annotations
 from trempy.Transformations.Transformation import Transformation
 from trempy.Tables.Exceptions.Exception import *
+from trempy.Tables.Exceptions.Exception import *
 from trempy.Shared.Types import PriorityType
 from trempy.Columns.Column import Column
 from trempy.Filters.Filter import Filter
 from typing import List, Dict, Optional
+from trempy.Shared.Utils import Utils
 from typing import TYPE_CHECKING
 import polars as pl
 
@@ -131,3 +133,27 @@ class Table:
             "table_size": self.table_size,
             "columns": list(self.columns.keys()),
         }
+    
+    def get_pk_columns(self) -> list:
+        """
+        Retorna a lista de colunas que compoem a chave primaria da tabela.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem.
+
+        Returns:
+            list: Lista de nomes de colunas que compoem a chave primaria da tabela.
+
+        Raises:
+            PrimaryKeyNotFoundError: Se nenhuma chave primaria for encontrada na tabela.
+        """
+        
+        pk_columns = [col.name for col in self.columns.values() if col.is_primary_key]
+        if not pk_columns:
+            e = PrimaryKeyNotFoundError(
+                f"Nenhuma PK encontrada para tabela",
+                f"{self.target_schema_name}.{self.target_table_name}",
+            )
+            Utils.log_exception_and_exit(e)
+
+        return pk_columns

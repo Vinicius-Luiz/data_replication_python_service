@@ -111,9 +111,7 @@ class FullLoadHandler:
                 }
         except Exception as e:
             self.connection_manager.rollback()
-            e = EndpointError(
-                f"Erro ao inserir dados no modo full load: {e}"
-            )  # TODO TODOS DEVEM SEGUIR ESSE PADRÃO
+            e = EndpointError(f"Erro ao inserir dados no modo full load: {e}")
             Utils.log_exception_and_exit(e)
 
     def _insert_full_load_data(self, table: Table) -> None:

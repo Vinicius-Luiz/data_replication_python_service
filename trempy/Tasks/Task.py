@@ -413,6 +413,5 @@ class Task:
                 # Move o arquivo para a pasta processada
                 dest_path = os.path.join(processed_dir, filename)
                 shutil.move(file_path, dest_path)
-                print(f"Arquivo {filename} processado e movido para {processed_dir}")
 
         return True
