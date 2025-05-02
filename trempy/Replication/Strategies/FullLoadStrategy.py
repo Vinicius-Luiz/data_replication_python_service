@@ -1,5 +1,5 @@
-from trempy.Shared.Utils import Utils
 from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
+from trempy.Shared.Utils import Utils
 from trempy.Tasks.Task import Task
 import logging
 import sys

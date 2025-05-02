@@ -1,12 +1,12 @@
-from abc import ABC, abstractmethod
 from trempy.Endpoints.Decorators.EndpointDecorators import (
     source_method,
     target_method,
 )
+from trempy.Shared.Types import DatabaseType, EndpointType
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
-from trempy.Shared.Types import DatabaseType, EndpointType
 from trempy.Shared.Utils import Utils
+from abc import ABC, abstractmethod
 import polars as pl
 
 

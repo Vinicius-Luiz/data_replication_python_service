@@ -1,13 +1,11 @@
-from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
 from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Columns.Column import Column
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
-import logging
-
 
 class MetadataReader:
     """Responsabilidade: Ler metadados do banco de dados (schemas, tabelas, colunas)."""

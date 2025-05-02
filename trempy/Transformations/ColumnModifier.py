@@ -2,10 +2,10 @@ from __future__ import annotations
 from trempy.Transformations.FunctionColumnModifier import (
     FunctionColumnModifier as FCM,
 )
-from trempy.Transformations.Exceptions.Exception import *
 from trempy.Shared.Types import TransformationOperationType
-from trempy.Shared.Utils import Utils
+from trempy.Transformations.Exceptions.Exception import *
 from typing import Dict, Any, TYPE_CHECKING
+from trempy.Shared.Utils import Utils
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table

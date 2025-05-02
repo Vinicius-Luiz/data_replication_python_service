@@ -4,18 +4,12 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
-from trempy.Shared.Utils import Utils
 from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Tables.Table import Table
 from psycopg2.extras import execute_values
+from trempy.Shared.Utils import Utils
+from trempy.Tables.Table import Table
 from psycopg2 import sql
-
-"""
-    insert_cdc_into_table
-_insert_cdc_data
-_insert_cdc_data_default
-"""
 
 
 class CDCOperationsHandler:
@@ -85,7 +79,10 @@ class CDCOperationsHandler:
                 case "scd2":
                     raise NotImplementedError  # TODO
         except Exception as e:
-            e = InsertCDCError(f"Erro ao inserir dados no modo CDC ({mode}): {e}", f"{table.target_schema_name}.{table.target_table_name}")
+            e = InsertCDCError(
+                f"Erro ao inserir dados no modo CDC ({mode}): {e}",
+                f"{table.target_schema_name}.{table.target_table_name}",
+            )
             Utils.log_exception_and_exit(e)
 
     def _insert_cdc_data_default(self, table: Table) -> None:
@@ -180,7 +177,7 @@ class CDCOperationsHandler:
                     set_clause=sql.SQL(", ").join(set_parts),
                     where_clause=sql.SQL(" AND ").join(where_parts),
                 )
-            
+
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(query, set_values + where_values)
 

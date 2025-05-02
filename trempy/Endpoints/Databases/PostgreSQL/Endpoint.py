@@ -1,5 +1,4 @@
 from trempy.Endpoints.Endpoint import Endpoint, EndpointType, DatabaseType
-from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses import (
     TableManager,
     CDCManager,
@@ -9,6 +8,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses import (
     MetadataReader,
     TableCreator,
 )
+from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
 from typing import Dict, List, Any
 import polars as pl

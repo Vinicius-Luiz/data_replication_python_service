@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from trempy.Shared.Types import TransformationType, PriorityType
-from trempy.Transformations.Exceptions.Exception import *
 from trempy.Transformations.ColumnModifier import ColumnModifier
 from trempy.Transformations.ColumnCreator import ColumnCreator
+from trempy.Transformations.Exceptions.Exception import *
 from trempy.Shared.Utils import Utils
 import logging
 

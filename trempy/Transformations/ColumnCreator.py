@@ -1,11 +1,11 @@
 from __future__ import annotations
 from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
-from trempy.Transformations.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
 from trempy.Shared.Types import TransformationOperationType
+from trempy.Transformations.Exceptions.Exception import *
+from typing import Dict, List, Any, TYPE_CHECKING
 from trempy.Columns.Column import Column
 from trempy.Shared.Utils import Utils
-from typing import Dict, List, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table

@@ -1,5 +1,5 @@
-from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
 from trempy.Endpoints.Databases.PostgreSQL.Endpoint import EndpointPostgreSQL
+from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Shared.Utils import Utils
 import logging

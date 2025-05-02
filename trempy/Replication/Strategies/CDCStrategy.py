@@ -1,11 +1,11 @@
-import logging
-import subprocess
-import sys
-from time import sleep
-from trempy.Shared.Utils import Utils
-from trempy.Tasks.Task import Task
 from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
 from trempy.Replication.Exceptions.Exception import *
+from trempy.Shared.Utils import Utils
+from trempy.Tasks.Task import Task
+from time import sleep
+import subprocess
+import logging
+import sys
 
 
 class CDCStrategy(ReplicationStrategy):

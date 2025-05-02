@@ -1,8 +1,8 @@
-from trempy.Shared.Utils import Utils
-from trempy.Shared.Types import TaskType
 from trempy.Replication.Strategies.FullLoadStrategy import FullLoadStrategy
 from trempy.Replication.Strategies.CDCStrategy import CDCStrategy
 from trempy.Replication.Exceptions.Exception import *
+from trempy.Shared.Types import TaskType
+from trempy.Shared.Utils import Utils
 
 
 class ReplicationStrategyFactory:

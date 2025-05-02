@@ -1,9 +1,9 @@
+from abc import ABC, abstractmethod
+from trempy.Tasks.Task import Task
+from typing import Optional
 import subprocess
 import logging
 import sys
-from typing import Optional
-from trempy.Tasks.Task import Task
-from abc import ABC, abstractmethod
 
 
 class ReplicationStrategy(ABC):

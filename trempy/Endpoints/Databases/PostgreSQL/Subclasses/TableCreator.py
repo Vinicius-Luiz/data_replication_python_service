@@ -1,8 +1,8 @@
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
-from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 

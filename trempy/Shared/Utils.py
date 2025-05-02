@@ -1,8 +1,8 @@
+from typing import TYPE_CHECKING
 import logging
 import pickle
 import uuid
 import sys
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from trempy.Tasks.Task import Task

@@ -1,5 +1,5 @@
-from typing import List, Dict
 from trempy.Shared.Types import TransformationOperationType
+from typing import List, Dict
 
 
 class FunctionColumn:

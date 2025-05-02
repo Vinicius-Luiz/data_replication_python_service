@@ -2,12 +2,12 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
 from trempy.Endpoints.Databases.PostgreSQL.DataTypes.DataType import DataTypes
-from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
-from datetime import datetime
 from typing import Dict, List, Any
+from datetime import datetime
 import polars as pl
 import logging
 import json

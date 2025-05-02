@@ -4,13 +4,13 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
-from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Endpoints.Exceptions.Exception import *
+from psycopg2.extras import execute_values
 from trempy.Tables.Table import Table
 from trempy.Shared.Utils import Utils
-from time import time
-from psycopg2.extras import execute_values
 from psycopg2 import sql
+from time import time
 import polars as pl
 import logging
 import os

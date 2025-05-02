@@ -1,16 +1,15 @@
-import json
-import logging
-from dotenv import load_dotenv
-from task.credentials import credentials
-from trempy.Tasks.Task import Task
-from trempy.Filters.Filter import Filter
-from trempy.Shared.Utils import Utils
-from trempy.Transformations.Transformation import Transformation
-from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
+from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
+from trempy.Transformations.Transformation import Transformation
 from trempy.Replication.Exceptions.Exception import *
+from trempy.Filters.Filter import Filter
+from task.credentials import credentials
+from trempy.Shared.Utils import Utils
+from trempy.Tasks.Task import Task
+from dotenv import load_dotenv
+import json
 
 
 class ReplicationManager:

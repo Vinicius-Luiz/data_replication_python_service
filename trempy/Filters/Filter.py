@@ -1,12 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from trempy.Shared.Types import FilterType
-from trempy.Filters.Exceptions.Exception import *
 from typing import Union, List, Type, get_args, get_origin
+from trempy.Filters.Exceptions.Exception import *
+from trempy.Shared.Types import FilterType
 from trempy.Shared.Utils import Utils
+from typing import TYPE_CHECKING
 from datetime import datetime
 import polars as pl
-
 import logging
 
 if TYPE_CHECKING:

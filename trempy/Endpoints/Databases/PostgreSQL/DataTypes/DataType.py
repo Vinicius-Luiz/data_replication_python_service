@@ -30,7 +30,6 @@ class DataTypes:
         "text": pl.Null,
     }
 
-    # Mapeamento de tipos Polars para funções de conversão
     TYPE_CONVERSION_METHODS = {
         pl.Date: lambda x: pl.Series([x]).str.strptime(pl.Date, "%Y-%m-%d")[0],
         pl.Datetime: lambda x: pl.Series([x]).str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S")[0],
@@ -48,7 +47,7 @@ class DataTypes:
     def convert_value(cls, col_value, col_type):
         """Converte um valor para o tipo correspondente no Polars."""
         if col_type not in cls.TYPE_DATABASE_TO_POLARS:
-            return col_value  # Se o tipo não estiver mapeado, retorna sem conversão
+            return col_value
 
         polars_type = cls.TYPE_DATABASE_TO_POLARS[col_type]
 

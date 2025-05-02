@@ -1,11 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from trempy.Shared.Types import PriorityType
-from trempy.Tables.Exceptions.Exception import *
 from trempy.Transformations.Transformation import Transformation
-from trempy.Filters.Filter import Filter
+from trempy.Tables.Exceptions.Exception import *
+from trempy.Shared.Types import PriorityType
 from trempy.Columns.Column import Column
+from trempy.Filters.Filter import Filter
 from typing import List, Dict, Optional
+from typing import TYPE_CHECKING
 import polars as pl
 
 if TYPE_CHECKING:
