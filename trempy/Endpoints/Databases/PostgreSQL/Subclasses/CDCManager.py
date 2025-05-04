@@ -13,14 +13,6 @@ import logging
 import json
 import re
 
-"""
-    capture_changes
-    structure_capture_changes_to_json
-    structure_capture_changes_to_dataframe
-    _process_transaction
-    _parse_data_line
-"""
-
 
 class CDCManager:
     """Responsabilidade: Gerenciar Change Data Capture (CDC)."""
@@ -50,18 +42,14 @@ class CDCManager:
         try:
             slot_name = kargs.get("slot_name")
             with self.connection_manager.cursor() as cursor:
-                cursor.execute(
-                    Query.VERIFY_IF_EXISTS_A_REPLICATION_SLOT, (slot_name,)
-                )
+                cursor.execute(Query.VERIFY_IF_EXISTS_A_REPLICATION_SLOT, (slot_name,))
 
                 exists_replication_slot = cursor.fetchone()
                 exists_replication_slot = exists_replication_slot[0]
 
                 if not exists_replication_slot:
                     logging.info(f"ENDPOINT - Criando slot de replicação {slot_name}")
-                    cursor.execute(
-                        Query.CREATE_REPLICATION_SLOT, (slot_name,)
-                    )
+                    cursor.execute(Query.CREATE_REPLICATION_SLOT, (slot_name,))
         except Exception as e:
             e = CaptureChangesError(f"Erro ao criar slot de replicação: {e}", slot_name)
             Utils.log_exception_and_exit(e)

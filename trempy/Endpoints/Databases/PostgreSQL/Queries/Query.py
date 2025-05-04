@@ -133,3 +133,18 @@ class Query:
         ON CONFLICT ({pk_columns}) 
         DO UPDATE SET {set_clause}
   """
+
+  SQL_VERIFY_ROW_SCD2_EXISTS = """
+      SELECT 1
+        FROM {schema}.{table}
+       WHERE {where_clause}
+         AND {current} = 1
+  """
+  
+  SQL_UPDATE_EXISTING = """
+    UPDATE {schema}.{table}
+       SET {end_date} = NOW(),
+           {current} = 0
+     WHERE {where_clause}
+       AND {current} = 1
+  """

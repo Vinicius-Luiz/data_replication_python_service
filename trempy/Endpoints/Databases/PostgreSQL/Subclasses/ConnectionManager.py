@@ -46,9 +46,7 @@ class ConnectionManager:
         return self.connection.cursor()
 
     def close(self) -> None:
-        """
-        Fecha a conexão com o banco de dados.
-        """
+        """Fecha a conexão com o banco de dados."""
 
         self.connection.close()
 

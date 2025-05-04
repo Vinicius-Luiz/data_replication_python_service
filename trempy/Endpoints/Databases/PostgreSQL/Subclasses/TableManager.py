@@ -22,7 +22,7 @@ class TableManager:
         self.connection_manager = connection_manager
         self.table_creator = table_creator
 
-    def _manage_table(
+    def _manage_target_table(
         self,
         table: Table,
         create_if_not_exists: bool = False,

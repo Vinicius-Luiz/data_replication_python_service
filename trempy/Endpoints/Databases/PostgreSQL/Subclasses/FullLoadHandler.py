@@ -92,7 +92,7 @@ class FullLoadHandler:
             initial_time = time()
 
             with self.connection_manager.cursor() as cursor:
-                self.table_manager._manage_table(
+                self.table_manager._manage_target_table(
                     table,
                     create_table_if_not_exists,
                     recreate_table_if_exists,

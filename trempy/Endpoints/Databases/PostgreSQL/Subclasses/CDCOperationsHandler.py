@@ -14,7 +14,7 @@ from psycopg2 import sql
 
 
 class CDCOperationsHandler:
-    """Responsabilidade: Lidar com operações CDC (INSERT, UPDATE, DELETE)."""
+    """Responsabilidade: Executar operações CDC (INSERT, UPDATE, DELETE)."""
 
     def __init__(
         self,
@@ -45,7 +45,7 @@ class CDCOperationsHandler:
         """
 
         try:
-            self.table_manager._manage_table(table, create_table_if_not_exists)
+            self.table_manager._manage_target_table(table, create_table_if_not_exists)
 
             self._insert_cdc_data(table, mode)
 
@@ -90,22 +90,18 @@ class CDCOperationsHandler:
             Utils.log_exception_and_exit(e)
 
     def _insert_cdc_data_default(self, table: Table) -> None:
-        """
-        Insere dados de altera es em uma tabela de destino, considerando o modo
-        de inser o "default".
+        """Processa operações CDC (INSERT, UPDATE, DELETE) no modo padrão.
 
-        O modo "default" insere todos os dados da tabela, sem considerar o tipo
-        de opera o (INSERT, UPDATE, DELETE).
+        Itera sobre as linhas da tabela de origem e executa a operação correspondente
+        ($TREM_OPERATION) na tabela de destino de forma individual para cada tipo
+        de operação.
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+            table (Table): Objeto contendo a estrutura da tabela e os dados a serem processados.
 
         Raises:
-            InsertCDCError: Se ocorrer um erro ao inserir os dados.
-            UpdateCDCError: Se ocorrer um erro ao atualizar os dados.
-            DeleteCDCError: Se ocorrer um erro ao remover os dados.
+            CDCDataError: Se ocorrer algum erro durante o processamento das operações.
         """
-
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
             if operation == "INSERT":
@@ -116,24 +112,17 @@ class CDCOperationsHandler:
                 self._operation_delete(table, row)
 
     def _insert_cdc_data_upsert(self, table: Table) -> None:
-        """
-        Insere dados de altera es em uma tabela de destino, considerando o modo
-        de inser o "upsert".
+        """Processa operações CDC no modo UPSERT (INSERT + UPDATE combinados).
 
-        O modo "upsert" insere todos os dados da tabela, considerando o tipo
-        de opera o (INSERT, UPDATE, DELETE). Quando uma opera o de UPDATE
-        ocorre, o sistema verifica se a linha já  existe na tabela de destino.
-        Se sim, a linha  atualizada. Caso contr rio, a linha  inserida.
+        Itera sobre as linhas da tabela de origem tratando tanto INSERTs quanto UPDATEs
+        como operações de UPSERT. DELETE é tratado de forma separada.
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+            table (Table): Objeto contendo a estrutura da tabela e os dados a serem processados.
 
         Raises:
-            InsertCDCError: Se ocorrer um erro ao inserir os dados.
-            UpdateCDCError: Se ocorrer um erro ao atualizar os dados.
-            DeleteCDCError: Se ocorrer um erro ao remover os dados.
+            CDCDataError: Se ocorrer algum erro durante o processamento das operações.
         """
-
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
             if operation in ("INSERT", "UPDATE"):
@@ -142,6 +131,19 @@ class CDCOperationsHandler:
                 self._operation_delete(table, row)
 
     def _insert_cdc_data_scd2(self, table: Table) -> None:
+        """Processa operações CDC no modo SCD2 (Slow Changing Dimension Type 2).
+
+        Implementa a lógica de dimensões lentas tipo 2, mantendo histórico de alterações
+        através de registros com validade temporal. Para INSERT/UPDATE, verifica se o
+        registro existe e desativa a versão anterior antes de criar a nova. Para DELETE,
+        apenas desativa o registro atual.
+
+        Args:
+            table (Table): Objeto contendo a estrutura da tabela e os dados a serem processados.
+
+        Raises:
+            CDCDataError: Se ocorrer algum erro durante o processamento das operações.
+        """
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
             if operation in ("INSERT", "UPDATE"):
@@ -153,6 +155,28 @@ class CDCOperationsHandler:
                 self._scd2_disable_current(table, row)
 
     def _scd2_get_where_clause(self, table: Table, row: dict) -> Dict[str, List[str]]:
+        """Constrói a cláusula WHERE para operações SCD2 baseada nas colunas-chave.
+
+        Gera as condições WHERE necessárias para identificar unicamente um registro
+        na tabela de destino, excluindo colunas temporais do SCD2. A cláusula é
+        construída usando apenas as colunas primárias que não são de controle SCD2.
+
+        Args:
+            table (Table): Objeto contendo a estrutura da tabela e metadados.
+            row (dict): Dicionário contendo os valores da linha a ser verificada.
+
+        Returns:
+            Dict[str, List]: Dicionário com:
+                - where_parts: Lista de fragmentos SQL das condições WHERE
+                - where_values: Lista de valores para os parâmetros da cláusula
+
+        Example:
+            Retorno exemplo:
+            {
+                "where_parts": ["id = %s", "code = %s"],
+                "where_values": [1, "ABC"]
+            }
+        """
         pk_columns_without_scd2_columns = table.get_pk_columns_without_scd2_columns()
         data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
 
@@ -168,7 +192,22 @@ class CDCOperationsHandler:
         return {"where_parts": where_parts, "where_values": where_values}
 
     def _scd2_verify_if_row_exists(self, table: Table, row: dict) -> bool:
+        """Verifica se um registro já existe na tabela de destino no modo SCD2.
 
+        Executa uma consulta na tabela de destino para verificar a existência de
+        um registro ativo (current = True) com os mesmos valores nas colunas-chave,
+        ignorando colunas temporais específicas do SCD2.
+
+        Args:
+            table (Table): Objeto contendo a estrutura da tabela e metadados.
+            row (dict): Dicionário contendo os valores da linha a ser verificada.
+
+        Returns:
+            bool: True se o registro existe e está ativo, False caso contrário.
+
+        Raises:
+            CDCDataError: Se ocorrer algum erro durante a verificação.
+        """
         scd2_columns = table.get_scd2_columns()
         current = scd2_columns[SCD2ColumnType.CURRENT]
 
@@ -176,14 +215,7 @@ class CDCOperationsHandler:
         where_parts = where_clase["where_parts"]
         where_values = where_clase["where_values"]
 
-        # Verificar se existe registro ativo (scd_current = 1)
-        SQL_VERIFY_ROW_SCD2_EXISTS = """
-            SELECT 1
-            FROM {schema}.{table}
-            WHERE {where_clause}
-            AND {current} = 1
-        """
-        query = sql.SQL(SQL_VERIFY_ROW_SCD2_EXISTS).format(
+        query = sql.SQL(Query.SQL_VERIFY_ROW_SCD2_EXISTS).format(
             schema=sql.Identifier(table.target_schema_name),
             table=sql.Identifier(table.target_table_name),
             where_clause=sql.SQL(" AND ").join(where_parts),
@@ -197,7 +229,24 @@ class CDCOperationsHandler:
         return True if row_exists else False
 
     def _scd2_create_current(self, table: Table, row: dict) -> None:
+        """Cria um novo registro ativo no padrão SCD2 (Slow Changing Dimension Type 2).
 
+        Adiciona uma nova versão do registro na tabela de destino, marcando-o como ativo (current=1)
+        e configurando as colunas temporais (start_date e end_date) conforme definido na estrutura SCD2.
+
+        Args:
+            table (Table): Objeto contendo a estrutura da tabela e metadados SCD2.
+            row (dict): Dicionário com os dados do registro a ser criado.
+
+        Raises:
+            CreateSCD2Error: Se ocorrer algum erro durante a criação do registro.
+                Inclui detalhes do schema, tabela e erro original.
+
+        Note:
+            - O registro é criado com current=1 (ativo)
+            - As datas de início e fim são extraídas do próprio row
+            - Delega a operação de inserção para o método _operation_insert
+        """
         try:
             scd2_columns = table.get_scd2_columns()
             current = scd2_columns[SCD2ColumnType.CURRENT]
@@ -222,6 +271,24 @@ class CDCOperationsHandler:
             Utils.log_exception_and_exit(e)
 
     def _scd2_disable_current(self, table: Table, row: dict) -> None:
+        """Desativa um registro existente no padrão SCD2 (Slow Changing Dimension Type 2).
+
+        Atualiza o registro existente na tabela de destino, marcando-o como inativo (current=0)
+        e configurando a data de fim (end_date) conforme definido na estrutura SCD2.
+
+        Args:
+            table (Table): Objeto contendo a estrutura da tabela e metadados SCD2.
+            row (dict): Dicionário com os dados do registro a ser desativado.
+
+        Raises:
+            DisableSCD2Error: Se ocorrer algum erro durante a desativação do registro.
+                Inclui detalhes do schema, tabela, query executada e erro original.
+
+        Note:
+            - Utiliza a cláusula WHERE gerada por _scd2_get_where_clause
+            - O registro é mantido na tabela com current=0 (inativo)
+            - A data de fim é atualizada conforme valor fornecido no row
+        """
         try:
             scd2_columns = table.get_scd2_columns()
             current = scd2_columns[SCD2ColumnType.CURRENT]
@@ -231,14 +298,7 @@ class CDCOperationsHandler:
             where_parts = where_clase["where_parts"]
             where_values = where_clase["where_values"]
 
-            SQL_UPDATE_EXISTING = """
-                UPDATE {schema}.{table}
-                    SET {end_date} = NOW(),
-                        {current} = 0
-                    WHERE {where_clause}
-                    AND {current} = 1
-            """
-            update_query = sql.SQL(SQL_UPDATE_EXISTING).format(
+            update_query = sql.SQL(Query.SQL_UPDATE_EXISTING).format(
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 where_clause=sql.SQL(" AND ").join(where_parts),
@@ -258,17 +318,19 @@ class CDCOperationsHandler:
             Utils.log_exception_and_exit(e)
 
     def _operation_insert(self, table: Table, row: dict) -> None:
-        """
-        Insere um registro em uma tabela de destino, considerando o modo de opera o "INSERT".
+        """Executa a operação de INSERT na tabela de destino.
 
-        Recebe um registro em formato de dicionário, onde as chaves são os nomes das colunas
-        e os valores são os valores a serem inseridos nas respectivas colunas.
+        Insere um novo registro na tabela de destino, filtrando colunas de metadados (que começam com "$TREM_").
+        Constrói dinamicamente a query SQL com os nomes das colunas e valores a serem inseridos.
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
-            row (dict): Dicionário contendo o registro a ser inserido.
-        """
+            table (Table): Objeto contendo a estrutura da tabela de destino (schema e nome).
+            row (dict): Dicionário com os dados a serem inseridos (incluindo valores das colunas).
 
+        Raises:
+            InsertCDCError: Se ocorrer algum erro durante a inserção.
+                Contém detalhes do schema, tabela e query executada.
+        """
         try:
             data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
             insert_values = [row[col] for col in data_columns]
@@ -296,19 +358,25 @@ class CDCOperationsHandler:
             Utils.log_exception(e)
 
     def _operation_update(self, table: Table, row: dict) -> None:
-        """
-        Atualiza um registro em uma tabela de destino, considerando o modo de opera o "UPDATE".
+        """Executa a operação de UPDATE na tabela de destino.
 
-        Recebe um registro em formato de dicionário, onde as chaves são os nomes das colunas
-        e os valores são os valores a serem atualizados nas respectivas colunas.
+        Atualiza um registro existente na tabela de destino, usando as colunas primárias (PK)
+        como critério de busca. Atualiza apenas colunas não-PK e filtra metadados ($TREM_).
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem atualizados.
-            row (dict): Dicion rio contendo o registro a ser atualizado.
+            table (Table): Objeto contendo a estrutura da tabela e colunas primárias.
+            row (dict): Dicionário com os dados a serem atualizados (valores novos e PKs).
+
+        Raises:
+            UpdateCDCError: Se ocorrer algum erro durante a atualização.
+                Contém detalhes do schema, tabela e query executada.
+
+        Note:
+            - Colunas primárias são usadas apenas na cláusula WHERE
+            - Colunas não-PK são atualizadas na cláusula SET
         """
         try:
             pk_columns = table.get_pk_columns()
-
             data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
 
             set_parts = []
@@ -347,18 +415,25 @@ class CDCOperationsHandler:
             Utils.log_exception(e)
 
     def _operation_delete(self, table: Table, row: dict) -> None:
-        """
-        Remove um registro de uma tabela de destino com base na chave primária.
+        """Executa a operação de DELETE na tabela de destino.
+
+        Remove um registro da tabela de destino usando apenas as colunas primárias (PK)
+        como critério de exclusão. Ignora completamente colunas de metadados ($TREM_).
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem.
-            row (dict): Dicionário contendo o registro a ser removido.
+            table (Table): Objeto contendo a estrutura da tabela e colunas primárias.
+            row (dict): Dicionário contendo os valores das PKs para identificar o registro.
 
+        Raises:
+            DeleteCDCError: Se ocorrer algum erro durante a exclusão.
+                Contém detalhes do schema, tabela e query executada.
+
+        Security Note:
+            - A operação é irreversível
+            - A cláusula WHERE é construída apenas com PKs para evitar exclusões acidentais
         """
-
         try:
             pk_columns = table.get_pk_columns()
-
             pk_values = [row[col] for col in pk_columns]
 
             where_parts = [
@@ -384,14 +459,28 @@ class CDCOperationsHandler:
             Utils.log_exception(e)
 
     def _operation_upsert(self, table: Table, row: dict) -> None:
-        """
-        Realiza um UPSERT (INSERT ou UPDATE condicional) em uma tabela de destino usando ON CONFLICT.
+        """Executa uma operação de UPSERT (INSERT ou UPDATE condicional) na tabela de destino.
+        
+        Implementa um padrão "insert or update" utilizando a cláusula ON CONFLICT do PostgreSQL.
+        Se a tabela tiver apenas colunas PK (sem colunas adicionais), executa DELETE+INSERT como fallback.
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem e os dados.
-            row (dict): Dicionário contendo o registro a ser upserted.
-        """
+            table (Table): Objeto contendo a estrutura da tabela e metadados das colunas.
+            row (dict): Dicionário com os dados completos do registro (PKs + valores normais).
 
+        Raises:
+            UpsertCDCError: Se ocorrer algum erro durante a operação.
+                Inclui detalhes do schema, tabela, query executada e erro original.
+
+        Behavior:
+            1. Caso normal (tabela tem colunas além das PKs):
+            - Usa INSERT ... ON CONFLICT ... DO UPDATE SET
+            - Atualiza apenas colunas não-PK em caso de conflito
+
+            2. Caso especial (tabela contém apenas PKs):
+            - Executa DELETE seguido de INSERT (fallback)
+            - Mais custoso porém necessário para tabelas sem colunas atualizáveis
+        """
         try:
             pk_columns = table.get_pk_columns()
 
