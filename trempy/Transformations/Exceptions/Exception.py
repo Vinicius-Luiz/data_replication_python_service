@@ -12,6 +12,12 @@ class NewColumnNameError(TransformationError):
     def __init__(self, message: str, new_column_name: str):
         super().__init__(f"{message} | {new_column_name}")
 
+class ColumnNameNotFoundError(TransformationError):
+    """Exceção lançada quando a coluna procurada nao foi encontrada."""
+
+    def __init__(self, message: str, column_name: str):
+        super().__init__(f"{message} | {column_name}")
+
 
 class InvalidDependencyError(TransformationError):
     """Exceção lançada quando uma coluna dependente é inválida."""

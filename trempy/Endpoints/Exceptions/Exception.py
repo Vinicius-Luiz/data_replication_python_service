@@ -60,6 +60,18 @@ class UpsertCDCError(EndpointError):
     def __init__(self, message: str, table_name: str, query: str):
         super().__init__(f"{message} | {table_name} | {query}")
 
+class CreateSCD2Error(EndpointError):
+    """Exceção lançada quando ocorre um erro ao remover dados do CDC Modo SCD2."""
+
+    def __init__(self, message: str, table_name: str, query: str):
+        super().__init__(f"{message} | {table_name} | {query}")
+
+class DisableSCD2Error(EndpointError):
+    """Exceção lançada quando ocorre um erro ao remover dados do CDC Modo SCD2."""
+
+    def __init__(self, message: str, table_name: str, query: str):
+        super().__init__(f"{message} | {table_name} | {query}")
+
 class CDCDataError(EndpointError):
     """Exceção lançada quando ocorre um erro ao remover dados do CDC."""
 

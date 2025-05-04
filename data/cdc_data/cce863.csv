@@ -1,0 +1,4 @@
+lsn,xid,data
+4/FEFBE398,1596,BEGIN 1596
+4/FEFBE398,1596,table employees.department: INSERT: id[character]:'d008' dept_name[character varying]:'Relationship'
+4/FEFC04C8,1596,COMMIT 1596

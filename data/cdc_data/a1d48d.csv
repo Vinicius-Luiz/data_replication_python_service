@@ -1,0 +1,10 @@
+lsn,xid,data
+4/FF1875C0,1623,BEGIN 1623
+4/FF1875C0,1623,table employees.department: UPDATE: id[character]:'d005' dept_name[character varying]:'Development'
+4/FF187618,1623,table employees.department: UPDATE: id[character]:'d002' dept_name[character varying]:'Finance'
+4/FF187668,1623,table employees.department: UPDATE: id[character]:'d003' dept_name[character varying]:'Human Resources'
+4/FF1876C0,1623,table employees.department: UPDATE: id[character]:'d001' dept_name[character varying]:'Marketing'
+4/FF187718,1623,table employees.department: UPDATE: id[character]:'d004' dept_name[character varying]:'Production'
+4/FF187770,1623,table employees.department: UPDATE: id[character]:'d006' dept_name[character varying]:'Quality Management'
+4/FF1877D0,1623,table employees.department: UPDATE: id[character]:'d007' dept_name[character varying]:'Sales'
+4/FF187850,1623,COMMIT 1623

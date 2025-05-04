@@ -1,4 +1,4 @@
-from trempy.Shared.Types import TaskType, EndpointType, DatabaseType
+from trempy.Shared.Types import TaskType, CdcModeType, EndpointType, DatabaseType
 from trempy.Transformations.Transformation import Transformation
 from trempy.Tasks.Exceptions.Exception import *
 from trempy.Endpoints.Endpoint import Endpoint
@@ -41,6 +41,7 @@ class Task:
         target_endpoint: Endpoint = None,
         full_load_settings: dict = {},
         cdc_settings: dict = {},
+        scd2_settings: dict = {},
         create_table_if_not_exists: bool = False,
     ) -> None:
         self.task_name = task_name
@@ -58,7 +59,18 @@ class Task:
             "truncate_before_insert", False
         )
 
-        self.cdc_mode: str = cdc_settings.get("mode", "default")
+        self.cdc_mode: CdcModeType = CdcModeType(cdc_settings.get("mode", "default"))
+
+        self.scd2_start_date_column_name: str = scd2_settings.get(
+            "start_date_column_name", "scd_start_date"
+        )
+        self.scd2_end_date_column_name: str = scd2_settings.get(
+            "end_date_column_name", "scd_end_date"
+        )
+        self.scd2_current_column_name: str = scd2_settings.get(
+            "current_column_name", "scd_current"
+        )
+        self.scd2_date_type: str = scd2_settings.get("date_type", "timestamp") # "date" or "timestamp"
 
         self.tables: List[Table] = []
 

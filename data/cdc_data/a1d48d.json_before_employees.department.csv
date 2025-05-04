@@ -1,0 +1,8 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,dept_name
+0,UPDATE,d005,Development
+1,UPDATE,d002,Finance
+2,UPDATE,d003,Human Resources
+3,UPDATE,d001,Marketing
+4,UPDATE,d004,Production
+5,UPDATE,d006,Quality Management
+6,UPDATE,d007,Sales

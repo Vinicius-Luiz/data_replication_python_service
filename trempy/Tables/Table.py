@@ -2,7 +2,7 @@ from __future__ import annotations
 from trempy.Transformations.Transformation import Transformation
 from trempy.Tables.Exceptions.Exception import *
 from trempy.Tables.Exceptions.Exception import *
-from trempy.Shared.Types import PriorityType
+from trempy.Shared.Types import PriorityType, SCD2ColumnType
 from trempy.Columns.Column import Column
 from trempy.Filters.Filter import Filter
 from typing import List, Dict, Optional
@@ -133,13 +133,13 @@ class Table:
             "table_size": self.table_size,
             "columns": list(self.columns.keys()),
         }
-    
-    def get_pk_columns(self) -> list:
+
+    def get_pk_columns(self, returns: str = "name") -> List[str | Column]:
         """
         Retorna a lista de colunas que compoem a chave primaria da tabela.
 
         Args:
-            table (Table): Objeto representando a estrutura da tabela de origem.
+            returns (str): Tipo de retorno. Pode ser 'name' ou 'object'.
 
         Returns:
             list: Lista de nomes de colunas que compoem a chave primaria da tabela.
@@ -147,8 +147,14 @@ class Table:
         Raises:
             PrimaryKeyNotFoundError: Se nenhuma chave primaria for encontrada na tabela.
         """
-        
-        pk_columns = [col.name for col in self.columns.values() if col.is_primary_key]
+
+        if returns == "name":
+            pk_columns = [
+                col.name for col in self.columns.values() if col.is_primary_key
+            ]
+        elif returns == "object":
+            pk_columns = [col for col in self.columns.values() if col.is_primary_key]
+
         if not pk_columns:
             e = PrimaryKeyNotFoundError(
                 f"Nenhuma PK encontrada para tabela",
@@ -157,3 +163,59 @@ class Table:
             Utils.log_exception_and_exit(e)
 
         return pk_columns
+
+    def get_pk_columns_without_scd2_columns(
+        self, returns: str = "name"
+    ) -> List[str] | List[Column]:
+        """
+        Retorna a lista de colunas que compoem a chave primaria da tabela sem considerar as colunas SCD2.
+
+        Args:
+            returns (str): Tipo de retorno. Pode ser 'name' ou 'object'.
+
+        Returns:
+            list: Lista de nomes de colunas que compoem a chave primaria da tabela sem considerar as colunas SCD2.
+
+        Raises:
+            PrimaryKeyNotFoundError: Se nenhuma chave primaria for encontrada na tabela.
+        """
+
+        if returns == "name":
+            pk_columns = [
+                col.name
+                for col in self.columns.values()
+                if col.is_primary_key and not col.is_scd2_column
+            ]
+        elif returns == "object":
+            pk_columns = [
+                col
+                for col in self.columns.values()
+                if col.is_primary_key and not col.is_scd2_column
+            ]
+
+        if not pk_columns:
+            e = PrimaryKeyNotFoundError(
+                f"Nenhuma PK encontrada para tabela",
+                f"{self.target_schema_name}.{self.target_table_name}",
+            )
+            Utils.log_exception_and_exit(e)
+
+        return pk_columns
+
+    def get_scd2_columns(self) -> Dict[SCD2ColumnType, str]:
+        """
+        Retorna um dicionário com as colunas SCD2 da tabela.
+
+        O dicionário retornado tem como chave o tipo de coluna SCD2 (start_date ou end_date)
+        e como valor o nome da coluna.
+
+        Returns:
+            dict: Dicionário com as colunas SCD2 da tabela.
+        """
+
+        scd2_columns = dict()
+        for col in self.columns.values():
+            if col.is_scd2_column:
+                scd2_columns[col.scd2_column_type] = col.name
+
+        return scd2_columns

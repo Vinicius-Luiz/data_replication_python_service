@@ -1,7 +1,7 @@
 from __future__ import annotations
 from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
+from trempy.Shared.Types import TransformationOperationType, SCD2ColumnType
 from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
-from trempy.Shared.Types import TransformationOperationType
 from trempy.Transformations.Exceptions.Exception import *
 from typing import Dict, List, Any, TYPE_CHECKING
 from trempy.Columns.Column import Column
@@ -15,9 +15,7 @@ class ColumnCreator:
     """Classe responsável por validar e criar novas colunas."""
 
     # TODO: eu tenho que saber qual o endpoint de destino pra salvar as colunas no tipo certo
-    TYPE_POLARS_TO_DATABASE = (
-        DataType.DataTypes.TYPE_POLARS_TO_DATABASE
-    )
+    TYPE_POLARS_TO_DATABASE = DataType.DataTypes.TYPE_POLARS_TO_DATABASE
 
     @staticmethod
     def get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
@@ -44,12 +42,17 @@ class ColumnCreator:
 
         return {
             TransformationOperationType.LITERAL: {
-                "func": lambda: FCC.literal(value=contract["value"]),
+                "func": lambda: FCC.literal(
+                    value=contract["value"], value_type=contract["value_type"]
+                ),
                 "required_params": FCC.get_required_params(
                     TransformationOperationType.LITERAL
                 ),
             },
             TransformationOperationType.DATE_NOW: {"func": lambda: FCC.date_now()},
+            TransformationOperationType.DATETIME_NOW: {
+                "func": lambda: FCC.datetime_now()
+            },
             TransformationOperationType.CONCAT: {
                 "func": lambda: FCC.concat(
                     separator=contract.get("separator", ""),
@@ -229,12 +232,12 @@ class ColumnCreator:
                 Utils.log_exception_and_exit(e)
 
     @classmethod
-    def _update_metadata(cls, table: Table, new_column_name: str) -> Table:
+    def _update_metadata(cls, table: Table, contract: dict) -> Table:
         """Atualiza os metadados da tabela para incluir a nova coluna.
 
         Args:
             table: Objeto Table contendo os dados e schema a serem atualizados.
-            new_column_name: Nome da nova coluna a ser adicionada.
+            contract: Contrato de transformação contendo os parâmetros fornecidos pelo usuário.
 
         Returns:
             A mesma tabela de entrada com os metadados atualizados.
@@ -244,6 +247,10 @@ class ColumnCreator:
         """
 
         try:
+            new_column_name = contract.get("new_column_name")
+            is_scd2_column = contract.get("is_scd2_column", False)
+            scd2_column_type = contract.get("scd2_column_type", None)
+
             new_column_type = table.data.schema[new_column_name]
             sql_type = cls.TYPE_POLARS_TO_DATABASE.get(type(new_column_type), "text")
 
@@ -253,6 +260,8 @@ class ColumnCreator:
                 nullable=True,
                 ordinal_position=len(table.columns) + 1,
                 is_primary_key=False,
+                is_scd2_column=is_scd2_column,
+                scd2_column_type=SCD2ColumnType(scd2_column_type) if scd2_column_type else None,
             )
         except Exception as e:
             e = UpdateMetadataError(
@@ -306,6 +315,6 @@ class ColumnCreator:
         table.data = table.data.with_columns(op_config["func"]().alias(new_column_name))
 
         # Atualiza metadados
-        table = cls._update_metadata(table, new_column_name)
+        table = cls._update_metadata(table, contract)
 
         return table

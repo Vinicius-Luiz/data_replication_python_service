@@ -35,3 +35,9 @@ class UnsportedExceptionError(ReplicationError):
 
     def __init__(self, message: str):
         super().__init__(f"{message}")
+
+class PrepareSCD2Error(ReplicationError):
+    """Exceção lançada quando ocorre um erro ao preparar o SCD2."""
+
+    def __init__(self, message: str, table_name: str):
+        super().__init__(f"{message} | {table_name}")

@@ -1,0 +1,23 @@
+{
+    "id": "e1552e",
+    "creted_at": "2025-05-04 03:00:51",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "update",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d009"
+                },
+                {
+                    "name": "dept_name",
+                    "type": "character varying",
+                    "value": "Customers Relationship"
+                }
+            ]
+        }
+    ]
+}

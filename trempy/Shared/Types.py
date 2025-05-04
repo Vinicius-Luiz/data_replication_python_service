@@ -16,6 +16,11 @@ class CdcModeType(Enum):
     UPSERT = 'upsert'
     SCD2 = 'scd2'
 
+class SCD2ColumnType(Enum):
+    START_DATE = 'start_date'
+    END_DATE = 'end_date'
+    CURRENT = 'current'
+
 class TransformationType(Enum):
     CREATE_COLUMN = 'create_column'
     MODIFY_SCHEMA_NAME = 'modify_schema_name'
@@ -36,6 +41,7 @@ class TransformationOperationType(Enum):
     MATH_EXPRESSION = 'math_expression'
     LITERAL = 'literal'
     DATE_NOW = 'date_now'
+    DATETIME_NOW = 'datetime_now'
     CONCAT = 'concat'
     DATE_DIFF_YEARS = 'date_diff_years'
 

@@ -1,0 +1,4 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,dept_name,user_operation,scd_start_date,scd_end_date,scd_current
+0,INSERT,d008,Logistic,python,2025-05-04T03:00:34.376369,,
+1,INSERT,d009,Relationship,python,2025-05-04T03:00:34.376369,,
+2,INSERT,d010,Architecture,python,2025-05-04T03:00:34.376369,,

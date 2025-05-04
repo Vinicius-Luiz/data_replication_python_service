@@ -1,3 +1,4 @@
+from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
 from trempy.Transformations.FunctionColumn import FunctionColumn
 from trempy.Shared.Types import TransformationOperationType
 from datetime import datetime
@@ -14,26 +15,38 @@ class FunctionColumnCreator(FunctionColumn):
     }
 
     REQUIRED_PARAMS = {
-        TransformationOperationType.LITERAL: ["value"],
+        TransformationOperationType.LITERAL: ["value", "value_type"],
         TransformationOperationType.CONCAT: ["depends_on"],
         TransformationOperationType.DATE_DIFF_YEARS: ["depends_on"],
     }
 
     @staticmethod
-    def literal(value: str) -> pl.Expr:
+    def literal(value: str, value_type: str) -> pl.Expr:
         """Cria uma expressão Polars com um valor literal constante.
 
         Args:
             value: Valor string que será convertido para expressão Polars.
+            value_type: Tipo do valor literal.
 
         Returns:
             Expressão Polars contendo o valor literal fornecido.
         """
 
-        return pl.lit(value)
+        value_type = DataType.DataTypes.TYPE_DATABASE_TO_POLARS[value_type]
+        return pl.lit(value).cast(value_type)
 
     @staticmethod
     def date_now() -> pl.Expr:
+        """Cria uma expressão Polars com a data atual.
+
+        Returns:
+            Expressão Polars do tipo Datetime contendo o timestamp atual.
+        """
+
+        return pl.lit(datetime.now()).cast(pl.Date)
+
+    @staticmethod
+    def datetime_now() -> pl.Expr:
         """Cria uma expressão Polars com a data e hora atuais.
 
         Returns:

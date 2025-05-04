@@ -1,3 +1,5 @@
+from trempy.Shared.Types import SCD2ColumnType 
+
 class Column:
     """
     Classe que representa uma coluna de uma tabela.
@@ -21,6 +23,8 @@ class Column:
         nullable: bool = None,
         ordinal_position: int = None,
         is_primary_key: bool = False,
+        is_scd2_column: bool = False,
+        scd2_column_type: SCD2ColumnType = None
     ):
         self.name = name
         self.data_type = (
@@ -32,4 +36,8 @@ class Column:
         self.ordinal_position = ordinal_position
         self.is_primary_key = is_primary_key
 
+        self.is_scd2_column = is_scd2_column
+        self.scd2_column_type = scd2_column_type
+
+        
         self.id = f"{self.name}"

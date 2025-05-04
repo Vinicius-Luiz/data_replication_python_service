@@ -1,14 +1,17 @@
 from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
+from trempy.Shared.Types import PriorityType, TaskType, CdcModeType
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Transformations.Transformation import Transformation
 from trempy.Replication.Exceptions.Exception import *
 from trempy.Filters.Filter import Filter
 from task.credentials import credentials
 from trempy.Shared.Utils import Utils
+from trempy.Tables.Table import Table
 from trempy.Tasks.Task import Task
 from dotenv import load_dotenv
+import logging
 import json
 
 
@@ -105,12 +108,122 @@ class ReplicationManager:
 
         for transformation_config in task_settings.get("transformations", []):
             transformation = Transformation(**transformation_config.get("settings"))
-            table_info = transformation_config.get("table_info")
+            table_info: dict = transformation_config.get("table_info")
             task.add_transformation(
                 schema_name=table_info.get("schema_name"),
                 table_name=table_info.get("table_name"),
                 transformation=transformation,
             )
+
+            if (
+                transformation.priority == PriorityType.VERY_LOW
+                and task.replication_type == TaskType.CDC
+                and task.cdc_mode == CdcModeType.SCD2
+            ):
+                logging.warning(
+                    f"Transformação com prioridade {transformation.priority.name} nao é recomendável com CDC com modo SCD2"
+                )
+        
+        for table in sorted(task.tables, key=lambda x: x.priority.value):
+            self._prepare_to_scd2(task, table)
+
+    def _prepare_to_scd2(self, task: Task, table: Table) -> None:
+        try:
+            if task.cdc_mode == CdcModeType.SCD2:
+                logging.debug(
+                    f"TASK - Preparando {table.schema_name}.{table.table_name} para SCD2"
+                )
+                scd2_transformations = [
+                    {
+                        "table_info": {
+                            "schema_name": table.schema_name,
+                            "table_name": table.table_name,
+                        },
+                        "settings": {
+                            "transformation_type": "create_column",
+                            "description": "Criando coluna scd_start_date",
+                            "contract": {
+                                "operation": (
+                                    "date_now"
+                                    if task.scd2_date_type == "date"
+                                    else "datetime_now"
+                                ),
+                                "new_column_name": task.scd2_start_date_column_name,
+                                "is_scd2_column": True,
+                                "scd2_column_type": "start_date",
+                            },
+                            "priority": 4,
+                        },
+                    },
+                    {
+                        "table_info": {
+                            "schema_name": table.schema_name,
+                            "table_name": table.table_name,
+                        },
+                        "settings": {
+                            "transformation_type": "create_column",
+                            "description": "Criando coluna scd_end_date",
+                            "contract": {
+                                "operation": "literal",
+                                "new_column_name": task.scd2_end_date_column_name,
+                                "value": None,
+                                "value_type": task.scd2_date_type,
+                                "is_scd2_column": True,
+                                "scd2_column_type": "end_date",
+                            },
+                            "priority": 4,
+                        },
+                    },
+                    {
+                        "table_info": {
+                            "schema_name": table.schema_name,
+                            "table_name": table.table_name,
+                        },
+                        "settings": {
+                            "transformation_type": "create_column",
+                            "description": "Criando coluna scd_current",
+                            "contract": {
+                                "operation": "literal",
+                                "new_column_name": task.scd2_current_column_name,
+                                "value": None,
+                                "value_type": "integer",
+                                "is_scd2_column": True,
+                                "scd2_column_type": "current",
+                            },
+                            "priority": 4,
+                        },
+                    },
+                    {
+                        "table_info": {
+                            "schema_name": table.schema_name,
+                            "table_name": table.table_name,
+                        },
+                        "settings": {
+                            "transformation_type": "add_primary_key",
+                            "description": "Adicionando chave primária scd_start_date",
+                            "contract": {
+                                "column_names": [task.scd2_start_date_column_name],
+                            },
+                            "priority": 4,
+                        },
+                    },
+                ]
+                for transformation_config in scd2_transformations:
+                    transformation = Transformation(
+                        **transformation_config.get("settings")
+                    )
+                    table_info: dict = transformation_config.get("table_info")
+                    task.add_transformation(
+                        schema_name=table_info.get("schema_name"),
+                        table_name=table_info.get("table_name"),
+                        transformation=transformation,
+                    )
+        except Exception as e:
+            e = PrepareSCD2Error(
+                f"Erro ao preparar para SCD2: {e}",
+                f"{table.schema_name}.{table.table_name}",
+            )
+            Utils.log_exception_and_exit(e)
 
     def run(self):
         """

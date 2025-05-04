@@ -1,0 +1,6 @@
+lsn,xid,data
+4/FF1730F8,1621,BEGIN 1621
+4/FF1730F8,1621,table employees.department: DELETE: id[character]:'d009'
+4/FF173140,1621,table employees.department: DELETE: id[character]:'d008'
+4/FF173188,1621,table employees.department: DELETE: id[character]:'d010'
+4/FF173200,1621,COMMIT 1621

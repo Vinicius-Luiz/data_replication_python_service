@@ -45,7 +45,9 @@ class Transformation:
         """
 
         if self.transformation_type not in TransformationType:
-            e = InvalidTransformationTypeError('Tipo de transformação inválido', self.transformation_type)
+            e = InvalidTransformationTypeError(
+                "Tipo de transformação inválido", self.transformation_type
+            )
             Utils.log_exception_and_exit(e)
 
     def execute(self, table: Table = None) -> None:
@@ -65,7 +67,7 @@ class Transformation:
         Returns:
             None
         """
-        
+
         logging.info(
             f"TRANSFORMATION - Aplicando transformação em {table.schema_name}.{table.table_name}: {self.description}"
         )
@@ -128,6 +130,56 @@ class Transformation:
         ]
         return table
 
+    def _execute_add_primary_key(self, table: Table) -> Table:
+        """
+        Adiciona a chave primária a tabela de destino com base no contrato de transformação.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem.
+
+        Returns:
+            Table: Objeto representando a estrutura da tabela de origem com a chave primária adicionada.
+        """
+
+        try:
+            column_names = self.contract["column_names"]
+
+            for column_name in column_names:
+                table.columns[column_name].is_primary_key = True
+
+            return table
+        except KeyError as e:
+            e = ColumnNameNotFoundError("Coluna procurada não encontrada", column_name)
+            Utils.log_exception_and_exit(e)
+        except Exception as e:
+            e = TransformationError(str(e))
+            Utils.log_exception_and_exit(e)
+
+    def _execute_remove_primary_key(self, table: Table) -> Table:
+        """
+        Remove a chave primária da tabela de destino com base no contrato de transformação.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem.
+
+        Returns:
+            Table: Objeto representando a estrutura da tabela de origem com a chave primária removida.
+        """
+
+        try:
+            column_names = self.contract["column_names"]
+
+            for column_name in column_names:
+                table.columns[column_name].is_primary_key = False
+
+            return table
+        except KeyError as e:
+            e = ColumnNameNotFoundError("Coluna procurada não encontrada", column_name)
+            Utils.log_exception_and_exit(e)
+        except Exception as e:
+            e = TransformationError(str(e))
+            Utils.log_exception_and_exit(e)
+
     def _execute_create_column(self, table: Table) -> Table:
         """
         Cria uma nova coluna com base no contrato de transformação.
@@ -152,32 +204,4 @@ class Transformation:
             Table: Objeto representando a estrutura da tabela de origem com o valor da coluna de destino atualizado.
         """
 
-        return ColumnModifier.modify_column(self.contract, table)
-    
-    def _execute_add_primary_key(self, table: Table) -> Table:
-        """
-        Adiciona a chave primária a tabela de destino com base no contrato de transformação.
-
-        Args:
-            table (Table): Objeto representando a estrutura da tabela de origem.
-
-        Returns:
-            Table: Objeto representando a estrutura da tabela de origem com a chave primária adicionada.
-        """
-
-        raise NotImplementedError # TODO
-        return ColumnModifier.modify_column(self.contract, table)
-    
-    def _execute_remove_primary_key(self, table: Table) -> Table:
-        """
-        Remove a chave primária da tabela de destino com base no contrato de transformação.
-
-        Args:
-            table (Table): Objeto representando a estrutura da tabela de origem.
-
-        Returns:
-            Table: Objeto representando a estrutura da tabela de origem com a chave primária removida.
-        """
-
-        raise NotImplementedError # TODO
         return ColumnModifier.modify_column(self.contract, table)
