@@ -1,0 +1,60 @@
+{
+    "id": "048530",
+    "creted_at": "2025-05-05 23:08:03",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "salary",
+            "operation": "update",
+            "columns": [
+                {
+                    "name": "employee_id",
+                    "type": "bigint",
+                    "value": "500002"
+                },
+                {
+                    "name": "amount",
+                    "type": "bigint",
+                    "value": "80520"
+                },
+                {
+                    "name": "from_date",
+                    "type": "date",
+                    "value": "2024-04-01"
+                },
+                {
+                    "name": "to_date",
+                    "type": "date",
+                    "value": "2025-05-05"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "salary",
+            "operation": "insert",
+            "columns": [
+                {
+                    "name": "employee_id",
+                    "type": "bigint",
+                    "value": "500002"
+                },
+                {
+                    "name": "amount",
+                    "type": "bigint",
+                    "value": "98520"
+                },
+                {
+                    "name": "from_date",
+                    "type": "date",
+                    "value": "2025-05-05"
+                },
+                {
+                    "name": "to_date",
+                    "type": "date",
+                    "value": "9999-12-31"
+                }
+            ]
+        }
+    ]
+}

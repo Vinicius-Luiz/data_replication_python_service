@@ -1,0 +1,6 @@
+lsn,xid,data
+4/FF642B60,1961,BEGIN 1961
+4/FF642B60,1961,table employees.department_manager: DELETE: employee_id[bigint]:500002 department_id[character]:'d008'
+4/FF642BB0,1961,table employees.department_manager: DELETE: employee_id[bigint]:500001 department_id[character]:'d010'
+4/FF642C00,1961,table employees.department_manager: DELETE: employee_id[bigint]:500002 department_id[character]:'d009'
+4/FF642C80,1961,COMMIT 1961

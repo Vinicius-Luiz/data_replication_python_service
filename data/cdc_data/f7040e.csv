@@ -1,0 +1,4 @@
+lsn,xid,data
+4/FF613F20,1926,BEGIN 1926
+4/FF613F20,1926,table employees.department: UPDATE: id[character]:'d009' dept_name[character varying]:'Customers Relationship'
+4/FF614F50,1926,COMMIT 1926

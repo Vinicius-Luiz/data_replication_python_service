@@ -143,12 +143,10 @@ class ReplicationManager:
                             "transformation_type": "create_column",
                             "description": "Criando coluna scd_start_date",
                             "contract": {
-                                "operation": (
-                                    "date_now"
-                                    if task.scd2_date_type == "date"
-                                    else "datetime_now"
-                                ),
+                                "operation": "literal",
                                 "new_column_name": task.scd2_start_date_column_name,
+                                "value": None,
+                                "value_type": task.scd2_date_type,
                                 "is_scd2_column": True,
                                 "scd2_column_type": "start_date",
                             },

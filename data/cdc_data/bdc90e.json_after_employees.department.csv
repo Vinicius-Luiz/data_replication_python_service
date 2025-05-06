@@ -1,2 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,id,dept_name,user_operation,scd_start_date,scd_end_date,scd_current
-0,UPDATE,d009,b2b Relationship,python,2025-05-04T03:04:04.961616,,

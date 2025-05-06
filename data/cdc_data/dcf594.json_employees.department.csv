@@ -1,0 +1,2 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,dept_name,scd_start_date,scd_end_date,scd_current
+0,UPDATE,d009,Customers Relationship,,,

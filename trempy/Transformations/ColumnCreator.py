@@ -260,6 +260,7 @@ class ColumnCreator:
                 nullable=True,
                 ordinal_position=len(table.columns) + 1,
                 is_primary_key=False,
+                is_created_by_trempy=True,
                 is_scd2_column=is_scd2_column,
                 scd2_column_type=SCD2ColumnType(scd2_column_type) if scd2_column_type else None,
             )

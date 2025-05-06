@@ -1,8 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,id,dept_name,user_operation,scd_start_date,scd_end_date,scd_current
-0,UPDATE,d005,Development,python,2025-05-04T03:02:13.686659,,
-1,UPDATE,d002,Finance,python,2025-05-04T03:02:13.686659,,
-2,UPDATE,d003,Human Resources,python,2025-05-04T03:02:13.686659,,
-3,UPDATE,d001,Marketing,python,2025-05-04T03:02:13.686659,,
-4,UPDATE,d004,Production,python,2025-05-04T03:02:13.686659,,
-5,UPDATE,d006,Quality Management,python,2025-05-04T03:02:13.686659,,
-6,UPDATE,d007,Sales,python,2025-05-04T03:02:13.686659,,

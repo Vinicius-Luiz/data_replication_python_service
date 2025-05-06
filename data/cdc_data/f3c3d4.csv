@@ -1,6 +1,0 @@
-lsn,xid,data
-4/FF189AF8,1632,BEGIN 1632
-4/FF189AF8,1632,table employees.department: DELETE: id[character]:'d008'
-4/FF189B40,1632,table employees.department: DELETE: id[character]:'d009'
-4/FF189B88,1632,table employees.department: DELETE: id[character]:'d010'
-4/FF189C00,1632,COMMIT 1632

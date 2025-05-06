@@ -1,0 +1,6 @@
+lsn,xid,data
+4/FF642E60,1965,BEGIN 1965
+4/FF642E60,1965,table employees.employee: DELETE: id[bigint]:500000
+4/FF642EA8,1965,table employees.employee: DELETE: id[bigint]:500001
+4/FF642EF0,1965,table employees.employee: DELETE: id[bigint]:500002
+4/FF642F68,1965,COMMIT 1965

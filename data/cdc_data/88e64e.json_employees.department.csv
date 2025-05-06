@@ -1,0 +1,4 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,dept_name,scd_start_date,scd_end_date,scd_current
+0,INSERT,d008,Logistic,,,
+1,INSERT,d009,Relationship,,,
+2,INSERT,d010,Architecture,,,

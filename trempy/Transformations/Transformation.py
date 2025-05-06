@@ -128,6 +128,9 @@ class Transformation:
         table.columns[self.contract["column_name"]].name = self.contract[
             "target_column_name"
         ]
+        table.data = table.data.rename(
+            {self.contract["column_name"]: self.contract["target_column_name"]}
+        )
         return table
 
     def _execute_add_primary_key(self, table: Table) -> Table:

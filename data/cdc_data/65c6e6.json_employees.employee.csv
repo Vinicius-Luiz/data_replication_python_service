@@ -1,0 +1,2 @@
+$TREM_ROWNUM,$TREM_OPERATION,id,birth_date,first_name,last_name,gender,hire_date,full_name,updated_by,sync_date,scd_start_date,scd_end_date,scd_current
+0,UPDATE,500001,2002-05-07,VITAL,RAMOS,M,2025-04-04,VITAL RAMOS,PYTHON,2025-05-05,,,

@@ -1,9 +1,0 @@
-lsn,xid,data
-4/FF188860,1626,BEGIN 1626
-4/FF188860,1626,table employees.department: UPDATE: id[character]:'d009' dept_name[character varying]:'b2b Relationship'
-4/FF188978,1626,COMMIT 1626
-4/FF1891E0,1628,BEGIN 1628
-4/FF1891E0,1628,table employees.department: DELETE: id[character]:'d008'
-4/FF189228,1628,table employees.department: DELETE: id[character]:'d010'
-4/FF189270,1628,table employees.department: DELETE: id[character]:'d009'
-4/FF1892E8,1628,COMMIT 1628

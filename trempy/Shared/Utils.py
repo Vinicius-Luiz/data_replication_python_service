@@ -46,6 +46,10 @@ class Utils:
         
         logging.error(log_message)
 
+    def log_debug(message: str):
+        """Loga uma mensagem de debug no formato desejado"""
+        logging.debug(message)
+
     @staticmethod
     def write_task_pickle(task: 'Task') -> None:
         """

@@ -22,6 +22,7 @@ class Column:
         character_maximum_length: int = None,
         nullable: bool = None,
         ordinal_position: int = None,
+        is_created_by_trempy: bool = False,
         is_primary_key: bool = False,
         is_scd2_column: bool = False,
         scd2_column_type: SCD2ColumnType = None
@@ -36,6 +37,8 @@ class Column:
         self.ordinal_position = ordinal_position
         self.is_primary_key = is_primary_key
 
+        self.is_created_by_trempy = is_created_by_trempy
+        
         self.is_scd2_column = is_scd2_column
         self.scd2_column_type = scd2_column_type
 

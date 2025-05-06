@@ -1,0 +1,6 @@
+lsn,xid,data
+4/FF615340,1928,BEGIN 1928
+4/FF615340,1928,table employees.salary: INSERT: employee_id[bigint]:500000 amount[bigint]:60000 from_date[date]:'2024-06-01' to_date[date]:'9999-12-31'
+4/FF616D88,1928,table employees.salary: INSERT: employee_id[bigint]:500001 amount[bigint]:26000 from_date[date]:'2025-04-04' to_date[date]:'9999-12-31'
+4/FF616E20,1928,table employees.salary: INSERT: employee_id[bigint]:500002 amount[bigint]:80520 from_date[date]:'2024-04-01' to_date[date]:'9999-12-31'
+4/FF6171A8,1928,COMMIT 1928

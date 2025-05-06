@@ -393,18 +393,9 @@ class Task:
                 )
                 for table in sorted(self.tables, key=lambda x: x.priority.value):
                     data: pl.DataFrame = df_changes_structured.get(table.id)
-                    table.data = data
-
-                    try:
-                        table.data.write_csv(
-                            rf"{cdc_log_dir}\{filename}_before_{table.id}.csv"
-                        )  # TODO temporário
-
-                        logging.debug(f"{table.id} - {table.data.schema}")
-                    except Exception as e:
-                        pass
 
                     if table.id in df_changes_structured.keys():
+                        table.add_data(data)
                         table.execute_filters()
                         table.execute_transformations()
 
@@ -415,7 +406,7 @@ class Task:
                         )
                     try:
                         table.data.write_csv(
-                            rf"{cdc_log_dir}\{filename}_after_{table.id}.csv"
+                            rf"{cdc_log_dir}\{filename}_{table.id}.csv"
                         )  # TODO temporário
                     except Exception as e:
                         pass

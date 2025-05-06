@@ -1,8 +1,9 @@
 from __future__ import annotations
+from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
 from trempy.Transformations.Transformation import Transformation
-from trempy.Tables.Exceptions.Exception import *
-from trempy.Tables.Exceptions.Exception import *
 from trempy.Shared.Types import PriorityType, SCD2ColumnType
+from trempy.Tables.Exceptions.Exception import *
+from trempy.Tables.Exceptions.Exception import *
 from trempy.Columns.Column import Column
 from trempy.Filters.Filter import Filter
 from typing import List, Dict, Optional
@@ -66,6 +67,35 @@ class Table:
         """
 
         return self.columns.get(column_name)
+
+    def add_data(self, data: pl.DataFrame) -> None:
+        """
+        Adiciona dados a tabela.
+
+        Args:
+            data (pl.DataFrame): DataFrame contendo os dados a serem adicionados.
+
+        Returns:
+            None
+        """
+        try:
+            for source_column_name, column in sorted(
+                self.columns.items(), key=lambda col: col[1].ordinal_position
+            ):
+                if (
+                    source_column_name not in data.columns
+                    and not column.is_created_by_trempy
+                ):
+                    data_type = DataType.DataTypes.TYPE_DATABASE_TO_POLARS[
+                        column.data_type
+                    ]  # TODO eu preciso saber qual é o tipo de endpoint correto
+                    data = data.with_columns(
+                        pl.lit(None, dtype=data_type).alias(source_column_name)
+                    )
+            self.data = data
+        except Exception as e:
+            e = AddDataError(f"Erro ao adicionar dados na tabela: {e}", self.id)
+            Utils.log_exception_and_exit(e)
 
     def execute_transformations(self) -> None:
         """

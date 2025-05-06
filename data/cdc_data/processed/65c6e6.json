@@ -1,0 +1,43 @@
+{
+    "id": "65c6e6",
+    "creted_at": "2025-05-05 23:05:34",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "employee",
+            "operation": "update",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "bigint",
+                    "value": "500001"
+                },
+                {
+                    "name": "birth_date",
+                    "type": "date",
+                    "value": "2002-05-07"
+                },
+                {
+                    "name": "first_name",
+                    "type": "character varying",
+                    "value": "Vital"
+                },
+                {
+                    "name": "last_name",
+                    "type": "character varying",
+                    "value": "Ramos"
+                },
+                {
+                    "name": "gender",
+                    "type": "employees.employee_gender",
+                    "value": "M"
+                },
+                {
+                    "name": "hire_date",
+                    "type": "date",
+                    "value": "2025-04-04"
+                }
+            ]
+        }
+    ]
+}

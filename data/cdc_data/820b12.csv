@@ -1,0 +1,5 @@
+lsn,xid,data
+4/FF63B030,1952,BEGIN 1952
+4/FF63B030,1952,table employees.department_manager: INSERT: employee_id[bigint]:500001 department_id[character]:'d010' from_date[date]:'2025-04-04' to_date[date]:'9999-01-01'
+4/FF63BB08,1952,table employees.department_manager: INSERT: employee_id[bigint]:500002 department_id[character]:'d008' from_date[date]:'2024-04-01' to_date[date]:'9999-01-01'
+4/FF63BCF0,1952,COMMIT 1952

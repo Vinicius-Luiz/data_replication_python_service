@@ -11,3 +11,9 @@ class PrimaryKeyNotFoundError(TableError):
 
     def __init__(self, message: str, table_name: str):
         super().__init__(f"{message} | {table_name}")
+
+class AddDataError(TableError):
+    """Exceção lançada quando ocorre um erro ao adicionar dados na tabela."""
+
+    def __init__(self, message: str, table_name: str):
+        super().__init__(f"{message} | {table_name}")

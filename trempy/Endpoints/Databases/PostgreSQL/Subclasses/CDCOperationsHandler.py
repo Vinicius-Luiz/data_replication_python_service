@@ -49,8 +49,6 @@ class CDCOperationsHandler:
 
             self._insert_cdc_data(table, mode)
 
-            self.connection_manager.commit()
-
             return {"message": "CDC data inserted successfully", "success": True}
 
         except Exception as e:
@@ -110,6 +108,7 @@ class CDCOperationsHandler:
                 self._operation_update(table, row)
             elif operation == "DELETE":
                 self._operation_delete(table, row)
+            self.connection_manager.commit()
 
     def _insert_cdc_data_upsert(self, table: Table) -> None:
         """Processa operações CDC no modo UPSERT (INSERT + UPDATE combinados).
@@ -129,6 +128,7 @@ class CDCOperationsHandler:
                 self._operation_upsert(table, row)
             elif operation == "DELETE":
                 self._operation_delete(table, row)
+            self.connection_manager.commit()
 
     def _insert_cdc_data_scd2(self, table: Table) -> None:
         """Processa operações CDC no modo SCD2 (Slow Changing Dimension Type 2).
@@ -153,6 +153,7 @@ class CDCOperationsHandler:
                 self._scd2_create_current(table, row)
             elif operation == "DELETE":
                 self._scd2_disable_current(table, row)
+            self.connection_manager.commit()
 
     def _scd2_get_where_clause(self, table: Table, row: dict) -> Dict[str, List[str]]:
         """Constrói a cláusula WHERE para operações SCD2 baseada nas colunas-chave.
@@ -211,9 +212,9 @@ class CDCOperationsHandler:
         scd2_columns = table.get_scd2_columns()
         current = scd2_columns[SCD2ColumnType.CURRENT]
 
-        where_clase = self._scd2_get_where_clause(table, row)
-        where_parts = where_clase["where_parts"]
-        where_values = where_clase["where_values"]
+        where_clause = self._scd2_get_where_clause(table, row)
+        where_parts = where_clause["where_parts"]
+        where_values = where_clause["where_values"]
 
         query = sql.SQL(Query.SQL_VERIFY_ROW_SCD2_EXISTS).format(
             schema=sql.Identifier(table.target_schema_name),
@@ -294,9 +295,9 @@ class CDCOperationsHandler:
             current = scd2_columns[SCD2ColumnType.CURRENT]
             end_date = scd2_columns[SCD2ColumnType.END_DATE]
 
-            where_clase = self._scd2_get_where_clause(table, row)
-            where_parts = where_clase["where_parts"]
-            where_values = where_clase["where_values"]
+            where_clause = self._scd2_get_where_clause(table, row)
+            where_parts = where_clause["where_parts"]
+            where_values = where_clause["where_values"]
 
             update_query = sql.SQL(Query.SQL_UPDATE_EXISTING).format(
                 schema=sql.Identifier(table.target_schema_name),
@@ -332,18 +333,28 @@ class CDCOperationsHandler:
                 Contém detalhes do schema, tabela e query executada.
         """
         try:
-            data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
-            insert_values = [row[col] for col in data_columns]
+            scd2_columns = table.get_scd2_columns()
+            scd2_start_date = scd2_columns[SCD2ColumnType.START_DATE]
 
-            value_placeholders = sql.SQL(", ").join(
-                [sql.Placeholder()] * len(data_columns)
-            )
+
+            data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
+            insert_values = []
+            value_placeholders = []
+            for col in data_columns:
+                if col == scd2_start_date:
+                    value_placeholders.append(sql.SQL("NOW()"))
+                else:
+                    value_placeholders.append(sql.Placeholder())
+                    insert_values.append(row[col])
+                    
+            # Garante que a lista de placeholders seja um Composable
+            values_part = sql.SQL(", ").join(value_placeholders)
 
             query = sql.SQL(Query.CDC_INSERT_DATA).format(
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
-                values=value_placeholders,
+                values=values_part,  # Já é um Composed SQL
             )
 
             with self.connection_manager.cursor() as cursor:

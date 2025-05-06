@@ -1,0 +1,4 @@
+$TREM_ROWNUM,$TREM_OPERATION,employee_id,department_id,from_date,to_date,scd_start_date,scd_end_date,scd_current
+0,DELETE,500002,d008,,,,,
+1,DELETE,500001,d010,,,,,
+2,DELETE,500002,d009,,,,,

@@ -1,0 +1,42 @@
+{
+    "id": "1b2d0a",
+    "creted_at": "2025-05-05 23:10:28",
+    "operations": [
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d008"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d010"
+                }
+            ]
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "department",
+            "operation": "delete",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "character",
+                    "value": "d009"
+                }
+            ]
+        }
+    ]
+}

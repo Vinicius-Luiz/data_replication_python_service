@@ -254,4 +254,5 @@ class ColumnModifier:
 
         # Execução
         table.data = table.data.with_columns(op_config["func"]().alias(column_name))
+
         return table

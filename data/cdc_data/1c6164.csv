@@ -1,0 +1,9 @@
+lsn,xid,data
+4/FF63AA28,1945,BEGIN 1945
+4/FF63AA28,1945,table employees.salary: DELETE: employee_id[bigint]:500000 from_date[date]:'2024-06-01'
+4/FF63AA70,1945,table employees.salary: DELETE: employee_id[bigint]:500000 from_date[date]:'2025-05-05'
+4/FF63AAB8,1945,table employees.salary: DELETE: employee_id[bigint]:500001 from_date[date]:'2025-04-04'
+4/FF63AB00,1945,table employees.salary: DELETE: employee_id[bigint]:500001 from_date[date]:'2025-05-05'
+4/FF63AB48,1945,table employees.salary: DELETE: employee_id[bigint]:500002 from_date[date]:'2024-04-01'
+4/FF63AB90,1945,table employees.salary: DELETE: employee_id[bigint]:500002 from_date[date]:'2025-05-05'
+4/FF63AC08,1945,COMMIT 1945

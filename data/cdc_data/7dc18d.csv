@@ -1,0 +1,6 @@
+lsn,xid,data
+4/FF60E638,1918,BEGIN 1918
+4/FF60E638,1918,table employees.employee: UPDATE: id[bigint]:500002 birth_date[date]:'1996-03-12' first_name[character varying]:'Aron' last_name[character varying]:'Sales' gender[employees.employee_gender]:'M' hire_date[date]:'2024-03-25'
+4/FF60E6A0,1918,table employees.employee: UPDATE: id[bigint]:500002 birth_date[date]:'1996-03-12' first_name[character varying]:'Aron' last_name[character varying]:'Sales' gender[employees.employee_gender]:'M' hire_date[date]:'2024-04-02'
+4/FF60E708,1918,table employees.employee: UPDATE: id[bigint]:500002 birth_date[date]:'1996-03-12' first_name[character varying]:'Aron' last_name[character varying]:'Sales' gender[employees.employee_gender]:'M' hire_date[date]:'2024-04-01'
+4/FF60E7A0,1918,COMMIT 1918

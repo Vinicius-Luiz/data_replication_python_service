@@ -1,0 +1,4 @@
+lsn,xid,data
+4/FF60E150,1914,BEGIN 1914
+4/FF60E150,1914,table employees.employee: UPDATE: id[bigint]:500000 birth_date[date]:'2000-05-14' first_name[character varying]:'Vinícius' last_name[character varying]:'França' gender[employees.employee_gender]:'M' hire_date[date]:'2024-06-01'
+4/FF60E1F0,1914,COMMIT 1914

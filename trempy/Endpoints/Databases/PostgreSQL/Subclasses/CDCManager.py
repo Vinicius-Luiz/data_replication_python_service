@@ -100,25 +100,27 @@ class CDCManager:
             id = Utils.hash_6_chars()
 
             changes_structured = []
-            for xid, group in df_changes_captured.group_by("xid"):
+            for xid, group in df_changes_captured.sort("xid").group_by("xid"):
                 transactions = self._process_transaction(group)
                 changes_structured.extend(transactions)
-            changes_structured = changes_structured[0] if changes_structured else []
+
+            # logging.debug(changes_structured)
+            # Utils.log_exception_and_exit('stop') if changes_structured else None
 
             filtered_changes_structured = []
             if changes_structured:
-                for operation in changes_structured.get("operations"):
-                    operation
-                    schema_name = operation.get("schema_name")
-                    table_name = operation.get("table_name")
-                    idx = f"{schema_name}.{table_name}"
+                for operations in changes_structured:
+                    for row in operations.get("operations"):
+                        schema_name = row.get("schema_name")
+                        table_name = row.get("table_name")
+                        idx = f"{schema_name}.{table_name}"
 
-                    table_ok = (
-                        True if idx in [table.id for table in task_tables] else False
-                    )
+                        table_ok = (
+                            True if idx in [table.id for table in task_tables] else False
+                        )
 
-                    if table_ok:
-                        filtered_changes_structured.append(operation)
+                        if table_ok:
+                            filtered_changes_structured.append(row)
 
             if filtered_changes_structured:
                 changes_structured = {

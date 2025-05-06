@@ -1,4 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,id,user_operation,scd_start_date,scd_end_date,scd_current
-0,DELETE,d008,python,2025-05-04T03:08:03.564546,,
-1,DELETE,d009,python,2025-05-04T03:08:03.564546,,
-2,DELETE,d010,python,2025-05-04T03:08:03.564546,,
