@@ -169,11 +169,9 @@ dlx_consumer.start_consuming()
 
 #### Boas Práticas Implementadas
 1. Confirmação de Mensagens (Acknowledgements)
-ACK explícito somente após structure_capture_changes_to_dataframe()
-
-NACK para mensagens inválidas (sem requeue)
-
-Prefetch Count = 1 para processamento serializado
+2. ACK explícito somente após structure_capture_changes_to_dataframe()
+3. NACK para mensagens inválidas (sem requeue)
+4. Prefetch Count = 1 para processamento serializado
 
 2. Durabilidade
 ```python
@@ -192,11 +190,9 @@ channel.queue_declare(
 ```
 
 3. Tratamento de Erros com DLX
-Mensagens problemáticas são roteadas para dlx_replication
-
-Padrão de routing key dlx.<original_task_name>
-
-Processamento especializado para mensagens falhas
+- Mensagens problemáticas são roteadas para dlx_replication
+- Padrão de routing key dlx.<original_task_name>
+- Processamento especializado para mensagens falhas
 
 ### Monitoramento Recomendado
 1. Filas não consumidas: Verificar se há mensagens acumulando
