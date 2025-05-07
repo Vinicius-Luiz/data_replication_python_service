@@ -208,6 +208,23 @@ channel.queue_declare(
     - Se falha → NACK (envia para DLX)
 4. Mensagens na DLX são registradas para análise posterior
 
+
+### Execução
+
+```bash
+# Terminal 1
+start python dlx_manager.py
+start python consumer.py
+python producer.py
+```
+
+```bash
+rabbitmqctl list_queues name messages_ready # Listar Todas as Filas Existentes
+rabbitmqctl list_exchanges # Listar Todas as Exchanges
+rabbitmqctl list_bindings # Verificar Bindings (Conexões entre Exchanges e Filas)
+rabbitmq-plugins enable rabbitmq_management # Interface Web | http://localhost:15672/ | Login padrão: guest / guest
+```
+
 ```
 Esta documentação cobre toda a implementação proposta, com exemplos de código prontos para uso e explicações detalhadas de cada componente. Você pode adaptar os nomes de exchanges, filas e métodos conforme a necessidade específica do seu projeto.
 ``` 

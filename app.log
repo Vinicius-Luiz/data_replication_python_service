@@ -2006,3 +2006,5 @@
 2025-05-05 23:23:56,754 - DEBUG - producer.py - Exit code: 0
 2025-05-05 23:23:59,365 - INFO - STRATEGY - Interrompendo processo CDC
 2025-05-05 23:23:59,366 - INFO - STRATEGY - CDC encerrado com sucesso
+2025-05-07 00:01:58,683 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-05-07 00:01:58,749 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
