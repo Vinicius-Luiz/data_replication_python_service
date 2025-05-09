@@ -1,0 +1,18 @@
+{
+    "delivery_tag": 1,
+    "message": {
+        "action": "update",
+        "name": "Vin\u00edcius Luiz",
+        "id": 5
+    },
+    "properties": {
+        "content_type": "application/json",
+        "content_encoding": null,
+        "headers": {
+            "version": "1.0.0",
+            "x-death": [
+                {
+                    "count": 1,
+                    "reason": "rejected",
+                    "queue": "trempy_queue_cdc_scd2_employees",
+                    "time": 

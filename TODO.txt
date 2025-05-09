@@ -1,0 +1,8 @@
+- criar parâmetro pra definir o que fazer se der erro nas operações de CDC
+- criar filtro de operação (INSERT, UPDATE, DELETE)
+- melhorar log do cdc (há muita informação no looping)
+- remover timestamp (date) do scd2
+- estudar novo modo de leitura de slot_replication
+- ajustar localização de PostgreSQL.DataTypes, precisa estar em shared
+- melhorar retorno do cdc e full load
+- ver quais métodos podem ser privados

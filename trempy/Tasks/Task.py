@@ -404,12 +404,13 @@ class Task:
                             table=table,
                             create_table_if_not_exists=self.create_table_if_not_exists,
                         )
-                    try:
-                        table.data.write_csv(
-                            rf"{cdc_log_dir}\{filename}_{table.id}.csv"
-                        )  # TODO temporário
-                    except Exception as e:
-                        pass
+                        
+                        try:
+                            table.data.write_csv(
+                                rf"{cdc_log_dir}\{filename}_{table.id}.csv"
+                            )  # TODO temporário
+                        except Exception as e:
+                            pass
 
                 # TODO somente isso será necessário no futuro
 
