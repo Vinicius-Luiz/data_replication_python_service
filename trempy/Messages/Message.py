@@ -145,8 +145,9 @@ class MessageConsumer(Message):
         body: bytes,
     ) -> None:
 
+        Utils.log_debug(f" [x] Received '{self.routing_key}'")
         message: dict = json.loads(body.decode())
-        Utils.log_debug(f" [x] Received '{self.routing_key}':{message['id']}...")
+        Utils.log_debug(f" [x] Received '{self.routing_key}':{message['id']}")
 
         message["delivery_tag"] = method.delivery_tag
 

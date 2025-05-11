@@ -150,6 +150,7 @@ class CDCManager:
         """
 
         try:
+            Utils.log_debug("[INICIO] - structure_capture_changes_to_dataframe")  # TODO debug
             tables_data = {}
 
             for op_index, operation in enumerate(
@@ -209,7 +210,8 @@ class CDCManager:
                 df = df.select(["$TREM_ROWNUM", "$TREM_OPERATION"] + cols)
 
                 result[f'{table_info["schema_name"]}.{table_info["table_name"]}'] = df
-
+            
+            Utils.log_debug("[FIM] - structure_capture_changes_to_dataframe") # TODO debug
             return result
 
         except Exception as e:

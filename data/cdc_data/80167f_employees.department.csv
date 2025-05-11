@@ -1,4 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,id,dept_name,scd_start_date,scd_end_date,scd_current
-0,DELETE,d008,,,,
-1,DELETE,d010,,,,
-2,DELETE,d009,,,,

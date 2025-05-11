@@ -394,6 +394,7 @@ class Task:
             data: pl.DataFrame = df_changes_structured.get(table.id)
 
             if table.id in df_changes_structured.keys():
+                Utils.log_debug(f'[INICIO] {table.id} CDC') # TODO debug
                 table.add_data(data)
                 table.execute_filters()
                 table.execute_transformations()
@@ -403,10 +404,11 @@ class Task:
                     table=table,
                     create_table_if_not_exists=self.create_table_if_not_exists,
                 )
+                Utils.log_debug(f'[FIM] {table.id} CDC') # TODO debug
 
                 try:
                     tmp_path = f"data\cdc_data\{changes_structured['id']}_{table.id}.csv"
-                    table.data.write_csv(tmp_path)  # TODO temporário
+                    # table.data.write_csv(tmp_path)  # TODO temporário
                 except Exception as e:
                     Utils.log_exception(
                         f'Erro ao salvar dados da tabela "{table.target_table_name}" no diretorio {tmp_path}: {e}'

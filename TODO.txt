@@ -12,3 +12,5 @@
         - (por enquanto, salvar em data\cdc_data\dlx_messages)
         - (posteriormente, salvar mensagem com erro no banco de destino)
 - implementar logicas de resume e reload task
+- adicionar no json qual database da origem
+- dividir em assuntos o query.py

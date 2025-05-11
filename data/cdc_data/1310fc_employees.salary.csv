@@ -1,7 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,funcionario_id,data_inicio,quantia_mensal,data_fim,periodo_anos,scd_start_date,scd_end_date,scd_current
-3,DELETE,500000,2024-06-01,,,,,,
-4,DELETE,500000,2025-05-11,,,,,,
-6,DELETE,500001,2025-04-04,,,,,,
-7,DELETE,500001,2025-05-11,,,,,,
-10,DELETE,500002,2024-04-01,,,,,,
-11,DELETE,500002,2025-05-11,,,,,,

@@ -1,243 +1,208 @@
-# Documentação Consolidada do RabbitMQ
+# Documentação Atualizada com RabbitMQ Streams
 
 ## Configuração Inicial no Windows
 
-### ✅ Passos Comprovados para Iniciar o RabbitMQ
+### ✅ Passos Comprovados para Iniciar o RabbitMQ com Streams
 
-1. **Iniciar o serviço RabbitMQ**:
+1. **Habilitar o plugin de Streams**:
    ```cmd
-   net start RabbitMQ
+   rabbitmq-plugins enable rabbitmq_stream rabbitmq_stream_management
    ```
 
-2. **Adicionar ao PATH** (caso necessário):
-   - Pressione `Win + R` → Digite `sysdm.cpl` → "Variáveis de Ambiente"
-   - Em "Variáveis do sistema", edite `Path` → Adicione:
-     ```
-     C:\Program Files\RabbitMQ Server\rabbitmq_server-{versão}\sbin
-     ```
-
-### 🔍 Verificação Final
-Para confirmar que tudo está funcionando:
-```cmd
-rabbitmqctl status
-```
-Deve mostrar informações do servidor, incluindo:
-- Versão do Erlang/OTP
-- Status dos plugins
-- Uso de memória
-
-### ⚠️ Solução para Problemas com Cookies Erlang
-O RabbitMQ usa o cookie Erlang como mecanismo de segurança. Para resolver problemas de autenticação:
-
-1. Iguale os cookies entre:
-   - Servidor: `C:\Windows\System32\config\systemprofile\.erlang.cookie`
-   - Usuário: `C:\Users\[SeuUsuário]\.erlang.cookie`
-
-2. Recomendações:
-   - Mantenha permissões restritas no arquivo
-   - Faça backup do cookie válido
-   - Reinicie os serviços após alterações
+2. **Reiniciar o serviço**:
+   ```cmd
+   net stop RabbitMQ && net start RabbitMQ
+   ```
 
 ## Arquitetura do Sistema
 
-### Fluxo Básico
+### Fluxo Tradicional vs Stream
+
 ```mermaid
-graph LR
-    A[Producer] -->|Publica mensagem| B[Exchange Direct]
-    B -->|Routing Key: task_name| C[Fila Durável]
-    C -->|Consome mensagens| D[Consumer]
-    D -->|ACK/NACK| C
-    C -->|Mensagens problemáticas| E[Dead Letter Exchange]
+graph TD
+    subgraph Traditional[Modelo Tradicional]
+        A[Producer] -->|Publica| B[Exchange]
+        B -->|Routing Key| C[Fila Durável]
+        C --> D[Consumer]
+        C --> E[DLX]
+    end
+    
+    subgraph Stream[Modelo com Streams]
+        F[Stream Producer] -->|Append| G[Stream]
+        G --> H[Stream Consumer]
+        G --> I[Offset Tracking]
+    end
 ```
 
-## Implementação
 
-### Producer
-```python
-import pika
-import json
-
-def setup_producer():
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost')
-    )
-    channel = connection.channel()
-    
-    # Declara a exchange direct durável
-    channel.exchange_declare(
-        exchange='data_replication',
-        exchange_type='direct',
-        durable=True
-    )
-    
-    return channel
-
-def publish_task(channel, task_name, data):
-    message = json.dumps(data)
-    
-    channel.basic_publish(
-        exchange='data_replication',
-        routing_key=task_name,
-        body=message,
-        properties=pika.BasicProperties(
-            delivery_mode=2,  # Torna a mensagem persistente
-            content_type='application/json'
-        )
-    )
-    print(f" [x] Sent '{task_name}':{message}")
-```
-
-### Consumer
-```python
-import pika
-import json
-
-def structure_capture_changes_to_dataframe(message):
-    try:
-        data = json.loads(message)
-        if 'id' not in data:
-            raise ValueError("ID faltando")
-        return True
-    except Exception as e:
-        print(f"Erro no processamento: {str(e)}")
-        return False
-
-def setup_consumer(task_name):
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost')
-    )
-    channel = connection.channel()
-    
-    args = {
-        'x-dead-letter-exchange': 'dlx_replication',
-        'x-dead-letter-routing-key': f'dlx.{task_name}'
+```mermaid
+classDiagram
+    class MessageStream {
+        <<abstract>>
+        +STREAM_NAME_PATTERN: str
+        +host: str
+        +port: int
+        +stream_name: str
+        +__create_connection() Connection
     }
     
-    channel.queue_declare(
-        queue=task_name,
-        durable=True,
-        arguments=args
-    )
+    class MessageStreamProducer {
+        +publish_message(message: Dict) None
+    }
     
-    channel.queue_bind(
-        exchange='data_replication',
-        queue=task_name,
-        routing_key=task_name
-    )
+    class MessageStreamConsumer {
+        +external_callback: Callable
+        +setup_consumer() None
+        +start_consuming() None
+    }
     
-    channel.basic_qos(prefetch_count=1)
-    
-    def callback(ch, method, properties, body):
-        print(f" [x] Received {body.decode()}")
-        
-        if structure_capture_changes_to_dataframe(body.decode()):
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            print(" [x] Processamento concluído com sucesso")
-        else:
-            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-            print(" [!] Mensagem rejeitada (enviada para DLX)")
-    
-    channel.basic_consume(
-        queue=task_name,
-        on_message_callback=callback,
-        auto_ack=False
-    )
-    
-    return channel
+    MessageStream <|-- MessageStreamProducer
+    MessageStream <|-- MessageStreamConsumer
 ```
 
-### Configuração da Dead Letter Exchange (DLX)
+## Implementação com Streams
+
+### Producer com Streams (Novo)
+
 ```python
-def setup_dlx():
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host='localhost')
-    )
-    channel = connection.channel()
-    
-    channel.exchange_declare(
-        exchange='dlx_replication',
-        exchange_type='topic',
-        durable=True
+from rabbitmq_stream import Producer, AMQPMessage
+
+def setup_stream_producer(stream_name: str):
+    producer = Producer(
+        host='localhost',
+        port=5552,  # Porta padrão para streams
+        username='guest',
+        password='guest'
     )
     
-    channel.queue_declare(
-        queue='failed_replication_tasks',
-        durable=True
+    # Declara o stream se não existir
+    producer.declare_stream(
+        stream=stream_name,
+        exists_ok=True,
+        arguments={
+            'max-length-bytes': 1000000000,  # 1GB
+            'max-age': '1h'  # Rotação horária
+        }
     )
     
-    channel.queue_bind(
-        exchange='dlx_replication',
-        queue='failed_replication_tasks',
-        routing_key='dlx.*'
+    return producer
+
+def publish_to_stream(producer, stream_name, data):
+    message = AMQPMessage(
+        body=json.dumps(data).encode(),
+        properties={
+            'message_id': data.get('id'),
+            'content_type': 'application/json'
+        }
     )
     
-    def dlx_callback(ch, method, properties, body):
-        print(f" [DLX] Received failed message: {body.decode()}")
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    
-    channel.basic_consume(
-        queue='failed_replication_tasks',
-        on_message_callback=dlx_callback,
-        auto_ack=False
+    producer.send(
+        stream=stream_name,
+        message=message
+    )
+    print(f" [x] Sent to stream '{stream_name}':{data['id']}")
+```
+
+### Consumer com Streams (Novo)
+
+```python
+from rabbitmq_stream import Consumer, OffsetType
+
+def setup_stream_consumer(stream_name: str, callback: Callable):
+    consumer = Consumer(
+        host='localhost',
+        port=5552,
+        username='guest',
+        password='guest',
+        callback=callback
     )
     
-    return channel
+    consumer.subscribe(
+        stream=stream_name,
+        offset_specification=OffsetType.FIRST,  # Ou OffsetType.NEXT
+        credit=1000  # Número de mensagens para pré-buscar
+    )
+    
+    return consumer
+
+def stream_callback(message, context):
+    try:
+        data = json.loads(message.body)
+        print(f" [x] Received from stream: {data['id']}")
+        # Processamento aqui...
+        context.ack()  # Confirma o offset
+    except Exception as e:
+        print(f" [!] Error: {str(e)}")
+        # Log do erro, mas não há DLX em streams
 ```
 
-## Boas Práticas Implementadas
+## Comparativo: Filas vs Streams
 
-1. **Confirmação de Mensagens**:
-   - ACK explícito somente após processamento bem-sucedido
-   - NACK para mensagens inválidas (sem requeue)
+| Característica          | Filas Tradicionais               | Streams                          |
+|-------------------------|----------------------------------|----------------------------------|
+| Modelo de consumo       | Compete-consumer                 | Consumo múltiplo (replay)        |
+| Retenção                | Após ACK                         | Baseado em tamanho/tempo         |
+| Performance             | ~50k msg/s                       | ~1M msg/s                        |
+| DLX                     | Suportado                        | Não aplicável                    |
+| Ordenação               | Garantida por fila               | Garantida por stream             |
+| Offset tracking         | Não                              | Sim                              |
+| TTL                    | Por mensagem                     | Por stream                       |
 
-2. **Durabilidade**:
-   - Mensagens persistentes (`delivery_mode=2`)
-   - Filas duráveis (`durable=True`)
+## Boas Práticas com Streams (Novo)
 
-3. **Tratamento de Erros**:
-   - Dead Letter Exchange para mensagens problemáticas
-   - Padrão de routing key `dlx.<original_task_name>`
+1. **Configuração de Stream**:
+   - Defina `max-length-bytes` e `max-age` conforme seu caso de uso
+   - Para replicação de dados: considere valores altos (ex: 10GB)
 
-4. **Controle de Fluxo**:
-   - Prefetch Count = 1 para processamento serializado
+2. **Monitoramento**:
+   ```bash
+   rabbitmq-streams list_streams
+   rabbitmq-streams stream_status {nome_do_stream}
+   ```
 
-## Execução e Monitoramento
+3. **Consumo**:
+   - Use `OffsetType` apropriado (FIRST para replay, NEXT para novas mensagens)
+   - Ajuste o `credit` para balancear throughput e uso de memória
 
-### Comandos para Execução
-```bash
-# Terminal 1
-start python dlx_manager.py
-start python consumer.py
-python producer.py
+4. **Tratamento de Erros**:
+   - Implemente log próprio de mensagens problemáticas
+   - Considere um stream separado para erros
+
+## Exemplo de Implementação Híbrida
+
+Para transição gradual, você pode usar ambos os modelos:
+
+```mermaid
+graph LR
+    A[DB Changes] --> B[Stream Producer]
+    B --> C[Data Stream]
+    C --> D[Stream Consumer]
+    C --> E[Legacy Bridge]
+    E --> F[Traditional Queue]
+    F --> G[Existing Consumers]
 ```
 
-### Comandos Úteis para Monitoramento
-```bash
-rabbitmqctl list_queues name messages_ready
-rabbitmqctl list_exchanges
-rabbitmqctl list_bindings
-rabbitmq-plugins enable rabbitmq_management
-```
+## Recomendações Finais Atualizadas
 
-### Acesso à Interface Web
-```
-http://localhost:15672
-```
-Usuário: `guest` | Senha: `guest`
+1. **Migração para Streams**:
+   - Comece com streams para novos componentes
+   - Mantenha filas tradicionais para sistemas legados
+   - Considere um período de operação paralela
 
-## Recomendações Finais
+2. **Monitoramento Específico**:
+   ```bash
+   rabbitmq-streams monitor {stream_name} --interval 5
+   ```
 
-1. **Monitoramento**:
-   - Verifique filas não consumidas
-   - Monitore a fila `failed_replication_tasks`
-   - Acompanhe métricas de tempo de processamento e taxas de ACK/NACK
+3. **Acesso à Interface Web**:
+   - Os streams aparecem na interface em `http://localhost:15672`
+   - Nova aba "Streams" com métricas específicas
 
-2. **Tratamento de Problemas**:
-   - Para erros de porta: reinicie o serviço RabbitMQ
-   - Para problemas de conexão Python: implemente tentativas de reconexão
-   - Em ambientes de cluster: todos os nós devem compartilhar o mesmo cookie Erlang
+4. **Performance**:
+   - Para alta vazão: aumente o tamanho do chunk (padrão: 4096 KB)
+   - Teste com `rabbitmq-streams performance_test`
 
-3. **Próximos Passos**:
-   - Teste os scripts em paralelo usando `start`
-   - Monitore as filas em tempo real
-   - Consulte os logs em `C:\Users\[SeuUsuário]\AppData\Roaming\RabbitMQ\log` para diagnóstico
+5. **Próximos Passos**:
+   - Implemente o consumer com tracking de offset
+   - Adicione métricas de throughput no producer
+   - Considere partições para streams muito grandes

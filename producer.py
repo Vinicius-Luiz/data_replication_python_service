@@ -26,8 +26,8 @@ if changes_structured and task.replication_type.value == 'cdc':
     producer.publish_message(message=changes_structured)
 
     # TODO temporário
-    with open(f'data\cdc_data\{int(datetime.now().timestamp())}_{changes_structured["id"]}.json', 'w') as f:
-        json.dump(changes_structured, f)
+    # with open(f'data\cdc_data\{int(datetime.now().timestamp())}_{changes_structured["id"]}.json', 'w') as f:
+    #     json.dump(changes_structured, f)
 
 
 
