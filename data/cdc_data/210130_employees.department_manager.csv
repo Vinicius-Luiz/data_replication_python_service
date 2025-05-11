@@ -1,0 +1,3 @@
+$TREM_ROWNUM,$TREM_OPERATION,employee_id,department_id,from_date,to_date,scd_start_date,scd_end_date,scd_current
+0,UPDATE,500002,d008,2024-04-01,2025-05-11,,,
+1,INSERT,500002,d009,2025-05-11,9999-01-01,,,

@@ -96,13 +96,10 @@ class EndpointPostgreSQL(Endpoint):
         )
 
     def structure_capture_changes_to_json(
-        self,
-        df_changes_captured: pl.DataFrame,
-        task_tables: List[Table],
-        save_files: bool = False,
+        self, df_changes_captured: pl.DataFrame, task_tables: List[Table]
     ) -> Dict[str, Any]:
         return self.cdc_manager.structure_capture_changes_to_json(
-            df_changes_captured, task_tables, save_files
+            df_changes_captured, task_tables
         )
 
     def structure_capture_changes_to_dataframe(self, changes_structured: dict) -> dict:

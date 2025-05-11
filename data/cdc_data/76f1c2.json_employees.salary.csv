@@ -1,4 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,funcionario_id,quantia_mensal,data_inicio,data_fim,periodo_anos,scd_start_date,scd_end_date,scd_current
-0,INSERT,500000,5000.0,2024-06-01,9999-12-31,7976,,,
-1,INSERT,500001,2166.6666666666665,2025-04-04,9999-12-31,7975,,,
-2,INSERT,500002,6710.0,2024-04-01,9999-12-31,7976,,,

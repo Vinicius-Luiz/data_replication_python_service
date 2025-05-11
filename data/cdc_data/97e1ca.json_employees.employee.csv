@@ -1,4 +1,0 @@
-$TREM_ROWNUM,$TREM_OPERATION,id,birth_date,first_name,last_name,gender,hire_date,full_name,updated_by,sync_date,scd_start_date,scd_end_date,scd_current
-0,DELETE,500000,,,,,,,PYTHON,2025-05-05,,,
-1,DELETE,500001,,,,,,,PYTHON,2025-05-05,,,
-2,DELETE,500002,,,,,,,PYTHON,2025-05-05,,,

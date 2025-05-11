@@ -29,6 +29,8 @@ class Utils:
             format="%(asctime)s - %(levelname)s - %(message)s",
         )
 
+        logging.getLogger("pika").setLevel(logging.WARNING)
+
         return True
     
     def log_exception_and_exit(e: Exception):

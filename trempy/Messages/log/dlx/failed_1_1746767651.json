@@ -1,9 +1,0 @@
-{
-    "delivery_tag": 1,
-    "message": {
-        "action": "update",
-        "name": "Vin\u00edcius Luiz",
-        "id": 5
-    },
-    "routing_key": "dlx.cdc_scd2_employees"
-}

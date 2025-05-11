@@ -1,6 +1,0 @@
-lsn,xid,data
-4/FF602078,1910,BEGIN 1910
-4/FF602078,1910,table employees.employee: INSERT: id[bigint]:500000 birth_date[date]:'2000-05-14' first_name[character varying]:'Vinícius' last_name[character varying]:'Luiz' gender[employees.employee_gender]:'M' hire_date[date]:'2024-06-01'
-4/FF603848,1910,table employees.employee: INSERT: id[bigint]:500001 birth_date[date]:'2002-05-07' first_name[character varying]:'Vital' last_name[character varying]:'Fernando' gender[employees.employee_gender]:'M' hire_date[date]:'2025-04-04'
-4/FF6038E8,1910,table employees.employee: INSERT: id[bigint]:500002 birth_date[date]:'1996-03-12' first_name[character varying]:'Aron' last_name[character varying]:'Sales' gender[employees.employee_gender]:'M' hire_date[date]:'2024-04-01'
-4/FF6039B0,1910,COMMIT 1910

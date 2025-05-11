@@ -1,4 +1,0 @@
-lsn,xid,data
-4/FF60E228,1915,BEGIN 1915
-4/FF60E228,1915,table employees.employee: UPDATE: id[bigint]:500001 birth_date[date]:'2002-05-07' first_name[character varying]:'Vital' last_name[character varying]:'Ramos' gender[employees.employee_gender]:'M' hire_date[date]:'2025-04-04'
-4/FF60E2C0,1915,COMMIT 1915

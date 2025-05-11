@@ -1,5 +1,0 @@
-lsn,xid,data
-4/FF639CA8,1935,BEGIN 1935
-4/FF639CA8,1935,table employees.salary: UPDATE: employee_id[bigint]:500001 amount[bigint]:26000 from_date[date]:'2025-04-04' to_date[date]:'2025-05-05'
-4/FF639D08,1935,table employees.salary: INSERT: employee_id[bigint]:500001 amount[bigint]:28800 from_date[date]:'2025-05-05' to_date[date]:'9999-12-31'
-4/FF639E08,1935,COMMIT 1935

@@ -1,6 +1,0 @@
-lsn,xid,data
-4/FF63A448,1941,BEGIN 1941
-4/FF63A448,1941,table employees.salary: UPDATE: employee_id[bigint]:500000 amount[bigint]:66000 from_date[date]:'2025-05-05' to_date[date]:'2025-05-05'
-4/FF63A4A8,1941,table employees.salary: UPDATE: employee_id[bigint]:500001 amount[bigint]:28800 from_date[date]:'2025-05-05' to_date[date]:'2025-05-05'
-4/FF63A508,1941,table employees.salary: UPDATE: employee_id[bigint]:500002 amount[bigint]:98520 from_date[date]:'2025-05-05' to_date[date]:'2025-05-05'
-4/FF63A598,1941,COMMIT 1941

@@ -1,28 +1,10 @@
 from pika.adapters.blocking_connection import BlockingChannel
 from pika.spec import Basic, BasicProperties
-from typing import Optional, Dict
-
-# from trempy.Shared.Utils import Utils
+from trempy.Shared.Utils import Utils
+from typing import Dict, Callable
 import time
 import json
 import pika
-
-# Utils.configure_logging()
-
-
-def structure_capture_changes_to_dataframe(message, error=False):
-    # Lógica de transformação dos dados
-    try:
-        data = json.loads(message)
-        with open("trempy\Messages\log\consumer_test.json", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
-        # Processamento simulado
-        if error:
-            raise ValueError("Erro no processamento")
-        return True
-    except Exception as e:
-        print(f"Erro no processamento: {str(e)}")
-        return False
 
 
 class Message:
@@ -84,21 +66,23 @@ class MessageProducer(Message):
     def __init__(self, task_name: str):
         super().__init__(task_name=task_name)
 
-    def publish_message(self, data: Dict) -> None:
-        message = json.dumps(data)
+    def publish_message(self, message: Dict) -> None:
+        message_dumps = json.dumps(message)
 
         self.channel.basic_publish(
             exchange=self.exchange_name,
             routing_key=self.routing_key,  # Roteamento para filas com esta binding key
-            body=message,
+            body=message_dumps,
             properties=pika.BasicProperties(
                 delivery_mode=2,  # Persistente (sobrevive a reinicializações)
                 content_type="application/json",
                 headers={"version": "1.0.0"},
-                message_id="123e4567-e89b-12d3",  # ID único
+                message_id=message.get("id"),
             ),
         )
-        print(f" [x] Sent '{self.routing_key}':{message[:100]}...")  # Log truncado
+        Utils.log_debug(
+            f" [x] Sent '{self.routing_key}':{message['id']}"
+        )  # Log truncado
 
 
 class MessageConsumer(Message):
@@ -107,6 +91,7 @@ class MessageConsumer(Message):
     def __init__(
         self,
         task_name: str,
+        external_callback: Callable,
         prefetch_count: int = 1,
         auto_ack: bool = False,
     ):
@@ -116,10 +101,11 @@ class MessageConsumer(Message):
 
         self.prefetch_count = prefetch_count
         self.auto_ack = auto_ack
+        self.external_callback = external_callback
 
         self.setup()
 
-    def setup(self) -> BlockingChannel:
+    def setup(self):
 
         # Configuração da Dead Letter Exchange (DLX)
         args = {
@@ -159,25 +145,16 @@ class MessageConsumer(Message):
         body: bytes,
     ) -> None:
 
-        message = body.decode()
-        print(f" [x] Received {message}")
+        message: dict = json.loads(body.decode())
+        Utils.log_debug(f" [x] Received '{self.routing_key}':{message['id']}...")
 
-        try:
-            # Processa a mensagem e só confirma se bem-sucedido
-            if structure_capture_changes_to_dataframe(message, error=True):
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-                print(" [x] Processamento concluído com sucesso")
-            else:
-                # Rejeita mensagem (sem reenfileirar) -> vai para DLX
-                ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-                print(" [!] Mensagem rejeitada (enviada para DLX)")
-        except Exception as e:
-            # Garante que exceções não quebrem o consumidor
-            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-            print(f" [!!] Erro crítico: {str(e)}. Mensagem enviada para DLX")
+        message["delivery_tag"] = method.delivery_tag
+
+        if self.external_callback:
+            self.external_callback(message, ch)
 
     def start_consuming(self):
-        print(" [*] Waiting for messages. To exit press CTRL+C")
+        Utils.log_debug(" [*] Waiting for messages. To exit press CTRL+C")
         self.channel.start_consuming()
 
 
@@ -194,8 +171,7 @@ class MessageDlx(Message):
         self.dlx_queue_name = self.DLX_QUEUE_NAME_PATTERN.format(task_name=task_name)
         self.setup()
 
-    def setup(self) -> BlockingChannel:
-        # Declara e vincula a fila DLX (igual ao original)
+    def setup(self):
         self.channel.queue_declare(
             queue=self.dlx_queue_name,
             durable=self.durable,
@@ -207,10 +183,9 @@ class MessageDlx(Message):
         )
         self.channel.basic_qos(prefetch_count=self.prefetch_count)
 
-        # Configura auto_ack=True para remoção automática
         self.channel.basic_consume(
             queue=self.dlx_queue_name,
-            auto_ack=True,  # Mensagens são automaticamente removidas após serem lidas
+            auto_ack=True,
             on_message_callback=self.__callback,
         )
 
@@ -222,7 +197,9 @@ class MessageDlx(Message):
         body: bytes,
     ) -> None:
         message = body.decode()
-        print(f" [DLX] Processing failed message (delivery_tag={method.delivery_tag})")
+        Utils.log_debug(
+            f" [DLX] Processing failed message (delivery_tag={method.delivery_tag})"
+        )
 
         try:
             error_dir = "trempy\\Messages\\log\\dlx\\"
@@ -245,14 +222,15 @@ class MessageDlx(Message):
                     indent=4,
                 )
 
-            print(f" [DLX] Saved message (tag={method.delivery_tag}) to {filepath}")
+            Utils.log_debug(
+                f" [DLX] Saved message (tag={method.delivery_tag}) to {filepath}"
+            )
 
         except Exception as e:
-            print(
+            Utils.log_debug(
                 f" [DLX!!] Error saving message (tag={method.delivery_tag}): {str(e)}"
             )
             # Não faz NACK (a mensagem já foi auto-ack'ed)
 
     def start_consuming(self):
-        print(" [DLX] Reading failed messages (no manual acks)...")
         self.channel.start_consuming()

@@ -1,4 +1,42 @@
-# RabbitMQ - Documentação da Ferramenta de Replicação de Dados
+# Documentação Consolidada do RabbitMQ
+
+## Configuração Inicial no Windows
+
+### ✅ Passos Comprovados para Iniciar o RabbitMQ
+
+1. **Iniciar o serviço RabbitMQ**:
+   ```cmd
+   net start RabbitMQ
+   ```
+
+2. **Adicionar ao PATH** (caso necessário):
+   - Pressione `Win + R` → Digite `sysdm.cpl` → "Variáveis de Ambiente"
+   - Em "Variáveis do sistema", edite `Path` → Adicione:
+     ```
+     C:\Program Files\RabbitMQ Server\rabbitmq_server-{versão}\sbin
+     ```
+
+### 🔍 Verificação Final
+Para confirmar que tudo está funcionando:
+```cmd
+rabbitmqctl status
+```
+Deve mostrar informações do servidor, incluindo:
+- Versão do Erlang/OTP
+- Status dos plugins
+- Uso de memória
+
+### ⚠️ Solução para Problemas com Cookies Erlang
+O RabbitMQ usa o cookie Erlang como mecanismo de segurança. Para resolver problemas de autenticação:
+
+1. Iguale os cookies entre:
+   - Servidor: `C:\Windows\System32\config\systemprofile\.erlang.cookie`
+   - Usuário: `C:\Users\[SeuUsuário]\.erlang.cookie`
+
+2. Recomendações:
+   - Mantenha permissões restritas no arquivo
+   - Faça backup do cookie válido
+   - Reinicie os serviços após alterações
 
 ## Arquitetura do Sistema
 
@@ -12,7 +50,9 @@ graph LR
     C -->|Mensagens problemáticas| E[Dead Letter Exchange]
 ```
 
-`producer`
+## Implementação
+
+### Producer
 ```python
 import pika
 import json
@@ -45,22 +85,16 @@ def publish_task(channel, task_name, data):
         )
     )
     print(f" [x] Sent '{task_name}':{message}")
-
-# Exemplo de uso
-channel = setup_producer()
-publish_task(channel, 'user_data_sync', {'action': 'update', 'id': 42})
 ```
 
-`consumer`
+### Consumer
 ```python
 import pika
 import json
 
 def structure_capture_changes_to_dataframe(message):
-    # Lógica de transformação dos dados
     try:
         data = json.loads(message)
-        # Processamento simulado
         if 'id' not in data:
             raise ValueError("ID faltando")
         return True
@@ -74,27 +108,23 @@ def setup_consumer(task_name):
     )
     channel = connection.channel()
     
-    # Configura DLX
     args = {
         'x-dead-letter-exchange': 'dlx_replication',
         'x-dead-letter-routing-key': f'dlx.{task_name}'
     }
     
-    # Declara fila durável
     channel.queue_declare(
         queue=task_name,
         durable=True,
         arguments=args
     )
     
-    # Faz o bind com a exchange
     channel.queue_bind(
         exchange='data_replication',
         queue=task_name,
         routing_key=task_name
     )
     
-    # Configura prefetch
     channel.basic_qos(prefetch_count=1)
     
     def callback(ch, method, properties, body):
@@ -114,14 +144,9 @@ def setup_consumer(task_name):
     )
     
     return channel
-
-# Exemplo de uso
-consumer = setup_consumer('user_data_sync')
-print(' [*] Waiting for messages. To exit press CTRL+C')
-consumer.start_consuming()
 ```
 
-#### Configuração da Dead Letter Exchange
+### Configuração da Dead Letter Exchange (DLX)
 ```python
 def setup_dlx():
     connection = pika.BlockingConnection(
@@ -129,20 +154,17 @@ def setup_dlx():
     )
     channel = connection.channel()
     
-    # Exchange principal para DLX
     channel.exchange_declare(
         exchange='dlx_replication',
         exchange_type='topic',
         durable=True
     )
     
-    # Fila para mensagens falhas
     channel.queue_declare(
         queue='failed_replication_tasks',
         durable=True
     )
     
-    # Bind com padrão de routing key
     channel.queue_bind(
         exchange='dlx_replication',
         queue='failed_replication_tasks',
@@ -151,7 +173,6 @@ def setup_dlx():
     
     def dlx_callback(ch, method, properties, body):
         print(f" [DLX] Received failed message: {body.decode()}")
-        # Lógica para lidar com mensagens falhas (log, alerta, etc.)
         ch.basic_ack(delivery_tag=method.delivery_tag)
     
     channel.basic_consume(
@@ -161,56 +182,28 @@ def setup_dlx():
     )
     
     return channel
-
-# Rodar em processo separado
-dlx_consumer = setup_dlx()
-dlx_consumer.start_consuming()
 ```
 
-#### Boas Práticas Implementadas
-1. Confirmação de Mensagens (Acknowledgements)
-2. ACK explícito somente após structure_capture_changes_to_dataframe()
-3. NACK para mensagens inválidas (sem requeue)
-4. Prefetch Count = 1 para processamento serializado
+## Boas Práticas Implementadas
 
-2. Durabilidade
-```python
-# Producer
-properties=pika.BasicProperties(
-    delivery_mode=2,  # Mensagem persistente
-    content_type='application/json'
-)
+1. **Confirmação de Mensagens**:
+   - ACK explícito somente após processamento bem-sucedido
+   - NACK para mensagens inválidas (sem requeue)
 
-# Consumer
-channel.queue_declare(
-    queue=task_name,
-    durable=True,  # Fila persiste após reinicialização
-    arguments=args
-)
-```
+2. **Durabilidade**:
+   - Mensagens persistentes (`delivery_mode=2`)
+   - Filas duráveis (`durable=True`)
 
-3. Tratamento de Erros com DLX
-- Mensagens problemáticas são roteadas para dlx_replication
-- Padrão de routing key dlx.<original_task_name>
-- Processamento especializado para mensagens falhas
+3. **Tratamento de Erros**:
+   - Dead Letter Exchange para mensagens problemáticas
+   - Padrão de routing key `dlx.<original_task_name>`
 
-### Monitoramento Recomendado
-1. Filas não consumidas: Verificar se há mensagens acumulando
-2. DLX: Monitorar fila failed_replication_tasks
-3. Métricas: Tempo de processamento, taxa de ACK/NACK
+4. **Controle de Fluxo**:
+   - Prefetch Count = 1 para processamento serializado
 
-### Exemplo Completo de Fluxo
-1. Producer publica mensagem para user_data_sync
-2. Exchange direciona para fila user_data_sync
-3. Consumer:
-    - Processa com structure_capture_changes_to_dataframe()
-    - Se sucesso → ACK
-    - Se falha → NACK (envia para DLX)
-4. Mensagens na DLX são registradas para análise posterior
+## Execução e Monitoramento
 
-
-### Execução
-
+### Comandos para Execução
 ```bash
 # Terminal 1
 start python dlx_manager.py
@@ -218,13 +211,33 @@ start python consumer.py
 python producer.py
 ```
 
+### Comandos Úteis para Monitoramento
 ```bash
-rabbitmqctl list_queues name messages_ready # Listar Todas as Filas Existentes
-rabbitmqctl list_exchanges # Listar Todas as Exchanges
-rabbitmqctl list_bindings # Verificar Bindings (Conexões entre Exchanges e Filas)
-rabbitmq-plugins enable rabbitmq_management # Interface Web | http://localhost:15672/ | Login padrão: guest / guest
+rabbitmqctl list_queues name messages_ready
+rabbitmqctl list_exchanges
+rabbitmqctl list_bindings
+rabbitmq-plugins enable rabbitmq_management
 ```
 
+### Acesso à Interface Web
 ```
-Esta documentação cobre toda a implementação proposta, com exemplos de código prontos para uso e explicações detalhadas de cada componente. Você pode adaptar os nomes de exchanges, filas e métodos conforme a necessidade específica do seu projeto.
-``` 
+http://localhost:15672
+```
+Usuário: `guest` | Senha: `guest`
+
+## Recomendações Finais
+
+1. **Monitoramento**:
+   - Verifique filas não consumidas
+   - Monitore a fila `failed_replication_tasks`
+   - Acompanhe métricas de tempo de processamento e taxas de ACK/NACK
+
+2. **Tratamento de Problemas**:
+   - Para erros de porta: reinicie o serviço RabbitMQ
+   - Para problemas de conexão Python: implemente tentativas de reconexão
+   - Em ambientes de cluster: todos os nós devem compartilhar o mesmo cookie Erlang
+
+3. **Próximos Passos**:
+   - Teste os scripts em paralelo usando `start`
+   - Monitore as filas em tempo real
+   - Consulte os logs em `C:\Users\[SeuUsuário]\AppData\Roaming\RabbitMQ\log` para diagnóstico

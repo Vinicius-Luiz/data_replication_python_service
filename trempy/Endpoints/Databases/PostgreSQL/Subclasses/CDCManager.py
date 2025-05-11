@@ -74,9 +74,8 @@ class CDCManager:
     def structure_capture_changes_to_json(
         self,
         df_changes_captured: pl.DataFrame,
-        task_tables: List[Table],
-        save_files: bool = False,
-    ) -> Dict[str, Any]:
+        task_tables: List[Table]
+    ) -> Dict:
         """
         Processa as mudanças capturadas em um dataframe e as transforma em um dicionário
         com as alterações de cada tabela separadas por schema_name e table_name.
@@ -84,10 +83,9 @@ class CDCManager:
         Args:
             df_changes_captured (pl.DataFrame): DataFrame com as mudanças capturadas
             task_tables (List[Table]): Lista com as tabelas que devem ser processadas
-            save_files (bool, optional): Flag para salvar as mudanças em arquivos. Defaults to False.
 
         Returns:
-            Dict[str, Any]: Dicionário com as alterações de cada tabela separadas por schema_name e table_name
+            Dict: Dicionário com as alterações de cada tabela
 
         Raises:
             StructureCaptureChangesToJsonError: Se ocorrer um erro ao estruturar as mudanças capturadas
@@ -96,16 +94,13 @@ class CDCManager:
         try:
             df_changes_captured = df_changes_captured.sort("lsn")
 
-            created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            created_at = int(datetime.now().timestamp())
             id = Utils.hash_6_chars()
 
             changes_structured = []
             for xid, group in df_changes_captured.sort("xid").group_by("xid"):
                 transactions = self._process_transaction(group)
                 changes_structured.extend(transactions)
-
-            # logging.debug(changes_structured)
-            # Utils.log_exception_and_exit('stop') if changes_structured else None
 
             filtered_changes_structured = []
             if changes_structured:
@@ -125,19 +120,13 @@ class CDCManager:
             if filtered_changes_structured:
                 changes_structured = {
                     "id": id,
-                    "creted_at": created_at,
+                    "created_at": created_at,
                     "operations": filtered_changes_structured,
                 }
 
-                if save_files:  # TODO CARATER TEMPORÁRIO
-                    with open(f"data/cdc_data/{id}.json", "w") as f:
-                        json.dump(changes_structured, f, indent=4)
-
-                    df_changes_captured.write_csv(f"data/cdc_data/{id}.csv")
-
                 return changes_structured
 
-            return None
+            return {}
 
         except Exception as e:
             e = StructureCaptureChangesToJsonError(

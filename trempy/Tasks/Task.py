@@ -1,17 +1,17 @@
 from trempy.Shared.Types import TaskType, CdcModeType, EndpointType, DatabaseType
 from trempy.Transformations.Transformation import Transformation
+from pika.adapters.blocking_connection import BlockingChannel
 from trempy.Tasks.Exceptions.Exception import *
 from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Filters.Filter import Filter
 from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 from typing import List, Optional
+from datetime import datetime
 import polars as pl
 import logging
-import shutil
 import json
 import re
-import os
 
 
 class Task:
@@ -70,11 +70,17 @@ class Task:
         self.scd2_current_column_name: str = scd2_settings.get(
             "current_column_name", "scd_current"
         )
-        self.scd2_date_type: str = scd2_settings.get("date_type", "timestamp") # "date" or "timestamp"
+        self.scd2_date_type: str = scd2_settings.get(
+            "date_type", "timestamp"
+        )  # "date" or "timestamp"
 
         self.tables: List[Table] = []
 
         self.filters = []
+
+        # self.dlx_consumer = MessageDlx(task_name=self.task_name)
+        # self.consumer =  MessageConsumer(task_name=self.task_name)
+        # self.producer = MessageProducer(task_name=self.task_name)
 
         self.validate()
 
@@ -255,7 +261,7 @@ class Task:
         for table in sorted(self.tables, key=lambda x: x.priority.value):
             if table.schema_name == schema_name and table.table_name == table_name:
                 return table
-
+    
     def execute_source(self) -> dict:
         """
         Executa a tarefa de extração de dados da fonte.
@@ -273,9 +279,13 @@ class Task:
             case TaskType.CDC:
                 return self._execute_source_cdc()
 
-    def execute_target(self) -> dict:
+    def execute_target(self, **kargs) -> dict:
         """
         Executa a tarefa de carregamento de dados no destino.
+
+        Args:
+            changes_structured (bool): Retorna as mudanças capturadas no banco de dados de origem
+            channel (BlockingChannel): Canal de comunicação com o RabbitMQ
 
         Dependendo do tipo de replicação, chama o método específico para carregamento de
         dados em Full Load ou CDC.
@@ -288,7 +298,7 @@ class Task:
             case TaskType.FULL_LOAD:
                 return self._execute_target_full_load()
             case TaskType.CDC:
-                return self._execute_target_cdc()
+                return self._execute_target_cdc(changes_structured = kargs.get('changes_structured'), channel = kargs.get('channel'))
 
     def _execute_source_full_load(self) -> dict:
         """
@@ -315,6 +325,8 @@ class Task:
                 table=table
             )
             logging.debug(table_get_full_load)
+
+        return {}
 
     def _execute_target_full_load(self) -> None:
         """
@@ -343,7 +355,6 @@ class Task:
             logging.debug(table_full_load)
 
     def _execute_source_cdc(self) -> dict:
-        # TODO enviar mensagem via RabbitMQ
         match self.source_endpoint.database_type:
             case DatabaseType.POSTGRESQL:
                 kargs = {
@@ -359,63 +370,44 @@ class Task:
         changes_captured = self.source_endpoint.capture_changes(**kargs)
 
         changes_structured = self.source_endpoint.structure_capture_changes_to_json(
-            changes_captured, task_tables=self.tables, save_files=True
+            changes_captured, task_tables=self.tables
         )
 
         return changes_structured
 
-    def _execute_target_cdc(self) -> bool:
-        # TODO receber mensagem via RabbitMQ
-
-        # Cria a pasta de destino se não existir
-        processed_dir = r"data\cdc_data\processed"
-        os.makedirs(processed_dir, exist_ok=True)
-
-        # Lista todos os arquivos JSON na pasta cdc_log
-        cdc_log_dir = r"data\cdc_data"
-        for filename in os.listdir(cdc_log_dir):
-            if filename.endswith(".json"):
-                file_path = os.path.join(cdc_log_dir, filename)
-
-                # Lê o arquivo JSON
-                with open(file_path, "r", encoding="utf-8") as f:
-                    changes_structured = json.load(f)
-                    logging.debug(
-                        f'changes_structured: {len(changes_structured.get("operations"))} linhas'
-                    )
-
-                # TODO somente isso será necessário no futuro
-                logging.info(f"TASK - Estruturando alterações de dados")
-                df_changes_structured = (
-                    self.target_endpoint.structure_capture_changes_to_dataframe(
-                        changes_structured
-                    )
+    def _execute_target_cdc(self, changes_structured: dict, channel: BlockingChannel) -> bool:
+        logging.info(f"TASK - Estruturando alterações de dados")
+        delivery_tag = changes_structured["delivery_tag"]
+        
+        try:
+            df_changes_structured = (
+                self.target_endpoint.structure_capture_changes_to_dataframe(
+                    changes_structured
                 )
-                for table in sorted(self.tables, key=lambda x: x.priority.value):
-                    data: pl.DataFrame = df_changes_structured.get(table.id)
+            )
+        except:
+            channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
+        
+        channel.basic_ack(delivery_tag=delivery_tag)
 
-                    if table.id in df_changes_structured.keys():
-                        table.add_data(data)
-                        table.execute_filters()
-                        table.execute_transformations()
+        for table in sorted(self.tables, key=lambda x: x.priority.value):
+            data: pl.DataFrame = df_changes_structured.get(table.id)
 
-                        table_cdc = self.target_endpoint.insert_cdc_into_table(
-                            mode=self.cdc_mode,
-                            table=table,
-                            create_table_if_not_exists=self.create_table_if_not_exists,
-                        )
-                        
-                        try:
-                            table.data.write_csv(
-                                rf"{cdc_log_dir}\{filename}_{table.id}.csv"
-                            )  # TODO temporário
-                        except Exception as e:
-                            pass
+            if table.id in df_changes_structured.keys():
+                table.add_data(data)
+                table.execute_filters()
+                table.execute_transformations()
 
-                # TODO somente isso será necessário no futuro
+                table_cdc = self.target_endpoint.insert_cdc_into_table(
+                    mode=self.cdc_mode,
+                    table=table,
+                    create_table_if_not_exists=self.create_table_if_not_exists,
+                )
 
-                # Move o arquivo para a pasta processada
-                dest_path = os.path.join(processed_dir, filename)
-                shutil.move(file_path, dest_path)
-
-        return True
+                try:
+                    tmp_path = f"data\cdc_data\{changes_structured['id']}_{table.id}.csv"
+                    table.data.write_csv(tmp_path)  # TODO temporário
+                except Exception as e:
+                    Utils.log_exception(
+                        f'Erro ao salvar dados da tabela "{table.target_table_name}" no diretorio {tmp_path}: {e}'
+                    )

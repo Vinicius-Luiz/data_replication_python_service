@@ -1,6 +1,0 @@
-lsn,xid,data
-4/FF60EC88,1922,BEGIN 1922
-4/FF60EC88,1922,table employees.department: INSERT: id[character]:'d008' dept_name[character varying]:'Logistic'
-4/FF60F320,1922,table employees.department: INSERT: id[character]:'d009' dept_name[character varying]:'Relationship'
-4/FF60F3F8,1922,table employees.department: INSERT: id[character]:'d010' dept_name[character varying]:'Architecture'
-4/FF60F500,1922,COMMIT 1922
