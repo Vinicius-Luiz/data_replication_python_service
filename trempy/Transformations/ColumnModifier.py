@@ -4,18 +4,20 @@ from trempy.Transformations.FunctionColumnModifier import (
 )
 from trempy.Shared.Types import TransformationOperationType
 from trempy.Transformations.Exceptions.Exception import *
+from trempy.Loggings.Logging import ReplicationLogger
 from typing import Dict, Any, TYPE_CHECKING
-from trempy.Shared.Utils import Utils
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table
+
+logger = ReplicationLogger()
 
 
 class ColumnModifier:
     """Classe responsável por validar e modificar colunas existentes."""
 
     @staticmethod
-    def get_operations(column_name: str, contract: dict) -> Dict[str, Any]:
+    def __get_operations(column_name: str, contract: dict) -> Dict[str, Any]:
         """Retorna um dicionário de operações de transformação disponíveis para uma coluna.
 
         Args:
@@ -93,7 +95,7 @@ class ColumnModifier:
         }
 
     @staticmethod
-    def _validate_basic_contract(column_name: str, table: Table) -> None:
+    def __validate_basic_contract(column_name: str, table: Table) -> None:
         """Valida se o nome da coluna é válido e existe na tabela especificada.
 
         Args:
@@ -111,7 +113,7 @@ class ColumnModifier:
 
         if not column_name:
             e = ColumnNameError("O contrato deve conter 'column_name'", None)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         if column_name not in table.data.columns:
             available = list(table.data.columns)
@@ -119,10 +121,10 @@ class ColumnModifier:
                 f"A coluna não existe no DataFrame. Disponíveis: {available}",
                 column_name,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     @staticmethod
-    def _validate_operation(
+    def __validate_operation(
         operation: str, operations: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Valida se uma operação está entre as operações suportadas.
@@ -149,11 +151,11 @@ class ColumnModifier:
             e = InvalidOperationError(
                 f"Operação não suportada. Válidas: {valid_ops}", operation
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
         return operations[operation]
 
     @staticmethod
-    def _validate_required_params(
+    def __validate_required_params(
         op_config: Dict[str, Any], contract: Dict[str, Any]
     ) -> None:
         """Valida a presença de todos os parâmetros obrigatórios no contrato de transformação.
@@ -171,10 +173,10 @@ class ColumnModifier:
         for param in op_config.get("required_params", []):
             if param not in contract:
                 e = RequiredParameterError("Parâmetro obrigatório faltando", param)
-                Utils.log_exception_and_exit(e)
+                logger.critical(e)
 
     @staticmethod
-    def _validate_column_type(
+    def __validate_column_type(
         column_name: str, op_config: Dict[str, Any], table: Table
     ) -> None:
         """Valida se o tipo da coluna é compatível com a operação especificada.
@@ -216,7 +218,7 @@ class ColumnModifier:
                 column_name,
                 type(actual_type).__name__,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     @classmethod
     def modify_column(cls, contract: Dict[str, Any], table: Table) -> Table:
@@ -244,13 +246,13 @@ class ColumnModifier:
         operation = TransformationOperationType(contract.get("operation"))
 
         # Busca operações
-        operations = cls.get_operations(column_name, contract)
+        operations = cls.__get_operations(column_name, contract)
 
         # Validações
-        cls._validate_basic_contract(column_name, table)
-        op_config = cls._validate_operation(operation, operations)
-        cls._validate_required_params(op_config, contract)
-        cls._validate_column_type(column_name, op_config, table)
+        cls.__validate_basic_contract(column_name, table)
+        op_config = cls.__validate_operation(operation, operations)
+        cls.__validate_required_params(op_config, contract)
+        cls.__validate_column_type(column_name, op_config, table)
 
         # Execução
         table.data = table.data.with_columns(op_config["func"]().alias(column_name))

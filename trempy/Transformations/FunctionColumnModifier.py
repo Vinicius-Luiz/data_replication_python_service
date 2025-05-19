@@ -1,9 +1,11 @@
 from trempy.Transformations.FunctionColumn import FunctionColumn
 from trempy.Shared.Types import TransformationOperationType
 from trempy.Transformations.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
+from trempy.Loggings.Logging import ReplicationLogger
 import polars as pl
 import re
+
+logger = ReplicationLogger()
 
 
 class FunctionColumnModifier(FunctionColumn):
@@ -161,7 +163,7 @@ class FunctionColumnModifier(FunctionColumn):
             e = MathExpressionError(
                 "Expressão deve ser uma string não vazia", expression
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         # Remove espaços e valida caracteres
         clean_expr = expression.replace(" ", "")
@@ -169,7 +171,7 @@ class FunctionColumnModifier(FunctionColumn):
             e = MathExpressionError(
                 "Expressão contém caracteres não permitidos", expression
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         # Verifica operadores permitidos
         used_ops = set(re.findall(r"[\+\-\*/^]", clean_expr))
@@ -178,7 +180,7 @@ class FunctionColumnModifier(FunctionColumn):
                 f"Operadores não permitidos: {used_ops - set(OPERATORS.keys())}",
                 expression,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         # Substitui 'value' pela coluna Polars
         expr_parts = []
@@ -214,4 +216,4 @@ class FunctionColumnModifier(FunctionColumn):
             e = MathExpressionError(
                 f"Falha na avaliação da expressão: {str(e)}", expression
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)

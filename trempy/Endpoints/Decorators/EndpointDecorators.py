@@ -1,7 +1,10 @@
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Shared.Types import EndpointType
-from trempy.Shared.Utils import Utils
 from functools import wraps
+
+logger = ReplicationLogger()
+
 
 def source_method(func):
     """
@@ -13,13 +16,19 @@ def source_method(func):
     Returns:
         function: Fun o decorada com a l gica de acesso limitado.
     """
+
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self.endpoint_type != EndpointType.SOURCE:
-            e = MethodNotSupportedError(f"O método está disponível apenas para endpoints do tipo Source.", func.__name__)
-            Utils.log_exception_and_exit(e)
+            e = MethodNotSupportedError(
+                f"O método está disponível apenas para endpoints do tipo Source.",
+                func.__name__,
+            )
+            logger.critical(e)
         return func(self, *args, **kwargs)
+
     return wrapper
+
 
 def target_method(func):
     """
@@ -31,10 +40,15 @@ def target_method(func):
     Returns:
         function: Fun o decorada com a l gica de acesso limitado.
     """
+
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self.endpoint_type != EndpointType.TARGET:
-            e = MethodNotSupportedError(f"O método está disponível apenas para endpoints do tipo Target.", func.__name__)
-            Utils.log_exception_and_exit(e)
+            e = MethodNotSupportedError(
+                f"O método está disponível apenas para endpoints do tipo Target.",
+                func.__name__,
+            )
+            logger.critical(e)
         return func(self, *args, **kwargs)
+
     return wrapper

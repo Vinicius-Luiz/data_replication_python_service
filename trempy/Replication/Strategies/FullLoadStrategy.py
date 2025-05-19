@@ -1,8 +1,10 @@
 from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Shared.Utils import Utils
 from trempy.Tasks.Task import Task
-import logging
 import sys
+
+logger = ReplicationLogger()
 
 
 class FullLoadStrategy(ReplicationStrategy):
@@ -11,6 +13,21 @@ class FullLoadStrategy(ReplicationStrategy):
     1. producer.py para extração completa dos dados
     2. consumer.py para carregamento no destino
     """
+
+    def __setup_environment(self, task: Task) -> None:
+        """Configura o ambiente para execução."""
+        Utils.write_task_pickle(task)
+
+    def __run_extraction(self) -> bool:
+        """Executa o producer.py para extração de dados."""
+
+        logger.info("FULL LOAD STRATEGY - Iniciando extração dos dados")
+        return self.run_process("producer.py")
+
+    def __run_loading(self) -> bool:
+        """Executa o consumer.py para carregamento de dados."""
+        logger.info("FULL LOAD STRATEGY - Iniciando carregamento dos dados")
+        return self.run_process("consumer.py")
 
     def execute(self, task: Task) -> None:
         """
@@ -22,29 +39,12 @@ class FullLoadStrategy(ReplicationStrategy):
         Raises:
             SystemExit: Se qualquer um dos processos falhar.
         """
-        self._setup_environment(task)
+        self.__setup_environment(task)
 
-        logging.info("STRATEGY - Iniciando processo de Full Load")
-
-        if not self._run_extraction():
+        if not self.__run_extraction():
             sys.exit(1)
 
-        if not self._run_loading():
+        if not self.__run_loading():
             sys.exit(1)
 
-        logging.info("STRATEGY - Full Load concluído com sucesso")
-
-    def _setup_environment(self, task: Task) -> None:
-        """Configura o ambiente para execução."""
-        Utils.write_task_pickle(task)
-        Utils.configure_logging()
-
-    def _run_extraction(self) -> bool:
-        """Executa o producer.py para extração de dados."""
-        logging.debug("Executando extração de dados (producer.py)")
-        return self._run_process("producer.py")
-
-    def _run_loading(self) -> bool:
-        """Executa o consumer.py para carregamento de dados."""
-        logging.debug("Executando carregamento de dados (consumer.py)")
-        return self._run_process("consumer.py")
+        logger.info("FULL LOAD STRATEGY - Full Load concluído com sucesso")

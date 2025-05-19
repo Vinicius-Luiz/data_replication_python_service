@@ -1,7 +1,9 @@
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
 import psycopg2
-import logging
+
+logger = ReplicationLogger()
+
 
 class ConnectionManager:
     """Responsabilidade: Gerenciar a conexão com o banco de dados PostgreSQL."""
@@ -9,13 +11,13 @@ class ConnectionManager:
     def __init__(self, credentials: dict):
         try:
             temp_credentials = credentials.copy()
-            self.connection = self._connect(temp_credentials)
+            self.connection = self.__connect(temp_credentials)
         finally:
             del temp_credentials
 
-        logging.debug(self.connection.get_dsn_parameters())
+        logger.debug(self.connection.get_dsn_parameters(), required_types="full_load")
 
-    def _connect(self, credentials: dict) -> psycopg2.extensions.connection:
+    def __connect(self, credentials: dict) -> psycopg2.extensions.connection:
         """
         Estabelece uma conexão com o banco de dados.
 
@@ -33,7 +35,7 @@ class ConnectionManager:
             return psycopg2.connect(**credentials)
         except Exception as e:
             e = EndpointError(f"Erro ao conectar ao banco de dados: {e}")
-            Utils.log_exception_and_exit(e)                
+            logger.critical(e)
 
     def cursor(self) -> psycopg2.extensions.cursor:
         """

@@ -1,16 +1,17 @@
 - criar parâmetro pra definir o que fazer se der erro nas operações de CDC
 - criar filtro de operação (INSERT, UPDATE, DELETE)
-- melhorar log do cdc (há muita informação no looping)
-- remover timestamp (date) do scd2
 - estudar novo modo de leitura de slot_replication
-- ajustar localização de PostgreSQL.DataTypes, precisa estar em shared
 - melhorar retorno do cdc e full load
-- ver quais métodos podem ser privados
-- implementar rabbitmq
-    - em que momento eu considero que a mensagem foi ack? (se structure_capture_changes_to_dataframe for executado com sucesso)
-    - o que fazer com as mensagens nack?
-        - (por enquanto, salvar em data\cdc_data\dlx_messages)
-        - (posteriormente, salvar mensagem com erro no banco de destino)
 - implementar logicas de resume e reload task
-- adicionar no json qual database da origem
-- dividir em assuntos o query.py
+
+[OK] - melhorar log do cdc (há muita informação no looping)
+[OK] - ver quais métodos podem ser privados
+[OK] - dividir em assuntos o query.py
+[OK] - adicionar no json qual database da origem
+[OK] - remover timestamp (date) do scd2
+[OK] - ajustar localização de PostgreSQL.DataTypes, precisa estar em shared
+[OK] - implementar rabbitmq
+    [OK] - em que momento eu considero que a mensagem foi ack? (se structure_capture_changes_to_dataframe for executado com sucesso)
+    [OK] - o que fazer com as mensagens nack?
+        [OK] - (por enquanto, salvar em data\cdc_data\dlx_messages)
+        - (posteriormente, salvar mensagem com erro no banco de destino)

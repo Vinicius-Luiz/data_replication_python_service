@@ -1,8 +1,10 @@
 from trempy.Replication.Strategies.FullLoadStrategy import FullLoadStrategy
 from trempy.Replication.Strategies.CDCStrategy import CDCStrategy
 from trempy.Replication.Exceptions.Exception import *
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Shared.Types import TaskType
-from trempy.Shared.Utils import Utils
+
+logger = ReplicationLogger()
 
 
 class ReplicationStrategyFactory:
@@ -27,5 +29,7 @@ class ReplicationStrategyFactory:
         elif mode == TaskType.CDC:
             return CDCStrategy(interval_seconds=kwargs.get("interval_seconds"))
         else:
-            e = NotSupportedReplicationTypeError("Modo de replicação não suportado", mode)
-            Utils.log_exception_and_exit(e)
+            e = NotSupportedReplicationTypeError(
+                "Modo de replicação não suportado", mode
+            )
+            logger.critical(e)

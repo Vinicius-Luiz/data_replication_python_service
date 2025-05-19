@@ -4,14 +4,18 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
-from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Shared.Queries.QueryPostgreSQL import (
+    SCD2Queries as SCD2QueriesPostgreSQL,
+    CDCQueries as CDCQueriesPostgreSQL,
+)  #  TODO eu preciso saber qual é o tipo de endpoint correto
 from trempy.Shared.Types import CdcModeType, SCD2ColumnType
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Tables.Table import Table
 from typing import Dict, List
 from psycopg2 import sql
 
+logger = ReplicationLogger()
 
 class CDCOperationsHandler:
     """Responsabilidade: Executar operações CDC (INSERT, UPDATE, DELETE)."""
@@ -24,39 +28,7 @@ class CDCOperationsHandler:
         self.connection_manager = connection_manager
         self.table_manager = table_manager
 
-    def insert_cdc_into_table(
-        self,
-        mode: str,
-        table: Table,
-        create_table_if_not_exists: bool = False,
-    ):
-        """
-        Insere dados de alterações em uma tabela de destino.
-
-        Args:
-            table (Table): Objeto representando a estrutura da tabela.
-            create_table_if_not_exists (bool): Se True, cria a tabela caso ela não exista.
-
-        Returns:
-            dict: Dicionário contendo o log de execução do método.
-
-        Raises:
-            EndpointError: Se houver um erro ao inserir os dados.
-        """
-
-        try:
-            self.table_manager._manage_target_table(table, create_table_if_not_exists)
-
-            self._insert_cdc_data(table, mode)
-
-            return {"message": "CDC data inserted successfully", "success": True}
-
-        except Exception as e:
-            self.connection_manager.rollback()
-            e = EndpointError(f"Erro ao inserir dados ({mode}): {e}")
-            Utils.log_exception_and_exit(e)
-
-    def _insert_cdc_data(self, table: Table, mode: CdcModeType) -> None:
+    def __insert_cdc_data(self, table: Table, mode: CdcModeType) -> None:
         """
         Insere dados de altera es em uma tabela de destino.
 
@@ -75,19 +47,19 @@ class CDCOperationsHandler:
         try:
             match mode:
                 case CdcModeType.DEFAULT:
-                    self._insert_cdc_data_default(table)
+                    self.__insert_cdc_data_default(table)
                 case CdcModeType.UPSERT:
-                    self._insert_cdc_data_upsert(table)
+                    self.__insert_cdc_data_upsert(table)
                 case CdcModeType.SCD2:
-                    self._insert_cdc_data_scd2(table)
+                    self.__insert_cdc_data_scd2(table)
         except Exception as e:
             e = CDCDataError(
                 f"Erro ao inserir dados no modo CDC ({mode.name}): {e}",
                 f"{table.target_schema_name}.{table.target_table_name}",
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e, required_types="cdc")
 
-    def _insert_cdc_data_default(self, table: Table) -> None:
+    def __insert_cdc_data_default(self, table: Table) -> None:
         """Processa operações CDC (INSERT, UPDATE, DELETE) no modo padrão.
 
         Itera sobre as linhas da tabela de origem e executa a operação correspondente
@@ -103,14 +75,14 @@ class CDCOperationsHandler:
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
             if operation == "INSERT":
-                self._operation_insert(table, row)
+                self.__operation_insert(table, row)
             elif operation == "UPDATE":
-                self._operation_update(table, row)
+                self.__operation_update(table, row)
             elif operation == "DELETE":
-                self._operation_delete(table, row)
+                self.__operation_delete(table, row)
             self.connection_manager.commit()
 
-    def _insert_cdc_data_upsert(self, table: Table) -> None:
+    def __insert_cdc_data_upsert(self, table: Table) -> None:
         """Processa operações CDC no modo UPSERT (INSERT + UPDATE combinados).
 
         Itera sobre as linhas da tabela de origem tratando tanto INSERTs quanto UPDATEs
@@ -125,12 +97,12 @@ class CDCOperationsHandler:
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
             if operation in ("INSERT", "UPDATE"):
-                self._operation_upsert(table, row)
+                self.__operation_upsert(table, row)
             elif operation == "DELETE":
-                self._operation_delete(table, row)
+                self.__operation_delete(table, row)
             self.connection_manager.commit()
 
-    def _insert_cdc_data_scd2(self, table: Table) -> None:
+    def __insert_cdc_data_scd2(self, table: Table) -> None:
         """Processa operações CDC no modo SCD2 (Slow Changing Dimension Type 2).
 
         Implementa a lógica de dimensões lentas tipo 2, mantendo histórico de alterações
@@ -147,15 +119,15 @@ class CDCOperationsHandler:
         for row in table.data.iter_rows(named=True):
             operation = row["$TREM_OPERATION"]
             if operation in ("INSERT", "UPDATE"):
-                row_exists = self._scd2_verify_if_row_exists(table, row)
+                row_exists = self.__scd2_verify_if_row_exists(table, row)
                 if row_exists:
-                    self._scd2_disable_current(table, row)
-                self._scd2_create_current(table, row)
+                    self.__scd2_disable_current(table, row)
+                self.__scd2_create_current(table, row)
             elif operation == "DELETE":
-                self._scd2_disable_current(table, row)
+                self.__scd2_disable_current(table, row)
             self.connection_manager.commit()
 
-    def _scd2_get_where_clause(self, table: Table, row: dict) -> Dict[str, List[str]]:
+    def __scd2_get_where_clause(self, table: Table, row: dict) -> Dict[str, List[str]]:
         """Constrói a cláusula WHERE para operações SCD2 baseada nas colunas-chave.
 
         Gera as condições WHERE necessárias para identificar unicamente um registro
@@ -192,7 +164,7 @@ class CDCOperationsHandler:
 
         return {"where_parts": where_parts, "where_values": where_values}
 
-    def _scd2_verify_if_row_exists(self, table: Table, row: dict) -> bool:
+    def __scd2_verify_if_row_exists(self, table: Table, row: dict) -> bool:
         """Verifica se um registro já existe na tabela de destino no modo SCD2.
 
         Executa uma consulta na tabela de destino para verificar a existência de
@@ -212,11 +184,11 @@ class CDCOperationsHandler:
         scd2_columns = table.get_scd2_columns()
         current = scd2_columns[SCD2ColumnType.CURRENT]
 
-        where_clause = self._scd2_get_where_clause(table, row)
+        where_clause = self.__scd2_get_where_clause(table, row)
         where_parts = where_clause["where_parts"]
         where_values = where_clause["where_values"]
 
-        query = sql.SQL(Query.SQL_VERIFY_ROW_SCD2_EXISTS).format(
+        query = sql.SQL(SCD2QueriesPostgreSQL.SQL_VERIFY_ROW_SCD2_EXISTS).format(
             schema=sql.Identifier(table.target_schema_name),
             table=sql.Identifier(table.target_table_name),
             where_clause=sql.SQL(" AND ").join(where_parts),
@@ -229,7 +201,7 @@ class CDCOperationsHandler:
 
         return True if row_exists else False
 
-    def _scd2_create_current(self, table: Table, row: dict) -> None:
+    def __scd2_create_current(self, table: Table, row: dict) -> None:
         """Cria um novo registro ativo no padrão SCD2 (Slow Changing Dimension Type 2).
 
         Adiciona uma nova versão do registro na tabela de destino, marcando-o como ativo (current=1)
@@ -246,7 +218,7 @@ class CDCOperationsHandler:
         Note:
             - O registro é criado com current=1 (ativo)
             - As datas de início e fim são extraídas do próprio row
-            - Delega a operação de inserção para o método _operation_insert
+            - Delega a operação de inserção para o método __operation_insert
         """
         try:
             scd2_columns = table.get_scd2_columns()
@@ -261,7 +233,7 @@ class CDCOperationsHandler:
                 current: 1,
             }
 
-            self._operation_insert(table, row)
+            self.__operation_insert(table, row)
 
         except Exception as e:
             e = CreateSCD2Error(
@@ -269,9 +241,9 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 None,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e, required_types="cdc")
 
-    def _scd2_disable_current(self, table: Table, row: dict) -> None:
+    def __scd2_disable_current(self, table: Table, row: dict) -> None:
         """Desativa um registro existente no padrão SCD2 (Slow Changing Dimension Type 2).
 
         Atualiza o registro existente na tabela de destino, marcando-o como inativo (current=0)
@@ -286,7 +258,7 @@ class CDCOperationsHandler:
                 Inclui detalhes do schema, tabela, query executada e erro original.
 
         Note:
-            - Utiliza a cláusula WHERE gerada por _scd2_get_where_clause
+            - Utiliza a cláusula WHERE gerada por __scd2_get_where_clause
             - O registro é mantido na tabela com current=0 (inativo)
             - A data de fim é atualizada conforme valor fornecido no row
         """
@@ -295,11 +267,11 @@ class CDCOperationsHandler:
             current = scd2_columns[SCD2ColumnType.CURRENT]
             end_date = scd2_columns[SCD2ColumnType.END_DATE]
 
-            where_clause = self._scd2_get_where_clause(table, row)
+            where_clause = self.__scd2_get_where_clause(table, row)
             where_parts = where_clause["where_parts"]
             where_values = where_clause["where_values"]
 
-            update_query = sql.SQL(Query.SQL_UPDATE_EXISTING).format(
+            update_query = sql.SQL(SCD2QueriesPostgreSQL.SQL_UPDATE_EXISTING).format(
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 where_clause=sql.SQL(" AND ").join(where_parts),
@@ -316,9 +288,9 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e, required_types="cdc")
 
-    def _operation_insert(self, table: Table, row: dict) -> None:
+    def __operation_insert(self, table: Table, row: dict) -> None:
         """Executa a operação de INSERT na tabela de destino.
 
         Insere um novo registro na tabela de destino, filtrando colunas de metadados (que começam com "$TREM_").
@@ -336,7 +308,6 @@ class CDCOperationsHandler:
             scd2_columns = table.get_scd2_columns()
             scd2_start_date = scd2_columns[SCD2ColumnType.START_DATE]
 
-
             data_columns = [col for col in row.keys() if not col.startswith("$TREM_")]
             insert_values = []
             value_placeholders = []
@@ -346,11 +317,11 @@ class CDCOperationsHandler:
                 else:
                     value_placeholders.append(sql.Placeholder())
                     insert_values.append(row[col])
-                    
+
             # Garante que a lista de placeholders seja um Composable
             values_part = sql.SQL(", ").join(value_placeholders)
 
-            query = sql.SQL(Query.CDC_INSERT_DATA).format(
+            query = sql.SQL(CDCQueriesPostgreSQL.CDC_INSERT_DATA).format(
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
@@ -366,9 +337,9 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            Utils.log_exception(e)
+            logger.error(e, required_types="cdc")
 
-    def _operation_update(self, table: Table, row: dict) -> None:
+    def __operation_update(self, table: Table, row: dict) -> None:
         """Executa a operação de UPDATE na tabela de destino.
 
         Atualiza um registro existente na tabela de destino, usando as colunas primárias (PK)
@@ -407,7 +378,7 @@ class CDCOperationsHandler:
                     )
                     set_values.append(row[col])
 
-            query = sql.SQL(Query.CDC_UPDATE_DATA).format(
+            query = sql.SQL(CDCQueriesPostgreSQL.CDC_UPDATE_DATA).format(
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 set_clause=sql.SQL(", ").join(set_parts),
@@ -423,9 +394,9 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            Utils.log_exception(e)
+            logger.error(e, required_types="cdc")
 
-    def _operation_delete(self, table: Table, row: dict) -> None:
+    def __operation_delete(self, table: Table, row: dict) -> None:
         """Executa a operação de DELETE na tabela de destino.
 
         Remove um registro da tabela de destino usando apenas as colunas primárias (PK)
@@ -452,7 +423,7 @@ class CDCOperationsHandler:
                 for col in pk_columns
             ]
 
-            query = sql.SQL(Query.CDC_DELETE_DATA).format(
+            query = sql.SQL(CDCQueriesPostgreSQL.CDC_DELETE_DATA).format(
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 where_clause=sql.SQL(" AND ").join(where_parts),
@@ -467,11 +438,11 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            Utils.log_exception(e)
+            logger.error(e, required_types="cdc")
 
-    def _operation_upsert(self, table: Table, row: dict) -> None:
+    def __operation_upsert(self, table: Table, row: dict) -> None:
         """Executa uma operação de UPSERT (INSERT ou UPDATE condicional) na tabela de destino.
-        
+
         Implementa um padrão "insert or update" utilizando a cláusula ON CONFLICT do PostgreSQL.
         Se a tabela tiver apenas colunas PK (sem colunas adicionais), executa DELETE+INSERT como fallback.
 
@@ -511,7 +482,7 @@ class CDCOperationsHandler:
                     if col not in pk_columns
                 ]
 
-                query = sql.SQL(Query.CDC_UPSERT_DATA).format(
+                query = sql.SQL(CDCQueriesPostgreSQL.CDC_UPSERT_DATA).format(
                     schema=sql.Identifier(table.target_schema_name),
                     table=sql.Identifier(table.target_table_name),
                     columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
@@ -524,8 +495,8 @@ class CDCOperationsHandler:
                     cursor.execute(query, values)
 
             else:
-                self._operation_delete(table, row)
-                self._operation_insert(table, row)
+                self.__operation_delete(table, row)
+                self.__operation_insert(table, row)
 
         except Exception as e:
             e = UpsertCDCError(
@@ -533,4 +504,36 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            Utils.log_exception(e)
+            logger.error(e, required_types="cdc")
+
+    def insert_cdc_into_table(
+        self,
+        mode: str,
+        table: Table,
+        create_table_if_not_exists: bool = False,
+    ):
+        """
+        Insere dados de alterações em uma tabela de destino.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+            create_table_if_not_exists (bool): Se True, cria a tabela caso ela não exista.
+
+        Returns:
+            dict: Dicionário contendo o log de execução do método.
+
+        Raises:
+            EndpointError: Se houver um erro ao inserir os dados.
+        """
+
+        try:
+            self.table_manager.manage_target_table(table, create_table_if_not_exists)
+
+            self.__insert_cdc_data(table, mode)
+
+            return {"message": "CDC data inserted successfully", "success": True}
+
+        except Exception as e:
+            self.connection_manager.rollback()
+            e = EndpointError(f"Erro ao inserir dados ({mode}): {e}")
+            logger.critical(e, required_types="cdc")

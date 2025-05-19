@@ -1,21 +1,12 @@
 {
     "task": {
-        "task_name": "cdc_scd2_employees",
-        "replication_type": "cdc",
-        "interval_seconds": 3,
+        "task_name": "fl_employees",
+        "replication_type": "full_load",
+        "interval_seconds": 1,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,
             "truncate_before_insert": true
-        },
-        "cdc_settings": {
-            "mode": "scd2",
-            "scd2_settings": {
-                "start_date_column_name": "scd_start_date",
-                "end_date_column_name": "scd_end_date",
-                "current_column_name": "scd_current",
-                "date_type": "timestamp"
-            }
         }
     },
     "tables": [
@@ -27,20 +18,40 @@
         {
             "schema_name": "employees",
             "table_name": "employee",
-            "priority": 0
+            "priority": 2
         },
         {
             "schema_name": "employees",
             "table_name": "department_manager",
-            "priority": 1
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "department",
             "priority": 0
         }
     ],
-    "filters": [],
+    "filters": [
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "department_manager"
+            },
+            "settings": {
+                "filter_type": "date_equals",
+                "description": "Filtrando data de inicio igual a 9999-01-01",
+                "column_name": "to_date",
+                "value": "9999-01-01"
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "employee"
+            },
+            "settings": {
+                "filter_type": "equals",
+                "description": "Filtrando gênero feminino",
+                "column_name": "gender",
+                "value": "F"
+            }
+        }
+    ],
     "transformations": [
         {
             "table_info": {
@@ -49,9 +60,9 @@
             },
             "settings": {
                 "transformation_type": "modify_table_name",
-                "description": "Alterando nome da tabela para histórico",
+                "description": "Alterando nome da tabela para considerar somente funcionários do gênero feminino",
                 "contract": {
-                    "target_table_name": "employee_history"
+                    "target_table_name": "employee_female"
                 },
                 "priority": 0
             }
@@ -63,37 +74,9 @@
             },
             "settings": {
                 "transformation_type": "modify_table_name",
-                "description": "Alterando nome da tabela para português e histórico",
+                "description": "Alterando nome da tabela para português",
                 "contract": {
-                    "target_table_name": "salario_historico"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "department_manager"
-            },
-            "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alterando nome da tabela para histórico",
-                "contract": {
-                    "target_table_name": "department_manager_history"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "department"
-            },
-            "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alteando nome da tabela para histórico",
-                "contract": {
-                    "target_table_name": "department_history"
+                    "target_table_name": "salario"
                 },
                 "priority": 0
             }
@@ -134,10 +117,10 @@
             },
             "settings": {
                 "transformation_type": "modify_column_name",
-                "description": "Modificando 'amount' para 'quantia_mensal'",
+                "description": "Modificando 'amount' para 'quantia'",
                 "contract": {
                     "column_name": "amount",
-                    "target_column_name": "quantia_mensal"
+                    "target_column_name": "quantia"
                 },
                 "priority": 3
             }

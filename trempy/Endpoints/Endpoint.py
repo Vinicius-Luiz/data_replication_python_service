@@ -30,6 +30,8 @@ class Endpoint(ABC):
         database_type: DatabaseType,
         endpoint_type: EndpointType,
         endpoint_name: str,
+
+        batch_cdc_size: int,
     ) -> None:
         """
         Inicializa um endpoint com os dados fornecidos.
@@ -43,13 +45,15 @@ class Endpoint(ABC):
         self.endpoint_type = endpoint_type
         self.endpoint_name = endpoint_name
 
+        self.batch_cdc_size = batch_cdc_size
+
         self.id = (
             f"{self.database_type.name}_{self.endpoint_type.name}_{self.endpoint_name}"
         )
 
-        self.validate()
+        self.__validate()
 
-    def validate(self) -> None:
+    def __validate(self) -> None:
         """
         Valida se os tipos de banco de dados e endpoint são válidos.
 

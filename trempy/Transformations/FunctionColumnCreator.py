@@ -1,6 +1,6 @@
-from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
 from trempy.Transformations.FunctionColumn import FunctionColumn
 from trempy.Shared.Types import TransformationOperationType
+from trempy.Shared.DataTypes import Datatype
 from datetime import datetime
 from typing import List
 import polars as pl
@@ -32,7 +32,9 @@ class FunctionColumnCreator(FunctionColumn):
             Expressão Polars contendo o valor literal fornecido.
         """
 
-        value_type = DataType.DataTypes.TYPE_DATABASE_TO_POLARS[value_type]
+        value_type = Datatype.DatatypePostgreSQL.TYPE_DATABASE_TO_POLARS[
+            value_type
+        ]  # TODO eu preciso saber qual é o tipo de endpoint correto
         return pl.lit(value).cast(value_type)
 
     @staticmethod

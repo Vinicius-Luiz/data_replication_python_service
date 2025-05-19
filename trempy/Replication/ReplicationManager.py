@@ -5,14 +5,18 @@ from trempy.Shared.Types import PriorityType, TaskType, CdcModeType
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Transformations.Transformation import Transformation
 from trempy.Replication.Exceptions.Exception import *
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Filters.Filter import Filter
 from task.credentials import credentials
-from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 from trempy.Tasks.Task import Task
 from dotenv import load_dotenv
-import logging
 import json
+import os
+
+
+ReplicationLogger.configure_logging()
+logger = ReplicationLogger()
 
 
 class ReplicationManager:
@@ -26,7 +30,7 @@ class ReplicationManager:
         self.settings_file = settings_file
         self.task = None
 
-    def load_settings(self) -> dict:
+    def __load_settings(self) -> dict:
         """
         Carrega as configurações do arquivo JSON especificado.
 
@@ -37,7 +41,7 @@ class ReplicationManager:
         with open(self.settings_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    def create_task(self, task_settings: dict) -> Task:
+    def __create_task(self, task_settings: dict) -> Task:
         """
         Cria e configura um objeto Task com base nas configurações fornecidas.
 
@@ -51,24 +55,22 @@ class ReplicationManager:
         source_endpoint = EndpointFactory.create_endpoint(
             **credentials.get("source_endpoint")
         )
-        target_endpoint = EndpointFactory.create_endpoint(
-            **credentials.get("target_endpoint")
-        )
 
         task = Task(
             source_endpoint=source_endpoint,
-            target_endpoint=target_endpoint,
             **task_settings.get("task"),
         )
 
-        self._configure_tables(task, task_settings)
-        self._configure_filters(task, task_settings)
-        self._configure_transformations(task, task_settings)
+        os.environ["REPLICATION_TYPE"] = task.replication_type.value
+
+        self.__configure_tables(task, task_settings)
+        self.__configure_filters(task, task_settings)
+        self.__configure_transformations(task, task_settings)
 
         task.clean_endpoints()
         return task
 
-    def _configure_tables(self, task: Task, task_settings: dict):
+    def __configure_tables(self, task: Task, task_settings: dict):
         """
         Configura as tabelas na tarefa com base nas configurações.
 
@@ -79,7 +81,7 @@ class ReplicationManager:
 
         task.add_tables(task_settings.get("tables", []))
 
-    def _configure_filters(self, task: Task, task_settings: dict) -> None:
+    def __configure_filters(self, task: Task, task_settings: dict) -> None:
         """
         Configura os filtros para as tabelas na tarefa.
 
@@ -97,7 +99,7 @@ class ReplicationManager:
                 filter=filter,
             )
 
-    def _configure_transformations(self, task: Task, task_settings: dict) -> None:
+    def __configure_transformations(self, task: Task, task_settings: dict) -> None:
         """
         Configura as transformações para as tabelas na tarefa.
 
@@ -120,18 +122,18 @@ class ReplicationManager:
                 and task.replication_type == TaskType.CDC
                 and task.cdc_mode == CdcModeType.SCD2
             ):
-                logging.warning(
-                    f"Transformação com prioridade {transformation.priority.name} nao é recomendável com CDC com modo SCD2"
+                logger.warning(
+                    f"REPLICATION - Transformação com prioridade {transformation.priority.name} nao é recomendada com CDC com modo SCD2"
                 )
-        
-        for table in sorted(task.tables, key=lambda x: x.priority.value):
-            self._prepare_to_scd2(task, table)
 
-    def _prepare_to_scd2(self, task: Task, table: Table) -> None:
+        for table in sorted(task.tables, key=lambda x: x.priority.value):
+            self.__prepare_to_scd2(task, table)
+
+    def __prepare_to_scd2(self, task: Task, table: Table) -> None:
         try:
             if task.cdc_mode == CdcModeType.SCD2:
-                logging.debug(
-                    f"TASK - Preparando {table.schema_name}.{table.table_name} para SCD2"
+                logger.info(
+                    f"REPLICATION - Preparando {table.schema_name}.{table.table_name} para SCD2"
                 )
                 scd2_transformations = [
                     {
@@ -146,7 +148,7 @@ class ReplicationManager:
                                 "operation": "literal",
                                 "new_column_name": task.scd2_start_date_column_name,
                                 "value": None,
-                                "value_type": task.scd2_date_type,
+                                "value_type": "timestamp",
                                 "is_scd2_column": True,
                                 "scd2_column_type": "start_date",
                             },
@@ -165,7 +167,7 @@ class ReplicationManager:
                                 "operation": "literal",
                                 "new_column_name": task.scd2_end_date_column_name,
                                 "value": None,
-                                "value_type": task.scd2_date_type,
+                                "value_type": "timestamp",
                                 "is_scd2_column": True,
                                 "scd2_column_type": "end_date",
                             },
@@ -221,7 +223,7 @@ class ReplicationManager:
                 f"Erro ao preparar para SCD2: {e}",
                 f"{table.schema_name}.{table.table_name}",
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def run(self):
         """
@@ -235,12 +237,11 @@ class ReplicationManager:
             Exception: Qualquer erro ocorrido durante a execução é registrado e relançado.
         """
 
-        Utils.configure_logging()
         load_dotenv()
 
         try:
-            task_settings = self.load_settings()
-            self.task = self.create_task(task_settings)
+            task_settings = self.__load_settings()
+            self.task = self.__create_task(task_settings)
 
             strategy = ReplicationStrategyFactory.create_strategy(
                 mode=self.task.replication_type,
@@ -250,4 +251,4 @@ class ReplicationManager:
             strategy.execute(task=self.task)
         except Exception as e:
             e = ReplicationRunError(f"Erro durante a execução: {str(e)}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)

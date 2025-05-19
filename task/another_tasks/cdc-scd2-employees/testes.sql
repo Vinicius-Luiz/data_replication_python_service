@@ -128,3 +128,21 @@ SELECT * FROM employees.department_manager_history order by employee_id, departm
 -- DROP TABLE employees.employee_history;
 -- DROP TABLE funcionarios.salario_historico;
 -- DROP TABLE employees.department_manager_history;
+
+
+
+
+----------------------------------------------
+-- TESTE DE CARGA
+----------------------------------------------
+UPDATE employees.salary set employee_id = employee_id;
+
+select 2844047  as qtd_total,
+       count(*) as qtd_target,
+	   2844047-count(*) as qtd_restante
+  from funcionarios.salario_historico;
+
+
+select min(scd_start_date), max(scd_start_date), max(scd_start_date)  - min(scd_start_date)
+  from funcionarios.salario_historico
+

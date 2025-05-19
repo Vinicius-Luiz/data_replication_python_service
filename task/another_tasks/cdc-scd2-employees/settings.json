@@ -13,8 +13,7 @@
             "scd2_settings": {
                 "start_date_column_name": "scd_start_date",
                 "end_date_column_name": "scd_end_date",
-                "current_column_name": "scd_current",
-                "date_type": "timestamp"
+                "current_column_name": "scd_current"
             }
         }
     },

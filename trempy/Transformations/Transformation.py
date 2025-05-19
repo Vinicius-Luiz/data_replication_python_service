@@ -4,11 +4,12 @@ from trempy.Shared.Types import TransformationType, PriorityType
 from trempy.Transformations.ColumnModifier import ColumnModifier
 from trempy.Transformations.ColumnCreator import ColumnCreator
 from trempy.Transformations.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
-import logging
+from trempy.Loggings.Logging import ReplicationLogger
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table
+
+logger = ReplicationLogger()
 
 
 class Transformation:
@@ -34,9 +35,9 @@ class Transformation:
         self.contract = contract
         self.priority = PriorityType(priority)
 
-        self.validate()
+        self.__validate()
 
-    def validate(self) -> None:
+    def __validate(self) -> None:
         """
         Valida se o tipo da transformação é válido.
 
@@ -48,51 +49,9 @@ class Transformation:
             e = InvalidTransformationTypeError(
                 "Tipo de transformação inválido", self.transformation_type
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def execute(self, table: Table = None) -> None:
-        """
-        Executa a transformação na tabela.
-
-        Dependendo do tipo da transformação, o método executará uma das seguintes ações:
-        - Criar uma coluna com um nome e tipo especificados.
-        - Modificar o nome do schema da tabela.
-        - Modificar o nome da tabela.
-        - Modificar o nome de uma coluna.
-        - Modificar os valores de uma coluna.
-
-        Args:
-            table (Table): Objeto representando a estrutura da tabela que receberá a transformação.
-
-        Returns:
-            None
-        """
-
-        logging.info(
-            f"TRANSFORMATION - Aplicando transformação em {table.schema_name}.{table.table_name}: {self.description}"
-        )
-
-        try:
-            match self.transformation_type:
-                case TransformationType.CREATE_COLUMN:
-                    return self._execute_create_column(table)
-                case TransformationType.MODIFY_SCHEMA_NAME:
-                    return self._execute_modify_schema_name(table)
-                case TransformationType.MODIFY_TABLE_NAME:
-                    return self._execute_modify_table_name(table)
-                case TransformationType.MODIFY_COLUMN_NAME:
-                    return self._execute_modify_column_name(table)
-                case TransformationType.MODIFY_COLUMN_VALUE:
-                    return self._execute_modify_column_value(table)
-                case TransformationType.ADD_PRIMARY_KEY:
-                    return self._execute_add_primary_key(table)
-                case TransformationType.REMOVE_PRIMARY_KEY:
-                    return self._execute_remove_primary_key(table)
-        except Exception as e:
-            e = TransformationError(str(e))
-            Utils.log_exception_and_exit(e)
-
-    def _execute_modify_schema_name(self, table: Table) -> Table:
+    def __execute_modify_schema_name(self, table: Table) -> Table:
         """
         Modifica o nome do schema da tabela de destino com base no contrato de transformação.
 
@@ -104,7 +63,7 @@ class Transformation:
         table.target_schema_name = self.contract["target_schema_name"]
         return table
 
-    def _execute_modify_table_name(self, table: Table) -> Table:
+    def __execute_modify_table_name(self, table: Table) -> Table:
         """
         Modifica o nome da tabela de destino com base no contrato de transformação.
 
@@ -116,7 +75,7 @@ class Transformation:
         table.target_table_name = self.contract["target_table_name"]
         return table
 
-    def _execute_modify_column_name(self, table: Table) -> Table:
+    def __execute_modify_column_name(self, table: Table) -> Table:
         """
         Modifica o nome da coluna de destino com base no contrato de transformação.
 
@@ -133,7 +92,7 @@ class Transformation:
         )
         return table
 
-    def _execute_add_primary_key(self, table: Table) -> Table:
+    def __execute_add_primary_key(self, table: Table) -> Table:
         """
         Adiciona a chave primária a tabela de destino com base no contrato de transformação.
 
@@ -153,12 +112,12 @@ class Transformation:
             return table
         except KeyError as e:
             e = ColumnNameNotFoundError("Coluna procurada não encontrada", column_name)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
         except Exception as e:
             e = TransformationError(str(e))
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def _execute_remove_primary_key(self, table: Table) -> Table:
+    def __execute_remove_primary_key(self, table: Table) -> Table:
         """
         Remove a chave primária da tabela de destino com base no contrato de transformação.
 
@@ -178,12 +137,12 @@ class Transformation:
             return table
         except KeyError as e:
             e = ColumnNameNotFoundError("Coluna procurada não encontrada", column_name)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
         except Exception as e:
             e = TransformationError(str(e))
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def _execute_create_column(self, table: Table) -> Table:
+    def __execute_create_column(self, table: Table) -> Table:
         """
         Cria uma nova coluna com base no contrato de transformação.
 
@@ -196,7 +155,7 @@ class Transformation:
 
         return ColumnCreator.create_column(self.contract, table)
 
-    def _execute_modify_column_value(self, table: Table) -> Table:
+    def __execute_modify_column_value(self, table: Table) -> Table:
         """
         Modifica o valor da coluna de destino com base no contrato de transformação.
 
@@ -208,3 +167,46 @@ class Transformation:
         """
 
         return ColumnModifier.modify_column(self.contract, table)
+
+    def execute(self, table: Table = None) -> None:
+        """
+        Executa a transformação na tabela.
+
+        Dependendo do tipo da transformação, o método executará uma das seguintes ações:
+        - Criar uma coluna com um nome e tipo especificados.
+        - Modificar o nome do schema da tabela.
+        - Modificar o nome da tabela.
+        - Modificar o nome de uma coluna.
+        - Modificar os valores de uma coluna.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela que receberá a transformação.
+
+        Returns:
+            None
+        """
+
+        logger.info(
+            f"TRANSFORMATION - Aplicando transformação em {table.schema_name}.{table.table_name}: {self.description}",
+            required_types="full_load",
+        )
+
+        try:
+            match self.transformation_type:
+                case TransformationType.CREATE_COLUMN:
+                    return self.__execute_create_column(table)
+                case TransformationType.MODIFY_SCHEMA_NAME:
+                    return self.__execute_modify_schema_name(table)
+                case TransformationType.MODIFY_TABLE_NAME:
+                    return self.__execute_modify_table_name(table)
+                case TransformationType.MODIFY_COLUMN_NAME:
+                    return self.__execute_modify_column_name(table)
+                case TransformationType.MODIFY_COLUMN_VALUE:
+                    return self.__execute_modify_column_value(table)
+                case TransformationType.ADD_PRIMARY_KEY:
+                    return self.__execute_add_primary_key(table)
+                case TransformationType.REMOVE_PRIMARY_KEY:
+                    return self.__execute_remove_primary_key(table)
+        except Exception as e:
+            e = TransformationError(str(e))
+            logger.critical(e)

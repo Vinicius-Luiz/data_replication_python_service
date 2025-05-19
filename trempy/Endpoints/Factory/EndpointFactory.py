@@ -1,8 +1,9 @@
 from trempy.Endpoints.Databases.PostgreSQL.Endpoint import EndpointPostgreSQL
 from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
-import logging
+
+logger = ReplicationLogger()
 
 
 class EndpointFactory:
@@ -12,6 +13,7 @@ class EndpointFactory:
         endpoint_type: str,
         endpoint_name: str,
         credentials: dict,
+        batch_cdc_size: int = 1000,
     ):
         """
         Cria um endpoint de acordo com o tipo de banco de dados e credenciais fornecidos.
@@ -21,6 +23,7 @@ class EndpointFactory:
             endpoint_type (str): Tipo do endpoint (fonte ou destino).
             endpoint_name (str): Nome do endpoint.
             credentials (dict): Credenciais do banco de dados.
+            batch_cdc_size (int): Tamanho do lote para CDC.
 
         Returns:
             Endpoint: Inst ncia do endpoint criado.
@@ -32,13 +35,15 @@ class EndpointFactory:
         database_type = DatabaseType(database_type)
         endpoint_type = EndpointType(endpoint_type)
 
-        logging.info(
-            f"ENDPOINT FACTORY - Conectando ao banco de dados {endpoint_name} como {endpoint_type.name}"
+        logger.info(
+            f"ENDPOINT FACTORY - Conectando ao banco de dados {endpoint_name} como {endpoint_type.name}", required_types="full_load"
         )
         if database_type == DatabaseType.POSTGRESQL:
             return EndpointPostgreSQL(
-                endpoint_type, endpoint_name, credentials
+                endpoint_type, endpoint_name, credentials, batch_cdc_size
             )
         else:
-            e = InvalidDatabaseTypeError("Tipo de banco de dados inválido", database_type)
-            Utils.log_exception_and_exit(e)
+            e = InvalidDatabaseTypeError(
+                "Tipo de banco de dados inválido", database_type
+            )
+            logger.critical(e)

@@ -1,24 +1,26 @@
 from __future__ import annotations
 from trempy.Transformations.FunctionColumnCreator import FunctionColumnCreator as FCC
 from trempy.Shared.Types import TransformationOperationType, SCD2ColumnType
-from trempy.Endpoints.Databases.PostgreSQL.DataTypes import DataType
 from trempy.Transformations.Exceptions.Exception import *
+from trempy.Loggings.Logging import ReplicationLogger
 from typing import Dict, List, Any, TYPE_CHECKING
+from trempy.Shared.DataTypes import Datatype
 from trempy.Columns.Column import Column
-from trempy.Shared.Utils import Utils
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table
 
+logger = ReplicationLogger()
 
 class ColumnCreator:
     """Classe responsável por validar e criar novas colunas."""
 
-    # TODO: eu tenho que saber qual o endpoint de destino pra salvar as colunas no tipo certo
-    TYPE_POLARS_TO_DATABASE = DataType.DataTypes.TYPE_POLARS_TO_DATABASE
+    TYPE_POLARS_TO_DATABASE = (
+        Datatype.DatatypePostgreSQL.TYPE_POLARS_TO_DATABASE
+    )  # TODO eu preciso saber qual é o tipo de endpoint correto
 
     @staticmethod
-    def get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
+    def __get_operations(depends_on: list, contract: dict) -> Dict[str, Any]:
         """Retorna um dicionário de operações com base em tipos de operações definidos.
 
         O dicionário retornado contém todas as operações disponíveis no sistema, cada uma com:
@@ -81,7 +83,7 @@ class ColumnCreator:
         }
 
     @staticmethod
-    def _validate_basic_contract(new_column_name: str, table: Table) -> None:
+    def __validate_basic_contract(new_column_name: str, table: Table) -> None:
         """Valida os requisitos básicos do contrato de transformação.
 
         Verifica se o nome da nova coluna é válido e único na tabela especificada.
@@ -98,14 +100,14 @@ class ColumnCreator:
 
         if not new_column_name:
             e = NewColumnNameError("O contrato deve conter 'new_column_name'", None)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         if new_column_name in table.data.columns:
             e = NewColumnNameError("A coluna já existe no DataFrame", new_column_name)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     @staticmethod
-    def _validate_dependent_columns(depends_on: List[str], table: Table) -> None:
+    def __validate_dependent_columns(depends_on: List[str], table: Table) -> None:
         """Valida a existência de todas as colunas dependentes na tabela especificada.
 
         Args:
@@ -125,10 +127,10 @@ class ColumnCreator:
                     f"Coluna dependente não encontrada. Disponíveis: {available}",
                     col,
                 )
-                Utils.log_exception_and_exit(e)
+                logger.critical(e)
 
     @staticmethod
-    def _validate_operation(
+    def __validate_operation(
         operation: str, operations: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Valida se uma operação está entre as operações suportadas.
@@ -153,11 +155,11 @@ class ColumnCreator:
             e = InvalidOperationError(
                 f"Operação não suportada. Válidas: {valid_ops}", operation
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
         return operations[operation]
 
     @staticmethod
-    def _validate_required_params(
+    def __validate_required_params(
         op_config: Dict[str, Any], contract: Dict[str, Any]
     ) -> None:
         """Valida a presença de todos os parâmetros obrigatórios no contrato de transformação.
@@ -181,10 +183,10 @@ class ColumnCreator:
         for param in op_config.get("required_params", []):
             if param not in contract:
                 e = RequiredParameterError("Parâmetro obrigatório faltando", param)
-                Utils.log_exception_and_exit(e)
+                logger.critical(e)
 
     @staticmethod
-    def _validate_column_types(
+    def __validate_column_types(
         depends_on: List[str], op_config: Dict[str, Any], table: Table
     ) -> None:
         """Valida se os tipos das colunas dependentes atendem aos requisitos da operação.
@@ -229,10 +231,10 @@ class ColumnCreator:
                     col,
                     type(actual_type).__name__,
                 )
-                Utils.log_exception_and_exit(e)
+                logger.critical(e)
 
     @classmethod
-    def _update_metadata(cls, table: Table, contract: dict) -> Table:
+    def __update_metadata(cls, table: Table, contract: dict) -> Table:
         """Atualiza os metadados da tabela para incluir a nova coluna.
 
         Args:
@@ -262,14 +264,16 @@ class ColumnCreator:
                 is_primary_key=False,
                 is_created_by_trempy=True,
                 is_scd2_column=is_scd2_column,
-                scd2_column_type=SCD2ColumnType(scd2_column_type) if scd2_column_type else None,
+                scd2_column_type=(
+                    SCD2ColumnType(scd2_column_type) if scd2_column_type else None
+                ),
             )
         except Exception as e:
             e = UpdateMetadataError(
                 f"Erro ao atualizar metadados: {e}",
                 f"{table.target_schema_name}.{table.target_table_name}",
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         return table
 
@@ -303,19 +307,19 @@ class ColumnCreator:
         depends_on = contract.get("depends_on", [])
 
         # Busca operações
-        operations = cls.get_operations(depends_on, contract)
+        operations = cls.__get_operations(depends_on, contract)
 
         # Validações
-        cls._validate_basic_contract(new_column_name, table)
-        cls._validate_dependent_columns(depends_on, table)
-        op_config = cls._validate_operation(operation, operations)
-        cls._validate_required_params(op_config, contract)
-        cls._validate_column_types(depends_on, op_config, table)
+        cls.__validate_basic_contract(new_column_name, table)
+        cls.__validate_dependent_columns(depends_on, table)
+        op_config = cls.__validate_operation(operation, operations)
+        cls.__validate_required_params(op_config, contract)
+        cls.__validate_column_types(depends_on, op_config, table)
 
         # Execução
         table.data = table.data.with_columns(op_config["func"]().alias(new_column_name))
 
         # Atualiza metadados
-        table = cls._update_metadata(table, contract)
+        table = cls.__update_metadata(table, contract)
 
         return table

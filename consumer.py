@@ -1,17 +1,15 @@
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from pika.adapters.blocking_connection import BlockingChannel
-from trempy.Messages.Message import MessageConsumer
+from trempy.Messages.MessageConsumer import MessageConsumer
+from trempy.Loggings.Logging import ReplicationLogger
 from task.credentials import credentials
 from trempy.Shared.Utils import Utils
 from trempy.Tasks.Task import Task
 
-Utils.configure_logging()
+ReplicationLogger.configure_logging()
 
 
 def external_callback(changes_structured: dict, channel: BlockingChannel):
-    Utils.log_debug(
-        f"Mensagem passou pelo callback externo com a mensagem: {changes_structured.keys()}"
-    )
     task.execute_target(changes_structured=changes_structured, channel=channel)
 
 
@@ -31,4 +29,4 @@ if task.replication_type.value == "cdc":
 elif task.replication_type.value == "full_load":
     task.execute_target()
 
-task.clean_endpoints() # TODO ver se vale a pena deixar sempre ligado
+task.clean_endpoints()  # TODO ver se vale a pena deixar sempre ligado

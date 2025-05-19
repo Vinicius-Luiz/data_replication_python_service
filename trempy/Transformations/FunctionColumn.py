@@ -9,7 +9,9 @@ class FunctionColumn:
     REQUIRED_PARAMS = {}
 
     @classmethod
-    def get_required_column_types(cls, function: TransformationOperationType) -> List | Dict:
+    def get_required_column_types(
+        cls, function: TransformationOperationType
+    ) -> List | Dict:
         """Retorna os tipos de coluna necessários para executar uma transformação.
 
         Args:

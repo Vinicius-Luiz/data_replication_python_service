@@ -1,17 +1,17 @@
 from trempy.Shared.Types import TaskType, CdcModeType, EndpointType, DatabaseType
 from trempy.Transformations.Transformation import Transformation
 from pika.adapters.blocking_connection import BlockingChannel
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Tasks.Exceptions.Exception import *
 from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Filters.Filter import Filter
-from trempy.Shared.Utils import Utils
+from typing import List, Dict, Optional
 from trempy.Tables.Table import Table
-from typing import List, Optional
-from datetime import datetime
 import polars as pl
-import logging
-import json
 import re
+
+
+logger = ReplicationLogger()
 
 
 class Task:
@@ -70,21 +70,14 @@ class Task:
         self.scd2_current_column_name: str = scd2_settings.get(
             "current_column_name", "scd_current"
         )
-        self.scd2_date_type: str = scd2_settings.get(
-            "date_type", "timestamp"
-        )  # "date" or "timestamp"
 
         self.tables: List[Table] = []
 
         self.filters = []
 
-        # self.dlx_consumer = MessageDlx(task_name=self.task_name)
-        # self.consumer =  MessageConsumer(task_name=self.task_name)
-        # self.producer = MessageProducer(task_name=self.task_name)
+        self.__validate()
 
-        self.validate()
-
-    def validate(self) -> None:
+    def __validate(self) -> None:
         """
         Realiza a validação do tipo da tarefa associada ao objeto.
 
@@ -99,22 +92,181 @@ class Task:
 
         if self.replication_type not in TaskType:
             e = InvalidTaskTypeError("Tipo de tarefa inválido", self.replication_type)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         if self.interval_seconds <= 0:
             e = InvalidIntervalSecondsError(
                 "Intervalo de execução da tarefa inválido", self.interval_seconds
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         partner = re.compile(r"^[a-z0-9_]+$")
         task_name_valid = bool(partner.match(self.task_name))
 
         if not task_name_valid:
             e = InvalidTaskNameError("Nome da tarefa inválido", self.task_name)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-        logging.info(f"TASK - {self.task_name} válido")
+        logger.info(f"TASK -  {self.task_name} válido")
+
+    def __execute_source_full_load(self) -> dict:
+        """
+        Executa a extração completa de dados da fonte em Full Load.
+
+        Percorre todas as tabelas especificadas na tarefa e executa a extração completa
+        de dados para cada uma delas. A extração utiliza o método get_full_load_from_table
+        da classe Endpoint, que pode ser implementado de acordo com a tecnologia do
+        banco de dados.
+
+        A extração completa de dados é realizada em paralelo para todas as tabelas
+        especificadas.
+
+        Returns:
+            dict: Resultado da operação com a seguinte estrutura:
+        """
+
+        for table in sorted(self.tables, key=lambda x: x.priority.value):
+            logger.info(
+                f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}",
+                required_types="full_load",
+            )
+            table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
+            table_get_full_load = self.source_endpoint.get_full_load_from_table(
+                table=table
+            )
+            logger.debug(table_get_full_load)
+
+        return {}
+
+    def __execute_target_full_load(self) -> None:
+        """
+        Executa a carga completa de dados no destino em Full Load.
+
+        Percorre todas as tabelas especificadas na tarefa e executa a carga completa
+        de dados para cada uma delas. A carga completa de dados é realizada em
+        paralelo para todas as tabelas especificadas.
+        """
+
+        for table in sorted(self.tables, key=lambda x: x.priority.value):
+            table.data = pl.read_parquet(table.path_data)
+
+            table.execute_filters()
+            table.execute_transformations()
+
+            logger.info(
+                f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}",
+                required_types="full_load",
+            )
+            table_full_load = self.target_endpoint.insert_full_load_into_table(
+                table=table,
+                create_table_if_not_exists=self.create_table_if_not_exists,
+                recreate_table_if_exists=self.recreate_table_if_exists,
+                truncate_before_insert=self.truncate_before_insert,
+            )
+
+            logger.debug(table_full_load)
+
+    def __execute_source_cdc(self) -> List[Dict]:
+        """
+        Executa a captura de alterações no endpoint de origem em CDC.
+
+        Percorre todas as tabelas especificadas na tarefa e executa a captura
+        de alterações para cada uma delas. A captura de alterações é realizada
+        em paralelo para todas as tabelas especificadas.
+
+        Os parâmetros utilizados na captura de alterações são passados como
+        parâmetro da função, que pode variar de acordo com a tecnologia do
+        banco de dados.
+
+        Returns:
+            List[Dict]: Resultado da operação com a seguinte estrutura:
+        """
+
+        kargs = {"database_type": self.source_endpoint.database_type.value}
+
+        match self.source_endpoint.database_type:
+            case DatabaseType.POSTGRESQL:
+                kargs["slot_name"] = self.task_name
+            case _:
+                e = DatabaseNotImplementedError(
+                    "Banco de dados não implementado",
+                    self.source_endpoint.database_type,
+                )
+                logger.critical(e)
+
+        changes_captured = self.source_endpoint.capture_changes(**kargs)
+
+        changes_structured = self.source_endpoint.structure_capture_changes_to_json(
+            changes_captured, task_tables=self.tables, **kargs
+        )
+
+        return changes_structured
+
+    def __execute_target_cdc(
+        self, changes_structured: dict, channel: BlockingChannel
+    ) -> bool:
+        """
+        Executa a replicação de alterações no endpoint de destino em CDC.
+
+        Processa as alterações capturadas em um dicionário e as transforma em um dicionário
+        de DataFrames com as alterações de cada tabela separadas por schema_name e table_name.
+
+        Em seguida, realiza a inserção das alterações no endpoint de destino.
+
+        Args:
+            changes_structured (dict): Dicionário com as alterações capturadas
+            channel (BlockingChannel): Canal de mensagens para confirmar a entrega
+
+        Returns:
+            bool: True se a operação for realizada com sucesso, False caso contrário
+        """
+
+        delivery_tag = changes_structured["delivery_tag"]
+
+        try:
+            df_changes_structured = (
+                self.target_endpoint.structure_capture_changes_to_dataframe(
+                    changes_structured
+                )
+            )
+        except:
+            channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
+
+        channel.basic_ack(delivery_tag=delivery_tag)
+
+        for table in sorted(self.tables, key=lambda x: x.priority.value):
+            data: pl.DataFrame = df_changes_structured.get(table.id)
+
+            if table.id in df_changes_structured.keys():
+                table.add_data(data)
+                table.execute_filters()
+                table.execute_transformations()
+
+                table_cdc = self.target_endpoint.insert_cdc_into_table(
+                    mode=self.cdc_mode,
+                    table=table,
+                    create_table_if_not_exists=self.create_table_if_not_exists,
+                )
+
+    def __find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
+        """
+        Busca e retorna uma tabela específica na lista de tabelas da tarefa atual.
+
+        Realiza uma busca exata (case-sensitive) pelo par (schema_name, table_name) na lista
+        de tabelas associadas à tarefa. A comparação considera espaços e caracteres especiais.
+
+        Args:
+            schema_name (str): Nome do esquema onde a tabela está registrada.
+            table_name (str): Nome da tabela a ser localizada.
+
+        Returns:
+            Optional[Table]: O objeto Table correspondente se encontrado, None caso a tabela
+                           não exista na tarefa.
+        """
+
+        for table in sorted(self.tables, key=lambda x: x.priority.value):
+            if table.schema_name == schema_name and table.table_name == table_name:
+                return table
 
     def clean_endpoints(self) -> None:
         """
@@ -171,11 +323,11 @@ class Task:
                 schema_name = table.get("schema_name")
                 table_name = table.get("table_name")
 
-                logging.info(
+                logger.info(
                     f"TASK - Obtendo detalhes da tabela {schema_name}.{table_name}"
                 )
                 table_detail = self.source_endpoint.get_table_details(table)
-                logging.debug(table_detail.to_dict())
+                logger.debug(table_detail.to_dict())
 
                 tables_detail.append(table_detail)
 
@@ -186,7 +338,7 @@ class Task:
             e = AddTablesError(
                 f"Erro ao adicionar tabelas: {e}", f"{schema_name}.{table_name}"
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def add_transformation(
         self, schema_name: str, table_name: str, transformation: Transformation
@@ -210,13 +362,13 @@ class Task:
         """
 
         try:
-            table = self.find_table(schema_name, table_name)
+            table = self.__find_table(schema_name, table_name)
             table.transformations.append(transformation)
         except Exception as e:
             e = AddTransformationError(
                 f"Erro ao adicionar transformação: {e}", f"{schema_name}.{table_name}"
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def add_filter(self, schema_name: str, table_name: str, filter: Filter) -> None:
         """
@@ -234,34 +386,14 @@ class Task:
         """
 
         try:
-            table = self.find_table(schema_name, table_name)
+            table = self.__find_table(schema_name, table_name)
             table.filters.append(filter)
         except Exception as e:
             e = AddFilterError(
                 f"Erro ao adicionar filtro: {e}", f"{schema_name}.{table_name}"
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
-        """
-        Busca e retorna uma tabela específica na lista de tabelas da tarefa atual.
-
-        Realiza uma busca exata (case-sensitive) pelo par (schema_name, table_name) na lista
-        de tabelas associadas à tarefa. A comparação considera espaços e caracteres especiais.
-
-        Args:
-            schema_name (str): Nome do esquema onde a tabela está registrada.
-            table_name (str): Nome da tabela a ser localizada.
-
-        Returns:
-            Optional[Table]: O objeto Table correspondente se encontrado, None caso a tabela
-                           não exista na tarefa.
-        """
-
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            if table.schema_name == schema_name and table.table_name == table_name:
-                return table
-    
     def execute_source(self) -> dict:
         """
         Executa a tarefa de extração de dados da fonte.
@@ -275,9 +407,9 @@ class Task:
 
         match self.replication_type:
             case TaskType.FULL_LOAD:
-                return self._execute_source_full_load()
+                return self.__execute_source_full_load()
             case TaskType.CDC:
-                return self._execute_source_cdc()
+                return self.__execute_source_cdc()
 
     def execute_target(self, **kargs) -> dict:
         """
@@ -296,120 +428,9 @@ class Task:
 
         match self.replication_type:
             case TaskType.FULL_LOAD:
-                return self._execute_target_full_load()
+                return self.__execute_target_full_load()
             case TaskType.CDC:
-                return self._execute_target_cdc(changes_structured = kargs.get('changes_structured'), channel = kargs.get('channel'))
-
-    def _execute_source_full_load(self) -> dict:
-        """
-        Executa a extração completa de dados da fonte em Full Load.
-
-        Percorre todas as tabelas especificadas na tarefa e executa a extração completa
-        de dados para cada uma delas. A extração utiliza o método get_full_load_from_table
-        da classe Endpoint, que pode ser implementado de acordo com a tecnologia do
-        banco de dados.
-
-        A extração completa de dados é realizada em paralelo para todas as tabelas
-        especificadas.
-
-        Returns:
-            dict: Resultado da operação com a seguinte estrutura:
-        """
-
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            logging.info(
-                f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}"
-            )
-            table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
-            table_get_full_load = self.source_endpoint.get_full_load_from_table(
-                table=table
-            )
-            logging.debug(table_get_full_load)
-
-        return {}
-
-    def _execute_target_full_load(self) -> None:
-        """
-        Executa a carga completa de dados no destino em Full Load.
-
-        Percorre todas as tabelas especificadas na tarefa e executa a carga completa
-        de dados para cada uma delas. A carga completa de dados é realizada em
-        paralelo para todas as tabelas especificadas.
-        """
-
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            table.data = pl.read_parquet(table.path_data)
-
-            table.execute_filters()
-            table.execute_transformations()
-
-            logging.info(
-                f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}"
-            )
-            table_full_load = self.target_endpoint.insert_full_load_into_table(
-                table=table,
-                create_table_if_not_exists=self.create_table_if_not_exists,
-                recreate_table_if_exists=self.recreate_table_if_exists,
-                truncate_before_insert=self.truncate_before_insert,
-            )
-            logging.debug(table_full_load)
-
-    def _execute_source_cdc(self) -> dict:
-        match self.source_endpoint.database_type:
-            case DatabaseType.POSTGRESQL:
-                kargs = {
-                    "slot_name": self.task_name,
-                }
-            case _:
-                e = DatabaseNotImplementedError(
-                    "Banco de dados não implementado",
-                    self.source_endpoint.database_type,
+                return self.__execute_target_cdc(
+                    changes_structured=kargs.get("changes_structured"),
+                    channel=kargs.get("channel"),
                 )
-                Utils.log_exception_and_exit(e)
-
-        changes_captured = self.source_endpoint.capture_changes(**kargs)
-
-        changes_structured = self.source_endpoint.structure_capture_changes_to_json(
-            changes_captured, task_tables=self.tables
-        )
-
-        return changes_structured
-
-    def _execute_target_cdc(self, changes_structured: dict, channel: BlockingChannel) -> bool:
-        logging.info(f"TASK - Estruturando alterações de dados")
-        delivery_tag = changes_structured["delivery_tag"]
-        
-        try:
-            df_changes_structured = (
-                self.target_endpoint.structure_capture_changes_to_dataframe(
-                    changes_structured
-                )
-            )
-        except:
-            channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
-        
-        channel.basic_ack(delivery_tag=delivery_tag)
-
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            data: pl.DataFrame = df_changes_structured.get(table.id)
-
-            if table.id in df_changes_structured.keys():
-                Utils.log_debug(f'[INICIO] {table.id} CDC') # TODO debug
-                table.add_data(data)
-                table.execute_filters()
-                table.execute_transformations()
-
-                table_cdc = self.target_endpoint.insert_cdc_into_table(
-                    mode=self.cdc_mode,
-                    table=table,
-                    create_table_if_not_exists=self.create_table_if_not_exists,
-                )
-                Utils.log_debug(f'[FIM] {table.id} CDC') # TODO debug
-
-                try:
-                    tmp_path = f"data\cdc_data\{changes_structured['id']}_{table.id}.csv"
-                    # table.data.write_csv(tmp_path)  # TODO temporário
-                except Exception as e:
-                    Utils.log_exception(
-                        f'Erro ao salvar dados da tabela "{table.target_table_name}" no diretorio {tmp_path}: {e}'
-                    )

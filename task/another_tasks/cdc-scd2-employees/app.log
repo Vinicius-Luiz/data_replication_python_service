@@ -1,362 +1,54 @@
-2025-05-11 02:18:42,054 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:42,089 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:42,089 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-05-11 02:18:42,123 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:42,123 - INFO - TASK - cdc_scd2_employees válido
-2025-05-11 02:18:42,123 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-05-11 02:18:42,143 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 3788862, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-05-11 02:18:42,143 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-05-11 02:18:42,148 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '39 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-05-11 02:18:42,148 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-05-11 02:18:42,153 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-05-11 02:18:42,153 - INFO - TASK - Obtendo detalhes da tabela employees.department
-2025-05-11 02:18:42,158 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
-2025-05-11 02:18:42,158 - DEBUG - TASK - Preparando employees.employee para SCD2
-2025-05-11 02:18:42,158 - DEBUG - TASK - Preparando employees.department para SCD2
-2025-05-11 02:18:42,158 - DEBUG - TASK - Preparando employees.salary para SCD2
-2025-05-11 02:18:42,158 - DEBUG - TASK - Preparando employees.department_manager para SCD2
-2025-05-11 02:18:42,159 - INFO - STRATEGY - Iniciando CDC com intervalo de 3s
-2025-05-11 02:18:42,164 - DEBUG - Executando ciclo do producer
-2025-05-11 02:18:42,491 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-05-11 02:18:42,491 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:42,535 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:42,536 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:42,538 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:18:42,547 - DEBUG -  [*] Waiting for messages. To exit press CTRL+C
-2025-05-11 02:18:42,593 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:18:45,604 - DEBUG - Executando ciclo do producer
-2025-05-11 02:18:45,927 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:45,964 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:45,966 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:18:46,006 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:18:49,019 - DEBUG - Executando ciclo do producer
-2025-05-11 02:18:49,341 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:49,383 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:49,385 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:18:49,420 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:18:52,427 - DEBUG - Executando ciclo do producer
-2025-05-11 02:18:52,750 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:52,785 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:52,787 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:18:52,803 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':cd9c87
-2025-05-11 02:18:52,806 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':cd9c87...
-2025-05-11 02:18:52,806 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:18:52,806 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:18:52,809 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-11 02:18:52,809 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-11 02:18:52,809 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-11 02:18:52,809 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-11 02:18:52,809 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-11 02:18:52,809 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-11 02:18:52,810 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-11 02:18:52,810 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-11 02:18:52,810 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-11 02:18:52,810 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
-2025-05-11 02:18:52,816 - INFO - ENDPOINT - Criando tabela employees.employee_history
-2025-05-11 02:18:52,832 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:18:55,841 - DEBUG - Executando ciclo do producer
-2025-05-11 02:18:56,184 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:56,219 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:56,221 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:18:56,257 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:18:59,259 - DEBUG - Executando ciclo do producer
-2025-05-11 02:18:59,584 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:18:59,620 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:18:59,622 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:18:59,661 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:02,663 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:02,980 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:03,015 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:03,016 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:03,047 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:06,058 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:06,376 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:06,411 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:06,413 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:06,449 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:09,449 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:09,784 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:09,818 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:09,820 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:09,836 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':5956b8
-2025-05-11 02:19:09,837 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':5956b8...
-2025-05-11 02:19:09,837 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:09,837 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:09,838 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-11 02:19:09,838 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-11 02:19:09,838 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-11 02:19:09,838 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-11 02:19:09,838 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-11 02:19:09,839 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-11 02:19:09,839 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-11 02:19:09,839 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-11 02:19:09,839 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-11 02:19:09,839 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
-2025-05-11 02:19:09,863 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:12,875 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:13,201 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:13,242 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:13,245 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:13,262 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':528fca
-2025-05-11 02:19:13,263 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':528fca...
-2025-05-11 02:19:13,263 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:13,263 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:13,263 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-11 02:19:13,263 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-11 02:19:13,264 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-11 02:19:13,264 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-11 02:19:13,264 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-11 02:19:13,264 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-11 02:19:13,264 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-11 02:19:13,264 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-11 02:19:13,265 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-11 02:19:13,265 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
-2025-05-11 02:19:13,288 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:16,293 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:16,625 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:16,660 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:16,662 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:16,684 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':4d6495
-2025-05-11 02:19:16,685 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':4d6495...
-2025-05-11 02:19:16,685 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:16,685 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:16,687 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-11 02:19:16,687 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-11 02:19:16,687 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-11 02:19:16,687 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-11 02:19:16,687 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-11 02:19:16,688 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-11 02:19:16,688 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-11 02:19:16,688 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-11 02:19:16,688 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-11 02:19:16,688 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
-2025-05-11 02:19:16,715 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:19,729 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:20,058 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:20,093 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:20,095 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:20,110 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':e698c1
-2025-05-11 02:19:20,111 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':e698c1...
-2025-05-11 02:19:20,111 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:20,111 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:20,112 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-11 02:19:20,112 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-11 02:19:20,112 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-11 02:19:20,112 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-11 02:19:20,113 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
-2025-05-11 02:19:20,113 - INFO - ENDPOINT - Criando tabela employees.department_history
-2025-05-11 02:19:20,139 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:23,148 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:23,486 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:23,522 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:23,524 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:23,540 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':f6aab6
-2025-05-11 02:19:23,540 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':f6aab6...
-2025-05-11 02:19:23,540 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:23,540 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:23,542 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-11 02:19:23,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-11 02:19:23,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-11 02:19:23,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-11 02:19:23,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
-2025-05-11 02:19:23,545 - INFO - ENDPOINT - Criando tabela funcionarios.salario_historico
-2025-05-11 02:19:23,579 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:26,579 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:26,910 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:26,945 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:26,947 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:26,963 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':990af0
-2025-05-11 02:19:26,964 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':990af0...
-2025-05-11 02:19:26,964 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:26,964 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:26,966 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-11 02:19:26,966 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-11 02:19:26,966 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-11 02:19:26,967 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-11 02:19:26,967 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-11 02:19:26,967 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-11 02:19:26,967 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-11 02:19:26,967 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-11 02:19:26,967 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-11 02:19:26,968 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-11 02:19:26,968 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-11 02:19:26,968 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
-2025-05-11 02:19:26,995 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:29,999 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:30,315 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:30,350 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:30,352 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:30,371 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':11851a
-2025-05-11 02:19:30,372 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':11851a...
-2025-05-11 02:19:30,372 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:30,372 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:30,374 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-11 02:19:30,374 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-11 02:19:30,374 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-11 02:19:30,374 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-11 02:19:30,374 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-11 02:19:30,375 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
-2025-05-11 02:19:30,399 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:33,413 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:33,733 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:33,768 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:33,770 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:33,786 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':bfee31
-2025-05-11 02:19:33,786 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':bfee31...
-2025-05-11 02:19:33,786 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:33,786 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:33,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-11 02:19:33,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-11 02:19:33,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-11 02:19:33,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-11 02:19:33,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
-2025-05-11 02:19:33,789 - INFO - ENDPOINT - Criando tabela employees.department_manager_history
-2025-05-11 02:19:33,817 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:36,831 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:37,154 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:37,194 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:37,196 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:37,215 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':210130
-2025-05-11 02:19:37,216 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':210130...
-2025-05-11 02:19:37,216 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:37,216 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:37,217 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-11 02:19:37,217 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-11 02:19:37,217 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-11 02:19:37,217 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-11 02:19:37,217 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
-2025-05-11 02:19:37,243 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:40,253 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:40,569 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:40,605 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:40,607 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:40,623 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':806ca6
-2025-05-11 02:19:40,624 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':806ca6...
-2025-05-11 02:19:40,624 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:40,624 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:40,625 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-11 02:19:40,625 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-11 02:19:40,626 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-11 02:19:40,626 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-11 02:19:40,626 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
-2025-05-11 02:19:40,650 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:43,657 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:43,997 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:44,039 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:44,041 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:44,058 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':1310fc
-2025-05-11 02:19:44,059 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':1310fc...
-2025-05-11 02:19:44,059 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:44,059 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:44,061 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-11 02:19:44,061 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-11 02:19:44,061 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-11 02:19:44,061 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-11 02:19:44,061 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-11 02:19:44,062 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-11 02:19:44,062 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-11 02:19:44,062 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-11 02:19:44,062 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-11 02:19:44,062 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
-2025-05-11 02:19:44,065 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-11 02:19:44,065 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-11 02:19:44,065 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-11 02:19:44,066 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-11 02:19:44,067 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
-2025-05-11 02:19:44,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-11 02:19:44,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-11 02:19:44,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-11 02:19:44,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-11 02:19:44,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
-2025-05-11 02:19:44,089 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:47,096 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:47,436 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:47,472 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:47,474 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:47,491 - DEBUG -  [x] Sent 'trempy_routing_key_cdc_scd2_employees':80167f
-2025-05-11 02:19:47,491 - DEBUG -  [x] Received 'trempy_routing_key_cdc_scd2_employees':80167f...
-2025-05-11 02:19:47,492 - DEBUG - Mensagem passou pelo callback externo com a mensagem: dict_keys(['id', 'created_at', 'operations', 'delivery_tag'])
-2025-05-11 02:19:47,492 - INFO - TASK - Estruturando alterações de dados
-2025-05-11 02:19:47,492 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-11 02:19:47,492 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-11 02:19:47,493 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-11 02:19:47,493 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-11 02:19:47,493 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
-2025-05-11 02:19:47,522 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:50,522 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:50,862 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:50,897 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:50,900 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:50,932 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:53,938 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:54,264 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:54,300 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:54,302 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:54,335 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:19:57,336 - DEBUG - Executando ciclo do producer
-2025-05-11 02:19:57,666 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:19:57,702 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:19:57,704 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:19:57,743 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:00,746 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:01,060 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:01,095 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:01,097 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:01,127 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:04,131 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:04,466 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:04,500 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:04,502 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:04,535 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:07,548 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:07,865 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:07,900 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:07,902 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:07,938 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:10,942 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:11,278 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:11,316 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:11,318 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:11,351 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:14,354 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:14,675 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:14,711 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:14,713 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:14,749 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:17,761 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:18,074 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:18,110 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:18,112 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:18,142 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:21,148 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:21,467 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:21,507 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:21,509 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:21,542 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:24,551 - DEBUG - Executando ciclo do producer
-2025-05-11 02:20:24,868 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-11 02:20:24,903 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-11 02:20:24,905 - INFO - ENDPOINT - Capturando alterações de dados
-2025-05-11 02:20:24,938 - DEBUG - producer.py - Exit code: 0
-2025-05-11 02:20:26,372 - INFO - STRATEGY - Interrompendo processo CDC
-2025-05-11 02:20:26,373 - INFO - STRATEGY - CDC encerrado com sucesso
+2025-05-19 20:49:45,688 - INFO - TASK -  cdc_scd2_employees válido
+2025-05-19 20:49:45,688 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-05-19 20:49:45,708 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2805611, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-05-19 20:49:45,709 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-05-19 20:49:45,714 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 3, 'table_size': '39 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-05-19 20:49:45,714 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-05-19 20:49:45,719 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-05-19 20:49:45,719 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-05-19 20:49:45,723 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-05-19 20:49:45,724 - INFO - REPLICATION - Preparando employees.employee para SCD2
+2025-05-19 20:49:45,724 - INFO - REPLICATION - Preparando employees.department para SCD2
+2025-05-19 20:49:45,724 - INFO - REPLICATION - Preparando employees.salary para SCD2
+2025-05-19 20:49:45,724 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
+2025-05-19 20:49:45,725 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-05-19 20:49:46,037 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-05-19 20:49:46,100 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-05-19 20:49:46,141 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:49:49,526 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:49:52,924 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:49:56,847 - INFO - MESSAGE - Publicado 'trempy_routing_key_cdc_scd2_employees': cd06ed/ec3272
+2025-05-19 20:49:56,911 - INFO - MESSAGE - Publicado 'trempy_routing_key_cdc_scd2_employees': cd06ed/f3108f
+2025-05-19 20:49:56,922 - INFO - MESSAGE - Recebido 'trempy_routing_key_cdc_scd2_employees': cd06ed/ec3272
+2025-05-19 20:49:56,968 - INFO - MESSAGE - Publicado 'trempy_routing_key_cdc_scd2_employees': cd06ed/48c996
+2025-05-19 20:49:56,981 - INFO - MESSAGE - Publicado 'trempy_routing_key_cdc_scd2_employees': cd06ed/403b3c
+2025-05-19 20:49:57,083 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:00,512 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:03,929 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:07,465 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:10,231 - INFO - MESSAGE - Recebido 'trempy_routing_key_cdc_scd2_employees': cd06ed/f3108f
+2025-05-19 20:50:10,910 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:14,326 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:17,740 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:21,146 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:23,587 - INFO - MESSAGE - Recebido 'trempy_routing_key_cdc_scd2_employees': cd06ed/48c996
+2025-05-19 20:50:24,588 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:28,007 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:31,413 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:34,821 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:36,964 - INFO - MESSAGE - Recebido 'trempy_routing_key_cdc_scd2_employees': cd06ed/403b3c
+2025-05-19 20:50:38,225 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:41,634 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:45,006 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:48,398 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:51,805 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:55,271 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:50:58,694 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:02,214 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:05,635 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:09,048 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:12,450 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:15,879 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:19,300 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-19 20:51:21,507 - INFO - CDC STRATEGY - Interrompendo processo CDC
+2025-05-19 20:51:21,508 - INFO - CDC STRATEGY - CDC encerrado

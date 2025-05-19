@@ -10,7 +10,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses import (
 )
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
-from typing import Dict, List, Any
+from typing import Dict, List
 import polars as pl
 
 
@@ -21,6 +21,7 @@ class EndpointPostgreSQL(Endpoint):
         endpoint_type: EndpointType,
         endpoint_name: str,
         credentials: dict,
+        batch_cdc_size: int,
     ):
         """
         Inicializa um endpoint para PostgreSQL, gerenciando a conexão.
@@ -34,6 +35,7 @@ class EndpointPostgreSQL(Endpoint):
             DatabaseType.POSTGRESQL,
             endpoint_type,
             endpoint_name,
+            batch_cdc_size
         )
 
         self.connection_manager = ConnectionManager.ConnectionManager(credentials)
@@ -42,7 +44,7 @@ class EndpointPostgreSQL(Endpoint):
         self.table_manager = TableManager.TableManager(
             self.connection_manager, self.table_creator
         )
-        self.cdc_manager = CDCManager.CDCManager(self.connection_manager)
+        self.cdc_manager = CDCManager.CDCManager(self.connection_manager, batch_cdc_size)
         self.cdc_operations_handler = CDCOperationsHandler.CDCOperationsHandler(
             self.connection_manager, self.table_manager
         )
@@ -96,10 +98,10 @@ class EndpointPostgreSQL(Endpoint):
         )
 
     def structure_capture_changes_to_json(
-        self, df_changes_captured: pl.DataFrame, task_tables: List[Table]
-    ) -> Dict[str, Any]:
+        self, df_changes_captured: pl.DataFrame, task_tables: List[Table], **kargs
+    ) -> List[Dict]:
         return self.cdc_manager.structure_capture_changes_to_json(
-            df_changes_captured, task_tables
+            df_changes_captured, task_tables, **kargs
         )
 
     def structure_capture_changes_to_dataframe(self, changes_structured: dict) -> dict:

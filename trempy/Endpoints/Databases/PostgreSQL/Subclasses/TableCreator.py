@@ -1,10 +1,15 @@
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
-from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Shared.Queries.QueryPostgreSQL import (
+    TableQueries as TableQueriesPostgreSQL,
+)  #  TODO eu preciso saber qual é o tipo de endpoint correto
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
+
+logger = ReplicationLogger()
+
 
 class TableCreator:
     """Responsabilidade: Criar e gerenciar estruturas de tabelas."""
@@ -12,34 +17,7 @@ class TableCreator:
     def __init__(self, connection_manager: ConnectionManager):
         self.connection_manager = connection_manager
 
-    def mount_create_table(self, table: Table) -> str:
-        """
-        Monta a string para criação da tabela no banco de dados.
-
-        Args:
-            table (Table): Objeto representando a estrutura da tabela.
-
-        Returns:
-            str: String formatada com as colunas para cria o da tabela, pronta para ser usada em comandos SQL.
-
-        Raises:
-            EndpointError: Se houver um erro ao montar a string de criação da tabela.
-        """
-
-        try:
-            columns_sql = self._mount_columns_to_create_table(table)
-            primary_key_sql = self._mount_primary_key_to_create_table(table)
-            return Query.CREATE_TABLE.format(
-                schema=table.target_schema_name,
-                table=table.target_table_name,
-                columns=columns_sql,
-                primary_key=primary_key_sql,
-            )
-        except Exception as e:
-            e = EndpointError(f"Erro ao montar a string de criação da tabela: {e}")
-            Utils.log_exception_and_exit(e)
-        
-    def _mount_columns_to_create_table(self, table: Table) -> str:
+    def __mount_columns_to_create_table(self, table: Table) -> str:
         """
         Monta a string de colunas para criação de uma tabela no banco de dados.
 
@@ -69,7 +47,7 @@ class TableCreator:
         columns_sql = ", ".join(columns_sql)
         return columns_sql
 
-    def _mount_primary_key_to_create_table(self, table: Table) -> str:
+    def __mount_primary_key_to_create_table(self, table: Table) -> str:
         """
         Monta a string de chave primária para criação de uma tabela no banco de dados.
 
@@ -98,3 +76,30 @@ class TableCreator:
             primary_key_sql = ""
 
         return primary_key_sql
+
+    def mount_create_table(self, table: Table) -> str:
+        """
+        Monta a string para criação da tabela no banco de dados.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela.
+
+        Returns:
+            str: String formatada com as colunas para cria o da tabela, pronta para ser usada em comandos SQL.
+
+        Raises:
+            EndpointError: Se houver um erro ao montar a string de criação da tabela.
+        """
+
+        try:
+            columns_sql = self.__mount_columns_to_create_table(table)
+            primary_key_sql = self.__mount_primary_key_to_create_table(table)
+            return TableQueriesPostgreSQL.CREATE_TABLE.format(
+                schema=table.target_schema_name,
+                table=table.target_table_name,
+                columns=columns_sql,
+                primary_key=primary_key_sql,
+            )
+        except Exception as e:
+            e = EndpointError(f"Erro ao montar a string de criação da tabela: {e}")
+            logger.critical(e)

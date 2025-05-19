@@ -1,11 +1,19 @@
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
-from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Shared.Queries.QueryPostgreSQL import (
+    SchemaQueries as SchemaQueriesPostgreSQL,
+    TableQueries as TableQueriesPostgreSQL,
+    ColumnQueries as ColumnQueriesPostgreSQL,
+)  #  TODO eu preciso saber qual é o tipo de endpoint correto
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Columns.Column import Column
-from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
+
+
+logger = ReplicationLogger()
+
 
 class MetadataReader:
     """Responsabilidade: Ler metadados do banco de dados (schemas, tabelas, colunas)."""
@@ -22,11 +30,11 @@ class MetadataReader:
 
         try:
             with self.connection_manager.cursor() as cursor:
-                cursor.execute(Query.GET_SCHEMAS)
+                cursor.execute(SchemaQueriesPostgreSQL.GET_SCHEMAS)
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
             e = GetSchemaError(f"Erro ao obter os esquemas: {e}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def get_tables(self, schema_name: str) -> list:
         """Obtém a lista de tabelas de um esquema específico.
@@ -40,11 +48,11 @@ class MetadataReader:
 
         try:
             with self.connection_manager.cursor() as cursor:
-                cursor.execute(Query.GET_TABLES, (schema_name,))
+                cursor.execute(TableQueriesPostgreSQL.GET_TABLES, (schema_name,))
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
             e = GetTablesError(f"Erro ao obter as tabelas: {e}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def get_table_details(self, table: dict) -> Table:
         """
@@ -68,14 +76,14 @@ class MetadataReader:
 
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    Query.GET_TABLE_DETAILS, (schema_name, table_name)
+                    TableQueriesPostgreSQL.GET_TABLE_DETAILS, (schema_name, table_name)
                 )
                 metadata_table = cursor.fetchone()
                 if not metadata_table:
                     e = TableNotFoundError(
                         f"Tabela não encontrada.", f"{schema_name}.{table_name}"
                     )
-                    Utils.log_exception_and_exit(e)
+                    logger.critical(e)
 
                 table_obj = Table(
                     schema_name=metadata_table[0],
@@ -89,7 +97,7 @@ class MetadataReader:
                 return self.get_table_columns(table_obj, primary_keys)
         except Exception as e:
             e = EndpointError(f"Erro ao obter os detalhes da tabela: {e}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def get_table_primary_key(self, table: Table) -> list:
         """
@@ -108,13 +116,13 @@ class MetadataReader:
         try:
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    Query.GET_TABLE_PRIMARY_KEY,
+                    ColumnQueriesPostgreSQL.GET_TABLE_PRIMARY_KEY,
                     (table.schema_name, table.table_name),
                 )
                 return [row[0] for row in cursor.fetchall()]
         except Exception as e:
             e = EndpointError(f"Erro ao obter as chaves primárias da tabela: {e}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def get_table_columns(self, table: Table, primary_keys: list) -> Table:
         """
@@ -135,7 +143,7 @@ class MetadataReader:
         try:
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    Query.GET_TABLE_COLUMNS,
+                    ColumnQueriesPostgreSQL.GET_TABLE_COLUMNS,
                     (table.schema_name, table.table_name),
                 )
                 for row in cursor.fetchall():
@@ -153,4 +161,4 @@ class MetadataReader:
             return table
         except Exception as e:
             e = EndpointError(f"Erro ao obter as colunas da tabela: {e}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)

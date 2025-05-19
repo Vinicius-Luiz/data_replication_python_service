@@ -1,15 +1,16 @@
 from __future__ import annotations
 from typing import Union, List, Type, get_args, get_origin
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Filters.Exceptions.Exception import *
 from trempy.Shared.Types import FilterType
-from trempy.Shared.Utils import Utils
 from typing import TYPE_CHECKING
 from datetime import datetime
 import polars as pl
-import logging
 
 if TYPE_CHECKING:
     from trempy.Tables.Table import Table
+
+logger = ReplicationLogger()
 
 
 class Filter:
@@ -45,9 +46,9 @@ class Filter:
 
         self.col_type = None
 
-        self.validate()
+        self.__validate()
 
-    def validate(self) -> None:
+    def __validate(self) -> None:
         """
         Valida se o tipo do filtro é válido.
 
@@ -57,9 +58,9 @@ class Filter:
 
         if self.filter_type not in FilterType:
             e = InvalidFilterTypeError("Tipo de filtro inválido", self.filter_type)
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def _validate_column_exists(self, table: Table) -> None:
+    def __validate_column_exists(self, table: Table) -> None:
         """Valida se a coluna existe no DataFrame.
 
         Args:
@@ -75,9 +76,9 @@ class Filter:
                 f"Colunas disponíveis: {available}",
                 self.column_name,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def _validate_type(self, type_required: Type, value_param: str = None) -> None:
+    def __validate_type(self, type_required: Type, value_param: str = None) -> None:
         """Valida se o tipo do valor do filtro corresponde ao tipo requerido.
 
         Args:
@@ -111,9 +112,9 @@ class Filter:
                 f"Tipo inválido para o valor do filtro. Esperado: {allowed_names}",
                 value_type.__name__,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def _validate_filter_date(self, table: Table, value_param: str) -> None:
+    def __validate_filter_date(self, table: Table, value_param: str) -> None:
         """Valida se o tipo do valor do filtro corresponde ao tipo requerido.
 
         Args:
@@ -139,84 +140,16 @@ class Filter:
                 f"Coluna {self.column_name} deve ser do tipo Date ou Datetime",
                 self.col_type.__class__.__name__,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         if not isinstance(value_param, str):
             e = InvalidTypeValueError(
                 f"Valor para comparação de datas deve ser string, ",
                 type(value_param).__name__,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
-    def execute(self, table: Table) -> Table:
-        """Aplica o filtro no DataFrame da tabela conforme o tipo especificado.
-
-        Args:
-            table (Table): Objeto Table contendo os dados a serem filtrados.
-
-        Returns:
-            Table: Objeto Table com o filtro aplicado.
-        """
-
-        logging.info(
-            f"FILTER - Aplicando filtro em {table.schema_name}.{table.table_name} {self.column_name}: {self.description}"
-        )
-
-        try:
-            match self.filter_type:
-                case FilterType.EQUALS:
-                    return self._execute_equals(table)
-                case FilterType.NOT_EQUALS:
-                    return self._execute_not_equals(table)
-                case FilterType.GREATER_THAN:
-                    return self._execute_greater_than(table)
-                case FilterType.GREATER_THAN_OR_EQUAL:
-                    return self._execute_less_than_or_equal(table)
-                case FilterType.LESS_THAN:
-                    return self._execute_less_than(table)
-                case FilterType.LESS_THAN_OR_EQUAL:
-                    return self._execute_less_than_or_equal(table)
-                case FilterType.IN:
-                    return self._execute_in(table)
-                case FilterType.NOT_IN:
-                    return self._execute_not_in(table)
-                case FilterType.IS_NULL:
-                    return self._execute_is_null(table)
-                case FilterType.IS_NOT_NULL:
-                    return self._execute_is_not_null(table)
-                case FilterType.STARTS_WITH:
-                    return self._execute_starts_with(table)
-                case FilterType.ENDS_WITH:
-                    return self._execute_ends_with(table)
-                case FilterType.CONTAINS:
-                    return self._execute_contains(table)
-                case FilterType.NOT_CONTAINS:
-                    return self._execute_not_contains(table)
-                case FilterType.BETWEEN:
-                    return self._execute_between(table)
-                case FilterType.NOT_BETWEEN:
-                    return self._execute_not_between(table)
-                case FilterType.DATE_EQUALS:
-                    return self._execute_date_equals(table)
-                case FilterType.DATE_NOT_EQUALS:
-                    return self._execute_date_not_equals(table)
-                case FilterType.DATE_GREATER_THAN:
-                    return self._execute_date_greater_than(table)
-                case FilterType.DATE_GREATER_THAN_OR_EQUAL:
-                    return self._execute_date_greater_than_or_equal(table)
-                case FilterType.DATE_LESS_THAN:
-                    return self._execute_date_less_than(table)
-                case FilterType.DATE_LESS_THAN_OR_EQUAL:
-                    return self._execute_date_less_than_or_equal(table)
-                case FilterType.DATE_BETWEEN:
-                    return self._execute_date_between(table)
-                case FilterType.DATE_NOT_BETWEEN:
-                    return self._execute_date_not_between(table)
-        except Exception as e:
-            e = FilterError(str(e))
-            Utils.log_exception_and_exit(e)
-
-    def _convert_str_to_date(self, value: str):
+    def __convert_str_to_date(self, value: str):
         """Converte string para Date ou Datetime conforme o tipo da coluna.
 
         Args:
@@ -245,11 +178,11 @@ class Filter:
                 f"Formato esperado: {'YYYY-MM-DD' if isinstance(self.col_type, pl.Date) else 'YYYY-MM-DD HH:MM:SS'}. "
                 f"Erro: {str(e)}"
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         return date_value
 
-    def _execute_equals(self, table: Table) -> Table:
+    def __execute_equals(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é igual ao valor especificado.
 
         Args:
@@ -260,13 +193,13 @@ class Filter:
         """
 
         type_required = Union[str, int, float]
-        self._validate_column_exists(table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(table)
+        self.__validate_type(type_required, "value")
 
         table.data = table.data.filter(pl.col(self.column_name) == self.value)
         return table
 
-    def _execute_not_equals(self, table: Table) -> Table:
+    def __execute_not_equals(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é diferente do valor especificado.
 
         Args:
@@ -277,12 +210,12 @@ class Filter:
         """
 
         type_required = Union[str, int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) != self.value)
         return table
 
-    def _execute_greater_than(self, table: Table) -> Table:
+    def __execute_greater_than(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é maior que o valor especificado.
 
         Args:
@@ -293,12 +226,12 @@ class Filter:
         """
 
         type_required = Union[int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) > self.value)
         return table
 
-    def _execute_greater_than_or_equal(self, table: Table) -> Table:
+    def __execute_greater_than_or_equal(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é maior ou igual que o valor especificado.
 
         Args:
@@ -309,12 +242,12 @@ class Filter:
         """
 
         type_required = Union[int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) >= self.value)
         return table
 
-    def _execute_less_than(self, table: Table) -> Table:
+    def __execute_less_than(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é menor que o valor especificado.
 
         Args:
@@ -325,12 +258,12 @@ class Filter:
         """
 
         type_required = Union[int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) < self.value)
         return table
 
-    def _execute_less_than_or_equal(self, table: Table) -> Table:
+    def __execute_less_than_or_equal(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é menor ou igual que o valor especificado.
 
         Args:
@@ -341,12 +274,12 @@ class Filter:
         """
 
         type_required = Union[int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) <= self.value)
         return table
 
-    def _execute_in(self, table: Table) -> Table:
+    def __execute_in(self, table: Table) -> Table:
         """Filtra linhas onde a coluna está na lista de valores especificada.
 
         Args:
@@ -357,12 +290,12 @@ class Filter:
         """
 
         type_required = List[Union[str, int, float]]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "values")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "values")
         table.data = table.data.filter(pl.col(self.column_name).is_in(self.values))
         return table
 
-    def _execute_not_in(self, table: Table) -> Table:
+    def __execute_not_in(self, table: Table) -> Table:
         """Filtra linhas onde a coluna não está na lista de valores especificada.
 
         Args:
@@ -373,12 +306,12 @@ class Filter:
         """
 
         type_required = List[Union[str, int, float]]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "values")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "values")
         table.data = table.data.filter(~pl.col(self.column_name).is_in(self.values))
         return table
 
-    def _execute_is_null(self, table: Table) -> Table:
+    def __execute_is_null(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é nula.
 
         Args:
@@ -388,11 +321,11 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(self.column_name, table)
+        self.__validate_column_exists(self.column_name, table)
         table.data = table.data.filter(pl.col(self.column_name).is_null())
         return table
 
-    def _execute_is_not_null(self, table: Table) -> Table:
+    def __execute_is_not_null(self, table: Table) -> Table:
         """Filtra linhas onde a coluna não é nula.
 
         Args:
@@ -402,11 +335,11 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(self.column_name, table)
+        self.__validate_column_exists(self.column_name, table)
         table.data = table.data.filter(pl.col(self.column_name).is_not_null())
         return table
 
-    def _execute_starts_with(self, table: Table) -> Table:
+    def __execute_starts_with(self, table: Table) -> Table:
         """Filtra linhas onde a coluna começa com o prefixo especificado.
 
         Args:
@@ -417,14 +350,14 @@ class Filter:
         """
 
         type_required = str
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             pl.col(self.column_name).str.starts_with(self.value)
         )
         return table
 
-    def _execute_ends_with(self, table: Table) -> Table:
+    def __execute_ends_with(self, table: Table) -> Table:
         """Filtra linhas onde a coluna termina com o sufixo especificado.
 
         Args:
@@ -435,14 +368,14 @@ class Filter:
         """
 
         type_required = str
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             pl.col(self.column_name).str.ends_with(self.value)
         )
         return table
 
-    def _execute_contains(self, table: Table) -> Table:
+    def __execute_contains(self, table: Table) -> Table:
         """Filtra linhas onde a coluna contém a substring especificada.
 
         Args:
@@ -453,14 +386,14 @@ class Filter:
         """
 
         type_required = str
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             pl.col(self.column_name).str.contains(self.value)
         )
         return table
 
-    def _execute_not_contains(self, table: Table) -> Table:
+    def __execute_not_contains(self, table: Table) -> Table:
         """Filtra linhas onde a coluna não contém a substring especificada.
 
         Args:
@@ -471,14 +404,14 @@ class Filter:
         """
 
         type_required = str
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "value")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             ~pl.col(self.column_name).str.contains(self.value)
         )
         return table
 
-    def _execute_between(self, table: Table) -> Table:
+    def __execute_between(self, table: Table) -> Table:
         """Filtra linhas onde a coluna está entre os valores especificados.
 
         Args:
@@ -489,15 +422,15 @@ class Filter:
         """
 
         type_required = Union[int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "lower")
-        self._validate_type(type_required, "upper")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "lower")
+        self.__validate_type(type_required, "upper")
         table.data = table.data.filter(
             pl.col(self.column_name).is_between(self.lower, self.upper)
         )
         return table
 
-    def _execute_not_between(self, table: Table) -> Table:
+    def __execute_not_between(self, table: Table) -> Table:
         """Filtra linhas onde a coluna não está entre os valores especificados.
 
         Args:
@@ -508,15 +441,15 @@ class Filter:
         """
 
         type_required = Union[int, float]
-        self._validate_column_exists(self.column_name, table)
-        self._validate_type(type_required, "lower")
-        self._validate_type(type_required, "upper")
+        self.__validate_column_exists(self.column_name, table)
+        self.__validate_type(type_required, "lower")
+        self.__validate_type(type_required, "upper")
         table.data = table.data.filter(
             ~pl.col(self.column_name).is_between(self.lower, self.upper)
         )
         return table
 
-    def _execute_date_equals(self, table: Table) -> Table:
+    def __execute_date_equals(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é igual ao valor especificado.
 
         Args:
@@ -526,15 +459,15 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "value")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "value")
 
-        date_value = self._convert_str_to_date(self.value)
+        date_value = self.__convert_str_to_date(self.value)
 
         table.data = table.data.filter(pl.col(self.column_name) == date_value)
         return table
 
-    def _execute_date_not_equals(self, table: Table) -> Table:
+    def __execute_date_not_equals(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é diferente do valor especificado.
 
         Args:
@@ -544,15 +477,15 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "value")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "value")
 
-        date_value = self._convert_str_to_date(self.value)
+        date_value = self.__convert_str_to_date(self.value)
 
         table.data = table.data.filter(pl.col(self.column_name) != date_value)
         return table
 
-    def _execute_date_greater_than(self, table: Table) -> Table:
+    def __execute_date_greater_than(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é maior que o valor especificado.
 
         Args:
@@ -562,15 +495,15 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "value")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "value")
 
-        date_value = self._convert_str_to_date(self.value)
+        date_value = self.__convert_str_to_date(self.value)
 
         table.data = table.data.filter(pl.col(self.column_name) > date_value)
         return table
 
-    def _execute_date_greater_than_or_equal(self, table: Table) -> Table:
+    def __execute_date_greater_than_or_equal(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é maior ou igual ao valor especificado.
 
         Args:
@@ -580,15 +513,15 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "value")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "value")
 
-        date_value = self._convert_str_to_date(self.value)
+        date_value = self.__convert_str_to_date(self.value)
 
         table.data = table.data.filter(pl.col(self.column_name) >= date_value)
         return table
 
-    def _execute_date_less_than(self, table: Table) -> Table:
+    def __execute_date_less_than(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é menor que o valor especificado.
 
         Args:
@@ -598,15 +531,15 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "value")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "value")
 
-        date_value = self._convert_str_to_date(self.value)
+        date_value = self.__convert_str_to_date(self.value)
 
         table.data = table.data.filter(pl.col(self.column_name) < date_value)
         return table
 
-    def _execute_date_less_than_or_equal(self, table: Table) -> Table:
+    def __execute_date_less_than_or_equal(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é menor ou igual ao valor especificado.
 
         Args:
@@ -616,15 +549,15 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "value")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "value")
 
-        date_value = self._convert_str_to_date(self.value)
+        date_value = self.__convert_str_to_date(self.value)
 
         table.data = table.data.filter(pl.col(self.column_name) <= date_value)
         return table
 
-    def _execute_date_between(self, table: Table) -> Table:
+    def __execute_date_between(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é entre os valores especificados.
 
         Args:
@@ -634,19 +567,19 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "lower")
-        self._validate_filter_date(table, "upper")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "lower")
+        self.__validate_filter_date(table, "upper")
 
-        date_lower = self._convert_str_to_date(self.lower)
-        date_upper = self._convert_str_to_date(self.upper)
+        date_lower = self.__convert_str_to_date(self.lower)
+        date_upper = self.__convert_str_to_date(self.upper)
 
         table.data = table.data.filter(
             pl.col(self.column_name).is_between(date_lower, date_upper)
         )
         return table
 
-    def _execute_date_not_between(self, table: Table) -> Table:
+    def __execute_date_not_between(self, table: Table) -> Table:
         """Filtra linhas onde a coluna de data é fora dos valores especificados.
 
         Args:
@@ -656,14 +589,83 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self._validate_column_exists(table)
-        self._validate_filter_date(table, "lower")
-        self._validate_filter_date(table, "upper")
+        self.__validate_column_exists(table)
+        self.__validate_filter_date(table, "lower")
+        self.__validate_filter_date(table, "upper")
 
-        date_lower = self._convert_str_to_date(self.lower)
-        date_upper = self._convert_str_to_date(self.upper)
+        date_lower = self.__convert_str_to_date(self.lower)
+        date_upper = self.__convert_str_to_date(self.upper)
 
         table.data = table.data.filter(
             ~pl.col(self.column_name).is_between(date_lower, date_upper)
         )
         return table
+
+    def execute(self, table: Table) -> Table:
+        """Aplica o filtro no DataFrame da tabela conforme o tipo especificado.
+
+        Args:
+            table (Table): Objeto Table contendo os dados a serem filtrados.
+
+        Returns:
+            Table: Objeto Table com o filtro aplicado.
+        """
+
+        logger.info(
+            f"FILTER - Aplicando filtro em {table.schema_name}.{table.table_name} {self.column_name}: {self.description}",
+            required_types="full_load",
+        )
+
+        try:
+            match self.filter_type:
+                case FilterType.EQUALS:
+                    return self.__execute_equals(table)
+                case FilterType.NOT_EQUALS:
+                    return self.__execute_not_equals(table)
+                case FilterType.GREATER_THAN:
+                    return self.__execute_greater_than(table)
+                case FilterType.GREATER_THAN_OR_EQUAL:
+                    return self.__execute_less_than_or_equal(table)
+                case FilterType.LESS_THAN:
+                    return self.__execute_less_than(table)
+                case FilterType.LESS_THAN_OR_EQUAL:
+                    return self.__execute_less_than_or_equal(table)
+                case FilterType.IN:
+                    return self.__execute_in(table)
+                case FilterType.NOT_IN:
+                    return self.__execute_not_in(table)
+                case FilterType.IS_NULL:
+                    return self.__execute_is_null(table)
+                case FilterType.IS_NOT_NULL:
+                    return self.__execute_is_not_null(table)
+                case FilterType.STARTS_WITH:
+                    return self.__execute_starts_with(table)
+                case FilterType.ENDS_WITH:
+                    return self.__execute_ends_with(table)
+                case FilterType.CONTAINS:
+                    return self.__execute_contains(table)
+                case FilterType.NOT_CONTAINS:
+                    return self.__execute_not_contains(table)
+                case FilterType.BETWEEN:
+                    return self.__execute_between(table)
+                case FilterType.NOT_BETWEEN:
+                    return self.__execute_not_between(table)
+                case FilterType.DATE_EQUALS:
+                    return self.__execute_date_equals(table)
+                case FilterType.DATE_NOT_EQUALS:
+                    return self.__execute_date_not_equals(table)
+                case FilterType.DATE_GREATER_THAN:
+                    return self.__execute_date_greater_than(table)
+                case FilterType.DATE_GREATER_THAN_OR_EQUAL:
+                    return self.__execute_date_greater_than_or_equal(table)
+                case FilterType.DATE_LESS_THAN:
+                    return self.__execute_date_less_than(table)
+                case FilterType.DATE_LESS_THAN_OR_EQUAL:
+                    return self.__execute_date_less_than_or_equal(table)
+                case FilterType.DATE_BETWEEN:
+                    return self.__execute_date_between(table)
+                case FilterType.DATE_NOT_BETWEEN:
+                    return self.__execute_date_not_between(table)
+        except Exception as e:
+            e = FilterError(str(e))
+            logger.critical(e)

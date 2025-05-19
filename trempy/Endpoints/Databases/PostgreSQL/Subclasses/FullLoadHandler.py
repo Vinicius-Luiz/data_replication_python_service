@@ -4,16 +4,19 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
-from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Shared.Queries.QueryPostgreSQL import (
+    FullLoadQueries as FullLoadQueriesPostgreSQL,
+)  #  TODO eu preciso saber qual é o tipo de endpoint correto
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
 from psycopg2.extras import execute_values
 from trempy.Tables.Table import Table
-from trempy.Shared.Utils import Utils
 from psycopg2 import sql
 from time import time
 import polars as pl
-import logging
 import os
+
+logger = ReplicationLogger()
 
 
 class FullLoadHandler:
@@ -24,6 +27,52 @@ class FullLoadHandler:
     ):
         self.connection_manager = connection_manager
         self.table_manager = table_manager
+
+    def __insert_full_load_data(self, table: Table) -> None:
+        """
+        Insere dados completos na tabela de destino.
+
+        Args:
+            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
+
+        Returns:
+            None
+
+        Raises:
+            InsertFullLoadError: Se ocorrer um erro ao inserir os dados.
+        """
+
+        try:
+            table_column_names = [
+                col.name
+                for col in sorted(
+                    table.columns.values(), key=lambda col: col.ordinal_position
+                )
+            ]
+            query = sql.SQL(
+                FullLoadQueriesPostgreSQL.FULL_LOAD_INSERT_DATA.format(
+                    schema=table.target_schema_name,
+                    table=table.target_table_name,
+                    columns=", ".join(table_column_names),
+                )
+            )
+
+            records = [tuple(row) for row in table.data.iter_rows()]
+
+            logger.info(
+                f"ENDPOINT - Inserindo {len(records)} registros na tabela {table.target_schema_name}.{table.target_table_name}"
+            )
+
+            with self.connection_manager.cursor() as cursor:
+                execute_values(
+                    cursor, query, records, page_size=10000
+                )  # TODO USAR task.batch_size
+        except Exception as e:
+            e = InsertFullLoadError(
+                f"Erro ao inserir dados na tabela: {e}",
+                table.target_table_name,
+            )
+            logger.critical(e)
 
     def get_full_load_from_table(self, table: Table) -> dict:
         """
@@ -44,7 +93,7 @@ class FullLoadHandler:
 
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(
-                    Query.GET_FULL_LOAD_FROM_TABLE.format(
+                    FullLoadQueriesPostgreSQL.GET_FULL_LOAD_FROM_TABLE.format(
                         schema=table.schema_name, table=table.table_name
                     )
                 )
@@ -63,7 +112,7 @@ class FullLoadHandler:
                 }
         except Exception as e:
             e = EndpointError(f"Erro ao obter a carga completa: {e}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     def insert_full_load_into_table(
         self,
@@ -92,14 +141,14 @@ class FullLoadHandler:
             initial_time = time()
 
             with self.connection_manager.cursor() as cursor:
-                self.table_manager._manage_target_table(
+                self.table_manager.manage_target_table(
                     table,
                     create_table_if_not_exists,
                     recreate_table_if_exists,
                     truncate_before_insert,
                 )
 
-                self._insert_full_load_data(table)
+                self.__insert_full_load_data(table)
 
                 self.connection_manager.commit()
                 os.remove(table.path_data)
@@ -112,48 +161,4 @@ class FullLoadHandler:
         except Exception as e:
             self.connection_manager.rollback()
             e = EndpointError(f"Erro ao inserir dados no modo full load: {e}")
-            Utils.log_exception_and_exit(e)
-
-    def _insert_full_load_data(self, table: Table) -> None:
-        """
-        Insere dados completos na tabela de destino.
-
-        Args:
-            table (Table): Objeto representando a estrutura da tabela de origem e os dados a serem inseridos.
-
-        Returns:
-            None
-
-        Raises:
-            InsertFullLoadError: Se ocorrer um erro ao inserir os dados.
-        """
-
-        try:
-            table_column_names = [
-                col.name
-                for col in sorted(
-                    table.columns.values(), key=lambda col: col.ordinal_position
-                )
-            ]
-            query = sql.SQL(
-                Query.FULL_LOAD_INSERT_DATA.format(
-                    schema=table.target_schema_name,
-                    table=table.target_table_name,
-                    columns=", ".join(table_column_names),
-                )
-            )
-
-            records = [tuple(row) for row in table.data.iter_rows()]
-
-            logging.info(
-                f"ENDPOINT - Inserindo {len(records)} registros na tabela {table.target_schema_name}.{table.target_table_name}"
-            )
-
-            with self.connection_manager.cursor() as cursor:
-                execute_values(cursor, query, records, page_size=10000)
-        except Exception as e:
-            e = InsertFullLoadError(
-                f"Erro ao inserir dados na tabela: {e}",
-                table.target_table_name,
-            )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)

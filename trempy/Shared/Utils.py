@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
-import logging
 import pickle
 import uuid
-import sys
+
 
 if TYPE_CHECKING:
     from trempy.Tasks.Task import Task
+
 
 class Utils:
     """
@@ -13,47 +13,7 @@ class Utils:
     """
 
     @staticmethod
-    def configure_logging() -> bool:
-        """
-        Configura o logging do aplicativo.
-
-        Remove todos os handlers existentes e configura um novo handler
-        para gravar mensagens de log no arquivo "app.log"
-        """
-        for handler in logging.root.handlers[:]:
-            logging.root.removeHandler(handler)
-
-        logging.basicConfig(
-            filename="app.log",
-            level=logging.DEBUG,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-        )
-
-        logging.getLogger("pika").setLevel(logging.WARNING)
-
-        return True
-    
-    def log_exception_and_exit(e: Exception):
-        """Loga a exceção no formato desejado e encerra o programa"""
-        error_type = f"{type(e).__module__}.{type(e).__name__}"
-        log_message = f"{error_type}: {str(e)}"
-        
-        logging.critical(log_message)
-        sys.exit(1)
-    
-    def log_exception(e: Exception):
-        """Loga a exceção no formato desejado"""
-        error_type = f"{type(e).__module__}.{type(e).__name__}"
-        log_message = f"{error_type}: {str(e)}"
-        
-        logging.error(log_message)
-
-    def log_debug(message: str):
-        """Loga uma mensagem de debug no formato desejado"""
-        logging.debug(message)
-
-    @staticmethod
-    def write_task_pickle(task: 'Task') -> None:
+    def write_task_pickle(task: "Task") -> None:
         """
         Salva a configuração da tarefa no arquivo "settings.pickle".
         """
@@ -62,7 +22,7 @@ class Utils:
             pickle.dump(task, f)
 
     @staticmethod
-    def read_task_pickle() -> 'Task':
+    def read_task_pickle() -> "Task":
         """
         Carrega a configura o da tarefa salva no arquivo "settings.pickle" e
         retorna um objeto Task.

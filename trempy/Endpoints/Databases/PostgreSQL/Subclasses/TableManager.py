@@ -4,11 +4,14 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableCreator import (
     TableCreator,
 )
-from trempy.Endpoints.Databases.PostgreSQL.Queries.Query import Query
+from trempy.Shared.Queries.QueryPostgreSQL import (
+    TableQueries as TableQueriesPostgreSQL,
+)  #  TODO eu preciso saber qual é o tipo de endpoint correto
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
-from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
-import logging
+
+logger = ReplicationLogger()
 
 
 class TableManager:
@@ -22,7 +25,7 @@ class TableManager:
         self.connection_manager = connection_manager
         self.table_creator = table_creator
 
-    def _manage_target_table(
+    def manage_target_table(
         self,
         table: Table,
         create_if_not_exists: bool = False,
@@ -54,11 +57,11 @@ class TableManager:
                 step = "recreate_if_exists"
                 if recreate_if_exists:
                     create_if_not_exists = True
-                    logging.info(
+                    logger.info(
                         f"ENDPOINT - Removendo tabela {table.target_schema_name}.{table.target_table_name}"
                     )
                     cursor.execute(
-                        Query.DROP_TABLE.format(
+                        TableQueriesPostgreSQL.DROP_TABLE.format(
                             schema=table.target_schema_name,
                             table=table.target_table_name,
                         )
@@ -67,23 +70,23 @@ class TableManager:
                 step = "create_if_not_exists"
                 if create_if_not_exists:
                     cursor.execute(
-                        Query.CHECK_TABLE_EXISTS,
+                        TableQueriesPostgreSQL.CHECK_TABLE_EXISTS,
                         (table.target_schema_name, table.target_table_name),
                     )
                     if cursor.fetchone()[0] == 0:
                         create_table_sql = self.table_creator.mount_create_table(table)
-                        logging.info(
+                        logger.info(
                             f"ENDPOINT - Criando tabela {table.target_schema_name}.{table.target_table_name}"
                         )
                         cursor.execute(create_table_sql)
 
                 step = "truncate_before_insert"
                 if truncate_before_insert:
-                    logging.info(
+                    logger.info(
                         f"ENDPOINT - Truncando tabela {table.target_schema_name}.{table.target_table_name}"
                     )
                     cursor.execute(
-                        Query.TRUNCATE_TABLE.format(
+                        TableQueriesPostgreSQL.TRUNCATE_TABLE.format(
                             schema=table.target_schema_name,
                             table=table.target_table_name,
                         )
@@ -93,4 +96,4 @@ class TableManager:
                 f"Erro ao gerenciar tabela {table.target_schema_name}.{table.target_table_name}: {e}",
                 step,
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
