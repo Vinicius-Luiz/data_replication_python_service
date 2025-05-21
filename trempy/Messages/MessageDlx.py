@@ -47,6 +47,9 @@ class MessageDlx(Message):
                 f"Erro ao configurar o consumidor Dlx de mensagens: {str(e)}"
             )
             logger.critical(e)
+    
+    def delete_queue(self):
+        self.channel.queue_delete(queue=self.dlx_queue_name, if_unused=False, if_empty=False)
 
     def __callback(
         self,

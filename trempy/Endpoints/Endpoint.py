@@ -40,6 +40,8 @@ class Endpoint(ABC):
             database_type (DatabaseType): Tipo do banco de dados.
             endpoint_type (EndpointType): Tipo do endpoint (fonte ou destino).
             endpoint_name (str): Nome do endpoint.
+            credentials (dict): Credenciais de acesso ao banco de dados.
+            batch_cdc_size (int): Tamanho do lote para CDC.
         """
         self.database_type = database_type
         self.endpoint_type = endpoint_type

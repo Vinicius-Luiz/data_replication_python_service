@@ -14,6 +14,7 @@ from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Tables.Table import Table
 from typing import Dict, List
 from psycopg2 import sql
+import os
 
 logger = ReplicationLogger()
 
@@ -337,7 +338,7 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            logger.error(e, required_types="cdc")
+            logger.critical(e, required_types="cdc") if os.getenv("STOP_IF_INSERT_ERROR") else logger.error(e, required_types="cdc")
 
     def __operation_update(self, table: Table, row: dict) -> None:
         """Executa a operação de UPDATE na tabela de destino.
@@ -394,7 +395,7 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            logger.error(e, required_types="cdc")
+            logger.critical(e, required_types="cdc") if os.getenv("STOP_IF_UPDATE_ERROR") else logger.error(e, required_types="cdc")
 
     def __operation_delete(self, table: Table, row: dict) -> None:
         """Executa a operação de DELETE na tabela de destino.
@@ -438,7 +439,7 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            logger.error(e, required_types="cdc")
+            logger.critical(e, required_types="cdc") if os.getenv("STOP_IF_DELETE_ERROR") else logger.error(e, required_types="cdc")
 
     def __operation_upsert(self, table: Table, row: dict) -> None:
         """Executa uma operação de UPSERT (INSERT ou UPDATE condicional) na tabela de destino.
@@ -504,7 +505,7 @@ class CDCOperationsHandler:
                 f"{table.target_schema_name}.{table.target_table_name}",
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
-            logger.error(e, required_types="cdc")
+            logger.critical(e, required_types="cdc") if os.getenv("STOP_IF_UPSERT_ERROR") else logger.error(e, required_types="cdc")
 
     def insert_cdc_into_table(
         self,

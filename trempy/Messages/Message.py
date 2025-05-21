@@ -55,3 +55,9 @@ class Message:
             exchange_type=self.exchange_type,
             durable=self.durable,
         )
+
+    def delete_exchange(self) -> None:
+        self.channel.exchange_delete(self.exchange_name, if_unused=False)
+
+    def delete_dlx_exchange(self) -> None:
+        self.channel.exchange_delete(self.dlx_exchange_name, if_unused=False)

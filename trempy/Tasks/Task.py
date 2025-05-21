@@ -1,4 +1,10 @@
-from trempy.Shared.Types import TaskType, CdcModeType, EndpointType, DatabaseType
+from trempy.Shared.Types import (
+    TaskType,
+    CdcModeType,
+    EndpointType,
+    DatabaseType,
+    StartType,
+)
 from trempy.Transformations.Transformation import Transformation
 from pika.adapters.blocking_connection import BlockingChannel
 from trempy.Loggings.Logging import ReplicationLogger
@@ -39,10 +45,12 @@ class Task:
         interval_seconds: int = 60,
         source_endpoint: Endpoint = None,
         target_endpoint: Endpoint = None,
+        start_mode: str = "continue",
         full_load_settings: dict = {},
         cdc_settings: dict = {},
         scd2_settings: dict = {},
         create_table_if_not_exists: bool = False,
+        error_handling: dict = {},
     ) -> None:
         self.task_name = task_name
         self.replication_type = TaskType(replication_type)
@@ -50,6 +58,8 @@ class Task:
 
         self.source_endpoint = source_endpoint
         self.target_endpoint = target_endpoint
+
+        self.start_mode = StartType(start_mode)
 
         self.create_table_if_not_exists = create_table_if_not_exists
         self.recreate_table_if_exists: bool = full_load_settings.get(
@@ -70,6 +80,11 @@ class Task:
         self.scd2_current_column_name: str = scd2_settings.get(
             "current_column_name", "scd_current"
         )
+
+        self.stop_if_insert_error = error_handling.get("stop_if_insert_error", False)
+        self.stop_if_update_error = error_handling.get("stop_if_update_error", False)
+        self.stop_if_delete_error = error_handling.get("stop_if_delete_error", False)
+        self.stop_if_upsert_error = error_handling.get("stop_if_upsert_error", False)
 
         self.tables: List[Table] = []
 
@@ -224,15 +239,15 @@ class Task:
         delivery_tag = changes_structured["delivery_tag"]
 
         try:
-            df_changes_structured = (
+            df_changes_structured: dict = (
                 self.target_endpoint.structure_capture_changes_to_dataframe(
                     changes_structured
                 )
             )
-        except:
+        except TaskError as e:
             channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
-
-        channel.basic_ack(delivery_tag=delivery_tag)
+            e = TaskError(f"Erro ao estruturar as alterações capturadas: {str(e)}")
+            logger.critical(e)
 
         for table in sorted(self.tables, key=lambda x: x.priority.value):
             data: pl.DataFrame = df_changes_structured.get(table.id)
@@ -247,6 +262,9 @@ class Task:
                     table=table,
                     create_table_if_not_exists=self.create_table_if_not_exists,
                 )
+
+        channel.basic_ack(delivery_tag=delivery_tag)
+        logger.info(f"TASK - Confirmado {delivery_tag}")
 
     def __find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """

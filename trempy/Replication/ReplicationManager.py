@@ -1,9 +1,10 @@
 from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
-from trempy.Shared.Types import PriorityType, TaskType, CdcModeType
+from trempy.Shared.Types import PriorityType, TaskType, CdcModeType, StartType
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Transformations.Transformation import Transformation
+from trempy.Messages import Message, MessageDlx, MessageConsumer
 from trempy.Replication.Exceptions.Exception import *
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Filters.Filter import Filter
@@ -61,7 +62,16 @@ class ReplicationManager:
             **task_settings.get("task"),
         )
 
+        if source_endpoint.batch_cdc_size > 1 and task.cdc_mode.value == "scd2":
+            logger.warning(
+                f"REPLICATION - CDC com modo SCD2 nao é recomendado para endpoints com batch_cdc_size > 1"
+            )
+
         os.environ["REPLICATION_TYPE"] = task.replication_type.value
+        os.environ["STOP_IF_INSERT_ERROR"] = task.stop_if_insert_error
+        os.environ["STOP_IF_UPDATE_ERROR"] = task.stop_if_update_error
+        os.environ["STOP_IF_DELETE_ERROR"] = task.stop_if_delete_error
+        os.environ["STOP_IF_UPSERT_ERROR"] = task.stop_if_upsert_error
 
         self.__configure_tables(task, task_settings)
         self.__configure_filters(task, task_settings)
@@ -69,6 +79,26 @@ class ReplicationManager:
 
         task.clean_endpoints()
         return task
+
+    def __reload_task(self, task: Task):
+        if task.start_mode == StartType.RELOAD:
+            logger.info("REPLICATION - Recarregando tarefa")
+            settings_pickle = "task\settings.pickle"
+
+            if os.path.exists(settings_pickle):
+                os.remove(settings_pickle)
+
+            message = Message.Message(task.task_name)
+            message_dlx = MessageDlx.MessageDlx(task.task_name)
+            message_consumer = MessageConsumer.MessageConsumer(
+                task.task_name, external_callback=None
+            )
+
+            message.delete_exchange()
+            message.delete_dlx_exchange()
+
+            message_dlx.delete_queue()
+            message_consumer.delete_queue()
 
     def __configure_tables(self, task: Task, task_settings: dict):
         """
@@ -242,6 +272,7 @@ class ReplicationManager:
         try:
             task_settings = self.__load_settings()
             self.task = self.__create_task(task_settings)
+            self.__reload_task(self.task)
 
             strategy = ReplicationStrategyFactory.create_strategy(
                 mode=self.task.replication_type,

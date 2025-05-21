@@ -1,4 +1,5 @@
 from trempy.Endpoints.Databases.PostgreSQL.Endpoint import EndpointPostgreSQL
+from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
@@ -14,7 +15,7 @@ class EndpointFactory:
         endpoint_name: str,
         credentials: dict,
         batch_cdc_size: int = 1000,
-    ):
+    ) -> Endpoint:
         """
         Cria um endpoint de acordo com o tipo de banco de dados e credenciais fornecidos.
 

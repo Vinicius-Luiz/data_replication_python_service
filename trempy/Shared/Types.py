@@ -11,6 +11,10 @@ class TaskType(Enum):
     FULL_LOAD = 'full_load'
     CDC = 'cdc'
 
+class StartType(Enum):
+    CONTINUE = 'continue'
+    RELOAD = 'reload'
+
 class CdcModeType(Enum):
     DEFAULT = 'default'
     UPSERT = 'upsert'

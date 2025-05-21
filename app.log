@@ -1,56 +1,23 @@
-2025-05-19 20:53:02,718 - INFO - TASK -  fl_employees vï¿½lido
-2025-05-19 20:53:02,718 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-05-19 20:53:02,740 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2865192, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-05-19 20:53:02,740 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-05-19 20:53:02,745 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 3, 'table_size': '39 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-05-19 20:53:02,745 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-05-19 20:53:02,750 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-05-19 20:53:02,751 - INFO - FULL LOAD STRATEGY - Iniciando extraï¿½ï¿½o dos dados
-2025-05-19 20:53:03,066 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-05-19 20:53:03,102 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-19 20:53:03,102 - INFO - TASK - Obtendo dados da tabela employees.department_manager
-2025-05-19 20:53:03,135 - DEBUG - {'success': True, 'rowcount': 18, 'statusmessage': 'SELECT 18', 'path_data': 'data/full_load_data/fl_employees_employees_department_manager.parquet', 'time_elapsed': '0.03s'}
-2025-05-19 20:53:03,135 - INFO - TASK - Obtendo dados da tabela employees.salary
-2025-05-19 20:53:06,642 - DEBUG - {'success': True, 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'path_data': 'data/full_load_data/fl_employees_employees_salary.parquet', 'time_elapsed': '3.33s'}
-2025-05-19 20:53:06,642 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-05-19 20:53:07,197 - DEBUG - {'success': True, 'rowcount': 300027, 'statusmessage': 'SELECT 300027', 'path_data': 'data/full_load_data/fl_employees_employees_employee.parquet', 'time_elapsed': '0.53s'}
-2025-05-19 20:53:07,228 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-19 20:53:07,228 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-05-19 20:53:07,561 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-05-19 20:53:07,600 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-05-19 20:53:07,617 - INFO - FILTER - Aplicando filtro em employees.department_manager to_date: Filtrando data de inicio igual a 9999-01-01
-2025-05-19 20:53:07,623 - INFO - TASK - Realizando carga completa da tabela employees.department_manager
-2025-05-19 20:53:07,623 - INFO - ENDPOINT - Removendo tabela employees.department_manager
-2025-05-19 20:53:07,643 - INFO - ENDPOINT - Criando tabela employees.department_manager
-2025-05-19 20:53:07,658 - INFO - ENDPOINT - Truncando tabela employees.department_manager
-2025-05-19 20:53:07,661 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_manager
-2025-05-19 20:53:07,666 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '0.04s'}
-2025-05-19 20:53:07,684 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome da tabela para portuguï¿½s
-2025-05-19 20:53:07,684 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome do schema para portuguï¿½s
-2025-05-19 20:53:07,684 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter diferenï¿½a de anos entre o data_inicio e data_fim do salario
-2025-05-19 20:53:07,708 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter salï¿½rio mensal
-2025-05-19 20:53:07,714 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-19 20:53:07,714 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'amount' para 'quantia'
-2025-05-19 20:53:07,714 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-19 20:53:07,714 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-19 20:53:07,714 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
-2025-05-19 20:53:07,714 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
-2025-05-19 20:53:07,716 - INFO - ENDPOINT - Criando tabela funcionarios.salario
-2025-05-19 20:53:07,720 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
-2025-05-19 20:53:09,003 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
-2025-05-19 20:53:48,164 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '40.45s'}
-2025-05-19 20:53:48,172 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando gï¿½nero feminino
-2025-05-19 20:53:48,175 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Alterando nome da tabela para considerar somente funcionï¿½rios do gï¿½nero feminino
-2025-05-19 20:53:48,175 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'first_name' com tudo em maiï¿½sculo
-2025-05-19 20:53:48,181 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'last_name' com tudo em maiï¿½sculo
-2025-05-19 20:53:48,184 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Cria coluna 'full_name'
-2025-05-19 20:53:48,191 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar como python quem realizou a replicaï¿½ï¿½o dos dados
-2025-05-19 20:53:48,191 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar data de sincronizaï¿½ï¿½o
-2025-05-19 20:53:48,194 - INFO - TASK - Realizando carga completa da tabela employees.employee_female
-2025-05-19 20:53:48,194 - INFO - ENDPOINT - Removendo tabela employees.employee_female
-2025-05-19 20:53:48,201 - INFO - ENDPOINT - Criando tabela employees.employee_female
-2025-05-19 20:53:48,209 - INFO - ENDPOINT - Truncando tabela employees.employee_female
-2025-05-19 20:53:48,321 - INFO - ENDPOINT - Inserindo 120051 registros na tabela employees.employee_female
-2025-05-19 20:53:50,990 - DEBUG - {'message': 'Full load data inserted successfully', 'success': True, 'time_elapsed': '2.80s'}
-2025-05-19 20:53:51,033 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-05-19 20:53:51,033 - INFO - FULL LOAD STRATEGY - Full Load concluï¿½do com sucesso
+2025-05-20 23:13:19,046 - INFO - TASK -  cdc_scd2_employees válido
+2025-05-20 23:13:19,047 - WARNING - REPLICATION - CDC com modo SCD2 nao é recomendado para endpoints com batch_cdc_size > 1
+2025-05-20 23:13:19,047 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-05-20 23:13:19,067 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2860527, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-05-20 23:13:19,067 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-05-20 23:13:19,072 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300027, 'table_size': '39 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-05-20 23:13:19,072 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-05-20 23:13:19,077 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-05-20 23:13:19,077 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-05-20 23:13:19,082 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-05-20 23:13:19,082 - INFO - REPLICATION - Preparando employees.employee para SCD2
+2025-05-20 23:13:19,082 - INFO - REPLICATION - Preparando employees.department para SCD2
+2025-05-20 23:13:19,082 - INFO - REPLICATION - Preparando employees.salary para SCD2
+2025-05-20 23:13:19,082 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
+2025-05-20 23:13:19,083 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-05-20 23:13:19,396 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-05-20 23:13:19,459 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-05-20 23:13:19,495 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-20 23:13:22,939 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-20 23:13:26,328 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-20 23:13:29,706 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-20 23:13:32,531 - INFO - CDC STRATEGY - Interrompendo processo CDC
+2025-05-20 23:13:32,532 - INFO - CDC STRATEGY - CDC encerrado

@@ -66,6 +66,9 @@ class MessageConsumer(Message):
             e =  MessageConsumerException(f"Erro ao configurar o consumidor de mensagens: {str(e)}")
             logger.critical(e)
 
+    def delete_queue(self):
+        self.channel.queue_delete(queue=self.queue_name, if_unused=False, if_empty=False)
+
     def __callback(
         self,
         ch: BlockingChannel,
@@ -77,7 +80,7 @@ class MessageConsumer(Message):
         try:
             message: dict = json.loads(body.decode())
             
-            logger.info(f"MESSAGE - Recebido '{self.routing_key}': {properties.headers.get('transaction_id')}/{properties.message_id}")
+            logger.info(f"MESSAGE - Recebido '{method.routing_key}' ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}")
 
             message["delivery_tag"] = method.delivery_tag
 
