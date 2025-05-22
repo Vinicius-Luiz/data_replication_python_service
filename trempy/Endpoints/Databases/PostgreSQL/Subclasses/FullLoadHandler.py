@@ -28,7 +28,7 @@ class FullLoadHandler:
         self.connection_manager = connection_manager
         self.table_manager = table_manager
 
-    def __insert_full_load_data(self, table: Table) -> None:
+    def __insert_full_load_data(self, table: Table) -> dict:
         """
         Insere dados completos na tabela de destino.
 
@@ -43,6 +43,8 @@ class FullLoadHandler:
         """
 
         try:
+            stats = {}
+
             table_column_names = [
                 col.name
                 for col in sorted(
@@ -66,7 +68,14 @@ class FullLoadHandler:
             with self.connection_manager.cursor() as cursor:
                 execute_values(
                     cursor, query, records, page_size=10000
-                )  # TODO USAR task.batch_size
+                )
+            
+            stats["schema_name"] = table.schema_name
+            stats["table_name"] = table.table_name
+            stats["records"] = len(records)
+
+            return stats
+        
         except Exception as e:
             e = InsertFullLoadError(
                 f"Erro ao inserir dados na tabela: {e}",
@@ -148,13 +157,13 @@ class FullLoadHandler:
                     truncate_before_insert,
                 )
 
-                self.__insert_full_load_data(table)
+                full_load_stats = self.__insert_full_load_data(table)
 
                 self.connection_manager.commit()
                 os.remove(table.path_data)
 
                 return {
-                    "message": "Full load data inserted successfully",
+                    "stats": full_load_stats,
                     "success": True,
                     "time_elapsed": f"{time() - initial_time:.2f}s",
                 }

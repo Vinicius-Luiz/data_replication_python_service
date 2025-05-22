@@ -9,6 +9,12 @@
             "truncate_before_insert": true
         }
     },
+    "error_handling": {
+        "stop_if_insert_error": false,
+        "stop_if_update_error": false,
+        "stop_if_delete_error": false,
+        "stop_if_upsert_error": false
+    },
     "tables": [
         {
             "schema_name": "employees",

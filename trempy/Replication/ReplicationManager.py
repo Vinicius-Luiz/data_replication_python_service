@@ -13,6 +13,7 @@ from trempy.Tables.Table import Table
 from trempy.Tasks.Task import Task
 from dotenv import load_dotenv
 import json
+import glob
 import os
 
 
@@ -68,10 +69,11 @@ class ReplicationManager:
             )
 
         os.environ["REPLICATION_TYPE"] = task.replication_type.value
-        os.environ["STOP_IF_INSERT_ERROR"] = task.stop_if_insert_error
-        os.environ["STOP_IF_UPDATE_ERROR"] = task.stop_if_update_error
-        os.environ["STOP_IF_DELETE_ERROR"] = task.stop_if_delete_error
-        os.environ["STOP_IF_UPSERT_ERROR"] = task.stop_if_upsert_error
+        os.environ["STOP_IF_INSERT_ERROR"] = str(int(task.stop_if_insert_error))
+        os.environ["STOP_IF_UPDATE_ERROR"] = str(int(task.stop_if_update_error))
+        os.environ["STOP_IF_DELETE_ERROR"] = str(int(task.stop_if_delete_error))
+        os.environ["STOP_IF_UPSERT_ERROR"] = str(int(task.stop_if_upsert_error))
+        os.environ["STOP_IF_SCD2_ERROR"] = str(int(task.stop_if_scd2_error))
 
         self.__configure_tables(task, task_settings)
         self.__configure_filters(task, task_settings)
@@ -83,10 +85,21 @@ class ReplicationManager:
     def __reload_task(self, task: Task):
         if task.start_mode == StartType.RELOAD:
             logger.info("REPLICATION - Recarregando tarefa")
-            settings_pickle = "task\settings.pickle"
 
-            if os.path.exists(settings_pickle):
-                os.remove(settings_pickle)
+            path_to_remove = {
+                "settings_pickle": r"task\settings.pickle",
+                "full_load_stats": r"data\full_load_data\stats",
+                "cdc_stats": r"data\cdc_data\stats",
+            }
+
+            for key, value in path_to_remove.items():
+                if key in ["full_load_stats", "cdc_stats"]:
+                    if os.path.exists(value):
+                        for parquet_file in glob.glob(os.path.join(value, "*.parquet")):
+                            os.remove(parquet_file)
+                else:
+                    if os.path.exists(value):
+                        os.remove(value)
 
             message = Message.Message(task.task_name)
             message_dlx = MessageDlx.MessageDlx(task.task_name)

@@ -1,5 +1,3 @@
 - estudar novo modo de leitura de slot_replication
 - melhorar retorno do cdc e full load
-[OK] - criar parâmetro pra definir o que fazer se der erro nas operações de CDC
-[OK] - testar o que acontece quando se para a tarefa no meio e retorna, verificar se perde dados
-[OK] - implementar logicas de resume e reload task
+- adicionar tipo de tarefa full_load & cdc

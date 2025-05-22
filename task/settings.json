@@ -3,7 +3,7 @@
         "task_name": "cdc_scd2_employees",
         "replication_type": "cdc",
         "interval_seconds": 3,
-        "start_mode": "continue",
+        "start_mode": "reload",
 
         "create_table_if_not_exists": true,
         "full_load_settings": {
@@ -23,7 +23,8 @@
         "stop_if_insert_error": false,
         "stop_if_update_error": false,
         "stop_if_delete_error": false,
-        "stop_if_upsert_error": false
+        "stop_if_upsert_error": false,
+        "stop_if_scd2_error": false
 
     },
     "tables": [

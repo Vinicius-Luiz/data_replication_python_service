@@ -13,6 +13,8 @@ from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Filters.Filter import Filter
 from typing import List, Dict, Optional
 from trempy.Tables.Table import Table
+from trempy.Shared.Utils import Utils
+from datetime import datetime
 import polars as pl
 import re
 
@@ -85,6 +87,7 @@ class Task:
         self.stop_if_update_error = error_handling.get("stop_if_update_error", False)
         self.stop_if_delete_error = error_handling.get("stop_if_delete_error", False)
         self.stop_if_upsert_error = error_handling.get("stop_if_upsert_error", False)
+        self.stop_if_scd2_error = error_handling.get("stop_if_scd2_error", False)
 
         self.tables: List[Table] = []
 
@@ -161,25 +164,34 @@ class Task:
         de dados para cada uma delas. A carga completa de dados é realizada em
         paralelo para todas as tabelas especificadas.
         """
+        try:
+            for table in sorted(self.tables, key=lambda x: x.priority.value):
+                table.data = pl.read_parquet(table.path_data)
 
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            table.data = pl.read_parquet(table.path_data)
+                table.execute_filters()
+                table.execute_transformations()
 
-            table.execute_filters()
-            table.execute_transformations()
+                logger.info(
+                    f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}",
+                    required_types="full_load",
+                )
+                full_load_stats = self.target_endpoint.insert_full_load_into_table(
+                    table=table,
+                    create_table_if_not_exists=self.create_table_if_not_exists,
+                    recreate_table_if_exists=self.recreate_table_if_exists,
+                    truncate_before_insert=self.truncate_before_insert,
+                )
 
-            logger.info(
-                f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}",
-                required_types="full_load",
-            )
-            table_full_load = self.target_endpoint.insert_full_load_into_table(
-                table=table,
-                create_table_if_not_exists=self.create_table_if_not_exists,
-                recreate_table_if_exists=self.recreate_table_if_exists,
-                truncate_before_insert=self.truncate_before_insert,
-            )
+                logger.debug(full_load_stats)
+                df_stats = pl.DataFrame([full_load_stats])
+                datetime_stats = datetime.now().strftime("%Y%m%d_%H%M%S")
+                df_stats.write_parquet(
+                    rf"data\full_load_data\stats\{datetime_stats}_{Utils.hash_6_chars()}.parquet"
+                )
 
-            logger.debug(table_full_load)
+        except Exception as e:
+            e = TaskError(f"Erro ao realizar carga completa: {str(e)}")
+            logger.critical(e)
 
     def __execute_source_cdc(self) -> List[Dict]:
         """
@@ -236,35 +248,46 @@ class Task:
             bool: True se a operação for realizada com sucesso, False caso contrário
         """
 
-        delivery_tag = changes_structured["delivery_tag"]
-
         try:
-            df_changes_structured: dict = (
-                self.target_endpoint.structure_capture_changes_to_dataframe(
-                    changes_structured
+            delivery_tag = changes_structured["delivery_tag"]
+
+            try:
+                df_changes_structured: dict = (
+                    self.target_endpoint.structure_capture_changes_to_dataframe(
+                        changes_structured
+                    )
                 )
-            )
-        except TaskError as e:
-            channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
-            e = TaskError(f"Erro ao estruturar as alterações capturadas: {str(e)}")
+            except TaskError as e:
+                channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
+                e = TaskError(f"Erro ao estruturar as alterações capturadas: {str(e)}")
+                logger.critical(e)
+
+            for table in sorted(self.tables, key=lambda x: x.priority.value):
+                data: pl.DataFrame = df_changes_structured.get(table.id)
+
+                if table.id in df_changes_structured.keys():
+                    table.add_data(data)
+                    table.execute_filters()
+                    table.execute_transformations()
+
+                    cdc_stats = self.target_endpoint.insert_cdc_into_table(
+                        mode=self.cdc_mode,
+                        table=table,
+                        create_table_if_not_exists=self.create_table_if_not_exists,
+                    )
+
+                    logger.debug(cdc_stats)
+                    df_stats = pl.DataFrame([cdc_stats])
+                    datetime_stats = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    df_stats.write_parquet(
+                        rf"data\cdc_data\stats\{datetime_stats}_{Utils.hash_6_chars()}.parquet"
+                    )
+
+            channel.basic_ack(delivery_tag=delivery_tag)
+            logger.info(f"TASK - Confirmado {delivery_tag}")
+        except Exception as e:
+            e = TaskError(f"Erro ao realizar carga de alterações: {str(e)}")
             logger.critical(e)
-
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            data: pl.DataFrame = df_changes_structured.get(table.id)
-
-            if table.id in df_changes_structured.keys():
-                table.add_data(data)
-                table.execute_filters()
-                table.execute_transformations()
-
-                table_cdc = self.target_endpoint.insert_cdc_into_table(
-                    mode=self.cdc_mode,
-                    table=table,
-                    create_table_if_not_exists=self.create_table_if_not_exists,
-                )
-
-        channel.basic_ack(delivery_tag=delivery_tag)
-        logger.info(f"TASK - Confirmado {delivery_tag}")
 
     def __find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
