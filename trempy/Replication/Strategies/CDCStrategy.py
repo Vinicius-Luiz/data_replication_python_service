@@ -1,4 +1,5 @@
 from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrategy
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Replication.Exceptions.Exception import *
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Shared.Utils import Utils
@@ -23,6 +24,11 @@ class CDCStrategy(ReplicationStrategy):
     def __setup_environment(self, task: Task) -> None:
         """Configura o ambiente para execução."""
         Utils.write_task_pickle(task)
+
+        logger.info("CDC STRATEGY - Criando tabelas de metadata")
+        with MetadataConnectionManager() as metadata_manager:
+            metadata_manager.create_tables()
+
         logger.info(
             f"CDC STRATEGY - Iniciando CDC com intervalo de {self.interval_seconds}s"
         )
@@ -50,7 +56,8 @@ class CDCStrategy(ReplicationStrategy):
         while True:
             if not self.__run_producer():
                 e = ReplicationRuntimeError("Erro ao executar o producer")
-                Utils.log_exception_and_exit(e)
+                logger.critical(e)
+                logger.critical(e)
 
             self.__check_consumer_status()
             self.__wait_next_cycle()
@@ -106,4 +113,4 @@ class CDCStrategy(ReplicationStrategy):
         except Exception as e:
             self.__emergency_shutdown()
             e = UnsportedExceptionError(f"Erro inesperado: {str(e)}")
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)

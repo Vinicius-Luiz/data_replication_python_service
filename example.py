@@ -1,19 +1,23 @@
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 import polars as pl
 
-path = rf"data\cdc_data\stats\*.parquet"
+with MetadataConnectionManager() as metadata_manager:
+    df = metadata_manager.get_stats("stats_cdc")
+    df = (
+        df.group_by(["task_name", "schema_name", "table_name"])
+        .agg(
+            [
+                pl.sum("inserts"),
+                pl.sum("updates"),
+                pl.sum("deletes"),
+                pl.sum("errors"),
+                pl.sum("total"),
+            ]
+        )
+        .sort(["task_name", "schema_name", "table_name"])
+    )
+    print(df.head(100000))
 
-df = pl.scan_parquet(path)
-print(df.head(6000).collect())
-
-
-resultado = df.group_by(["schema_name", "table_name"]).agg(
-    [
-        pl.col("inserts").sum().alias("sum_inserts"),
-        pl.col("updates").sum().alias("sum_updates"),
-        pl.col("deletes").sum().alias("sum_deletes"),
-        pl.col("errors").sum().alias("sum_errors"),
-        pl.col("total").sum().alias("sum_total"),
-    ]
-)
-
-print(resultado.head(6000).collect())
+with MetadataConnectionManager() as metadata_manager:
+    df = metadata_manager.get_stats("stats_full_load")
+    print(df.head(100000))

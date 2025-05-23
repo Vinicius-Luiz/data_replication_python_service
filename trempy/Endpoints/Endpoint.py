@@ -4,10 +4,12 @@ from trempy.Endpoints.Decorators.EndpointDecorators import (
 )
 from trempy.Shared.Types import DatabaseType, EndpointType
 from trempy.Endpoints.Exceptions.Exception import *
+from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Tables.Table import Table
-from trempy.Shared.Utils import Utils
 from abc import ABC, abstractmethod
 import polars as pl
+
+logger = ReplicationLogger()
 
 
 class Endpoint(ABC):
@@ -30,7 +32,6 @@ class Endpoint(ABC):
         database_type: DatabaseType,
         endpoint_type: EndpointType,
         endpoint_name: str,
-
         batch_cdc_size: int,
     ) -> None:
         """
@@ -67,13 +68,13 @@ class Endpoint(ABC):
             e = InvalidDatabaseTypeError(
                 "Tipo de banco de dados inválido", self.database_type
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
         if self.endpoint_type not in EndpointType:
             e = InvalidEndpointTypeError(
                 "Tipo de endpoint inválido", self.endpoint_type
             )
-            Utils.log_exception_and_exit(e)
+            logger.critical(e)
 
     @abstractmethod
     @source_method

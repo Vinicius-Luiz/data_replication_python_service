@@ -5,6 +5,7 @@ from trempy.Shared.Types import (
     DatabaseType,
     StartType,
 )
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Transformations.Transformation import Transformation
 from pika.adapters.blocking_connection import BlockingChannel
 from trempy.Loggings.Logging import ReplicationLogger
@@ -13,8 +14,6 @@ from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Filters.Filter import Filter
 from typing import List, Dict, Optional
 from trempy.Tables.Table import Table
-from trempy.Shared.Utils import Utils
-from datetime import datetime
 import polars as pl
 import re
 
@@ -152,7 +151,7 @@ class Task:
             table_get_full_load = self.source_endpoint.get_full_load_from_table(
                 table=table
             )
-            logger.debug(table_get_full_load)
+            logger.debug(table_get_full_load)  # TODO CRIAR TABELA NO SQL3 TBM
 
         return {}
 
@@ -183,11 +182,10 @@ class Task:
                 )
 
                 logger.debug(full_load_stats)
-                df_stats = pl.DataFrame([full_load_stats])
-                datetime_stats = datetime.now().strftime("%Y%m%d_%H%M%S")
-                df_stats.write_parquet(
-                    rf"data\full_load_data\stats\{datetime_stats}_{Utils.hash_6_chars()}.parquet"
-                )
+                with MetadataConnectionManager() as metadata_manager:
+                    metadata_manager.insert_full_load_stats(
+                        full_load_stats, task_name=self.task_name
+                    )
 
         except Exception as e:
             e = TaskError(f"Erro ao realizar carga completa: {str(e)}")
@@ -277,11 +275,10 @@ class Task:
                     )
 
                     logger.debug(cdc_stats)
-                    df_stats = pl.DataFrame([cdc_stats])
-                    datetime_stats = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    df_stats.write_parquet(
-                        rf"data\cdc_data\stats\{datetime_stats}_{Utils.hash_6_chars()}.parquet"
-                    )
+                    with MetadataConnectionManager() as metadata_manager:
+                        metadata_manager.insert_cdc_stats(
+                            cdc_stats, task_name=self.task_name
+                        )
 
             channel.basic_ack(delivery_tag=delivery_tag)
             logger.info(f"TASK - Confirmado {delivery_tag}")

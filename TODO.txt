@@ -1,3 +1,4 @@
 - estudar novo modo de leitura de slot_replication
-- melhorar retorno do cdc e full load
+[OK] - melhorar retorno do cdc e full load
+[OK] - usar sqlite para armazenar retorno de cdc e full load
 - adicionar tipo de tarefa full_load & cdc

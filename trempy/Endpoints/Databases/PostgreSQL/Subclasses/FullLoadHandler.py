@@ -116,7 +116,6 @@ class FullLoadHandler:
                     "success": True,
                     "rowcount": cursor.rowcount,
                     "statusmessage": cursor.statusmessage,
-                    "path_data": table.path_data,
                     "time_elapsed": f"{time() - initial_time:.2f}s",
                 }
         except Exception as e:
@@ -163,7 +162,7 @@ class FullLoadHandler:
                 os.remove(table.path_data)
 
                 return {
-                    "stats": full_load_stats,
+                    **full_load_stats,
                     "success": True,
                     "time_elapsed": f"{time() - initial_time:.2f}s",
                 }
