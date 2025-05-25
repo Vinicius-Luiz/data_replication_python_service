@@ -80,7 +80,7 @@ class MessageConsumer(Message):
         try:
             message: dict = json.loads(body.decode())
             
-            logger.info(f"MESSAGE - Recebido '{method.routing_key}' ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}")
+            logger.info(f"MESSAGE - Recebido: ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}")
 
             message["delivery_tag"] = method.delivery_tag
 

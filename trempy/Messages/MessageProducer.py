@@ -35,7 +35,7 @@ class MessageProducer(Message):
                     ),
                 )
                 logger.info(
-                    f"MESSAGE - Publicado '{self.routing_key}': {message.get('id')}/{message_id}"
+                    f"MESSAGE - Publicado: {message.get('id')}/{message_id}"
                 )
 
         except Exception as e:
