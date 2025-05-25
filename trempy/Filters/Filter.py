@@ -613,7 +613,7 @@ class Filter:
 
         logger.info(
             f"FILTER - Aplicando filtro em {table.schema_name}.{table.table_name} {self.column_name}: {self.description}",
-            required_types=["full_load_and_cdc", "full_load"],
+            required_types=["full_load"],
         )
 
         try:

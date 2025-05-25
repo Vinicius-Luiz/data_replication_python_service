@@ -188,7 +188,7 @@ class Transformation:
 
         logger.info(
             f"TRANSFORMATION - Aplicando transformação em {table.schema_name}.{table.table_name}: {self.description}",
-            required_types=["full_load_and_cdc", "full_load"],
+            required_types=["full_load"],
         )
 
         try:

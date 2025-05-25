@@ -61,7 +61,7 @@ class CDCOperationsHandler:
                 f"Erro ao inserir dados no modo CDC ({mode.name}): {e}",
                 f"{table.target_schema_name}.{table.target_table_name}",
             )
-            logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+            logger.critical(e, required_types=["cdc"])
 
     def __insert_cdc_data_default(self, table: Table) -> dict:
         """Processa operações CDC (INSERT, UPDATE, DELETE) no modo padrão.
@@ -335,9 +335,9 @@ class CDCOperationsHandler:
                 None,
             )
             (
-                logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+                logger.critical(e, required_types=["cdc"])
                 if int(os.getenv("STOP_IF_SCD2_ERROR"))
-                else logger.error(e, required_types=["full_load_and_cdc", "cdc"])
+                else logger.error(e, required_types=["cdc"])
             )
 
         return stats
@@ -396,9 +396,9 @@ class CDCOperationsHandler:
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
             (
-                logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+                logger.critical(e, required_types=["cdc"])
                 if int(os.getenv("STOP_IF_SCD2_ERROR"))
-                else logger.error(e, required_types=["full_load_and_cdc", "cdc"])
+                else logger.error(e, required_types=["cdc"])
             )
 
         return stats
@@ -457,9 +457,9 @@ class CDCOperationsHandler:
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
             (
-                logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+                logger.critical(e, required_types=["cdc"])
                 if int(os.getenv("STOP_IF_INSERT_ERROR"))
-                else logger.error(e, required_types=["full_load_and_cdc", "cdc"])
+                else logger.error(e, required_types=["cdc"])
             )
 
         return stats
@@ -526,9 +526,9 @@ class CDCOperationsHandler:
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
             (
-                logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+                logger.critical(e, required_types=["cdc"])
                 if int(os.getenv("STOP_IF_UPDATE_ERROR"))
-                else logger.error(e, required_types=["full_load_and_cdc", "cdc"])
+                else logger.error(e, required_types=["cdc"])
             )
 
         return stats
@@ -582,9 +582,9 @@ class CDCOperationsHandler:
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
             (
-                logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+                logger.critical(e, required_types=["cdc"])
                 if int(os.getenv("STOP_IF_DELETE_ERROR"))
-                else logger.error(e, required_types=["full_load_and_cdc", "cdc"])
+                else logger.error(e, required_types=["cdc"])
             )
 
         return stats
@@ -660,9 +660,9 @@ class CDCOperationsHandler:
                 cursor.query.decode("utf-8") if cursor.query else "",
             )
             (
-                logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+                logger.critical(e, required_types=["cdc"])
                 if int(os.getenv("STOP_IF_UPSERT_ERROR"))
-                else logger.error(e, required_types=["full_load_and_cdc", "cdc"])
+                else logger.error(e, required_types=["cdc"])
             )
 
         return stats
@@ -697,4 +697,4 @@ class CDCOperationsHandler:
         except Exception as e:
             self.connection_manager.rollback()
             e = EndpointError(f"Erro ao inserir dados ({mode}): {e}")
-            logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
+            logger.critical(e, required_types=["cdc"])

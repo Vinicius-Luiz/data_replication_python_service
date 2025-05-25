@@ -1,4 +1,4 @@
-2025-05-25 01:37:50,341 - INFO - TASK -  fl_cdc_scd2_employees válido
+2025-05-25 01:37:50,341 - INFO - TASK -  fl_cdc_scd2_employees vï¿½lido
 2025-05-25 01:37:50,341 - INFO - TASK - Obtendo detalhes da tabela employees.salary
 2025-05-25 01:37:50,364 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2860527, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
 2025-05-25 01:37:50,364 - INFO - TASK - Obtendo detalhes da tabela employees.employee
@@ -13,7 +13,7 @@
 2025-05-25 01:37:50,379 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
 2025-05-25 01:37:50,379 - INFO - REPLICATION - Recarregando tarefa
 2025-05-25 01:37:50,418 - INFO - CDC STRATEGY - Criando tabelas de metadata
-2025-05-25 01:37:50,427 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-05-25 01:37:50,427 - INFO - FULL LOAD STRATEGY - Iniciando extraï¿½ï¿½o dos dados
 2025-05-25 01:37:50,789 - INFO - TASK - Obtendo dados da tabela employees.employee
 2025-05-25 01:37:51,316 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
 2025-05-25 01:37:51,319 - INFO - TASK - Obtendo dados da tabela employees.department
@@ -24,56 +24,56 @@
 2025-05-25 01:37:54,804 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
 2025-05-25 01:37:54,972 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:37:54,972 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-05-25 01:37:55,414 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:37:55,414 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:37:55,427 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:37:55,437 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:37:55,456 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:37:55,461 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:37:55,466 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:37:55,468 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:37:55,472 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:37:55,473 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
+2025-05-25 01:37:55,414 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Alterando nome da tabela para histï¿½rico
+2025-05-25 01:37:55,414 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'first_name' com tudo em maiï¿½sculo
+2025-05-25 01:37:55,427 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Formata coluna 'last_name' com tudo em maiï¿½sculo
+2025-05-25 01:37:55,437 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Cria coluna 'full_name'
+2025-05-25 01:37:55,456 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar como python quem realizou a replicaï¿½ï¿½o dos dados
+2025-05-25 01:37:55,461 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Carimbar data de sincronizaï¿½ï¿½o
+2025-05-25 01:37:55,466 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Criando coluna scd_start_date
+2025-05-25 01:37:55,468 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Criando coluna scd_end_date
+2025-05-25 01:37:55,472 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Criando coluna scd_current
+2025-05-25 01:37:55,473 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.employee: Adicionando chave primï¿½ria scd_start_date
 2025-05-25 01:37:55,473 - INFO - TASK - Realizando carga completa da tabela employees.employee_history
 2025-05-25 01:37:55,473 - INFO - ENDPOINT - Removendo tabela employees.employee_history
 2025-05-25 01:37:55,483 - INFO - ENDPOINT - Criando tabela employees.employee_history
 2025-05-25 01:37:55,499 - INFO - ENDPOINT - Truncando tabela employees.employee_history
 2025-05-25 01:37:55,939 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee_history
 2025-05-25 01:38:04,716 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 300024, 'success': True, 'time_elapsed': '00:00:09'}
-2025-05-25 01:38:04,720 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:38:04,720 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:38:04,720 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:38:04,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:38:04,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
+2025-05-25 01:38:04,720 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department: Alteando nome da tabela para histï¿½rico
+2025-05-25 01:38:04,720 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department: Criando coluna scd_start_date
+2025-05-25 01:38:04,720 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department: Criando coluna scd_end_date
+2025-05-25 01:38:04,721 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department: Criando coluna scd_current
+2025-05-25 01:38:04,721 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department: Adicionando chave primï¿½ria scd_start_date
 2025-05-25 01:38:04,721 - INFO - TASK - Realizando carga completa da tabela employees.department_history
 2025-05-25 01:38:04,721 - INFO - ENDPOINT - Removendo tabela employees.department_history
 2025-05-25 01:38:04,722 - INFO - ENDPOINT - Criando tabela employees.department_history
 2025-05-25 01:38:04,724 - INFO - ENDPOINT - Truncando tabela employees.department_history
 2025-05-25 01:38:04,726 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_history
 2025-05-25 01:38:04,729 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'records': 7, 'success': True, 'time_elapsed': '00:00:00'}
-2025-05-25 01:38:04,747 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:38:04,747 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:38:04,747 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:38:04,781 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:38:04,792 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:38:04,799 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:38:04,802 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
+2025-05-25 01:38:04,747 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome da tabela para portuguï¿½s e histï¿½rico
+2025-05-25 01:38:04,747 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Alterando nome do schema para portuguï¿½s
+2025-05-25 01:38:04,747 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter diferenï¿½a de anos entre o data_inicio e data_fim do salario
+2025-05-25 01:38:04,781 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Obter salï¿½rio mensal
+2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'employee_id' para 'funcionario_id'
+2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'amount' para 'quantia_mensal'
+2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'from_date' para 'data_inicio'
+2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Modificando 'to_date' para 'data_fim'
+2025-05-25 01:38:04,788 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Criando coluna scd_start_date
+2025-05-25 01:38:04,792 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Criando coluna scd_end_date
+2025-05-25 01:38:04,799 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Criando coluna scd_current
+2025-05-25 01:38:04,802 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.salary: Adicionando chave primï¿½ria scd_start_date
 2025-05-25 01:38:04,802 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario_historico
 2025-05-25 01:38:04,803 - INFO - ENDPOINT - Removendo tabela funcionarios.salario_historico
 2025-05-25 01:38:04,804 - INFO - ENDPOINT - Criando tabela funcionarios.salario_historico
 2025-05-25 01:38:04,807 - INFO - ENDPOINT - Truncando tabela funcionarios.salario_historico
 2025-05-25 01:38:06,950 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario_historico
 2025-05-25 01:39:08,684 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': True, 'time_elapsed': '00:01:04'}
-2025-05-25 01:39:08,689 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:39:08,689 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:39:08,689 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:39:08,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:39:08,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
+2025-05-25 01:39:08,689 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department_manager: Alterando nome da tabela para histï¿½rico
+2025-05-25 01:39:08,689 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department_manager: Criando coluna scd_start_date
+2025-05-25 01:39:08,689 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department_manager: Criando coluna scd_end_date
+2025-05-25 01:39:08,690 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department_manager: Criando coluna scd_current
+2025-05-25 01:39:08,690 - INFO - TRANSFORMATION - Aplicando transformaï¿½ï¿½o em employees.department_manager: Adicionando chave primï¿½ria scd_start_date
 2025-05-25 01:39:08,690 - INFO - TASK - Realizando carga completa da tabela employees.department_manager_history
 2025-05-25 01:39:08,690 - INFO - ENDPOINT - Removendo tabela employees.department_manager_history
 2025-05-25 01:39:08,693 - INFO - ENDPOINT - Criando tabela employees.department_manager_history
@@ -81,7 +81,7 @@
 2025-05-25 01:39:08,702 - INFO - ENDPOINT - Inserindo 18 registros na tabela employees.department_manager_history
 2025-05-25 01:39:08,704 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 18, 'success': True, 'time_elapsed': '00:00:00'}
 2025-05-25 01:39:08,750 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-05-25 01:39:08,750 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-05-25 01:39:08,750 - INFO - FULL LOAD STRATEGY - Full Load concluï¿½do com sucesso
 2025-05-25 01:39:08,760 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
 2025-05-25 01:39:09,132 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
 2025-05-25 01:39:09,197 - INFO - MESSAGE - Consumer Esperando por mensagens
@@ -104,69 +104,19 @@
 2025-05-25 01:40:02,384 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': b74839/aadeed
 2025-05-25 01:40:02,384 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': b74839/247224
 2025-05-25 01:40:02,384 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (1): b74839/02a333
-2025-05-25 01:40:02,392 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:02,392 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:02,393 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:02,393 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:02,394 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:02,394 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:02,394 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:02,394 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:02,395 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:02,395 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:02,412 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:02,415 - INFO - TASK - Confirmado 1
 2025-05-25 01:40:02,416 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (2): b74839/aadeed
-2025-05-25 01:40:02,416 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:02,416 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:02,417 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:02,418 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:02,422 - INFO - TASK - Confirmado 2
 2025-05-25 01:40:02,423 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (3): b74839/247224
-2025-05-25 01:40:02,423 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:02,423 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:02,423 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:02,424 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:02,430 - INFO - TASK - Confirmado 3
 2025-05-25 01:40:05,868 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:09,346 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:12,815 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 966a08/5bde15
 2025-05-25 01:40:12,815 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 966a08/6a12ed
 2025-05-25 01:40:12,816 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (4): 966a08/5bde15
-2025-05-25 01:40:12,817 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:12,817 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:12,817 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:12,817 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:12,817 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:12,817 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:12,818 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:12,818 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:12,818 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:12,818 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:12,826 - INFO - TASK - Confirmado 4
 2025-05-25 01:40:12,826 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (5): 966a08/6a12ed
-2025-05-25 01:40:12,826 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:12,826 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:12,827 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:12,827 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:12,827 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:12,827 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:12,827 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:12,828 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:12,828 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:12,828 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:12,834 - INFO - TASK - Confirmado 5
 2025-05-25 01:40:12,855 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:16,315 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -177,40 +127,10 @@
 2025-05-25 01:40:30,127 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': ae482c/d3c8bc
 2025-05-25 01:40:30,127 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': ae482c/bdbcaa
 2025-05-25 01:40:30,128 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (6): ae482c/260dc9
-2025-05-25 01:40:30,128 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:30,129 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:30,129 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:30,129 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:30,129 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:30,129 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:30,130 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:30,130 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:30,130 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:30,130 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:30,135 - INFO - TASK - Confirmado 6
 2025-05-25 01:40:30,136 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (7): ae482c/d3c8bc
-2025-05-25 01:40:30,136 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:30,136 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:30,136 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:30,137 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:30,137 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:30,137 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:30,137 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:30,137 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:30,137 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:30,138 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:30,143 - INFO - TASK - Confirmado 7
 2025-05-25 01:40:30,144 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (8): ae482c/bdbcaa
-2025-05-25 01:40:30,145 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:40:30,145 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:40:30,145 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:40:30,145 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:40:30,145 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:40:30,145 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:40:30,146 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:40:30,146 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:40:30,146 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:40:30,146 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:40:30,152 - INFO - TASK - Confirmado 8
 2025-05-25 01:40:30,165 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:33,563 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -221,35 +141,15 @@
 2025-05-25 01:40:47,189 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 8f27ba/615d50
 2025-05-25 01:40:47,189 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 8f27ba/773da2
 2025-05-25 01:40:47,190 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (9): 8f27ba/056933
-2025-05-25 01:40:47,190 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:40:47,190 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:40:47,190 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:40:47,191 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:40:47,191 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:40:47,197 - INFO - TASK - Confirmado 9
 2025-05-25 01:40:47,198 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (10): 8f27ba/615d50
-2025-05-25 01:40:47,198 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:40:47,198 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:40:47,198 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:40:47,198 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:40:47,199 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:40:47,204 - INFO - TASK - Confirmado 10
 2025-05-25 01:40:47,204 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (11): 8f27ba/773da2
-2025-05-25 01:40:47,205 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:40:47,205 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:40:47,205 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:40:47,205 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:40:47,205 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:40:47,211 - INFO - TASK - Confirmado 11
 2025-05-25 01:40:47,224 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:50,658 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:54,045 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': fd8a07/e3e6dc
 2025-05-25 01:40:54,052 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (12): fd8a07/e3e6dc
-2025-05-25 01:40:54,052 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:40:54,052 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:40:54,052 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:40:54,053 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:40:54,053 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:40:54,058 - INFO - TASK - Confirmado 12
 2025-05-25 01:40:54,075 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:40:57,486 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -258,46 +158,10 @@
 2025-05-25 01:41:04,310 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 860841/245121
 2025-05-25 01:41:04,310 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 860841/c7f7a3
 2025-05-25 01:41:04,310 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (13): 860841/8671e0
-2025-05-25 01:41:04,311 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:04,311 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:04,311 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:04,315 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:04,315 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:04,316 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:04,316 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:04,317 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:04,317 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:04,317 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:04,317 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:04,317 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:04,324 - INFO - TASK - Confirmado 13
 2025-05-25 01:41:04,325 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (14): 860841/245121
-2025-05-25 01:41:04,326 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:04,326 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:04,326 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:04,326 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:04,327 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:04,333 - INFO - TASK - Confirmado 14
 2025-05-25 01:41:04,334 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (15): 860841/c7f7a3
-2025-05-25 01:41:04,334 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:04,334 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:04,335 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:04,336 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:04,336 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:04,336 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:04,341 - INFO - TASK - Confirmado 15
 2025-05-25 01:41:04,350 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:41:07,745 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -309,137 +173,29 @@
 2025-05-25 01:41:21,502 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 793f9d/474e79
 2025-05-25 01:41:21,502 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 793f9d/3d09ba
 2025-05-25 01:41:21,502 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (16): 793f9d/52c1ab
-2025-05-25 01:41:21,503 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:21,503 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:21,503 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:21,504 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:21,504 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:21,504 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:21,504 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:21,504 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:21,504 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:21,505 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:21,505 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:21,505 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:21,511 - INFO - TASK - Confirmado 16
 2025-05-25 01:41:21,512 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (17): 793f9d/8035f3
-2025-05-25 01:41:21,513 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:21,513 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:21,513 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:21,513 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:21,513 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:21,513 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:21,514 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:21,514 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:21,514 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:21,514 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:21,514 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:21,514 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:21,532 - INFO - TASK - Confirmado 17
 2025-05-25 01:41:21,532 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (18): 793f9d/474e79
-2025-05-25 01:41:21,533 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:21,533 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:21,533 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:21,534 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:21,535 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:21,537 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:41:21,541 - INFO - TASK - Confirmado 18
 2025-05-25 01:41:21,542 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (19): 793f9d/3d09ba
-2025-05-25 01:41:21,542 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:21,543 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:21,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:21,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:21,544 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:21,549 - INFO - TASK - Confirmado 19
 2025-05-25 01:41:24,931 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 3d7aa8/308679
 2025-05-25 01:41:24,931 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 3d7aa8/44ef8b
 2025-05-25 01:41:24,932 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (20): 3d7aa8/308679
-2025-05-25 01:41:24,933 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:24,933 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:24,933 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:24,933 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:24,933 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:24,934 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:24,939 - INFO - TASK - Confirmado 20
 2025-05-25 01:41:24,940 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (21): 3d7aa8/44ef8b
-2025-05-25 01:41:24,941 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:24,941 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:24,941 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:24,941 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:24,941 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:24,942 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:24,942 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:24,942 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:24,942 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:24,942 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:24,942 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:24,943 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:24,948 - INFO - TASK - Confirmado 21
 2025-05-25 01:41:24,967 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:41:28,367 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cf5870/f71cbd
 2025-05-25 01:41:28,367 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cf5870/b484bd
 2025-05-25 01:41:28,368 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cf5870/6fbbef
 2025-05-25 01:41:28,369 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (22): cf5870/f71cbd
-2025-05-25 01:41:28,370 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:28,370 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:28,370 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:28,371 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:28,372 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:28,372 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:28,377 - INFO - TASK - Confirmado 22
 2025-05-25 01:41:28,377 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (23): cf5870/b484bd
-2025-05-25 01:41:28,378 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:28,379 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:28,379 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:28,379 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:28,380 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:28,381 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:28,386 - INFO - TASK - Confirmado 23
 2025-05-25 01:41:28,387 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (24): cf5870/6fbbef
-2025-05-25 01:41:28,387 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:41:28,388 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:41:28,389 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:41:28,389 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:41:28,389 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:41:28,389 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:41:28,395 - INFO - TASK - Confirmado 24
 2025-05-25 01:41:28,406 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:41:31,807 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -450,18 +206,8 @@
 2025-05-25 01:41:48,889 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 2cf24f/8f2033
 2025-05-25 01:41:48,890 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 2cf24f/7c531e
 2025-05-25 01:41:48,890 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (25): 2cf24f/8f2033
-2025-05-25 01:41:48,891 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:41:48,891 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:41:48,892 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:41:48,892 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:41:48,892 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:41:48,899 - INFO - TASK - Confirmado 25
 2025-05-25 01:41:48,900 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (26): 2cf24f/7c531e
-2025-05-25 01:41:48,901 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:41:48,902 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:41:48,902 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:41:48,902 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:41:48,902 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:41:48,908 - INFO - TASK - Confirmado 26
 2025-05-25 01:41:48,930 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:41:52,339 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -469,35 +215,15 @@
 2025-05-25 01:41:59,158 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 9d2721/f80d36
 2025-05-25 01:41:59,158 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 9d2721/5c30ef
 2025-05-25 01:41:59,159 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (27): 9d2721/f80d36
-2025-05-25 01:41:59,160 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:41:59,160 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:41:59,161 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:41:59,161 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:41:59,161 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:41:59,166 - INFO - TASK - Confirmado 27
 2025-05-25 01:41:59,167 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (28): 9d2721/5c30ef
-2025-05-25 01:41:59,168 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:41:59,168 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:41:59,168 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:41:59,168 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:41:59,168 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:41:59,173 - INFO - TASK - Confirmado 28
 2025-05-25 01:41:59,194 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:42:02,589 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': f0b5a5/cd7fd5
 2025-05-25 01:42:02,589 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': f0b5a5/2f8b1c
 2025-05-25 01:42:02,590 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (29): f0b5a5/cd7fd5
-2025-05-25 01:42:02,590 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:42:02,590 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:42:02,591 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:42:02,591 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:42:02,591 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:42:02,596 - INFO - TASK - Confirmado 29
 2025-05-25 01:42:02,596 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (30): f0b5a5/2f8b1c
-2025-05-25 01:42:02,597 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:42:02,597 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:42:02,597 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:42:02,598 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:42:02,598 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:42:02,603 - INFO - TASK - Confirmado 30
 2025-05-25 01:42:02,625 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:42:06,044 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
@@ -515,172 +241,40 @@
 2025-05-25 01:42:19,682 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 1506c7/c16a93
 2025-05-25 01:42:19,682 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 1506c7/2c80c2
 2025-05-25 01:42:19,682 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 1506c7/4e35e0
-2025-05-25 01:42:19,682 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
 2025-05-25 01:42:19,682 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 1506c7/487f92
-2025-05-25 01:42:19,682 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
 2025-05-25 01:42:19,682 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 1506c7/940605
-2025-05-25 01:42:19,683 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:42:19,683 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:42:19,683 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:42:19,683 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:42:19,684 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:42:19,684 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:42:19,684 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:42:19,684 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,689 - INFO - TASK - Confirmado 31
 2025-05-25 01:42:19,689 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (32): 1506c7/4f37b9
-2025-05-25 01:42:19,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:42:19,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:42:19,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:42:19,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:42:19,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:42:19,690 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:42:19,691 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:42:19,691 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:42:19,691 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:42:19,691 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,696 - INFO - TASK - Confirmado 32
 2025-05-25 01:42:19,697 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (33): 1506c7/4e85cb
-2025-05-25 01:42:19,697 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
-2025-05-25 01:42:19,697 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-05-25 01:42:19,698 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-05-25 01:42:19,698 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-05-25 01:42:19,698 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-05-25 01:42:19,698 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-05-25 01:42:19,698 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-05-25 01:42:19,699 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-05-25 01:42:19,699 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-05-25 01:42:19,699 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,704 - INFO - TASK - Confirmado 33
 2025-05-25 01:42:19,705 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (34): 1506c7/42bb26
-2025-05-25 01:42:19,705 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:42:19,705 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:42:19,705 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:42:19,706 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:42:19,706 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:42:19,706 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:42:19,706 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:42:19,706 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:42:19,706 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:42:19,707 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:42:19,707 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:42:19,707 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,712 - INFO - TASK - Confirmado 34
 2025-05-25 01:42:19,713 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (35): 1506c7/b9ea6d
-2025-05-25 01:42:19,714 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:42:19,714 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:42:19,714 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:42:19,714 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:42:19,714 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:42:19,715 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,716 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:42:19,720 - INFO - TASK - Confirmado 35
 2025-05-25 01:42:19,720 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (36): 1506c7/839b9f
-2025-05-25 01:42:19,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:42:19,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:42:19,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:42:19,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:42:19,721 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,726 - INFO - TASK - Confirmado 36
 2025-05-25 01:42:19,726 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (37): 1506c7/7e10ee
-2025-05-25 01:42:19,727 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:42:19,727 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:42:19,727 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:42:19,727 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:42:19,727 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:42:19,728 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,734 - INFO - TASK - Confirmado 37
 2025-05-25 01:42:19,734 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (38): 1506c7/c16a93
-2025-05-25 01:42:19,735 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:42:19,735 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:42:19,735 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:42:19,736 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,741 - INFO - TASK - Confirmado 38
 2025-05-25 01:42:19,741 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (39): 1506c7/2c80c2
-2025-05-25 01:42:19,742 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:42:19,742 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:42:19,742 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:42:19,742 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:42:19,742 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,747 - INFO - TASK - Confirmado 39
 2025-05-25 01:42:19,748 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (40): 1506c7/4e35e0
-2025-05-25 01:42:19,748 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
-2025-05-25 01:42:19,748 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-05-25 01:42:19,748 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-05-25 01:42:19,749 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-05-25 01:42:19,749 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,753 - INFO - TASK - Confirmado 40
 2025-05-25 01:42:19,754 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (41): 1506c7/487f92
-2025-05-25 01:42:19,754 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:42:19,754 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:42:19,754 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:42:19,755 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,760 - INFO - TASK - Confirmado 41
 2025-05-25 01:42:19,760 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (42): 1506c7/940605
-2025-05-25 01:42:19,761 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
-2025-05-25 01:42:19,761 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-05-25 01:42:19,761 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-05-25 01:42:19,761 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-05-25 01:42:19,762 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
 2025-05-25 01:42:19,768 - INFO - TASK - Confirmado 42
 2025-05-25 01:42:23,126 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': a05780/c76de8
 2025-05-25 01:42:23,126 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': a05780/990463
 2025-05-25 01:42:23,126 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': a05780/915c21
 2025-05-25 01:42:23,127 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (43): a05780/c76de8
-2025-05-25 01:42:23,127 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:42:23,127 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:42:23,127 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:42:23,127 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:42:23,128 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:42:23,132 - INFO - TASK - Confirmado 43
 2025-05-25 01:42:23,132 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (44): a05780/990463
-2025-05-25 01:42:23,133 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:42:23,133 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:42:23,133 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:42:23,133 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:42:23,134 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:42:23,139 - INFO - TASK - Confirmado 44
 2025-05-25 01:42:23,140 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (45): a05780/915c21
-2025-05-25 01:42:23,140 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
-2025-05-25 01:42:23,140 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-05-25 01:42:23,140 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-05-25 01:42:23,141 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-05-25 01:42:23,141 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
 2025-05-25 01:42:23,146 - INFO - TASK - Confirmado 45
 2025-05-25 01:42:23,162 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
 2025-05-25 01:42:26,581 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}

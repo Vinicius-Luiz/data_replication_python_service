@@ -14,10 +14,11 @@ from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Tasks.Exceptions.Exception import *
 from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Filters.Filter import Filter
-from typing import List, Dict, Optional
 from trempy.Tables.Table import Table
+from typing import List, Optional
 import polars as pl
 import re
+import os
 
 
 logger = ReplicationLogger()
@@ -96,6 +97,11 @@ class Task:
 
         self.source_full_load_already_done = False
         self.target_full_load_already_done = False
+
+        if self.replication_type.value == "full_load_and_cdc" and not self.target_full_load_already_done:
+            os.environ["REPLICATION_TYPE"] = "full_load"
+        else:
+            os.environ["REPLICATION_TYPE"] = "cdc"
 
         self.__validate()
 
@@ -218,7 +224,7 @@ class Task:
                 for table in sorted(self.tables, key=lambda x: x.priority.value):
                     logger.info(
                         f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}",
-                        required_types=["full_load_and_cdc", "full_load"],
+                        required_types=["full_load"],
                     )
                     table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
                     table_source_stats = self.source_endpoint.get_full_load_from_table(
@@ -263,7 +269,7 @@ class Task:
 
                     logger.info(
                         f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}",
-                        required_types=["full_load_and_cdc", "full_load"],
+                        required_types=["full_load"],
                     )
                     full_load_stats = self.target_endpoint.insert_full_load_into_table(
                         table=table,
