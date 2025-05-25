@@ -1,4 +1,4 @@
 - estudar novo modo de leitura de slot_replication
-[OK] - adicionar tipo de tarefa full_load & cdc
+- mover mensagens do dlx para sqlite
 - eu preciso saber quantas operações serão enviadas no publish
     - colocar no Metadata sqlite
