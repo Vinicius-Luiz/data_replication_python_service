@@ -1,4 +1,4 @@
 - estudar novo modo de leitura de slot_replication
-- adicionar tipo de tarefa full_load & cdc
+[OK] - adicionar tipo de tarefa full_load & cdc
 - eu preciso saber quantas operações serão enviadas no publish
     - colocar no Metadata sqlite
