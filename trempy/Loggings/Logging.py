@@ -46,6 +46,7 @@ class ReplicationLogger:
             filename="app.log",
             level=logging_level,
             format="%(asctime)s - %(levelname)s - %(message)s",
+            encoding="utf-8",
         )
 
         logging.getLogger("pika").setLevel(logging.WARNING)

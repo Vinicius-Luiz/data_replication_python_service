@@ -165,7 +165,7 @@ class FullLoadHandler:
 
                 return {
                     **full_load_stats,
-                    "success": True,
+                    "success": 1,
                     "time_elapsed": Utils.format_time_elapsed(time() - initial_time)
                 }
         except Exception as e:

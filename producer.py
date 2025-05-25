@@ -8,6 +8,7 @@ from trempy.Tasks.Task import Task
 ReplicationLogger.configure_logging()
 
 task: Task = Utils.read_task_pickle()
+task.verify_current_replication_type()
 
 source_endpoint = EndpointFactory.create_endpoint(**credentials.get("source_endpoint"))
 task.add_endpoint(source_endpoint)

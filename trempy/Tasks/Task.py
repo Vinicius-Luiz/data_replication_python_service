@@ -98,11 +98,6 @@ class Task:
         self.source_full_load_already_done = False
         self.target_full_load_already_done = False
 
-        if self.replication_type.value == "full_load_and_cdc" and not self.target_full_load_already_done:
-            os.environ["REPLICATION_TYPE"] = "full_load"
-        else:
-            os.environ["REPLICATION_TYPE"] = "cdc"
-
         self.__validate()
 
     def __validate(self) -> None:
@@ -480,3 +475,9 @@ class Task:
                 f"Erro ao adicionar filtro: {e}", f"{schema_name}.{table_name}"
             )
             logger.critical(e)
+
+    def verify_current_replication_type(self) -> None:
+            if self.replication_type.value == "full_load_and_cdc" and not self.target_full_load_already_done:
+                os.environ["REPLICATION_TYPE"] = "full_load"
+            else:
+                os.environ["REPLICATION_TYPE"] = "cdc"

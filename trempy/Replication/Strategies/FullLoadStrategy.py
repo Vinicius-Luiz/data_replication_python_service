@@ -23,7 +23,7 @@ class FullLoadStrategy(ReplicationStrategy):
 
         Utils.write_task_pickle(task)
 
-        logger.info("CDC STRATEGY - Criando tabelas de metadata")
+        logger.info("FULL LOAD STRATEGY - Criando tabelas de metadata")
         with MetadataConnectionManager() as metadata_manager:
             metadata_manager.create_tables()
 
