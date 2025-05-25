@@ -11,7 +11,7 @@ logger = ReplicationLogger()
 class MetadataConnectionManager:
     """Gerenciador de conexão com o banco de dados SQLite para metadados de replicação."""
 
-    TABLES_METADATA = ["stats_cdc", "stats_full_load"]
+    TABLES_METADATA = ["stats_cdc", "stats_full_load", "stats_source_tables"]
 
     STATS_CDC_REQUIRED_COLUMNS = [
         "task_name",
@@ -33,6 +33,15 @@ class MetadataConnectionManager:
         "time_elapsed",
     ]
 
+    STATS_SOURCE_TABLES_REQUIRED_COLUMNS = [
+        "task_name",
+        "schema_name",
+        "table_name",
+        "rowcount",
+        "statusmessage",
+        "time_elapsed",
+    ]
+
     def __init__(self, db_name: str = "trempy.db"):
         """
         Inicializa a conexão com o banco de dados e cria as tabelas necessárias se não existirem.
@@ -51,12 +60,14 @@ class MetadataConnectionManager:
 
             cursor.execute(Query.SQL_CREATE_STATS_FULL_LOAD)
 
+            cursor.execute(Query.SQL_CREATE_STATS_SOURCE_TABLES)
+
             self.connection.commit()
         except Exception as e:
             e = CreateTableError(f"Erro ao criar as tabelas de metadados: {e}")
             logger.critical(e)
 
-    def insert_cdc_stats(self, data: Dict, **kargs) -> None:
+    def insert_stats_cdc(self, data: Dict, **kargs) -> None:
         """
         Insere dados na tabela stats_cdc.
 
@@ -89,10 +100,11 @@ class MetadataConnectionManager:
                 ),
             )
             self.connection.commit()
-        except InsertStatsError as e:
-            logger.critical(f"Erro ao inserir dados na tabela stats_cdc: {e}")
+        except Exception as e:
+            e = InsertStatsError(f"Erro ao inserir dados na tabela stats_cdc: {e}")
+            logger.critical(e)
 
-    def insert_full_load_stats(self, data: Dict, **kargs) -> None:
+    def insert_stats_full_load(self, data: Dict, **kargs) -> None:
         """
         Insere dados na tabela stats_full_load.
 
@@ -106,7 +118,7 @@ class MetadataConnectionManager:
             data = {**data, **kargs}
             if not all(key in data for key in self.STATS_FULL_LOAD_REQUIRED_COLUMNS):
                 e = RequiredColumnsError(
-                    f"Data must contain all required keys: {self.STATS_FULL_LOAD_REQUIRED_COLUMNS}"
+                    f"Data must contain all required keys: {self.STATS_SOURCE_TABLES_REQUIRED_COLUMNS}"
                 )
                 logger.critical(e)
 
@@ -127,21 +139,56 @@ class MetadataConnectionManager:
         except InsertStatsError as e:
             logger.critical(f"Erro ao inserir dados na tabela stats_full_load: {e}")
 
+    def insert_stats_source_tables(self, data: Dict, **kargs) -> None:
+        """
+        Insere dados na tabela stats_source_tables.
+
+        Args:
+            data: Dicionário com os dados a serem inseridos.
+                Deve conter as chaves: task_name, schema_name, table_name.
+        """
+
+        try:
+            data = {**data, **kargs}
+            if not all(
+                key in data for key in self.STATS_SOURCE_TABLES_REQUIRED_COLUMNS
+            ):
+                e = RequiredColumnsError(
+                    f"Data must contain all required keys: {self.STATS_FULL_LOAD_REQUIRED_COLUMNS}"
+                )
+                logger.critical(e)
+
+            cursor = self.connection.cursor()
+            cursor.execute(
+                Query.SQL_INSERT_STATS_SOURCE_TABLES,
+                (
+                    data["task_name"],
+                    data["schema_name"],
+                    data["table_name"],
+                    data["rowcount"],
+                    data["statusmessage"],
+                    data["time_elapsed"],
+                ),
+            )
+            self.connection.commit()
+        except InsertStatsError as e:
+            logger.critical(f"Erro ao inserir dados na tabela stats_source_tables: {e}")
+
     def get_stats(
         self,
         metadata_table_name: str,
         task_name: Optional[str] = None,
-        table_name: Optional[str] = None,
         schema_name: Optional[str] = None,
+        table_name: Optional[str] = None,
     ) -> pl.DataFrame:
         """
         Obtém estatísticas de uma tabela com filtros opcionais.
 
         Args:
-            table_name: Nome da tabela de estatísticas ('stats_cdc' ou 'stats_full_load').
+            metadata_table_name: Nome da tabela de estatísticas ('stats_cdc', 'stats_full_load' ou 'stats_source_tables').
             task_name: Nome da tarefa para filtrar (opcional).
             schema_name: Nome do schema para filtrar (opcional).
-            table: Nome da tabela para filtrar (opcional).
+            table_name: Nome da tabela para filtrar (opcional).
 
         Returns:
             DataFrame contendo as estatísticas filtradas.

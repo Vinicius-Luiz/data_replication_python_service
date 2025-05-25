@@ -144,14 +144,14 @@ class CDCManager:
                 exists_replication_slot = exists_replication_slot[0]
 
                 if not exists_replication_slot:
-                    logger.info(f"ENDPOINT - Criando slot de replicação {slot_name}", required_types='cdc')
+                    logger.info(f"ENDPOINT - Criando slot de replicação {slot_name}", required_types=["full_load_and_cdc", "cdc"])
                     cursor.execute(
                         ReplicationQueriesPostgreSQL.CREATE_REPLICATION_SLOT,
                         (slot_name,),
                     )
         except Exception as e:
             e = CaptureChangesError(f"Erro ao criar slot de replicação: {e}", slot_name)
-            logger.critical(e, required_types='cdc')
+            logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
 
         try:
             with self.connection_manager.cursor() as cursor:
@@ -167,7 +167,7 @@ class CDCManager:
 
         except Exception as e:
             e = CaptureChangesError(f"Erro ao ler slot de replicação: {e}", slot_name)
-            logger.critical(e, required_types='cdc')
+            logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
 
     def structure_capture_changes_to_json(
         self, df_changes_captured: pl.DataFrame, task_tables: List[Table], **kargs
@@ -255,7 +255,7 @@ class CDCManager:
             e = StructureCaptureChangesToJsonError(
                 f"Erro ao estruturar as mudanças para json: {e}"
             )
-            logger.critical(e, required_types='cdc')
+            logger.critical(e, required_types=["full_load_and_cdc", "cdc"])
 
     def structure_capture_changes_to_dataframe(self, changes_structured: dict) -> dict:
         """
@@ -340,4 +340,4 @@ class CDCManager:
             e = StructureCaptureChangesToDataFrameError(
                 f"Erro ao estruturar as mudanças para dataframe: {e}"
             )
-            logger.critical(e, required_types='cdc')
+            logger.critical(e, required_types=["full_load_and_cdc", "cdc"])

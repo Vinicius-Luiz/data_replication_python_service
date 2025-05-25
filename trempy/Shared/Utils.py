@@ -40,3 +40,15 @@ class Utils:
         """
 
         return uuid.uuid4().hex[:6].lower()
+    
+    from time import time
+
+    @staticmethod
+    def format_time_elapsed(seconds_float: float) -> str:
+        """Formata um tempo em segundos (float) para HH:MM:SS (string)."""
+        seconds = int(round(seconds_float))  # Arredonda para inteiro
+        hours = seconds // 3600
+        remaining_seconds = seconds % 3600
+        minutes = remaining_seconds // 60
+        seconds_remaining = remaining_seconds % 60
+        return f"{hours:02d}:{minutes:02d}:{seconds_remaining:02d}"

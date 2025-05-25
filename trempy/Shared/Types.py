@@ -8,6 +8,7 @@ class EndpointType(Enum):
     TARGET = 'target'
 
 class TaskType(Enum):
+    FULL_LOAD_AND_CDC = 'full_load_and_cdc'
     FULL_LOAD = 'full_load'
     CDC = 'cdc'
 

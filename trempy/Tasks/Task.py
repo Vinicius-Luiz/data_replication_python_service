@@ -8,6 +8,8 @@ from trempy.Shared.Types import (
 from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Transformations.Transformation import Transformation
 from pika.adapters.blocking_connection import BlockingChannel
+from trempy.Messages.MessageProducer import MessageProducer
+from trempy.Messages.MessageConsumer import MessageConsumer
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Tasks.Exceptions.Exception import *
 from trempy.Endpoints.Endpoint import Endpoint
@@ -92,6 +94,9 @@ class Task:
 
         self.filters = []
 
+        self.source_full_load_already_done = False
+        self.target_full_load_already_done = False
+
         self.__validate()
 
     def __validate(self) -> None:
@@ -126,126 +131,29 @@ class Task:
 
         logger.info(f"TASK -  {self.task_name} válido")
 
-    def __execute_source_full_load(self) -> dict:
+    def __find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
-        Executa a extração completa de dados da fonte em Full Load.
+        Busca e retorna uma tabela específica na lista de tabelas da tarefa atual.
 
-        Percorre todas as tabelas especificadas na tarefa e executa a extração completa
-        de dados para cada uma delas. A extração utiliza o método get_full_load_from_table
-        da classe Endpoint, que pode ser implementado de acordo com a tecnologia do
-        banco de dados.
+        Realiza uma busca exata (case-sensitive) pelo par (schema_name, table_name) na lista
+        de tabelas associadas à tarefa. A comparação considera espaços e caracteres especiais.
 
-        A extração completa de dados é realizada em paralelo para todas as tabelas
-        especificadas.
+        Args:
+            schema_name (str): Nome do esquema onde a tabela está registrada.
+            table_name (str): Nome da tabela a ser localizada.
 
         Returns:
-            dict: Resultado da operação com a seguinte estrutura:
+            Optional[Table]: O objeto Table correspondente se encontrado, None caso a tabela
+                           não exista na tarefa.
         """
 
         for table in sorted(self.tables, key=lambda x: x.priority.value):
-            logger.info(
-                f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}",
-                required_types="full_load",
-            )
-            table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
-            table_get_full_load = self.source_endpoint.get_full_load_from_table(
-                table=table
-            )
-            logger.debug(table_get_full_load)  # TODO CRIAR TABELA NO SQL3 TBM
+            if table.schema_name == schema_name and table.table_name == table_name:
+                return table
 
-        return {}
-
-    def __execute_target_full_load(self) -> None:
-        """
-        Executa a carga completa de dados no destino em Full Load.
-
-        Percorre todas as tabelas especificadas na tarefa e executa a carga completa
-        de dados para cada uma delas. A carga completa de dados é realizada em
-        paralelo para todas as tabelas especificadas.
-        """
-        try:
-            for table in sorted(self.tables, key=lambda x: x.priority.value):
-                table.data = pl.read_parquet(table.path_data)
-
-                table.execute_filters()
-                table.execute_transformations()
-
-                logger.info(
-                    f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}",
-                    required_types="full_load",
-                )
-                full_load_stats = self.target_endpoint.insert_full_load_into_table(
-                    table=table,
-                    create_table_if_not_exists=self.create_table_if_not_exists,
-                    recreate_table_if_exists=self.recreate_table_if_exists,
-                    truncate_before_insert=self.truncate_before_insert,
-                )
-
-                logger.debug(full_load_stats)
-                with MetadataConnectionManager() as metadata_manager:
-                    metadata_manager.insert_full_load_stats(
-                        full_load_stats, task_name=self.task_name
-                    )
-
-        except Exception as e:
-            e = TaskError(f"Erro ao realizar carga completa: {str(e)}")
-            logger.critical(e)
-
-    def __execute_source_cdc(self) -> List[Dict]:
-        """
-        Executa a captura de alterações no endpoint de origem em CDC.
-
-        Percorre todas as tabelas especificadas na tarefa e executa a captura
-        de alterações para cada uma delas. A captura de alterações é realizada
-        em paralelo para todas as tabelas especificadas.
-
-        Os parâmetros utilizados na captura de alterações são passados como
-        parâmetro da função, que pode variar de acordo com a tecnologia do
-        banco de dados.
-
-        Returns:
-            List[Dict]: Resultado da operação com a seguinte estrutura:
-        """
-
-        kargs = {"database_type": self.source_endpoint.database_type.value}
-
-        match self.source_endpoint.database_type:
-            case DatabaseType.POSTGRESQL:
-                kargs["slot_name"] = self.task_name
-            case _:
-                e = DatabaseNotImplementedError(
-                    "Banco de dados não implementado",
-                    self.source_endpoint.database_type,
-                )
-                logger.critical(e)
-
-        changes_captured = self.source_endpoint.capture_changes(**kargs)
-
-        changes_structured = self.source_endpoint.structure_capture_changes_to_json(
-            changes_captured, task_tables=self.tables, **kargs
-        )
-
-        return changes_structured
-
-    def __execute_target_cdc(
+    def __execute_target_cdc_callback(
         self, changes_structured: dict, channel: BlockingChannel
-    ) -> bool:
-        """
-        Executa a replicação de alterações no endpoint de destino em CDC.
-
-        Processa as alterações capturadas em um dicionário e as transforma em um dicionário
-        de DataFrames com as alterações de cada tabela separadas por schema_name e table_name.
-
-        Em seguida, realiza a inserção das alterações no endpoint de destino.
-
-        Args:
-            changes_structured (dict): Dicionário com as alterações capturadas
-            channel (BlockingChannel): Canal de mensagens para confirmar a entrega
-
-        Returns:
-            bool: True se a operação for realizada com sucesso, False caso contrário
-        """
-
+    ):
         try:
             delivery_tag = changes_structured["delivery_tag"]
 
@@ -274,37 +182,172 @@ class Task:
                         create_table_if_not_exists=self.create_table_if_not_exists,
                     )
 
-                    logger.debug(cdc_stats)
                     with MetadataConnectionManager() as metadata_manager:
-                        metadata_manager.insert_cdc_stats(
+                        metadata_manager.insert_stats_cdc(
                             cdc_stats, task_name=self.task_name
                         )
 
             channel.basic_ack(delivery_tag=delivery_tag)
             logger.info(f"TASK - Confirmado {delivery_tag}")
+
         except Exception as e:
             e = TaskError(f"Erro ao realizar carga de alterações: {str(e)}")
             logger.critical(e)
 
-    def __find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
+    def execute_source_full_load(self) -> bool:
         """
-        Busca e retorna uma tabela específica na lista de tabelas da tarefa atual.
+        Executa a extração completa de dados da fonte em Full Load.
 
-        Realiza uma busca exata (case-sensitive) pelo par (schema_name, table_name) na lista
-        de tabelas associadas à tarefa. A comparação considera espaços e caracteres especiais.
+        Percorre todas as tabelas especificadas na tarefa e executa a extração completa
+        de dados para cada uma delas. A extração utiliza o método get_full_load_from_table
+        da classe Endpoint, que pode ser implementado de acordo com a tecnologia do
+        banco de dados.
 
-        Args:
-            schema_name (str): Nome do esquema onde a tabela está registrada.
-            table_name (str): Nome da tabela a ser localizada.
+        A extração completa de dados é realizada em paralelo para todas as tabelas
+        especificadas.
 
         Returns:
-            Optional[Table]: O objeto Table correspondente se encontrado, None caso a tabela
-                           não exista na tarefa.
+            dict: Resultado da operação com a seguinte estrutura:
         """
 
-        for table in sorted(self.tables, key=lambda x: x.priority.value):
-            if table.schema_name == schema_name and table.table_name == table_name:
-                return table
+        if not self.source_full_load_already_done and self.replication_type.value in (
+            "full_load",
+            "full_load_and_cdc",
+        ):
+            try:
+                for table in sorted(self.tables, key=lambda x: x.priority.value):
+                    logger.info(
+                        f"TASK - Obtendo dados da tabela {table.target_schema_name}.{table.target_table_name}",
+                        required_types=["full_load_and_cdc", "full_load"],
+                    )
+                    table.path_data = f"{self.PATH_FULL_LOAD_STAGING_AREA}{self.task_name}_{table.target_schema_name}_{table.target_table_name}.parquet"
+                    table_source_stats = self.source_endpoint.get_full_load_from_table(
+                        table=table
+                    )
+                    logger.debug(table_source_stats)
+                    with MetadataConnectionManager() as metadata_manager:
+                        metadata_manager.insert_stats_source_tables(
+                            table_source_stats, task_name=self.task_name
+                        )
+
+                self.source_full_load_already_done = True
+
+            except Exception as e:
+                e = TaskError(f"Erro ao executar carga completa da fonte: {e}")
+                logger.critical(e)
+
+            return True
+
+        return False
+
+    def execute_target_full_load(self) -> bool:
+        """
+        Executa a carga completa de dados no destino em Full Load.
+
+        Percorre todas as tabelas especificadas na tarefa e executa a carga completa
+        de dados para cada uma delas. A carga completa de dados é realizada em
+        paralelo para todas as tabelas especificadas.
+        """
+
+        if not self.target_full_load_already_done and self.replication_type.value in (
+            "full_load",
+            "full_load_and_cdc",
+        ):
+
+            try:
+                for table in sorted(self.tables, key=lambda x: x.priority.value):
+                    table.data = pl.read_parquet(table.path_data)
+
+                    table.execute_filters()
+                    table.execute_transformations()
+
+                    logger.info(
+                        f"TASK - Realizando carga completa da tabela {table.target_schema_name}.{table.target_table_name}",
+                        required_types=["full_load_and_cdc", "full_load"],
+                    )
+                    full_load_stats = self.target_endpoint.insert_full_load_into_table(
+                        table=table,
+                        create_table_if_not_exists=self.create_table_if_not_exists,
+                        recreate_table_if_exists=self.recreate_table_if_exists,
+                        truncate_before_insert=self.truncate_before_insert,
+                    )
+
+                    logger.debug(full_load_stats)
+                    with MetadataConnectionManager() as metadata_manager:
+                        metadata_manager.insert_stats_full_load(
+                            full_load_stats, task_name=self.task_name
+                        )
+
+                    table.data = pl.DataFrame()
+
+                self.target_full_load_already_done = True
+
+            except Exception as e:
+                e = TaskError(f"Erro ao realizar carga completa: {str(e)}")
+                logger.critical(e)
+
+            return True
+
+        return False
+
+    def execute_source_cdc(self) -> bool:
+        if self.replication_type.value in (
+            "cdc",
+            "full_load_and_cdc",
+        ):
+
+            try:
+                kargs = {"database_type": self.source_endpoint.database_type.value}
+
+                match self.source_endpoint.database_type:
+                    case DatabaseType.POSTGRESQL:
+                        kargs["slot_name"] = self.task_name
+                    case _:
+                        e = DatabaseNotImplementedError(
+                            "Banco de dados não implementado",
+                            self.source_endpoint.database_type,
+                        )
+                        logger.critical(e)
+
+                changes_captured = self.source_endpoint.capture_changes(**kargs)
+
+                changes_structured = (
+                    self.source_endpoint.structure_capture_changes_to_json(
+                        changes_captured, task_tables=self.tables, **kargs
+                    )
+                )
+
+                if changes_structured:
+                    producer = MessageProducer(task_name=self.task_name)
+                    producer.publish_message(messages=changes_structured)
+
+            except Exception as e:
+                e = TaskError(f"Erro ao executar captura de alterações: {e}")
+                logger.critical(e)
+
+            return True
+
+        return False
+
+    def execute_target_cdc(self) -> bool:
+        if self.replication_type.value in (
+            "cdc",
+            "full_load_and_cdc",
+        ):
+            try:
+                consumer = MessageConsumer(
+                    task_name=self.task_name,
+                    external_callback=self.__execute_target_cdc_callback,
+                )
+                consumer.start_consuming()
+
+            except Exception as e:
+                e = TaskError(f"Erro ao realizar carga de alterações: {str(e)}")
+                logger.critical(e)
+
+            return True
+
+        return False
 
     def clean_endpoints(self) -> None:
         """
@@ -431,44 +474,3 @@ class Task:
                 f"Erro ao adicionar filtro: {e}", f"{schema_name}.{table_name}"
             )
             logger.critical(e)
-
-    def execute_source(self) -> dict:
-        """
-        Executa a tarefa de extração de dados da fonte.
-
-        Dependendo do tipo de replicação, chama o método específico para extração de
-        dados em Full Load ou CDC.
-
-        Returns:
-            dict: Resultado da operação com a seguinte estrutura:
-        """
-
-        match self.replication_type:
-            case TaskType.FULL_LOAD:
-                return self.__execute_source_full_load()
-            case TaskType.CDC:
-                return self.__execute_source_cdc()
-
-    def execute_target(self, **kargs) -> dict:
-        """
-        Executa a tarefa de carregamento de dados no destino.
-
-        Args:
-            changes_structured (bool): Retorna as mudanças capturadas no banco de dados de origem
-            channel (BlockingChannel): Canal de comunicação com o RabbitMQ
-
-        Dependendo do tipo de replicação, chama o método específico para carregamento de
-        dados em Full Load ou CDC.
-
-        Returns:
-            dict: Resultado da operação com a seguinte estrutura:
-        """
-
-        match self.replication_type:
-            case TaskType.FULL_LOAD:
-                return self.__execute_target_full_load()
-            case TaskType.CDC:
-                return self.__execute_target_cdc(
-                    changes_structured=kargs.get("changes_structured"),
-                    channel=kargs.get("channel"),
-                )

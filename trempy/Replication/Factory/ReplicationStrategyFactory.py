@@ -1,3 +1,4 @@
+from trempy.Replication.Strategies.CompositeReplicationStrategy import CompositeReplicationStrategy
 from trempy.Replication.Strategies.FullLoadStrategy import FullLoadStrategy
 from trempy.Replication.Strategies.CDCStrategy import CDCStrategy
 from trempy.Replication.Exceptions.Exception import *
@@ -20,7 +21,7 @@ class ReplicationStrategyFactory:
 
         Returns:
             ReplicationStrategy: Instância da estratégia de replicação correspondente ao modo.
-
+S
         Raises:
             ValueError: Quando o modo especificado não é suportado.
         """
@@ -28,6 +29,11 @@ class ReplicationStrategyFactory:
             return FullLoadStrategy()
         elif mode == TaskType.CDC:
             return CDCStrategy(interval_seconds=kwargs.get("interval_seconds"))
+        elif mode == TaskType.FULL_LOAD_AND_CDC:
+            return CompositeReplicationStrategy(
+                FullLoadStrategy(),
+                CDCStrategy(interval_seconds=kwargs.get("interval_seconds")),
+            )
         else:
             e = NotSupportedReplicationTypeError(
                 "Modo de replicação não suportado", mode

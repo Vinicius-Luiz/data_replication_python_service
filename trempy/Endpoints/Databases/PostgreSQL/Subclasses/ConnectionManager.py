@@ -15,7 +15,7 @@ class ConnectionManager:
         finally:
             del temp_credentials
 
-        logger.debug(self.connection.get_dsn_parameters(), required_types="full_load")
+        logger.debug(self.connection.get_dsn_parameters(), required_types=["full_load"])
 
     def __connect(self, credentials: dict) -> psycopg2.extensions.connection:
         """

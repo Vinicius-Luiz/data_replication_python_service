@@ -37,7 +37,7 @@ class EndpointFactory:
         endpoint_type = EndpointType(endpoint_type)
 
         logger.info(
-            f"ENDPOINT FACTORY - Conectando ao banco de dados {endpoint_name} como {endpoint_type.name}", required_types="full_load"
+            f"ENDPOINT FACTORY - Conectando ao banco de dados {endpoint_name} como {endpoint_type.name}", required_types=["full_load"]
         )
         if database_type == DatabaseType.POSTGRESQL:
             return EndpointPostgreSQL(

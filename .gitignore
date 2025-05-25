@@ -172,4 +172,4 @@ cython_debug/
 
 # Personalizado
 tst.py
-data/*/stats/*.parquet
+data/*/*/*.parquet

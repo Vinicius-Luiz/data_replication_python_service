@@ -21,13 +21,21 @@ class CDCStrategy(ReplicationStrategy):
     def __init__(self, interval_seconds: int):
         self.interval_seconds = interval_seconds
 
-    def __setup_environment(self, task: Task) -> None:
+    def __setup_environment(self, task_settings: dict) -> None:
         """Configura o ambiente para execução."""
-        Utils.write_task_pickle(task)
+        try:
+            task = Utils.read_task_pickle()
+        except FileNotFoundError:
+            task = self.create_task(task_settings)
+            
+        if not task.source_full_load_already_done:
+            self.reload_task(task)
 
-        logger.info("CDC STRATEGY - Criando tabelas de metadata")
-        with MetadataConnectionManager() as metadata_manager:
-            metadata_manager.create_tables()
+            Utils.write_task_pickle(task)
+
+            logger.info("CDC STRATEGY - Criando tabelas de metadata")
+            with MetadataConnectionManager() as metadata_manager:
+                metadata_manager.create_tables()
 
         logger.info(
             f"CDC STRATEGY - Iniciando CDC com intervalo de {self.interval_seconds}s"
@@ -91,17 +99,17 @@ class CDCStrategy(ReplicationStrategy):
         self.consumer_process.kill()
         sys.exit(1)
 
-    def execute(self, task: Task) -> None:
+    def execute(self, task_settings: dict) -> None:
         """
         Executa a estratégia CDC em loop até interrupção.
 
         Args:
-            task (Task): Configuração da tarefa de replicação.
+            task_settings (dict): Configuração da tarefa de replicação.
 
         Raises:
             SystemExit: Em caso de falha nos processos ou interrupção.
         """
-        self.__setup_environment(task)
+        self.__setup_environment(task_settings)
 
         self.__start_dlx()
         self.__start_consumer()

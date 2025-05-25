@@ -7,6 +7,7 @@ from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
 from trempy.Shared.Queries.QueryPostgreSQL import (
     FullLoadQueries as FullLoadQueriesPostgreSQL,
 )  #  TODO eu preciso saber qual é o tipo de endpoint correto
+from trempy.Shared.Utils import Utils
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
 from psycopg2.extras import execute_values
@@ -113,10 +114,11 @@ class FullLoadHandler:
                 df.write_parquet(table.path_data)
 
                 return {
-                    "success": True,
+                    "schema_name": table.schema_name,
+                    "table_name": table.table_name,
                     "rowcount": cursor.rowcount,
                     "statusmessage": cursor.statusmessage,
-                    "time_elapsed": f"{time() - initial_time:.2f}s",
+                    "time_elapsed": Utils.format_time_elapsed(time() - initial_time)
                 }
         except Exception as e:
             e = EndpointError(f"Erro ao obter a carga completa: {e}")
@@ -164,7 +166,7 @@ class FullLoadHandler:
                 return {
                     **full_load_stats,
                     "success": True,
-                    "time_elapsed": f"{time() - initial_time:.2f}s",
+                    "time_elapsed": Utils.format_time_elapsed(time() - initial_time)
                 }
         except Exception as e:
             self.connection_manager.rollback()

@@ -21,3 +21,8 @@ with MetadataConnectionManager() as metadata_manager:
 with MetadataConnectionManager() as metadata_manager:
     df = metadata_manager.get_stats("stats_full_load")
     print(df.head(100000))
+
+
+with MetadataConnectionManager() as metadata_manager:
+    df = metadata_manager.get_stats("stats_source_tables")
+    print(df.head(100000))
