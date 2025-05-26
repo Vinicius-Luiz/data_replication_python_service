@@ -1,3 +1,4 @@
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from pika.adapters.blocking_connection import BlockingChannel
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Messages.Exceptions.Exception import *
@@ -61,13 +62,17 @@ class MessageConsumer(Message):
                 auto_ack=self.auto_ack,
                 on_message_callback=self.__callback,
             )
-        
+
         except Exception as e:
-            e =  MessageConsumerException(f"Erro ao configurar o consumidor de mensagens: {str(e)}")
+            e = MessageConsumerException(
+                f"Erro ao configurar o consumidor de mensagens: {str(e)}"
+            )
             logger.critical(e)
 
     def delete_queue(self):
-        self.channel.queue_delete(queue=self.queue_name, if_unused=False, if_empty=False)
+        self.channel.queue_delete(
+            queue=self.queue_name, if_unused=False, if_empty=False
+        )
 
     def __callback(
         self,
@@ -78,14 +83,24 @@ class MessageConsumer(Message):
     ) -> None:
 
         try:
-            message: dict = json.loads(body.decode())
-            
-            logger.info(f"MESSAGE - Recebido: ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}")
+            with MetadataConnectionManager() as metadata_manager:
+                message: dict = json.loads(body.decode())
+                metadata_manager.update_stats_message(
+                    {
+                        "transaction_id": properties.headers.get("transaction_id"),
+                        "column": "received",
+                        "value": message.get("batch_size"),
+                    }
+                )
+                logger.info(
+                    f"MESSAGE - Recebido: ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}"
+                )
 
-            message["delivery_tag"] = method.delivery_tag
+                message["delivery_tag"] = method.delivery_tag
+                message["transaction_id"] = properties.headers.get("transaction_id")
 
-            if self.external_callback:
-                self.external_callback(message, ch)
+                if self.external_callback:
+                    self.external_callback(message, ch)
 
         except Exception as e:
             e = MessageConsumerException(f"Erro ao processar mensagem: {str(e)}")

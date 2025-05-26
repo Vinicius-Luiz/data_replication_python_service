@@ -16,6 +16,8 @@ class Message:
         exchange_type: str = "direct",
         durable: bool = True,
     ):
+        self.task_name = task_name
+
         self.dlx_exchange_name = self.DLX_EXCHANGE_NAME_PATTERN.format(
             task_name=task_name
         )

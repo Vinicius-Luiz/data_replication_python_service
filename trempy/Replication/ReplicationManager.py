@@ -1,3 +1,4 @@
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
@@ -62,6 +63,8 @@ class ReplicationManager:
             start_mode = task_settings["task"]["start_mode"]
             task_name = task_settings["task"]["task_name"]
 
+            with MetadataConnectionManager() as metadata_manager:
+                metadata_manager.create_tables()
             if start_mode == "reload":
                 strategy.reload_task(task_name)
 

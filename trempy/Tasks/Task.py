@@ -126,7 +126,7 @@ class Task:
             e = InvalidTaskNameError("Nome da tarefa inválido", self.task_name)
             logger.critical(e)
 
-        logger.info(f"TASK -  {self.task_name} válido")
+        logger.info(f"TASK - {self.task_name} válido")
 
     def __find_table(self, schema_name: str, table_name: str) -> Optional[Table]:
         """
@@ -153,6 +153,7 @@ class Task:
     ):
         try:
             delivery_tag = changes_structured["delivery_tag"]
+            transaction_id = changes_structured["transaction_id"]
 
             try:
                 df_changes_structured: dict = (
@@ -183,12 +184,19 @@ class Task:
                         metadata_manager.insert_stats_cdc(
                             cdc_stats, task_name=self.task_name
                         )
-
             channel.basic_ack(delivery_tag=delivery_tag)
-            logger.info(f"TASK - Confirmado {delivery_tag}")
+            with MetadataConnectionManager() as metadata_manager:
+                metadata_manager.update_stats_message(
+                    {
+                        "transaction_id": transaction_id,
+                        "column": "processed",
+                        "value": changes_structured["batch_size"],
+                    }
+                )
+            logger.info(f"TASK - Confirmado ({delivery_tag})")
 
         except Exception as e:
-            e = TaskError(f"Erro ao realizar carga de alterações: {str(e)}")
+            e = TaskError(f"Erro ao realizar carga de alterações no callback: {str(e)}")
             logger.critical(e)
 
     def execute_source_full_load(self) -> bool:
@@ -281,7 +289,7 @@ class Task:
 
             with MetadataConnectionManager() as metadata_manager:
                 metadata_manager.update_metadata_config({"FULL_LOAD_FINISHED": 1})
-                
+
             return True
 
         return False

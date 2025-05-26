@@ -144,7 +144,10 @@ class CDCManager:
                 exists_replication_slot = exists_replication_slot[0]
 
                 if not exists_replication_slot:
-                    logger.info(f"ENDPOINT - Criando slot de replicação {slot_name}", required_types=["cdc"])
+                    logger.info(
+                        f"ENDPOINT - Criando slot de replicação {slot_name}",
+                        required_types=["cdc"],
+                    )
                     cursor.execute(
                         ReplicationQueriesPostgreSQL.CREATE_REPLICATION_SLOT,
                         (slot_name,),
@@ -171,7 +174,7 @@ class CDCManager:
 
     def structure_capture_changes_to_json(
         self, df_changes_captured: pl.DataFrame, task_tables: List[Table], **kargs
-    ) -> List[Dict]:
+    ) -> Dict:
         """
         Processa as mudanças capturadas em um dataframe e as transforma em um dicionário
         com as alterações de cada tabela separadas por schema_name e table_name.
@@ -218,7 +221,14 @@ class CDCManager:
                             filtered_changes_structured.append(row)
 
             if filtered_changes_structured:
-                list_changes_structured = []
+                qtd_changes = len(filtered_changes_structured)
+                json_changes_structured = {
+                    "source_database_type": source_database_type,
+                    "qtd_changes": qtd_changes,
+                    "transaction_id": id,
+                    "created_at": created_at,
+                    "changes": [],
+                }
 
                 batch_page = 0
                 batch_index_start = 0
@@ -233,13 +243,10 @@ class CDCManager:
                     if not batch_changes_structured:
                         break
 
-                    list_changes_structured.append(
+                    json_changes_structured["changes"].append(
                         {
-                            "source_database_type": source_database_type,
-                            "id": id,
                             "batch_page": batch_page,
-                            "batch_size": self.batch_cdc_size,
-                            "created_at": created_at,
+                            "batch_size": len(batch_changes_structured),
                             "operations": batch_changes_structured,
                         }
                     )
@@ -247,7 +254,7 @@ class CDCManager:
                     batch_page += 1
                     batch_index_start = batch_index_end
 
-                return list_changes_structured
+                return json_changes_structured
 
             return []
 

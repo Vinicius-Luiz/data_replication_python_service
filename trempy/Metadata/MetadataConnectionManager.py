@@ -11,7 +11,13 @@ logger = ReplicationLogger()
 class MetadataConnectionManager:
     """Gerenciador de conexão com o banco de dados SQLite para metadados de replicação."""
 
-    TABLES_METADATA = ["stats_cdc", "stats_full_load", "stats_source_tables", "metadata_table"]
+    TABLES_METADATA = [
+        "stats_cdc",
+        "stats_full_load",
+        "stats_source_tables",
+        "stats_message",
+        "metadata_table",
+    ]
 
     STATS_CDC_REQUIRED_COLUMNS = [
         "task_name",
@@ -44,14 +50,11 @@ class MetadataConnectionManager:
 
     STATS_MESSAGE_REQUIRED_COLUMNS = [
         "task_name",
-        "schema_name",
-        "table_name",
         "transaction_id",
-        "message_id",
         "quantity_operations",
         "published",
         "received",
-        "acked",
+        "processed",
     ]
 
     def __init__(self, db_name: str = "trempy.db"):
@@ -201,25 +204,17 @@ class MetadataConnectionManager:
 
         try:
             data = {**data, **kargs}
-            if not all(key in data for key in self.STATS_MESSAGE_REQUIRED_COLUMNS):
-                e = RequiredColumnsError(
-                    f"Data must contain all required keys: {self.STATS_MESSAGE_REQUIRED_COLUMNS}"
-                )
-                logger.critical(e)
 
             cursor = self.connection.cursor()
             cursor.execute(
                 Query.SQL_INSERT_STATS_MESSAGE,
                 (
                     data["task_name"],
-                    data["schema_name"],
-                    data["table_name"],
                     data["transaction_id"],
-                    data["message_id"],
                     data["quantity_operations"],
-                    data["published"],
-                    data["received"],
-                    data["acked"],
+                    data.get("published", 0),
+                    data.get("received", 0),
+                    data.get("processed", 0),
                 ),
             )
             self.connection.commit()
@@ -232,21 +227,25 @@ class MetadataConnectionManager:
 
         Args:
             data: Dicionário com os dados a serem inseridos.
-                Deve conter as chaves: task_name, schema_name, table_name.
         """
 
         try:
             data = {**data, **kargs}
 
             column_set = data.get("column")
+            value_set = data.get("value")
 
             cursor = self.connection.cursor()
+            current_value = cursor.execute(
+                Query.SQL_GET_STATS_MESSAGE.format(column=column_set),
+                (data["transaction_id"],),
+            ).fetchone()[0]
+
             cursor.execute(
-                Query.SQL_UPDATE_STATS_MESSSAGE.format(column_set=column_set),
-                (
-                    data["transaction_id"],
-                    data["message_id"],
+                Query.SQL_UPDATE_STATS_MESSSAGE.format(
+                    column_set=column_set, value_set=current_value + value_set
                 ),
+                (data["transaction_id"],),
             )
             self.connection.commit()
         except InsertStatsError as e:
@@ -338,10 +337,10 @@ class MetadataConnectionManager:
             return cursor.fetchone()[0]
         except GetMetadataError as e:
             logger.critical(f"Erro ao obter config: {e}")
-    
+
     def truncate_tables(self) -> None:
         """Limpa as tabelas de metadados."""
-        
+
         try:
             cursor = self.connection.cursor()
 
