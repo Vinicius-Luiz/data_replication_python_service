@@ -196,11 +196,11 @@ class Table:
         Returns:
             dict: Dicionário contendo a representação da tabela com a seguinte estrutura:
                 {
-                    'schema_name': str,         # Nome do esquema da tabela
-                    'table_name': str,          # Nome da tabela
-                    'estimated_row_count': int,  # Quantidade estimada de linhas
-                    'table_size': str,          # Tamanho da tabela em bytes
-                    'columns': List[str],       # Lista de nomes de colunas
+                    'schema_name': str,
+                    'table_name': str,
+                    'estimated_row_count': int,
+                    'table_size': str,
+                    'columns': List[str],
                 }
         """
 

@@ -34,8 +34,6 @@ class ReplicationManager:
         with open(self.settings_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
-    
-
     def run(self):
         """
         Executa o fluxo completo de replicação:
@@ -61,7 +59,13 @@ class ReplicationManager:
                 interval_seconds=interval_seconds,
             )
 
-            strategy.execute(task_settings) # antes era task=self.task
+            start_mode = task_settings["task"]["start_mode"]
+            task_name = task_settings["task"]["task_name"]
+
+            if start_mode == "reload":
+                strategy.reload_task(task_name)
+
+            strategy.execute(task_settings)
         except Exception as e:
             e = ReplicationRunError(f"Erro durante a execução: {str(e)}")
             logger.critical(e)

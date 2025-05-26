@@ -20,7 +20,6 @@ import polars as pl
 import re
 import os
 
-
 logger = ReplicationLogger()
 
 
@@ -94,9 +93,6 @@ class Task:
         self.tables: List[Table] = []
 
         self.filters = []
-
-        self.source_full_load_already_done = False
-        self.target_full_load_already_done = False
 
         self.__validate()
 
@@ -211,7 +207,7 @@ class Task:
             dict: Resultado da operação com a seguinte estrutura:
         """
 
-        if not self.source_full_load_already_done and self.replication_type.value in (
+        if self.replication_type.value in (
             "full_load",
             "full_load_and_cdc",
         ):
@@ -231,8 +227,6 @@ class Task:
                             table_source_stats, task_name=self.task_name
                         )
 
-                self.source_full_load_already_done = True
-
             except Exception as e:
                 e = TaskError(f"Erro ao executar carga completa da fonte: {e}")
                 logger.critical(e)
@@ -250,7 +244,7 @@ class Task:
         paralelo para todas as tabelas especificadas.
         """
 
-        if not self.target_full_load_already_done and self.replication_type.value in (
+        if self.replication_type.value in (
             "full_load",
             "full_load_and_cdc",
         ):
@@ -281,12 +275,13 @@ class Task:
 
                     table.data = pl.DataFrame()
 
-                self.target_full_load_already_done = True
-
             except Exception as e:
                 e = TaskError(f"Erro ao realizar carga completa: {str(e)}")
                 logger.critical(e)
 
+            with MetadataConnectionManager() as metadata_manager:
+                metadata_manager.update_metadata_config({"FULL_LOAD_FINISHED": 1})
+                
             return True
 
         return False
@@ -475,9 +470,3 @@ class Task:
                 f"Erro ao adicionar filtro: {e}", f"{schema_name}.{table_name}"
             )
             logger.critical(e)
-
-    def verify_current_replication_type(self) -> None:
-            if self.replication_type.value == "full_load_and_cdc" and not self.target_full_load_already_done:
-                os.environ["REPLICATION_TYPE"] = "full_load"
-            else:
-                os.environ["REPLICATION_TYPE"] = "cdc"

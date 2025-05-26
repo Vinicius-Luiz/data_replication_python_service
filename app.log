@@ -1,212 +1,123 @@
-2025-05-25 02:22:03,446 - INFO - TASK -  fl_cdc_scd2_employees válido
-2025-05-25 02:22:03,446 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-05-25 02:22:03,478 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2860527, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-05-25 02:22:03,479 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-05-25 02:22:03,484 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '39 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-05-25 02:22:03,484 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-05-25 02:22:03,489 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-05-25 02:22:03,489 - INFO - TASK - Obtendo detalhes da tabela employees.department
-2025-05-25 02:22:03,494 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
-2025-05-25 02:22:03,494 - INFO - REPLICATION - Preparando employees.employee para SCD2
-2025-05-25 02:22:03,494 - INFO - REPLICATION - Preparando employees.department para SCD2
-2025-05-25 02:22:03,494 - INFO - REPLICATION - Preparando employees.salary para SCD2
-2025-05-25 02:22:03,494 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
-2025-05-25 02:22:03,495 - INFO - REPLICATION - Recarregando tarefa
-2025-05-25 02:22:03,526 - INFO - FULL LOAD STRATEGY - Criando tabelas de metadata
-2025-05-25 02:22:03,534 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-05-25 02:22:04,446 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
-2025-05-25 02:22:04,452 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'rowcount': 7, 'statusmessage': 'SELECT 7', 'time_elapsed': '00:00:00'}
-2025-05-25 02:22:08,427 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'time_elapsed': '00:00:04'}
-2025-05-25 02:22:08,432 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
-2025-05-25 02:22:08,503 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:22:08,503 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-05-25 02:22:09,067 - INFO - ENDPOINT - Removendo tabela employees.employee_history
-2025-05-25 02:22:09,088 - INFO - ENDPOINT - Criando tabela employees.employee_history
-2025-05-25 02:22:09,096 - INFO - ENDPOINT - Truncando tabela employees.employee_history
-2025-05-25 02:22:09,524 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee_history
-2025-05-25 02:22:18,765 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 300024, 'success': 1, 'time_elapsed': '00:00:10'}
-2025-05-25 02:22:18,770 - INFO - ENDPOINT - Removendo tabela employees.department_history
-2025-05-25 02:22:18,771 - INFO - ENDPOINT - Criando tabela employees.department_history
-2025-05-25 02:22:18,773 - INFO - ENDPOINT - Truncando tabela employees.department_history
-2025-05-25 02:22:18,775 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_history
-2025-05-25 02:22:18,778 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'records': 7, 'success': 1, 'time_elapsed': '00:00:00'}
-2025-05-25 02:22:18,838 - INFO - ENDPOINT - Removendo tabela funcionarios.salario_historico
-2025-05-25 02:22:18,840 - INFO - ENDPOINT - Criando tabela funcionarios.salario_historico
-2025-05-25 02:22:18,842 - INFO - ENDPOINT - Truncando tabela funcionarios.salario_historico
-2025-05-25 02:22:21,174 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario_historico
-2025-05-25 02:23:23,815 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': 1, 'time_elapsed': '00:01:05'}
-2025-05-25 02:23:23,821 - INFO - ENDPOINT - Removendo tabela employees.department_manager_history
-2025-05-25 02:23:23,825 - INFO - ENDPOINT - Criando tabela employees.department_manager_history
-2025-05-25 02:23:23,829 - INFO - ENDPOINT - Truncando tabela employees.department_manager_history
-2025-05-25 02:23:23,831 - INFO - ENDPOINT - Inserindo 18 registros na tabela employees.department_manager_history
-2025-05-25 02:23:23,835 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 18, 'success': 1, 'time_elapsed': '00:00:00'}
-2025-05-25 02:23:23,879 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-05-25 02:23:23,879 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-05-25 02:23:23,880 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
-2025-05-25 02:23:24,248 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-05-25 02:23:24,325 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-05-25 02:23:25,075 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:29,163 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:32,564 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:35,972 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:39,368 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:42,762 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 3dc8fe/e014d9
-2025-05-25 02:23:42,763 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 3dc8fe/1d6832
-2025-05-25 02:23:42,763 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 3dc8fe/8e7617
-2025-05-25 02:23:42,763 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (1): 3dc8fe/e014d9
-2025-05-25 02:23:42,791 - INFO - TASK - Confirmado 1
-2025-05-25 02:23:42,792 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (2): 3dc8fe/1d6832
-2025-05-25 02:23:42,795 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:42,798 - INFO - TASK - Confirmado 2
-2025-05-25 02:23:42,799 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (3): 3dc8fe/8e7617
-2025-05-25 02:23:42,805 - INFO - TASK - Confirmado 3
-2025-05-25 02:23:46,162 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 0e83aa/3af226
-2025-05-25 02:23:46,163 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (4): 0e83aa/3af226
-2025-05-25 02:23:46,171 - INFO - TASK - Confirmado 4
-2025-05-25 02:23:46,193 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:49,743 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 65e5f5/2e4521
-2025-05-25 02:23:49,743 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 65e5f5/f064e6
-2025-05-25 02:23:49,743 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 65e5f5/a654e8
-2025-05-25 02:23:49,743 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 65e5f5/ee413d
-2025-05-25 02:23:49,744 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (5): 65e5f5/2e4521
-2025-05-25 02:23:49,750 - INFO - TASK - Confirmado 5
-2025-05-25 02:23:49,750 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (6): 65e5f5/f064e6
-2025-05-25 02:23:49,757 - INFO - TASK - Confirmado 6
-2025-05-25 02:23:49,757 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (7): 65e5f5/a654e8
-2025-05-25 02:23:49,765 - INFO - TASK - Confirmado 7
-2025-05-25 02:23:49,765 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (8): 65e5f5/ee413d
-2025-05-25 02:23:49,772 - INFO - TASK - Confirmado 8
-2025-05-25 02:23:49,774 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:53,216 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:23:56,591 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 08c635/088c32
-2025-05-25 02:23:56,591 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 08c635/a5a2a2
-2025-05-25 02:23:56,591 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 08c635/969e99
-2025-05-25 02:23:56,591 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (9): 08c635/088c32
-2025-05-25 02:23:56,599 - INFO - TASK - Confirmado 9
-2025-05-25 02:23:56,599 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (10): 08c635/a5a2a2
-2025-05-25 02:23:56,605 - INFO - TASK - Confirmado 10
-2025-05-25 02:23:56,605 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (11): 08c635/969e99
-2025-05-25 02:23:56,611 - INFO - TASK - Confirmado 11
-2025-05-25 02:23:56,625 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:00,025 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 0881ab/da34ac
-2025-05-25 02:24:00,026 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (12): 0881ab/da34ac
-2025-05-25 02:24:00,032 - INFO - TASK - Confirmado 12
-2025-05-25 02:24:00,058 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:03,553 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 6ba22c/312b9c
-2025-05-25 02:24:03,553 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 6ba22c/7b72a5
-2025-05-25 02:24:03,553 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 6ba22c/b7f7b0
-2025-05-25 02:24:03,554 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (13): 6ba22c/312b9c
-2025-05-25 02:24:03,567 - INFO - TASK - Confirmado 13
-2025-05-25 02:24:03,567 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (14): 6ba22c/7b72a5
-2025-05-25 02:24:03,574 - INFO - TASK - Confirmado 14
-2025-05-25 02:24:03,575 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (15): 6ba22c/b7f7b0
-2025-05-25 02:24:03,584 - INFO - TASK - Confirmado 15
-2025-05-25 02:24:03,591 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:06,985 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cd4523/f0a57d
-2025-05-25 02:24:06,985 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cd4523/1adfc2
-2025-05-25 02:24:06,985 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cd4523/b9d86e
-2025-05-25 02:24:06,985 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': cd4523/892cf1
-2025-05-25 02:24:06,986 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (16): cd4523/f0a57d
-2025-05-25 02:24:06,993 - INFO - TASK - Confirmado 16
-2025-05-25 02:24:06,993 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (17): cd4523/1adfc2
-2025-05-25 02:24:07,000 - INFO - TASK - Confirmado 17
-2025-05-25 02:24:07,001 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (18): cd4523/b9d86e
-2025-05-25 02:24:07,008 - INFO - TASK - Confirmado 18
-2025-05-25 02:24:07,008 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (19): cd4523/892cf1
-2025-05-25 02:24:07,015 - INFO - TASK - Confirmado 19
-2025-05-25 02:24:07,020 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:10,485 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': c88a48/bf047b
-2025-05-25 02:24:10,485 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': c88a48/f86578
-2025-05-25 02:24:10,486 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (20): c88a48/bf047b
-2025-05-25 02:24:10,492 - INFO - TASK - Confirmado 20
-2025-05-25 02:24:10,493 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (21): c88a48/f86578
-2025-05-25 02:24:10,500 - INFO - TASK - Confirmado 21
-2025-05-25 02:24:10,516 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:13,970 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 9f3cd7/f530d6
-2025-05-25 02:24:13,971 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 9f3cd7/05d6c6
-2025-05-25 02:24:13,971 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 9f3cd7/cca21e
-2025-05-25 02:24:13,972 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (22): 9f3cd7/f530d6
-2025-05-25 02:24:13,978 - INFO - TASK - Confirmado 22
-2025-05-25 02:24:13,979 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (23): 9f3cd7/05d6c6
-2025-05-25 02:24:13,986 - INFO - TASK - Confirmado 23
-2025-05-25 02:24:13,987 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (24): 9f3cd7/cca21e
-2025-05-25 02:24:13,995 - INFO - TASK - Confirmado 24
-2025-05-25 02:24:14,009 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:17,427 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 98d4c9/db87ae
-2025-05-25 02:24:17,427 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 98d4c9/a5f110
-2025-05-25 02:24:17,428 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (25): 98d4c9/db87ae
-2025-05-25 02:24:17,435 - INFO - TASK - Confirmado 25
-2025-05-25 02:24:17,435 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (26): 98d4c9/a5f110
-2025-05-25 02:24:17,441 - INFO - TASK - Confirmado 26
-2025-05-25 02:24:17,457 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:20,846 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': ca5e2e/b95ef2
-2025-05-25 02:24:20,846 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': ca5e2e/841c76
-2025-05-25 02:24:20,847 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (27): ca5e2e/b95ef2
-2025-05-25 02:24:20,854 - INFO - TASK - Confirmado 27
-2025-05-25 02:24:20,854 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (28): ca5e2e/841c76
-2025-05-25 02:24:20,861 - INFO - TASK - Confirmado 28
-2025-05-25 02:24:20,880 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:24,250 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 538332/af8b65
-2025-05-25 02:24:24,250 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 538332/798cd9
-2025-05-25 02:24:24,251 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (29): 538332/af8b65
-2025-05-25 02:24:24,257 - INFO - TASK - Confirmado 29
-2025-05-25 02:24:24,257 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (30): 538332/798cd9
-2025-05-25 02:24:24,264 - INFO - TASK - Confirmado 30
-2025-05-25 02:24:24,279 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:27,664 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/94c17d
-2025-05-25 02:24:27,664 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/1a81e9
-2025-05-25 02:24:27,664 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/847024
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/014a92
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/5c2916
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/e4741f
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (31): 20f00b/94c17d
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/776107
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/5b6c74
-2025-05-25 02:24:27,665 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/c182d8
-2025-05-25 02:24:27,666 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/0484d0
-2025-05-25 02:24:27,666 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/db0c53
-2025-05-25 02:24:27,666 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 20f00b/6366ef
-2025-05-25 02:24:27,671 - INFO - TASK - Confirmado 31
-2025-05-25 02:24:27,671 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (32): 20f00b/1a81e9
-2025-05-25 02:24:27,678 - INFO - TASK - Confirmado 32
-2025-05-25 02:24:27,678 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (33): 20f00b/847024
-2025-05-25 02:24:27,685 - INFO - TASK - Confirmado 33
-2025-05-25 02:24:27,685 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (34): 20f00b/014a92
-2025-05-25 02:24:27,692 - INFO - TASK - Confirmado 34
-2025-05-25 02:24:27,693 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (35): 20f00b/5c2916
-2025-05-25 02:24:27,697 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:27,699 - INFO - TASK - Confirmado 35
-2025-05-25 02:24:27,699 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (36): 20f00b/e4741f
-2025-05-25 02:24:27,704 - INFO - TASK - Confirmado 36
-2025-05-25 02:24:27,705 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (37): 20f00b/776107
-2025-05-25 02:24:27,710 - INFO - TASK - Confirmado 37
-2025-05-25 02:24:27,710 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (38): 20f00b/5b6c74
-2025-05-25 02:24:27,716 - INFO - TASK - Confirmado 38
-2025-05-25 02:24:27,716 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (39): 20f00b/c182d8
-2025-05-25 02:24:27,721 - INFO - TASK - Confirmado 39
-2025-05-25 02:24:27,721 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (40): 20f00b/0484d0
-2025-05-25 02:24:27,726 - INFO - TASK - Confirmado 40
-2025-05-25 02:24:27,726 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (41): 20f00b/db0c53
-2025-05-25 02:24:27,732 - INFO - TASK - Confirmado 41
-2025-05-25 02:24:27,732 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (42): 20f00b/6366ef
-2025-05-25 02:24:27,738 - INFO - TASK - Confirmado 42
-2025-05-25 02:24:31,074 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 506b1e/648339
-2025-05-25 02:24:31,074 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 506b1e/c1252c
-2025-05-25 02:24:31,074 - INFO - MESSAGE - Publicado 'trempy_routing_key_fl_cdc_scd2_employees': 506b1e/2651c3
-2025-05-25 02:24:31,075 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (43): 506b1e/648339
-2025-05-25 02:24:31,079 - INFO - TASK - Confirmado 43
-2025-05-25 02:24:31,080 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (44): 506b1e/c1252c
-2025-05-25 02:24:31,085 - INFO - TASK - Confirmado 44
-2025-05-25 02:24:31,086 - INFO - MESSAGE - Recebido 'trempy_routing_key_fl_cdc_scd2_employees' (45): 506b1e/2651c3
-2025-05-25 02:24:31,091 - INFO - TASK - Confirmado 45
-2025-05-25 02:24:31,108 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:34,507 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:37,903 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:41,298 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:44,715 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:48,117 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:51,517 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:54,905 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:24:58,315 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-05-25 02:25:01,236 - INFO - CDC STRATEGY - Interrompendo processo CDC
-2025-05-25 02:25:01,237 - INFO - CDC STRATEGY - CDC encerrado
+2025-05-26 00:14:37,815 - INFO - TASK -  fl_cdc_scd2_employees válido
+2025-05-26 00:14:37,815 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-05-26 00:14:37,835 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2860527, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-05-26 00:14:37,835 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-05-26 00:14:37,840 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '39 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-05-26 00:14:37,840 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-05-26 00:14:37,845 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-05-26 00:14:37,846 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-05-26 00:14:37,851 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-05-26 00:14:37,851 - INFO - REPLICATION - Preparando employees.employee para SCD2
+2025-05-26 00:14:37,851 - INFO - REPLICATION - Preparando employees.department para SCD2
+2025-05-26 00:14:37,851 - INFO - REPLICATION - Preparando employees.salary para SCD2
+2025-05-26 00:14:37,851 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
+2025-05-26 00:14:37,852 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-05-26 00:14:38,170 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-05-26 00:14:38,208 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-05-26 00:14:38,208 - INFO - TASK - Obtendo dados da tabela employees.employee
+2025-05-26 00:14:38,730 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
+2025-05-26 00:14:38,733 - INFO - TASK - Obtendo dados da tabela employees.department
+2025-05-26 00:14:38,736 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'rowcount': 7, 'statusmessage': 'SELECT 7', 'time_elapsed': '00:00:00'}
+2025-05-26 00:14:38,739 - INFO - TASK - Obtendo dados da tabela employees.salary
+2025-05-26 00:14:42,302 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'time_elapsed': '00:00:03'}
+2025-05-26 00:14:42,306 - INFO - TASK - Obtendo dados da tabela employees.department_manager
+2025-05-26 00:14:42,309 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
+2025-05-26 00:14:42,368 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:14:42,368 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-05-26 00:14:42,698 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-05-26 00:14:42,740 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-05-26 00:14:42,749 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para histórico
+2025-05-26 00:14:42,749 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
+2025-05-26 00:14:42,759 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
+2025-05-26 00:14:42,768 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
+2025-05-26 00:14:42,781 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
+2025-05-26 00:14:42,783 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
+2025-05-26 00:14:42,784 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
+2025-05-26 00:14:42,786 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
+2025-05-26 00:14:42,787 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
+2025-05-26 00:14:42,788 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
+2025-05-26 00:14:42,788 - INFO - TASK - Realizando carga completa da tabela employees.employee_history
+2025-05-26 00:14:42,788 - INFO - ENDPOINT - Removendo tabela employees.employee_history
+2025-05-26 00:14:42,802 - INFO - ENDPOINT - Criando tabela employees.employee_history
+2025-05-26 00:14:42,810 - INFO - ENDPOINT - Truncando tabela employees.employee_history
+2025-05-26 00:14:43,200 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee_history
+2025-05-26 00:14:52,127 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 300024, 'success': 1, 'time_elapsed': '00:00:09'}
+2025-05-26 00:14:52,131 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alteando nome da tabela para histórico
+2025-05-26 00:14:52,131 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
+2025-05-26 00:14:52,132 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
+2025-05-26 00:14:52,132 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
+2025-05-26 00:14:52,132 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
+2025-05-26 00:14:52,132 - INFO - TASK - Realizando carga completa da tabela employees.department_history
+2025-05-26 00:14:52,132 - INFO - ENDPOINT - Removendo tabela employees.department_history
+2025-05-26 00:14:52,134 - INFO - ENDPOINT - Criando tabela employees.department_history
+2025-05-26 00:14:52,137 - INFO - ENDPOINT - Truncando tabela employees.department_history
+2025-05-26 00:14:52,139 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_history
+2025-05-26 00:14:52,142 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'records': 7, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-05-26 00:14:52,161 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português e histórico
+2025-05-26 00:14:52,161 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
+2025-05-26 00:14:52,161 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
+2025-05-26 00:14:52,183 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
+2025-05-26 00:14:52,189 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
+2025-05-26 00:14:52,189 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia_mensal'
+2025-05-26 00:14:52,189 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
+2025-05-26 00:14:52,189 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
+2025-05-26 00:14:52,189 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
+2025-05-26 00:14:52,193 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
+2025-05-26 00:14:52,199 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
+2025-05-26 00:14:52,202 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
+2025-05-26 00:14:52,202 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario_historico
+2025-05-26 00:14:52,202 - INFO - ENDPOINT - Removendo tabela funcionarios.salario_historico
+2025-05-26 00:14:52,204 - INFO - ENDPOINT - Criando tabela funcionarios.salario_historico
+2025-05-26 00:14:52,207 - INFO - ENDPOINT - Truncando tabela funcionarios.salario_historico
+2025-05-26 00:14:54,416 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario_historico
+2025-05-26 00:15:55,118 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': 1, 'time_elapsed': '00:01:03'}
+2025-05-26 00:15:55,123 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterando nome da tabela para histórico
+2025-05-26 00:15:55,123 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
+2025-05-26 00:15:55,123 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
+2025-05-26 00:15:55,123 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
+2025-05-26 00:15:55,123 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
+2025-05-26 00:15:55,123 - INFO - TASK - Realizando carga completa da tabela employees.department_manager_history
+2025-05-26 00:15:55,123 - INFO - ENDPOINT - Removendo tabela employees.department_manager_history
+2025-05-26 00:15:55,129 - INFO - ENDPOINT - Criando tabela employees.department_manager_history
+2025-05-26 00:15:55,133 - INFO - ENDPOINT - Truncando tabela employees.department_manager_history
+2025-05-26 00:15:55,135 - INFO - ENDPOINT - Inserindo 18 registros na tabela employees.department_manager_history
+2025-05-26 00:15:55,139 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 18, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-05-26 00:15:55,198 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-05-26 00:15:55,198 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-05-26 00:15:55,203 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-05-26 00:15:55,546 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-05-26 00:15:55,612 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-05-26 00:15:56,333 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:00,360 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:04,402 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:07,816 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:11,204 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:14,599 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:18,009 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:21,399 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:24,786 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:28,192 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:31,581 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:34,996 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:38,477 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:41,951 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:42,405 - INFO - CDC STRATEGY - Interrompendo processo CDC
+2025-05-26 00:16:42,406 - INFO - CDC STRATEGY - CDC encerrado
+2025-05-26 00:16:43,303 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-05-26 00:16:43,650 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-05-26 00:16:43,686 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-05-26 00:16:43,793 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:43,793 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-05-26 00:16:44,148 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-05-26 00:16:44,189 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-05-26 00:16:44,220 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-05-26 00:16:44,220 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-05-26 00:16:44,225 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-05-26 00:16:44,562 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-05-26 00:16:44,624 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-05-26 00:16:44,858 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:48,329 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:51,795 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:55,226 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-05-26 00:16:55,845 - INFO - CDC STRATEGY - Interrompendo processo CDC
+2025-05-26 00:16:55,846 - INFO - CDC STRATEGY - CDC encerrado

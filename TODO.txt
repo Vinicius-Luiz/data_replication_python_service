@@ -1,4 +1,43 @@
 - estudar novo modo de leitura de slot_replication
 - mover mensagens do dlx para sqlite
 - eu preciso saber quantas operações serão enviadas no publish
-    - colocar no Metadata sqlite
+    - task_name,schema_name,table_name,transaction_id,message_id,quantity_operations,published,received,acked
+    - fl-cdc-scd2-employees,employees,department,15bdf,dgb15a,4000,1,1,1
+    - fl-cdc-scd2-employees,employees,department,15bdf,613bsd,512,1,0,0
+
+PROBLEMA: nesse fluxo se for continue e o full load ja tiver sendo executado, o target cdc executa na primeira execução (não deveria)
+é por causa do not task.execute_target_full_load() and task.execute_target_cdc()
+
+
+Fluxo esperado 
+
+*tarefa nunca iniciou
+
+[CONFIGURAÇÃO AMBIENTE] (deve cria tarefa, recarrega tarefa, salva tarefa e criar metadatas se necessários respectivamente)
+[FULL LOAD]
+- tenta carregar tarefa pickle salva
+- se não existir ou (se flag target full load complete = False e tarefa for no modo reload):
+	- cria tarefa
+	- recarrega tarefa
+	- salva tarefa
+	- cria metadatas
+
+[CDC]
+- tenta carregar tarefa no pickle salva
+- se não existir ou ( se flag source full load complete = False e tarefa for no modo reload):
+	- criar tarefa
+	- recarregar tarefa
+	- salva tarefa
+	- criar metadatas
+
+
+[SOURCE]
+- source full load começa se flag source full load complete = False
+- seta flag source full load complete = True
+- source cdc começa
+- publica mensagens (se houver)
+
+[TARGET]
+- target full load começa se flag target full load complete = False
+- seta flag target full load complete = True
+- source cdc começa se target full load não tiver sido executado

@@ -2,8 +2,8 @@ from trempy.Replication.Strategies.ReplicationStrategy import ReplicationStrateg
 from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Shared.Utils import Utils
-from trempy.Tasks.Task import Task
 import sys
+import os
 
 logger = ReplicationLogger()
 
@@ -17,15 +17,17 @@ class FullLoadStrategy(ReplicationStrategy):
 
     def __setup_environment(self, task_settings: dict) -> None:
         """Configura o ambiente para execução."""
-        task = self.create_task(task_settings)
-        
-        self.reload_task(task)
+        try:
+            task_exists = True
+            task = Utils.read_task_pickle()
+        except FileNotFoundError:
+            task_exists = False
 
-        Utils.write_task_pickle(task)
+        if not task_exists or task.start_mode.value == "reload":
 
-        logger.info("FULL LOAD STRATEGY - Criando tabelas de metadata")
-        with MetadataConnectionManager() as metadata_manager:
-            metadata_manager.create_tables()
+            task = self.create_task(task_settings)
+
+            Utils.write_task_pickle(task)
 
     def __run_extraction(self) -> bool:
         """Executa o producer.py para extração de dados."""
@@ -48,6 +50,13 @@ class FullLoadStrategy(ReplicationStrategy):
         Raises:
             SystemExit: Se qualquer um dos processos falhar.
         """
+
+        with MetadataConnectionManager() as metadata_manager:
+            metadata_manager.update_metadata_config(
+                {"CURRENT_REPLICATION_TYPE": "full_load"}
+            )
+            os.environ["CURRENT_REPLICATION_TYPE"] = "full_load"
+
         self.__setup_environment(task_settings)
 
         if not self.__run_extraction():

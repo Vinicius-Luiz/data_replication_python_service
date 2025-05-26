@@ -1,5 +1,5 @@
-
-from trempy.Shared.Types import PriorityType, TaskType, CdcModeType, StartType
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
+from trempy.Shared.Types import PriorityType, TaskType, CdcModeType
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Transformations.Transformation import Transformation
 from trempy.Messages import Message, MessageDlx, MessageConsumer
@@ -254,27 +254,29 @@ class ReplicationStrategy(ABC):
         task.clean_endpoints()
         return task
 
-    def reload_task(self, task: Task):
-        if task.start_mode == StartType.RELOAD:
-            logger.info("REPLICATION - Recarregando tarefa")
+    def reload_task(self, task_name: str):
 
-            path_to_remove = [r"task\settings.pickle", r"trempy.db"]
+        logger.info("REPLICATION - Recarregando tarefa")
 
-            for path in path_to_remove:
-                if os.path.exists(path):
-                    os.remove(path)
+        if os.path.exists(r"task\settings.pickle"):
+            os.remove(r"task\settings.pickle")
 
-            message = Message.Message(task.task_name)
-            message_dlx = MessageDlx.MessageDlx(task.task_name)
-            message_consumer = MessageConsumer.MessageConsumer(
-                task.task_name, external_callback=None
-            )
+        with MetadataConnectionManager() as metadata_manager:
+            logger.info("REPLICATION - Recriando tabelas de metadata")
+            metadata_manager.create_tables()
+            metadata_manager.truncate_tables()
 
-            message.delete_exchange()
-            message.delete_dlx_exchange()
+        message = Message.Message(task_name)
+        message_dlx = MessageDlx.MessageDlx(task_name)
+        message_consumer = MessageConsumer.MessageConsumer(
+            task_name, external_callback=None
+        )
 
-            message_dlx.delete_queue()
-            message_consumer.delete_queue()
+        message.delete_exchange()
+        message.delete_dlx_exchange()
+
+        message_dlx.delete_queue()
+        message_consumer.delete_queue()
 
     def run_process(self, script_name: str) -> bool:
         """

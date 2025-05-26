@@ -1,4 +1,11 @@
 class Query:
+    SQL_METADATA_TABLE = """
+        CREATE TABLE IF NOT EXISTS metadata_table (
+            key    TEXT PRIMARY KEY,
+            value  TEXT
+        )
+    """
+
     SQL_CREATE_STATS_CDC = """
         CREATE TABLE IF NOT EXISTS stats_cdc (
             task_name   TEXT,
@@ -25,7 +32,6 @@ class Query:
         )
         """
     
-    # {'rowcount': 300027, 'statusmessage': 'SELECT 300027', 'time_elapsed': '0.54s'}
     SQL_CREATE_STATS_SOURCE_TABLES = """
         CREATE TABLE IF NOT EXISTS stats_source_tables (
             task_name    TEXT,
@@ -34,6 +40,21 @@ class Query:
             rowcount     INTEGER,
             statusmessage TEXT,
             time_elapsed TEXT,
+            created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """
+
+    SQL_CREATE_STATS_MESSAGE = """
+        CREATE TABLE IF NOT EXISTS stats_message (
+            task_name    TEXT,
+            schema_name  TEXT,
+            table_name   TEXT,
+            transaction_id TEXT,
+            message_id     TEXT,
+            quantity_operations INTEGER,
+            published INTEGER,
+            received INTEGER,
+            acked INTEGER,
             created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """
@@ -55,3 +76,31 @@ class Query:
         (task_name, schema_name, table_name, rowcount, statusmessage, time_elapsed)
         VALUES (?, ?, ?, ?, ?, ?)
         """
+    
+    SQL_INSERT_STATS_MESSAGE = """
+        INSERT INTO stats_message 
+        (task_name, schema_name, table_name, transaction_id, message_id, quantity_operations, published, received, acked)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+    
+    SQL_UPDATE_STATS_MESSSAGE = """
+        UPDATE stats_message
+           SET {column_set} = 1
+         WHERE transaction_id = ?
+           AND message_id = ?
+    """
+
+    SQL_UPSERT_METADATA_TABLE = """
+        INSERT OR REPLACE INTO metadata_table (key, value)
+        VALUES (?, ?);
+        """
+    
+    SQL_GET_METADATA_CONFIG = """
+        SELECT MAX(value)
+        FROM metadata_table
+        WHERE key = ?
+    """
+
+    SQL_TRUNCATE_TABLE = """
+        DELETE FROM {table}
+    """

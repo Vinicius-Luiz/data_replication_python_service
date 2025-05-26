@@ -1,18 +1,17 @@
 from typing import Dict, Union
 import logging
-import os
 import sys
+import os
 
 
 class ReplicationLogger:
-    def __init__(self, replication_type: str = None):
+    def __init__(self):
         """
         Inicializa o logger com o tipo de replicação.
         Se não for fornecido, obtém da variável de ambiente REPLICATION_TYPE.
         """
-        self.replication_type = (
-            replication_type or os.getenv("REPLICATION_TYPE", "").lower()
-        )
+
+        self.replication_type = os.getenv("CURRENT_REPLICATION_TYPE")
 
     @staticmethod
     def configure_logging(level: str = "DEBUG") -> bool:

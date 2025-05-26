@@ -46,7 +46,7 @@ class Utils:
     @staticmethod
     def format_time_elapsed(seconds_float: float) -> str:
         """Formata um tempo em segundos (float) para HH:MM:SS (string)."""
-        seconds = int(round(seconds_float))  # Arredonda para inteiro
+        seconds = int(round(seconds_float))
         hours = seconds // 3600
         remaining_seconds = seconds % 3600
         minutes = remaining_seconds // 60
