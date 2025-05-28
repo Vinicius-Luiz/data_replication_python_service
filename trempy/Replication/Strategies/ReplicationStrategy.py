@@ -241,12 +241,6 @@ class ReplicationStrategy(ABC):
                 f"REPLICATION - CDC com modo SCD2 nao é recomendado para endpoints com batch_cdc_size > 1"
             )
 
-        os.environ["STOP_IF_INSERT_ERROR"] = str(int(task.stop_if_insert_error))
-        os.environ["STOP_IF_UPDATE_ERROR"] = str(int(task.stop_if_update_error))
-        os.environ["STOP_IF_DELETE_ERROR"] = str(int(task.stop_if_delete_error))
-        os.environ["STOP_IF_UPSERT_ERROR"] = str(int(task.stop_if_upsert_error))
-        os.environ["STOP_IF_SCD2_ERROR"] = str(int(task.stop_if_scd2_error))
-
         self.__configure_tables(task, task_settings)
         self.__configure_filters(task, task_settings)
         self.__configure_transformations(task, task_settings)

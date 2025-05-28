@@ -1,3 +1,4 @@
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from pika.adapters.blocking_connection import BlockingChannel
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Messages.Exceptions.Exception import *
@@ -47,9 +48,11 @@ class MessageDlx(Message):
                 f"Erro ao configurar o consumidor Dlx de mensagens: {str(e)}"
             )
             logger.critical(e)
-    
+
     def delete_queue(self):
-        self.channel.queue_delete(queue=self.dlx_queue_name, if_unused=False, if_empty=False)
+        self.channel.queue_delete(
+            queue=self.dlx_queue_name, if_unused=False, if_empty=False
+        )
 
     def __callback(
         self,
@@ -59,35 +62,25 @@ class MessageDlx(Message):
         body: bytes,
     ) -> None:
 
-        logger.info(
-            f"MESSAGE DLX - Processando mensagem falha (delivery_tag={method.delivery_tag})"
-        )
+        logger.info(f"MESSAGE DLX - Processando mensagem falha ({method.delivery_tag})")
         message = body.decode()
 
         try:
-            error_dir = "data\cdc_data\dlx_messages"
-
-            os.makedirs(error_dir, exist_ok=True)
-
-            # Nome do arquivo inclui delivery_tag para referência
-            filename = f"failed_{method.delivery_tag}_{int(time.time())}.json"
-            filepath = os.path.join(error_dir, filename)
-
-            with open(filepath, "w", encoding="utf-8") as f:
-                json.dump(
-                    {
-                        "delivery_tag": method.delivery_tag,  # Adicionado para rastreamento
-                        "message": json.loads(message),
+            with MetadataConnectionManager() as metadata_manager:
+                metadata_manager.insert_dlx_message(
+                    data={
+                        "task_name": self.task_name,
+                        "transaction_id": properties.headers.get("transaction_id"),
+                        "message_id": properties.message_id,
+                        "delivery_tag": method.delivery_tag,
                         "routing_key": method.routing_key,
-                    },
-                    f,
-                    indent=4,
+                        "body": message,
+                    }
                 )
 
         except Exception as e:
             e = MessageDlxException(f"Erro ao salvar a mensagem: {str(e)}")
             logger.error(e)
-            # Não faz NACK (a mensagem já foi auto-ack'ed)
 
     def start_consuming(self):
         logger.info(f"MESSAGE DLX - Consumer Esperando por mensagens")

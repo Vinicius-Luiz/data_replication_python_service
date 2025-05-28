@@ -11,51 +11,81 @@ logger = ReplicationLogger()
 class MetadataConnectionManager:
     """Gerenciador de conexão com o banco de dados SQLite para metadados de replicação."""
 
-    TABLES_METADATA = [
-        "stats_cdc",
-        "stats_full_load",
-        "stats_source_tables",
-        "stats_message",
-        "metadata_table",
-    ]
-
-    STATS_CDC_REQUIRED_COLUMNS = [
-        "task_name",
-        "schema_name",
-        "table_name",
-        "inserts",
-        "updates",
-        "deletes",
-        "errors",
-        "total",
-    ]
-
-    STATS_FULL_LOAD_REQUIRED_COLUMNS = [
-        "task_name",
-        "schema_name",
-        "table_name",
-        "records",
-        "success",
-        "time_elapsed",
-    ]
-
-    STATS_SOURCE_TABLES_REQUIRED_COLUMNS = [
-        "task_name",
-        "schema_name",
-        "table_name",
-        "rowcount",
-        "statusmessage",
-        "time_elapsed",
-    ]
-
-    STATS_MESSAGE_REQUIRED_COLUMNS = [
-        "task_name",
-        "transaction_id",
-        "quantity_operations",
-        "published",
-        "received",
-        "processed",
-    ]
+    # Estrutura consolidada de tabelas e suas colunas obrigatórias
+    TABLE_SCHEMA = {
+        "stats_cdc": {
+            "schema": [
+                "task_name",
+                "schema_name",
+                "table_name",
+                "inserts",
+                "updates",
+                "deletes",
+                "errors",
+                "total",
+            ],
+            "verify_schema": True,
+        },
+        "stats_full_load": {
+            "schema": [
+                "task_name",
+                "schema_name",
+                "table_name",
+                "records",
+                "success",
+                "time_elapsed",
+            ],
+            "verify_schema": True,
+        },
+        "stats_source_tables": {
+            "schema": [
+                "task_name",
+                "schema_name",
+                "table_name",
+                "rowcount",
+                "statusmessage",
+                "time_elapsed",
+            ],
+            "verify_schema": True,
+        },
+        "stats_message": {
+            "schema": [
+                "task_name",
+                "transaction_id",
+                "quantity_operations",
+                "published",
+                "received",
+                "processed",
+            ],
+            "verify_schema": False,
+        },
+        "dlx_message": {
+            "schema": [
+                "task_name",
+                "transaction_id",
+                "message_id",
+                "delivery_tag",
+                "routing_key",
+                "body",
+            ],
+            "verify_schema": True,
+        },
+        "apply_exceptions": {
+            "schema": [
+                "schema_name",
+                "table_name",
+                "message",
+                "type",
+                "code",
+                "query",
+            ],
+            "verify_schema": True,
+        },
+        "metadata_table": {
+            "schema": [],
+            "verify_schema": False,
+        },
+    }
 
     def __init__(self, db_name: str = "trempy.db"):
         """
@@ -67,171 +97,114 @@ class MetadataConnectionManager:
         self.connection = sqlite3.connect(db_name)
 
     def create_tables(self) -> None:
-        """Cria as tabelas stats_cdc e stats_full_load se não existirem."""
+        """Cria todas as tabelas de metadados se não existirem."""
         try:
             cursor = self.connection.cursor()
 
-            cursor.execute(Query.SQL_METADATA_TABLE)
-
+            # Executa todos os SQLs de criação de tabela
+            cursor.execute(Query.SQL_CREATE_METADATA_TABLE)
             cursor.execute(Query.SQL_CREATE_STATS_CDC)
-
             cursor.execute(Query.SQL_CREATE_STATS_FULL_LOAD)
-
             cursor.execute(Query.SQL_CREATE_STATS_SOURCE_TABLES)
-
             cursor.execute(Query.SQL_CREATE_STATS_MESSAGE)
+            cursor.execute(Query.SQL_CREATE_DLX_MESSAGE)
+            cursor.execute(Query.SQL_CREATE_APPLY_EXCEPTIONS)
 
             self.connection.commit()
         except Exception as e:
             e = CreateTableError(f"Erro ao criar as tabelas de metadados: {e}")
             logger.critical(e)
 
-    def insert_stats_cdc(self, data: Dict, **kargs) -> None:
+    def __validate_data(self, table_name: str, data: Dict) -> None:
+        """Valida se o dicionário de dados contém todas as colunas obrigatórias."""
+        table_schema = self.TABLE_SCHEMA.get(table_name, {})
+
+        verify_schema = table_schema.get("verify_schema", False)
+        if not verify_schema:
+            return
+
+        required_columns = table_schema.get("schema", [])
+        if required_columns and not all(key in data for key in required_columns):
+            raise RequiredColumnsError(
+                f"Dados não contém todas as colunas obrigatórias para {table_name}: {required_columns}"
+            )
+
+    def __insert_data(self, table_name: str, data: Dict) -> None:
         """
-        Insere dados na tabela stats_cdc.
+        Método genérico para inserção de dados em qualquer tabela.
 
         Args:
-            data: Dicionário com os dados a serem inseridos.
-                Deve conter as chaves: task_name, schema_name, table_name,
-                inserts, updates, deletes, errors, total.
+            table_name: Nome da tabela de destino
+            data: Dicionário com os dados a serem inseridos
         """
-
         try:
-            data = {**data, **kargs}
-            if not all(key in data for key in self.STATS_CDC_REQUIRED_COLUMNS):
-                e = RequiredColumnsError(
-                    f"Colunas devem ser: {self.STATS_CDC_REQUIRED_COLUMNS}"
-                )
-                logger.critical(e)
+            self.__validate_data(table_name, data)
+
+            sql_insert = getattr(Query, f"SQL_INSERT_{table_name.upper()}")
+
+            values = [data[col] for col in self.TABLE_SCHEMA[table_name]["schema"]]
 
             cursor = self.connection.cursor()
-            cursor.execute(
-                Query.SQL_INSERT_STATS_CDC,
-                (
-                    data["task_name"],
-                    data["schema_name"],
-                    data["table_name"],
-                    data["inserts"],
-                    data["updates"],
-                    data["deletes"],
-                    data["errors"],
-                    data["total"],
-                ),
-            )
+            cursor.execute(sql_insert, values)
             self.connection.commit()
+
         except Exception as e:
-            e = InsertStatsError(f"Erro ao inserir dados na tabela stats_cdc: {e}")
-            logger.critical(e)
-
-    def insert_stats_full_load(self, data: Dict, **kargs) -> None:
-        """
-        Insere dados na tabela stats_full_load.
-
-        Args:
-            data: Dicionário com os dados a serem inseridos.
-                Deve conter as chaves: task_name, schema_name, table_name,
-                records, success, time_elapsed.
-        """
-
-        try:
-            data = {**data, **kargs}
-            if not all(key in data for key in self.STATS_FULL_LOAD_REQUIRED_COLUMNS):
-                e = RequiredColumnsError(
-                    f"Data must contain all required keys: {self.STATS_SOURCE_TABLES_REQUIRED_COLUMNS}"
-                )
-                logger.critical(e)
-
-            cursor = self.connection.cursor()
-            cursor.execute(
-                Query.SQL_INSERT_STATS_FULL_LOAD,
-                (
-                    data["task_name"],
-                    data["schema_name"],
-                    data["table_name"],
-                    data["records"],
-                    data["success"],
-                    data["time_elapsed"],
-                ),
+            raise InsertMetadataError(
+                f"Erro ao inserir dados na tabela {table_name}: {e}", table_name
             )
-            self.connection.commit()
 
-        except InsertStatsError as e:
-            logger.critical(f"Erro ao inserir dados na tabela stats_full_load: {e}")
-
-    def insert_stats_source_tables(self, data: Dict, **kargs) -> None:
-        """
-        Insere dados na tabela stats_source_tables.
-
-        Args:
-            data: Dicionário com os dados a serem inseridos.
-                Deve conter as chaves: task_name, schema_name, table_name.
-        """
-
+    # Métodos específicos para cada tabela (apenas encapsulam o método genérico)
+    def insert_stats_cdc(self, data: Dict, **kwargs) -> None:
+        """Insere dados na tabela stats_cdc."""
         try:
-            data = {**data, **kargs}
-            if not all(
-                key in data for key in self.STATS_SOURCE_TABLES_REQUIRED_COLUMNS
-            ):
-                e = RequiredColumnsError(
-                    f"Data must contain all required keys: {self.STATS_FULL_LOAD_REQUIRED_COLUMNS}"
-                )
-                logger.critical(e)
+            self.__insert_data("stats_cdc", {**data, **kwargs})
+        except InsertMetadataError as e:
+            logger.critical(str(e))
 
-            cursor = self.connection.cursor()
-            cursor.execute(
-                Query.SQL_INSERT_STATS_SOURCE_TABLES,
-                (
-                    data["task_name"],
-                    data["schema_name"],
-                    data["table_name"],
-                    data["rowcount"],
-                    data["statusmessage"],
-                    data["time_elapsed"],
-                ),
-            )
-            self.connection.commit()
-        except InsertStatsError as e:
-            logger.critical(f"Erro ao inserir dados na tabela stats_source_tables: {e}")
-
-    def insert_stats_message(self, data: Dict, **kargs) -> None:
-        """
-        Insere dados na tabela stats_message.
-
-        Args:
-            data: Dicionário com os dados a serem inseridos.
-                Deve conter as chaves: task_name, schema_name, table_name.
-        """
-
+    def insert_stats_full_load(self, data: Dict, **kwargs) -> None:
+        """Insere dados na tabela stats_full_load."""
         try:
-            data = {**data, **kargs}
+            self.__insert_data("stats_full_load", {**data, **kwargs})
+        except InsertMetadataError as e:
+            logger.critical(str(e))
 
-            cursor = self.connection.cursor()
-            cursor.execute(
-                Query.SQL_INSERT_STATS_MESSAGE,
-                (
-                    data["task_name"],
-                    data["transaction_id"],
-                    data["quantity_operations"],
-                    data.get("published", 0),
-                    data.get("received", 0),
-                    data.get("processed", 0),
-                ),
-            )
-            self.connection.commit()
-        except InsertStatsError as e:
-            logger.critical(f"Erro ao inserir dados na tabela stats_message: {e}")
-
-    def update_stats_message(self, data: Dict, **kargs) -> None:
-        """
-        Insere dados na tabela stats_message.
-
-        Args:
-            data: Dicionário com os dados a serem inseridos.
-        """
-
+    def insert_stats_source_tables(self, data: Dict, **kwargs) -> None:
+        """Insere dados na tabela stats_source_tables."""
         try:
-            data = {**data, **kargs}
+            self.__insert_data("stats_source_tables", {**data, **kwargs})
+        except InsertMetadataError as e:
+            logger.critical(str(e))
 
+    def insert_stats_message(self, data: Dict, **kwargs) -> None:
+        """Insere dados na tabela stats_message."""
+        try:
+            data = {**data, **kwargs}
+            data["published"] =  data.get("published", 0)
+            data["received"] =  data.get("received", 0)
+            data["processed"] =  data.get("processed", 0)
+
+            self.__insert_data("stats_message", data)
+        except InsertMetadataError as e:
+            logger.critical(str(e))
+
+    def insert_dlx_message(self, data: Dict, **kwargs) -> None:
+        """Insere dados na tabela dlx_message."""
+        try:
+            self.__insert_data("dlx_message", {**data, **kwargs})
+        except InsertMetadataError as e:
+            logger.critical(str(e))
+
+    def insert_apply_exceptions(self, data: Dict, **kwargs) -> None:
+        """Insere dados na tabela apply_exceptions."""
+        try:
+            self.__insert_data("apply_exceptions", {**data, **kwargs})
+        except InsertMetadataError as e:
+            logger.critical(str(e))
+
+    def update_stats_message(self, data: Dict, **kwargs) -> None:
+        """Atualiza dados na tabela stats_message."""
+        try:
+            data = {**data, **kwargs}
             column_set = data.get("column")
             value_set = data.get("value")
 
@@ -248,31 +221,18 @@ class MetadataConnectionManager:
                 (data["transaction_id"],),
             )
             self.connection.commit()
-        except InsertStatsError as e:
+        except InsertMetadataError as e:
             logger.critical(f"Erro ao atualizar dados na tabela stats_message: {e}")
 
     def update_metadata_config(self, config: Dict) -> None:
-        """
-        Insere dados na tabela stats_message.
-
-        Args:
-            data: Dicionário com os dados a serem inseridos. Com o formato key: value
-        """
-
+        """Atualiza configurações na tabela metadata_table."""
         try:
             cursor = self.connection.cursor()
             for key, value in config.items():
-                cursor.execute(
-                    Query.SQL_UPSERT_METADATA_TABLE,
-                    (
-                        key,
-                        value,
-                    ),
-                )
-
+                cursor.execute(Query.SQL_UPSERT_METADATA_TABLE, (key, value))
             self.connection.commit()
-        except InsertStatsError as e:
-            logger.critical(f"Erro ao atualizar dados na tabela stats_message: {e}")
+        except InsertMetadataError as e:
+            logger.critical(f"Erro ao atualizar dados na tabela metadata_table: {e}")
 
     def get_metadata_tables(
         self,
@@ -285,26 +245,25 @@ class MetadataConnectionManager:
         Obtém estatísticas de uma tabela com filtros opcionais.
 
         Args:
-            metadata_table_name: Nome da tabela de estatísticas ('stats_cdc', 'stats_full_load' ou 'stats_source_tables').
-            task_name: Nome da tarefa para filtrar (opcional).
-            schema_name: Nome do schema para filtrar (opcional).
-            table_name: Nome da tabela para filtrar (opcional).
+            metadata_table_name: Nome da tabela de estatísticas
+            task_name: Nome da tarefa para filtrar (opcional)
+            schema_name: Nome do schema para filtrar (opcional)
+            table_name: Nome da tabela para filtrar (opcional)
 
         Returns:
             DataFrame contendo as estatísticas filtradas.
         """
-
         try:
-            if metadata_table_name not in self.TABLES_METADATA:
-                e = GetMetadataError(
-                    f"table_name must be either {' OR '.join(self.TABLES_METADATA)}"
+            if metadata_table_name not in self.TABLE_SCHEMA:
+                raise GetMetadataError(
+                    f"table_name must be one of: {', '.join(self.TABLE_SCHEMA.keys())}"
                 )
-                logger.critical(e)
 
             query = f"SELECT * FROM {metadata_table_name}"
             conditions = []
             params = []
 
+            # Adiciona filtros conforme parâmetros fornecidos
             if task_name:
                 conditions.append("task_name = ?")
                 params.append(task_name)
@@ -324,13 +283,13 @@ class MetadataConnectionManager:
             df = pl.DataFrame(
                 cursor.fetchall(), schema=[desc[0] for desc in cursor.description]
             )
-
             return df
 
         except GetMetadataError as e:
             logger.critical(f"Erro ao obter estatísticas: {e}")
 
     def get_metadata_config(self, key: str) -> str:
+        """Obtém um valor de configuração da tabela metadata_table."""
         try:
             cursor = self.connection.cursor()
             cursor.execute(Query.SQL_GET_METADATA_CONFIG, (key,))
@@ -339,20 +298,16 @@ class MetadataConnectionManager:
             logger.critical(f"Erro ao obter config: {e}")
 
     def truncate_tables(self) -> None:
-        """Limpa as tabelas de metadados."""
-
+        """Limpa todas as tabelas de metadados."""
         try:
             cursor = self.connection.cursor()
-
-            for table in self.TABLES_METADATA:
+            for table in self.TABLE_SCHEMA.keys():
                 try:
                     cursor.execute(Query.SQL_TRUNCATE_TABLE.format(table=table))
                 except sqlite3.OperationalError:
                     logger.warning(f"Table {table} does not exist")
                     continue
-
             self.connection.commit()
-
         except Exception as e:
             e = MetadataError(f"Erro ao limpar as tabelas de metadados: {e}")
             logger.critical(e)

@@ -1,3 +1,3 @@
 - estudar novo modo de leitura de slot_replication
 - mover mensagens do dlx para sqlite
-[OK] - eu preciso saber quantas operações serão enviadas no publish
+- colocar variávels stop_if no metadatada do sqlite

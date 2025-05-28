@@ -21,7 +21,7 @@ class CDCStrategy(ReplicationStrategy):
     def __init__(self, interval_seconds: int):
         self.interval_seconds = interval_seconds
 
-    def __setup_environment(self, task_settings: dict) -> None:
+    def __setup_environment(self, task_settings: dict):
         """Configura o ambiente para execução."""
         try:
             task_exists = True
@@ -33,6 +33,17 @@ class CDCStrategy(ReplicationStrategy):
             task = self.create_task(task_settings)
 
             Utils.write_task_pickle(task)
+
+        with MetadataConnectionManager() as metadata_manager:
+            metadata_manager.update_metadata_config(
+                {
+                    "STOP_IF_INSERT_ERROR": str(int(task.stop_if_insert_error)),
+                    "STOP_IF_UPDATE_ERROR": str(int(task.stop_if_update_error)),
+                    "STOP_IF_DELETE_ERROR": str(int(task.stop_if_delete_error)),
+                    "STOP_IF_UPSERT_ERROR": str(int(task.stop_if_upsert_error)),
+                    "STOP_IF_SCD2_ERROR": str(int(task.stop_if_scd2_error)),
+                }
+            )
 
         logger.info(
             f"CDC STRATEGY - Iniciando CDC com intervalo de {self.interval_seconds}s"

@@ -13,7 +13,7 @@ class CreateTableError(MetadataError):
         super().__init__(message)
 
 
-class InsertStatsError(MetadataError):
+class InsertMetadataError(MetadataError):
     """Exceção lançada quando ocorre um erro ao inserir dados na tabela stats_cdc."""
 
     def __init__(self, message: str, table_name: str):

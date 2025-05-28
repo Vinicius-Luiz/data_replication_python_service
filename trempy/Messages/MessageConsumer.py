@@ -35,8 +35,8 @@ class MessageConsumer(Message):
         try:
             # Configuração da Dead Letter Exchange (DLX)
             args = {
-                "x-dead-letter-exchange": self.dlx_exchange_name,  # Exchange para mensagens falhas
-                "x-dead-letter-routing-key": self.dlx_routing_key,  # Routing key padrão para DLX
+                "x-dead-letter-exchange": self.dlx_exchange_name,
+                "x-dead-letter-routing-key": self.dlx_routing_key,
             }
 
             # Declara a fila principal com:

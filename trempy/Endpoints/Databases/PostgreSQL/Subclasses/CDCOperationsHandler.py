@@ -1,6 +1,7 @@
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.ConnectionManager import (
     ConnectionManager,
 )
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Endpoints.Databases.PostgreSQL.Subclasses.TableManager import (
     TableManager,
 )
@@ -9,14 +10,29 @@ from trempy.Shared.Queries.QueryPostgreSQL import (
     CDCQueries as CDCQueriesPostgreSQL,
 )  #  TODO eu preciso saber qual é o tipo de endpoint correto
 from trempy.Shared.Types import CdcModeType, SCD2ColumnType
-from trempy.Endpoints.Exceptions.Exception import *
+from psycopg2 import sql, extensions, InterfaceError, Error
 from trempy.Loggings.Logging import ReplicationLogger
+from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
 from typing import Dict, List
-from psycopg2 import sql
-import os
+
 
 logger = ReplicationLogger()
+
+with MetadataConnectionManager() as metadata_manager:
+    STOP_IF_INSERT_ERROR = int(
+        metadata_manager.get_metadata_config("STOP_IF_INSERT_ERROR")
+    )
+    STOP_IF_UPDATE_ERROR = int(
+        metadata_manager.get_metadata_config("STOP_IF_UPDATE_ERROR")
+    )
+    STOP_IF_DELETE_ERROR = int(
+        metadata_manager.get_metadata_config("STOP_IF_DELETE_ERROR")
+    )
+    STOP_IF_UPSERT_ERROR = int(
+        metadata_manager.get_metadata_config("STOP_IF_UPSERT_ERROR")
+    )
+    STOP_IF_SCD2_ERROR = int(metadata_manager.get_metadata_config("STOP_IF_SCD2_ERROR"))
 
 
 class CDCOperationsHandler:
@@ -29,6 +45,53 @@ class CDCOperationsHandler:
     ):
         self.connection_manager = connection_manager
         self.table_manager = table_manager
+
+    from psycopg2 import InterfaceError, Error
+
+    def __handle_database_exceptions(
+        self,
+        schema_name: str,
+        table_name: str,
+        cursor: extensions.cursor = None,
+        exception: Exception = None,
+    ) -> dict:
+        """
+        Trata exceções de banco de dados de forma padronizada.
+
+        Args:
+            schema_name: Nome do schema
+            table_name: Nome da tabela
+            cursor: Objeto cursor do psycopg2 (opcional)
+            exception: Exceção capturada (opcional)
+
+        Returns:
+            str: Mensagem de erro formatada
+        """
+        error_info = {
+            "schema_name": schema_name,
+            "table_name": table_name,
+            "message": str(exception),
+            "type": type(exception).__name__,
+            "code": None,
+            "query": None,
+        }
+
+        error_info["code"] = getattr(exception, "pgcode", None)
+
+        if cursor and hasattr(cursor, "query") and cursor.query:
+            error_info["query"] = (
+                cursor.query.decode()
+                if isinstance(cursor.query, bytes)
+                else cursor.query
+            )
+
+        with MetadataConnectionManager() as metadata_manager:
+            metadata_manager.insert_apply_exceptions(error_info)
+
+        error_info["error_msg"] = (
+            f'{error_info["schema_name"]}.{error_info["table_name"]}: {error_info["type"]} - {error_info["message"]}'
+        )
+        return error_info
 
     def __insert_cdc_data(self, table: Table, mode: CdcModeType) -> dict:
         """
@@ -190,7 +253,9 @@ class CDCOperationsHandler:
                 create_stats = self.__scd2_create_current(table, row)
                 stats["inserts"] += 1
                 stats["total"] += 1
-                stats["errors"] += disable_stats.get("errors", 0) or create_stats.get("errors", 0)
+                stats["errors"] += disable_stats.get("errors", 0) or create_stats.get(
+                    "errors", 0
+                )
 
             elif operation == "UPDATE":
                 row_exists = self.__scd2_verify_if_row_exists(table, row)
@@ -201,7 +266,9 @@ class CDCOperationsHandler:
                 create_stats = self.__scd2_create_current(table, row)
                 stats["updates"] += 1
                 stats["total"] += 1
-                stats["errors"] += disable_stats.get("errors", 0) or create_stats.get("errors", 0)
+                stats["errors"] += disable_stats.get("errors", 0) or create_stats.get(
+                    "errors", 0
+                )
 
             elif operation == "DELETE":
                 disable_stats = self.__scd2_disable_current(table, row)
@@ -336,7 +403,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if int(os.getenv("STOP_IF_SCD2_ERROR"))
+                if STOP_IF_SCD2_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -367,7 +434,6 @@ class CDCOperationsHandler:
                 "errors": 0,
             }
 
-
             scd2_columns = table.get_scd2_columns()
             current = scd2_columns[SCD2ColumnType.CURRENT]
             end_date = scd2_columns[SCD2ColumnType.END_DATE]
@@ -386,18 +452,22 @@ class CDCOperationsHandler:
 
             with self.connection_manager.cursor() as cursor:
                 cursor.execute(update_query, where_values)
-            
+
         except Exception as e:
             stats["errors"] += 1
 
+            error_info = self.__handle_database_exceptions(
+                table.target_schema_name, table.target_table_name, cursor, e
+            )
+
             e = DisableSCD2Error(
-                f"Erro ao desativar registro no modo SCD2: {e}",
+                f"Erro ao desativar registro no modo SCD2: {error_info['error_msg']}",
                 f"{table.target_schema_name}.{table.target_table_name}",
-                cursor.query.decode("utf-8") if cursor.query else "",
+                error_info["query"],
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if int(os.getenv("STOP_IF_SCD2_ERROR"))
+                if STOP_IF_SCD2_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -442,7 +512,7 @@ class CDCOperationsHandler:
                 schema=sql.Identifier(table.target_schema_name),
                 table=sql.Identifier(table.target_table_name),
                 columns=sql.SQL(", ").join(map(sql.Identifier, data_columns)),
-                values=values_part,  # Já é um Composed SQL
+                values=values_part,
             )
 
             with self.connection_manager.cursor() as cursor:
@@ -451,14 +521,18 @@ class CDCOperationsHandler:
         except Exception as e:
             stats["errors"] += 1
 
+            error_info = self.__handle_database_exceptions(
+                table.target_schema_name, table.target_table_name, cursor, e
+            )
+
             e = InsertCDCError(
-                f"Erro ao inserir dados: {e}",
+                f"Erro ao inserir dados: {error_info['error_msg']}",
                 f"{table.target_schema_name}.{table.target_table_name}",
-                cursor.query.decode("utf-8") if cursor.query else "",
+                error_info["query"],
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if int(os.getenv("STOP_IF_INSERT_ERROR"))
+                if STOP_IF_INSERT_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -520,14 +594,18 @@ class CDCOperationsHandler:
         except Exception as e:
             stats["errors"] += 1
 
+            error_info = self.__handle_database_exceptions(
+                table.target_schema_name, table.target_table_name, cursor, e
+            )
+
             e = UpdateCDCError(
-                f"Erro ao atualizar dados: {e}",
+                f"Erro ao atualizar dados: {error_info['error_msg']}",
                 f"{table.target_schema_name}.{table.target_table_name}",
-                cursor.query.decode("utf-8") if cursor.query else "",
+                error_info["query"],
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if int(os.getenv("STOP_IF_UPDATE_ERROR"))
+                if STOP_IF_UPDATE_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -576,14 +654,18 @@ class CDCOperationsHandler:
         except Exception as e:
             stats["errors"] += 1
 
+            error_info = self.__handle_database_exceptions(
+                table.target_schema_name, table.target_table_name, cursor, e
+            )
+
             e = DeleteCDCError(
-                f"Erro ao remover dados: {e}",
+                f"Erro ao remover dados: {error_info['error_msg']}",
                 f"{table.target_schema_name}.{table.target_table_name}",
-                cursor.query.decode("utf-8") if cursor.query else "",
+                error_info["query"],
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if int(os.getenv("STOP_IF_DELETE_ERROR"))
+                if STOP_IF_DELETE_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -654,14 +736,18 @@ class CDCOperationsHandler:
         except Exception as e:
             stats["errors"] += 1
 
+            error_info = self.__handle_database_exceptions(
+                table.target_schema_name, table.target_table_name, cursor, e
+            )
+
             e = UpsertCDCError(
-                f"Erro ao realizar UPSERT: {e}",
+                f"Erro ao realizar UPSERT: {error_info['error_msg']}",
                 f"{table.target_schema_name}.{table.target_table_name}",
-                cursor.query.decode("utf-8") if cursor.query else "",
+                error_info["query"],
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if int(os.getenv("STOP_IF_UPSERT_ERROR"))
+                if STOP_IF_UPSERT_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 

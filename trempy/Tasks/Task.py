@@ -154,7 +154,6 @@ class Task:
         try:
             delivery_tag = changes_structured["delivery_tag"]
             transaction_id = changes_structured["transaction_id"]
-
             try:
                 df_changes_structured: dict = (
                     self.target_endpoint.structure_capture_changes_to_dataframe(
@@ -162,8 +161,8 @@ class Task:
                     )
                 )
             except TaskError as e:
-                channel.basic_nack(delivery_tag=delivery_tag, requeue=True)
                 e = TaskError(f"Erro ao estruturar as alterações capturadas: {str(e)}")
+                channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
                 logger.critical(e)
 
             for table in sorted(self.tables, key=lambda x: x.priority.value):
@@ -197,6 +196,7 @@ class Task:
 
         except Exception as e:
             e = TaskError(f"Erro ao realizar carga de alterações no callback: {str(e)}")
+            channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
             logger.critical(e)
 
     def execute_source_full_load(self) -> bool:

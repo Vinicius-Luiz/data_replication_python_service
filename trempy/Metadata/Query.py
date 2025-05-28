@@ -1,5 +1,5 @@
 class Query:
-    SQL_METADATA_TABLE = """
+    SQL_CREATE_METADATA_TABLE = """
         CREATE TABLE IF NOT EXISTS metadata_table (
             key    TEXT PRIMARY KEY,
             value  TEXT
@@ -56,6 +56,30 @@ class Query:
         )
     """
 
+    SQL_CREATE_DLX_MESSAGE = """
+        CREATE TABLE IF NOT EXISTS dlx_message (
+            task_name    TEXT,
+            transaction_id TEXT,
+            message_id TEXT,
+            delivery_tag INTEGER,
+            routing_key TEXT,
+            body TEXT,
+            created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """
+
+    SQL_CREATE_APPLY_EXCEPTIONS = """
+        CREATE TABLE IF NOT EXISTS apply_exceptions (
+            schema_name TEXT,
+            table_name TEXT,
+            message TEXT,
+            type TEXT,
+            code TEXT,
+            query TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """
+
     SQL_INSERT_STATS_CDC = """
         INSERT INTO stats_cdc 
         (task_name, schema_name, table_name, inserts, updates, deletes, errors, total)
@@ -80,6 +104,17 @@ class Query:
         VALUES (?, ?, ?, ?, ?, ?)
         """
 
+    SQL_INSERT_DLX_MESSAGE = """
+        INSERT INTO dlx_message 
+        (task_name, transaction_id, message_id, delivery_tag, routing_key, body)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """
+
+    SQL_INSERT_APPLY_EXCEPTIONS = """
+        INSERT INTO apply_exceptions 
+        (schema_name, table_name, message, type, code, query)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """
     SQL_UPDATE_STATS_MESSSAGE = """
         UPDATE stats_message
            SET {column_set} = {value_set}
@@ -96,7 +131,7 @@ class Query:
         FROM stats_message
         WHERE transaction_id = ?
     """
-    
+
     SQL_GET_METADATA_CONFIG = """
         SELECT MAX(value)
         FROM metadata_table
