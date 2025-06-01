@@ -1,8 +1,8 @@
 from trempy.Endpoints.Databases.PostgreSQL.Endpoint import EndpointPostgreSQL
-from trempy.Endpoints.Endpoint import Endpoint
 from trempy.Endpoints.Endpoint import DatabaseType, EndpointType
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
+from trempy.Endpoints.Endpoint import Endpoint
 
 logger = ReplicationLogger()
 

@@ -1,6 +1,8 @@
 from trempy.Replication.ReplicationManager import ReplicationManager
 
-
-if __name__ == "__main__":
+def main():
     manager = ReplicationManager()
     manager.run()
+
+if __name__ == "__main__":
+    main()

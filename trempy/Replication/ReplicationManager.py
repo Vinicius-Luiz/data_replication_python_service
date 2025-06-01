@@ -2,9 +2,9 @@ from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Replication.Factory.ReplicationStrategyFactory import (
     ReplicationStrategyFactory,
 )
-from trempy.Shared.Types import TaskType
 from trempy.Replication.Exceptions.Exception import *
 from trempy.Loggings.Logging import ReplicationLogger
+from trempy.Shared.Types import TaskType
 from dotenv import load_dotenv
 import json
 

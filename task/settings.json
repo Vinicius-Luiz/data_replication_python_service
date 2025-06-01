@@ -3,7 +3,7 @@
         "task_name": "fl_cdc_scd2_employees",
         "replication_type": "full_load_and_cdc",
         "interval_seconds": 3,
-        "start_mode": "continue",
+        "start_mode": "reload",
 
         "create_table_if_not_exists": true,
         "full_load_settings": {

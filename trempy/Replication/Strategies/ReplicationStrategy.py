@@ -1,6 +1,6 @@
 from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
-from trempy.Shared.Types import PriorityType, TaskType, CdcModeType
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
+from trempy.Shared.Types import PriorityType, TaskType, CdcModeType
 from trempy.Transformations.Transformation import Transformation
 from trempy.Messages import Message, MessageDlx, MessageConsumer
 from trempy.Loggings.Logging import ReplicationLogger
