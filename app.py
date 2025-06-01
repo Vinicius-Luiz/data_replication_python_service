@@ -6,15 +6,39 @@ import signal
 import psutil
 import platform
 import sys
+import time
+from pathlib import Path
+
+
+class LogViewer:
+    def __init__(self, log_file='app.log'):
+        self.log_file = log_file
+        self.last_position = 0
+        
+    def get_new_log_entries(self):
+        """Retorna as novas entradas do arquivo de log"""
+        try:
+            with open(self.log_file, 'r', encoding='utf-8') as f:
+                # Vai para a última posição conhecida
+                f.seek(self.last_position)
+                new_content = f.read()
+                # Atualiza a última posição
+                self.last_position = f.tell()
+                return new_content
+        except FileNotFoundError:
+            return "Arquivo de log não encontrado. A replicação pode não ter gerado logs ainda."
+        except Exception as e:
+            return f"Erro ao ler o arquivo de log: {str(e)}"
 
 
 class ReplicationController:
     def __init__(self):
         self.logger = ReplicationLogger()
         self.python_path = sys.executable
-        self.__initialize_session_state()
+        self.log_viewer = LogViewer()
+        self._initialize_session_state()
 
-    def __initialize_session_state(self):
+    def _initialize_session_state(self):
         if "process" not in st.session_state:
             st.session_state.process = None
 
@@ -71,17 +95,45 @@ class ReplicationController:
         else:
             st.success("Replicação de dados está em execução")
 
+    def display_logs(self):
+        """Exibe o conteúdo do arquivo de log em tempo real"""
+        st.subheader("Visualização do Log em Tempo Real")
+        
+        # Cria um expander para os logs
+        with st.expander("Visualizar Logs", expanded=True):
+            # Cria o text_area uma única vez fora do loop
+            log_display = st.empty()
+            
+            # Atualiza os logs a cada 2 segundos
+            while True:
+                new_logs = self.log_viewer.get_new_log_entries()
+                if new_logs:
+                    # Atualiza o conteúdo sem recriar o elemento
+                    log_display.text_area(
+                        "",
+                        value=new_logs,
+                        height=300,
+                        key=f"log_content_{time.time()}"  # Chave única usando timestamp
+                    )
+                time.sleep(2)
+                
+                # Interrompe o loop se o usuário sair da página
+                if not st.session_state.get('running', True):
+                    break
+
     def display_instructions(self):
         """Exibe as instruções de uso"""
         st.markdown("""
         ### Instruções:
         1. Clique em **Iniciar Replicação** para começar o processo
         2. Clique em **Parar Replicação** para interromper o processo
+        3. Os logs aparecerão automaticamente na seção abaixo
         """)
 
 
 class ReplicationApp:
     def __init__(self):
+        st.set_page_config(layout="wide", initial_sidebar_state="expanded")
         self.controller = ReplicationController()
         self._setup_ui()
 
@@ -89,6 +141,7 @@ class ReplicationApp:
         """Configura a interface do usuário"""
         st.title("Controle de Replicação de Dados")
         
+        # Seção de controle
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Iniciar Replicação", key="start"):
@@ -100,6 +153,10 @@ class ReplicationApp:
         
         self.controller.display_status()
         self.controller.display_instructions()
+        
+        # Seção de logs
+        st.session_state.running = True
+        self.controller.display_logs()
 
 
 # Configuração inicial do logging
