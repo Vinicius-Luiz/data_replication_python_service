@@ -49,6 +49,9 @@ class ReplicationLogger:
         )
 
         logging.getLogger("pika").setLevel(logging.WARNING)
+        logging.getLogger("matplotlib").setLevel(logging.WARNING)
+        logging.getLogger("fonttools").setLevel(logging.WARNING)
+        logging.getLogger("pyarrow").setLevel(logging.WARNING)
         return True
 
     def _should_log(self, required_types: Union[str, list]) -> bool:

@@ -41,3 +41,7 @@ with MetadataConnectionManager() as metadata_manager:
 with MetadataConnectionManager() as metadata_manager:
     df = metadata_manager.get_metadata_tables("apply_exceptions")
     print(df.head(100000))
+
+with MetadataConnectionManager() as metadata_manager:
+    df = metadata_manager.get_messages_stats()
+    print(df.head(100000))

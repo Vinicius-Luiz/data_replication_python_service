@@ -1,11 +1,16 @@
+from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Loggings.Logging import ReplicationLogger
+import matplotlib.pyplot as plt
+import plotly.express as px
 import streamlit as st
+import pandas as pd
+import polars as pl
 import subprocess
-import os
+import platform
 import signal
 import psutil
-import platform
 import sys
+import os
 
 
 class LogViewer:
@@ -54,7 +59,6 @@ class ReplicationController:
                         else 0
                     ),
                 )
-                st.success("Replicação de dados iniciada com sucesso!")
                 self.logger.info("UI - Replicação de dados iniciada")
             except Exception as e:
                 st.error(f"Erro ao iniciar a replicação: {e}")
@@ -73,7 +77,6 @@ class ReplicationController:
 
                 try:
                     st.session_state.process.wait(timeout=5)
-                    st.success("Replicação de dados parada com sucesso!")
                     self.logger.info("UI - Replicação de dados finalizada")
                 except subprocess.TimeoutExpired:
                     st.error(
@@ -89,11 +92,32 @@ class ReplicationController:
                 st.session_state.process = None
 
     def __display_status(self):
-        """Exibe o status atual da replicação"""
-        if st.session_state.process is None:
-            st.warning("Replicação de dados não está em execução")
-        else:
-            st.success("Replicação de dados está em execução")
+        # Container principal com largura total
+        main_container = st.container()
+
+        with main_container:
+            cols = st.columns([6, 12])
+
+            with cols[0]:
+                col1, col2, col3, col4 = st.columns(4)
+
+                with col1:
+                    if st.button("Iniciar", key="start"):
+                        self.__start_replication()
+
+                with col2:
+                    if st.button("Parar", key="stop"):
+                        self.__stop_replication()
+
+                with col3:
+                    if st.button("Atualizar", key="unique_refresh_button"):
+                        st.session_state.log_refresh = not st.session_state.log_refresh
+
+                with col4:
+                    if st.session_state.process is None:
+                        st.error("**PARADO**")
+                    else:
+                        st.success("**EXECUTANDO**")
 
     def __display_logs(self):
         """Exibe o conteúdo do arquivo de log em tempo real"""
@@ -104,10 +128,6 @@ class ReplicationController:
             st.session_state.log_refresh = False
 
         with st.expander("Visualizar Logs", expanded=True):
-            # Botão que altera o estado (não a key)
-            if st.button("Atualizar Logs", key="unique_refresh_button"):
-                st.session_state.log_refresh = not st.session_state.log_refresh
-
             # Exibe os logs com syntax highlighting
             current_logs = self.log_viewer.get_new_log_entries()
             st.code(
@@ -117,33 +137,124 @@ class ReplicationController:
                 height=300,
             )
 
-    def __display_instructions(self):
-        """Exibe as instruções de uso"""
-        st.markdown(
-            """
-        ### Instruções:
-        1. Clique em **Iniciar Replicação** para começar o processo
-        2. Clique em **Parar Replicação** para interromper o processo
-        3. Os logs aparecerão automaticamente na seção abaixo
-        """
+    def __graph_cdc_01(self):
+        with MetadataConnectionManager() as metadata_manager:
+            df = metadata_manager.get_metadata_tables("stats_cdc")
+            df = (
+                df.group_by(["task_name", "schema_name", "table_name"])
+                .agg(
+                    [
+                        pl.sum("inserts"),
+                        pl.sum("updates"),
+                        pl.sum("deletes"),
+                        pl.sum("errors"),
+                        pl.sum("total"),
+                    ]
+                )
+                .sort(["task_name", "schema_name", "table_name"])
+            )
+
+        st.table(df.to_pandas())
+
+    def __graph_cdc_02(self):
+        try:
+            data = {}
+            with MetadataConnectionManager() as metadata_manager:
+                df = metadata_manager.get_messages_stats().to_pandas()
+                data = df.iloc[0].to_dict()
+        except:
+            return
+        finally:
+            if not data:
+                return
+
+        # Cálculo das diferenças
+        bar_A = data["quantity_operations"] - data["published"]
+        bar_B = data["published"] - data["received"]
+        bar_C = max(data["received"] - data["processed"], 0)  # Evita valores negativos
+        bar_D = data["processed"] if data["processed"] < data["quantity_operations"] else 0
+
+        # Criar DataFrame para o Plotly
+        df_plotly = pd.DataFrame(
+            {
+                "Estágio": [
+                    "Não publicados",
+                    "Publicados na fila",
+                    "Em processamento",
+                    "Processado",
+                ],
+                "Quantidade": [bar_A, bar_B, bar_C, bar_D],
+                "Cor": [
+                    "#FF6B6B",
+                    "#FFD166",
+                    "#06D6A0",
+                    "#118AB2",
+                ],  # Cores personalizadas
+            }
         )
 
-    def display_execute(self):
+        # Gráfico de barras interativo
+        fig = px.bar(
+            df_plotly,
+            x="Estágio",
+            y="Quantidade",
+            color="Cor",  # Cores baseadas na coluna 'Cor'
+            title="Estatísticas de Transações em processamento",
+            labels={"Quantidade": "", "Estágio": ""},
+            text="Quantidade",
+            color_discrete_map="identity",  # Usa cores diretamente da coluna
+        )
+
+        # Ajustar formatação
+        fig.update_traces(
+            texttemplate="%{text:,}",  # Formato com separador de milhar
+            textposition="outside",
+            marker_line_color="black",
+            marker_line_width=1,
+        )
+        fig.update_layout(
+            yaxis_range=[
+                0,
+                data["quantity_operations"] * 1.05,
+            ],  # Margem de 5% no eixo Y
+            showlegend=False,  # Remove a legenda (as cores já são autoexplicativas)
+        )
+
+        # Exibir no Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
+    def __display_cdc_stats(self):
+        self.__graph_cdc_01()
+
+        # Linha 2 - Gráficos lado a lado
         col1, col2 = st.columns(2)
+
         with col1:
-            if st.button("Iniciar Replicação", key="start"):
-                self.__start_replication()
+            self.__graph_cdc_02()
 
         with col2:
-            if st.button("Parar Replicação", key="stop"):
-                self.__stop_replication()
+            st.subheader("Distribuição de Eventos (Pizza)")
+
+    def display_home_page(self):
 
         self.__display_status()
-        self.__display_instructions()
 
-        # Seção de logs
-        st.session_state.running = True
-        self.__display_logs()
+        subtab1, subtab2, subtab3, subtab4 = st.tabs(
+            ["Logs", "Full Load Stats", "CDC Stats", "Errors"]
+        )
+
+        with subtab1:
+            st.session_state.running = True
+            self.__display_logs()
+
+        with subtab2:
+            st.write("Full Load Stats")
+
+        with subtab3:
+            self.__display_cdc_stats()
+
+        with subtab4:
+            st.write("Errors")
 
     def display_connections(self):
         st.header("Conexões")
@@ -248,7 +359,7 @@ class ReplicationApp:
 
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
             [
-                "Executar",
+                "Página Inicial",
                 "Conexões",
                 "Configurações da Tarefa",
                 "Tabelas",
@@ -258,7 +369,7 @@ class ReplicationApp:
         )
 
         with tab1:
-            self.controller.display_execute()
+            self.controller.display_home_page()
 
         with tab2:
             self.controller.display_connections()

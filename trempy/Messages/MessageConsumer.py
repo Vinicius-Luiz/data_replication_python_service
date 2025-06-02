@@ -92,9 +92,9 @@ class MessageConsumer(Message):
                         "value": message.get("batch_size"),
                     }
                 )
-                logger.info(
-                    f"MESSAGE - Recebido: ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}"
-                )
+                # logger.info(
+                #     f"MESSAGE - Recebido: ({method.delivery_tag}): {properties.headers.get('transaction_id')}/{properties.message_id}"
+                # )
 
                 message["delivery_tag"] = method.delivery_tag
                 message["transaction_id"] = properties.headers.get("transaction_id")

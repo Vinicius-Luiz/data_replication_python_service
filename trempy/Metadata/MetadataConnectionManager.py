@@ -179,9 +179,9 @@ class MetadataConnectionManager:
         """Insere dados na tabela stats_message."""
         try:
             data = {**data, **kwargs}
-            data["published"] =  data.get("published", 0)
-            data["received"] =  data.get("received", 0)
-            data["processed"] =  data.get("processed", 0)
+            data["published"] = data.get("published", 0)
+            data["received"] = data.get("received", 0)
+            data["processed"] = data.get("processed", 0)
 
             self.__insert_data("stats_message", data)
         except InsertMetadataError as e:
@@ -287,6 +287,18 @@ class MetadataConnectionManager:
 
         except GetMetadataError as e:
             logger.critical(f"Erro ao obter estatísticas: {e}")
+
+    def get_messages_stats(self) -> pl.DataFrame:
+        """Obtém estatísticas de mensagens."""
+
+        cursor = self.connection.cursor()
+
+        cursor.execute(Query.SQL_GET_MESSAGES_STATS)
+
+        df = pl.DataFrame(
+            cursor.fetchall(), schema=[desc[0] for desc in cursor.description]
+        )
+        return df
 
     def get_metadata_config(self, key: str) -> str:
         """Obtém um valor de configuração da tabela metadata_table."""

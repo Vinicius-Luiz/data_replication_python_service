@@ -184,6 +184,14 @@ class Task:
                             cdc_stats, task_name=self.task_name
                         )
             channel.basic_ack(delivery_tag=delivery_tag)
+            # logger.info(f"TASK - Confirmado ({delivery_tag})")
+
+        except Exception as e:
+            e = TaskError(f"Erro ao realizar carga de alterações no callback: {str(e)}")
+            channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
+            logger.critical(e)
+        
+        finally:
             with MetadataConnectionManager() as metadata_manager:
                 metadata_manager.update_stats_message(
                     {
@@ -192,12 +200,6 @@ class Task:
                         "value": changes_structured["batch_size"],
                     }
                 )
-            logger.info(f"TASK - Confirmado ({delivery_tag})")
-
-        except Exception as e:
-            e = TaskError(f"Erro ao realizar carga de alterações no callback: {str(e)}")
-            channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
-            logger.critical(e)
 
     def execute_source_full_load(self) -> bool:
         """

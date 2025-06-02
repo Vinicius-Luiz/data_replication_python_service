@@ -138,6 +138,17 @@ class Query:
         WHERE key = ?
     """
 
+    SQL_GET_MESSAGES_STATS = """
+        SELECT task_name,
+               sum(quantity_operations) as quantity_operations,
+               sum(published) as published,
+               sum(received)  as received,
+               sum(processed) as processed
+          FROM stats_message
+         WHERE processed < quantity_operations
+         GROUP BY task_name
+    """
+
     SQL_TRUNCATE_TABLE = """
         DELETE FROM {table}
     """

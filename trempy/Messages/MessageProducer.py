@@ -53,9 +53,9 @@ class MessageProducer(Message):
                             "value": message.get("batch_size"),
                         }
                     )
-                    logger.info(
-                        f"MESSAGE - Publicado: {messages.get('transaction_id')}/{message_id}"
-                    )
+                    # logger.info(
+                    #     f"MESSAGE - Publicado: {messages.get('transaction_id')}/{message_id}"
+                    # )
 
         except Exception as e:
             e = MessageProducerException(f"Erro ao publicar mensagem: {str(e)}")
