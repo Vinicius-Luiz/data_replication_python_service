@@ -32,10 +32,7 @@ class EndpointPostgreSQL(Endpoint):
             credentials (dict): Credenciais do banco de dados.
         """
         super().__init__(
-            DatabaseType.POSTGRESQL,
-            endpoint_type,
-            endpoint_name,
-            batch_cdc_size
+            DatabaseType.POSTGRESQL, endpoint_type, endpoint_name, batch_cdc_size
         )
 
         self.connection_manager = ConnectionManager.ConnectionManager(credentials)
@@ -44,7 +41,9 @@ class EndpointPostgreSQL(Endpoint):
         self.table_manager = TableManager.TableManager(
             self.connection_manager, self.table_creator
         )
-        self.cdc_manager = CDCManager.CDCManager(self.connection_manager, batch_cdc_size)
+        self.cdc_manager = CDCManager.CDCManager(
+            self.connection_manager, batch_cdc_size
+        )
         self.cdc_operations_handler = CDCOperationsHandler.CDCOperationsHandler(
             self.connection_manager, self.table_manager
         )
@@ -91,10 +90,15 @@ class EndpointPostgreSQL(Endpoint):
         return self.cdc_manager.capture_changes(**kargs)
 
     def insert_cdc_into_table(
-        self, mode: str, table: Table, create_table_if_not_exists: bool = False
+        self,
+        mode: str,
+        table: Table,
+        create_table_if_not_exists: bool = False,
     ):
         return self.cdc_operations_handler.insert_cdc_into_table(
-            mode, table, create_table_if_not_exists
+            mode=mode,
+            table=table,
+            create_table_if_not_exists=create_table_if_not_exists,
         )
 
     def structure_capture_changes_to_json(

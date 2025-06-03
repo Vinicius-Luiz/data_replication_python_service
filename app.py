@@ -1,6 +1,5 @@
 from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Loggings.Logging import ReplicationLogger
-import matplotlib.pyplot as plt
 import plotly.express as px
 import streamlit as st
 import pandas as pd
@@ -123,36 +122,46 @@ class ReplicationController:
         """Exibe o conteúdo do arquivo de log em tempo real"""
         st.subheader("Visualização do Log em Tempo Real")
 
-        # Variável de estado para forçar atualização
         if "log_refresh" not in st.session_state:
             st.session_state.log_refresh = False
 
         with st.expander("Visualizar Logs", expanded=True):
-            # Exibe os logs com syntax highlighting
             current_logs = self.log_viewer.get_new_log_entries()
             st.code(
                 current_logs,
-                language="log",  # Formatação específica para logs
-                line_numbers=False,  # Opcional: mostra numeração de linhas
-                height=300,
+                language="log",
+                line_numbers=False,
+                height=400,
             )
 
+    def __graph_fl_01(self):
+        try:
+            with MetadataConnectionManager() as metadata_manager:
+                df = metadata_manager.get_metadata_tables("stats_full_load")
+        except:
+            df = pl.DataFrame()
+
+        st.table(df.to_pandas())
+
     def __graph_cdc_01(self):
-        with MetadataConnectionManager() as metadata_manager:
-            df = metadata_manager.get_metadata_tables("stats_cdc")
-            df = (
-                df.group_by(["task_name", "schema_name", "table_name"])
-                .agg(
-                    [
-                        pl.sum("inserts"),
-                        pl.sum("updates"),
-                        pl.sum("deletes"),
-                        pl.sum("errors"),
-                        pl.sum("total"),
-                    ]
+        try:
+            with MetadataConnectionManager() as metadata_manager:
+                df = metadata_manager.get_metadata_tables("stats_cdc")
+                df = (
+                    df.group_by(["task_name", "schema_name", "table_name"])
+                    .agg(
+                        [
+                            pl.sum("inserts"),
+                            pl.sum("updates"),
+                            pl.sum("deletes"),
+                            pl.sum("errors"),
+                            pl.sum("total"),
+                        ]
+                    )
+                    .sort(["task_name", "schema_name", "table_name"])
                 )
-                .sort(["task_name", "schema_name", "table_name"])
-            )
+        except:
+            df = pl.DataFrame()
 
         st.table(df.to_pandas())
 
@@ -163,16 +172,23 @@ class ReplicationController:
                 df = metadata_manager.get_messages_stats().to_pandas()
                 data = df.iloc[0].to_dict()
         except:
-            return
+            pass
         finally:
             if not data:
-                return
+                data = {
+                    "quantity_operations": 0,
+                    "published": 0,
+                    "received": 0,
+                    "processed": 0,
+                }
 
         # Cálculo das diferenças
         bar_A = data["quantity_operations"] - data["published"]
         bar_B = data["published"] - data["received"]
         bar_C = max(data["received"] - data["processed"], 0)  # Evita valores negativos
-        bar_D = data["processed"] if data["processed"] < data["quantity_operations"] else 0
+        bar_D = (
+            data["processed"] if data["processed"] < data["quantity_operations"] else 0
+        )
 
         # Criar DataFrame para o Plotly
         df_plotly = pd.DataFrame(
@@ -223,6 +239,44 @@ class ReplicationController:
         # Exibir no Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
+    def __graph_cdc_03(self):
+        try:
+            with MetadataConnectionManager() as metadata_manager:
+                df = metadata_manager.get_metadata_tables("stats_cdc")
+                df = df.group_by(["task_name", "schema_name", "table_name"]).agg(
+                    [
+                        pl.sum("inserts"),
+                        pl.sum("updates"),
+                        pl.sum("deletes"),
+                        pl.sum("errors"),
+                        pl.sum("total"),
+                    ]
+                )
+
+                # Calcular totais de cada operação
+                total_inserts = df["inserts"].sum()
+                total_updates = df["updates"].sum()
+                total_deletes = df["deletes"].sum()
+
+        except:
+            total_inserts = 0
+            total_updates = 0
+            total_deletes = 0
+
+        fig = px.pie(
+            names=["Inserts", "Updates", "Deletes"],
+            values=[total_inserts, total_updates, total_deletes],
+            title="Operações CDC",
+            color=["Inserts", "Updates", "Deletes"],
+            color_discrete_map={
+                "Inserts": "#118AB2",
+                "Updates": "#FFD166",
+                "Deletes": "#FF6B6B",
+            },
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
     def __display_cdc_stats(self):
         self.__graph_cdc_01()
 
@@ -233,7 +287,10 @@ class ReplicationController:
             self.__graph_cdc_02()
 
         with col2:
-            st.subheader("Distribuição de Eventos (Pizza)")
+            self.__graph_cdc_03()
+
+    def __display_full_load_stats(self):
+        self.__graph_fl_01()
 
     def display_home_page(self):
 
@@ -248,7 +305,7 @@ class ReplicationController:
             self.__display_logs()
 
         with subtab2:
-            st.write("Full Load Stats")
+            self.__display_full_load_stats()
 
         with subtab3:
             self.__display_cdc_stats()
@@ -355,7 +412,7 @@ class ReplicationApp:
 
     def _setup_ui(self):
         """Configura a interface do usuário"""
-        st.title("Controle de Replicação de Dados")
+        st.title("TREMpy - Transactional Replication Engine for Multi-databases")
 
         tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
             [

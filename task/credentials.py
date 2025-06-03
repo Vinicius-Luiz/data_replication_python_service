@@ -9,7 +9,7 @@ credentials = {
         "database_type": "postgresql",
         "endpoint_type": "source",
         "endpoint_name": "Source_PostgreSQL",
-        "batch_cdc_size": 1,
+        "batch_cdc_size": 20000,
         "credentials": {
             "dbname": os.getenv("DB_NAME_POSTGRESQL_SOURCE"),
             "user": os.getenv("DB_USER_POSTGRESQL"),

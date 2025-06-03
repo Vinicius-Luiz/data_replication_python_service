@@ -10,7 +10,7 @@ from trempy.Shared.Queries.QueryPostgreSQL import (
     CDCQueries as CDCQueriesPostgreSQL,
 )  #  TODO eu preciso saber qual é o tipo de endpoint correto
 from trempy.Shared.Types import CdcModeType, SCD2ColumnType
-from psycopg2 import sql, extensions, InterfaceError, Error
+from psycopg2 import sql, extensions
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Endpoints.Exceptions.Exception import *
 from trempy.Tables.Table import Table
@@ -93,7 +93,11 @@ class CDCOperationsHandler:
         )
         return error_info
 
-    def __insert_cdc_data(self, table: Table, mode: CdcModeType) -> dict:
+    def __insert_cdc_data(
+        self,
+        table: Table,
+        mode: CdcModeType,
+    ) -> dict:
         """
         Insere dados de altera es em uma tabela de destino.
 
