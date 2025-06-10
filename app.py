@@ -142,8 +142,90 @@ class ReplicationController:
             df = pl.DataFrame()
 
         st.table(df.to_pandas())
+        
+    def __graph_errors_01(self):
+        try:
+            with MetadataConnectionManager() as metadata_manager:
+                df = metadata_manager.get_metadata_tables("apply_exceptions")
+        except:
+            df = pl.DataFrame()
+
+        if df.is_empty():
+            st.warning("Nenhum dado de erro encontrado")
+            return
+        
+        # Convertendo para pandas para facilitar a manipulação no Streamlit
+        df_pd = df.to_pandas()
+        
+        # Adicionando métricas resumidas
+        st.subheader("Resumo de Erros")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total de Erros", len(df_pd))
+        col2.metric("Tipos de Erros Únicos", df_pd['type'].nunique())
+        col3.metric("Códigos Únicos", df_pd['code'].nunique())
+        
+        # Criando colunas para os filtros
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            # Filtro por tipo de erro
+            types = ['Todos'] + sorted(df_pd['type'].unique().tolist())
+            selected_type = st.selectbox('Tipo de erro:', types)
+        
+        with col2:
+            # Filtro por código de erro
+            codes = ['Todos'] + sorted(df_pd['code'].unique().tolist())
+            selected_code = st.selectbox('Código de erro:', codes)
+        
+        with col3:
+            # Filtro por tabela
+            tables = ['Todos'] + sorted(df_pd['table_name'].unique().tolist())
+            selected_table = st.selectbox('Tabela:', tables)
+        
+        # Aplicando filtros
+        if selected_type != 'Todos':
+            df_pd = df_pd[df_pd['type'] == selected_type]
+        
+        if selected_code != 'Todos':
+            df_pd = df_pd[df_pd['code'] == selected_code]
+        
+        if selected_table != 'Todos':
+            df_pd = df_pd[df_pd['table_name'] == selected_table]
+        
+        # Configurações de estilo para a tabela
+        st.markdown("""
+        <style>
+            .stDataFrame {
+                width: 100%;
+                height: 500px;
+                overflow-y: auto;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # Exibindo a tabela com rolagem
+        st.dataframe(
+            df_pd,
+            column_config={
+                "created_at": st.column_config.DatetimeColumn(
+                    "Data/Hora",
+                    format="YYYY-MM-DD HH:mm:ss",
+                ),
+                "message": st.column_config.TextColumn(
+                    "Mensagem",
+                    width="large",
+                ),
+                "query": st.column_config.TextColumn(
+                    "Query",
+                    width="large",
+                )
+            },
+            hide_index=True,
+            use_container_width=True
+        )
 
     def __graph_cdc_01(self):
+        
         try:
             with MetadataConnectionManager() as metadata_manager:
                 df = metadata_manager.get_metadata_tables("stats_cdc")
@@ -291,6 +373,9 @@ class ReplicationController:
 
     def __display_full_load_stats(self):
         self.__graph_fl_01()
+        
+    def __display_errors_stats(self):
+        self.__graph_errors_01()
 
     def display_home_page(self):
 
@@ -311,7 +396,7 @@ class ReplicationController:
             self.__display_cdc_stats()
 
         with subtab4:
-            st.write("Errors")
+            self.__display_errors_stats()
 
     def display_connections(self):
         st.header("Conexões")
@@ -351,6 +436,24 @@ class ReplicationController:
 
     def display_tables(self):
         st.header("Tabelas")
+
+        # Conteúdo da terceira aba
+        st.markdown(
+            """
+        ## Aplicação de Exemplo
+        
+        Este é um exemplo simples de como usar abas no Streamlit.
+        
+        - **Tab1**: Configurações do usuário
+        - **Tab2**: Visualização de dados
+        - **Tab3**: Informações sobre o app
+        
+        Desenvolvido com ❤️ usando Streamlit
+        """
+        )
+
+    def display_filters(self):
+        st.header("Filtros")
 
         # Conteúdo da terceira aba
         st.markdown(
@@ -414,12 +517,13 @@ class ReplicationApp:
         """Configura a interface do usuário"""
         st.title("TREMpy - Transactional Replication Engine for Multi-databases")
 
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
             [
                 "Página Inicial",
                 "Conexões",
                 "Configurações da Tarefa",
                 "Tabelas",
+                "Filtros",
                 "Transformações",
                 "Error Handling",
             ]
@@ -438,9 +542,12 @@ class ReplicationApp:
             self.controller.display_tables()
 
         with tab5:
-            self.controller.display_transformations()
+            self.controller.display_filters()
 
         with tab6:
+            self.controller.display_transformations()
+
+        with tab7:
             self.controller.display_error_handling()
 
 

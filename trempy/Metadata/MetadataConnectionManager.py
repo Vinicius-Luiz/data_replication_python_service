@@ -281,7 +281,7 @@ class MetadataConnectionManager:
             cursor.execute(query, params)
 
             df = pl.DataFrame(
-                cursor.fetchall(), schema=[desc[0] for desc in cursor.description]
+                cursor.fetchall(), schema=[desc[0] for desc in cursor.description], orient="row"
             )
             return df
 
@@ -296,7 +296,7 @@ class MetadataConnectionManager:
         cursor.execute(Query.SQL_GET_MESSAGES_STATS)
 
         df = pl.DataFrame(
-            cursor.fetchall(), schema=[desc[0] for desc in cursor.description]
+            cursor.fetchall(), schema=[desc[0] for desc in cursor.description], orient="row"
         )
         return df
 
