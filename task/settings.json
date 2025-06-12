@@ -1,7 +1,7 @@
 {
     "task": {
         "task_name": "cdc_department",
-        "replication_type": "cdc",
+        "replication_type": "full_load_and_cdc",
         "interval_seconds": 3,
         "start_mode": "reload",
 

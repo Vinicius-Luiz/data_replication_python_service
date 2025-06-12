@@ -1,59 +1,121 @@
-2025-06-10 00:48:29,537 - INFO - UI - Replicação de dados iniciada
-2025-06-10 00:48:29,920 - INFO - REPLICATION - Recarregando tarefa
-2025-06-10 00:48:29,920 - INFO - REPLICATION - Recriando tabelas de metadata
-2025-06-10 00:48:30,001 - INFO - TASK - cdc_department válido
-2025-06-10 00:48:30,001 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-06-10 00:48:30,023 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 18, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-06-10 00:48:30,023 - INFO - TASK - Obtendo detalhes da tabela employees.department
-2025-06-10 00:48:30,029 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
-2025-06-10 00:48:30,029 - INFO - TASK - Obtendo detalhes da tabela employees.the_office_season
-2025-06-10 00:48:30,034 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office_season', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'season_number', 'description']}
-2025-06-10 00:48:30,034 - INFO - TASK - Obtendo detalhes da tabela employees.eletronic_history
-2025-06-10 00:48:30,038 - DEBUG - {'schema_name': 'employees', 'table_name': 'eletronic_history', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'date_acquisition']}
-2025-06-10 00:48:30,038 - INFO - TASK - Obtendo detalhes da tabela employees.the_office
-2025-06-10 00:48:30,043 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'name', 'age', 'created_date']}
-2025-06-10 00:48:30,043 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-06-10 00:48:30,048 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2839947, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-06-10 00:48:30,053 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
-2025-06-10 00:48:30,435 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-06-10 00:48:30,481 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-06-10 00:48:30,514 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:33,969 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:37,395 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:40,805 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:44,215 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:47,646 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:51,069 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:54,479 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:48:57,896 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:01,311 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:04,733 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:08,149 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:11,558 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:14,971 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:18,385 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:21,801 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:25,222 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:28,636 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:32,074 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:35,483 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:38,887 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:42,467 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:44,309 - INFO - ENDPOINT - Criando tabela employees.salary
-2025-06-10 00:49:45,915 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:49,353 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:52,813 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:56,243 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:49:59,659 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:03,063 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:06,506 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:09,944 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:13,358 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:16,756 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:20,155 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:23,554 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:26,962 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:30,368 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:33,856 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:37,264 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-10 00:50:39,535 - INFO - UI - Replicação de dados finalizada
+2025-06-12 00:33:28,713 - INFO - UI - Replicação de dados iniciada
+2025-06-12 00:33:29,083 - INFO - REPLICATION - Recarregando tarefa
+2025-06-12 00:33:29,084 - INFO - REPLICATION - Recriando tabelas de metadata
+2025-06-12 00:33:29,202 - INFO - TASK - cdc_department válido
+2025-06-12 00:33:29,202 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-06-12 00:33:29,248 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-06-12 00:33:29,248 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-06-12 00:33:29,253 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-06-12 00:33:29,253 - INFO - TASK - Obtendo detalhes da tabela employees.the_office_season
+2025-06-12 00:33:29,257 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office_season', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'season_number', 'description']}
+2025-06-12 00:33:29,257 - INFO - TASK - Obtendo detalhes da tabela employees.eletronic_history
+2025-06-12 00:33:29,262 - DEBUG - {'schema_name': 'employees', 'table_name': 'eletronic_history', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'date_acquisition']}
+2025-06-12 00:33:29,262 - INFO - TASK - Obtendo detalhes da tabela employees.the_office
+2025-06-12 00:33:29,267 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'name', 'age', 'created_date']}
+2025-06-12 00:33:29,267 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-06-12 00:33:29,272 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-06-12 00:33:29,277 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-12 00:33:29,644 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-12 00:33:29,683 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-12 00:33:29,684 - INFO - TASK - Obtendo dados da tabela employees.department
+2025-06-12 00:33:29,721 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'rowcount': 7, 'statusmessage': 'SELECT 7', 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:29,727 - INFO - TASK - Obtendo dados da tabela employees.the_office_season
+2025-06-12 00:33:29,729 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office_season', 'rowcount': 0, 'statusmessage': 'SELECT 0', 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:29,734 - INFO - TASK - Obtendo dados da tabela employees.eletronic_history
+2025-06-12 00:33:29,737 - DEBUG - {'schema_name': 'employees', 'table_name': 'eletronic_history', 'rowcount': 0, 'statusmessage': 'SELECT 0', 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:29,741 - INFO - TASK - Obtendo dados da tabela employees.the_office
+2025-06-12 00:33:29,742 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'rowcount': 0, 'statusmessage': 'SELECT 0', 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:29,746 - INFO - TASK - Obtendo dados da tabela employees.salary
+2025-06-12 00:33:33,612 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'time_elapsed': '00:00:04'}
+2025-06-12 00:33:33,615 - INFO - TASK - Obtendo dados da tabela employees.department_manager
+2025-06-12 00:33:33,620 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:54,713 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:33:54,713 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-12 00:33:55,050 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-12 00:33:55,084 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-12 00:33:55,107 - INFO - TASK - Realizando carga completa da tabela employees.department
+2025-06-12 00:33:55,107 - INFO - ENDPOINT - Removendo tabela employees.department
+2025-06-12 00:33:55,146 - INFO - ENDPOINT - Criando tabela employees.department
+2025-06-12 00:33:55,160 - INFO - ENDPOINT - Truncando tabela employees.department
+2025-06-12 00:33:55,164 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department
+2025-06-12 00:33:55,169 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'records': 7, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:55,180 - INFO - TASK - Realizando carga completa da tabela employees.the_office_season
+2025-06-12 00:33:55,180 - INFO - ENDPOINT - Removendo tabela employees.the_office_season
+2025-06-12 00:33:55,181 - INFO - ENDPOINT - Criando tabela employees.the_office_season
+2025-06-12 00:33:55,184 - INFO - ENDPOINT - Truncando tabela employees.the_office_season
+2025-06-12 00:33:55,186 - INFO - ENDPOINT - Inserindo 0 registros na tabela employees.the_office_season
+2025-06-12 00:33:55,189 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office_season', 'records': 0, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:55,201 - INFO - TASK - Realizando carga completa da tabela employees.eletronic_history
+2025-06-12 00:33:55,201 - INFO - ENDPOINT - Removendo tabela employees.eletronic_history
+2025-06-12 00:33:55,203 - INFO - ENDPOINT - Criando tabela employees.eletronic_history
+2025-06-12 00:33:55,206 - INFO - ENDPOINT - Truncando tabela employees.eletronic_history
+2025-06-12 00:33:55,209 - INFO - ENDPOINT - Inserindo 0 registros na tabela employees.eletronic_history
+2025-06-12 00:33:55,211 - DEBUG - {'schema_name': 'employees', 'table_name': 'eletronic_history', 'records': 0, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:55,221 - INFO - TRANSFORMATION - Aplicando transformação em employees.the_office: Carimbando data de sincronização
+2025-06-12 00:33:55,229 - INFO - TASK - Realizando carga completa da tabela employees.the_office
+2025-06-12 00:33:55,229 - INFO - ENDPOINT - Removendo tabela employees.the_office
+2025-06-12 00:33:55,231 - INFO - ENDPOINT - Criando tabela employees.the_office
+2025-06-12 00:33:55,232 - INFO - ENDPOINT - Truncando tabela employees.the_office
+2025-06-12 00:33:55,232 - INFO - ENDPOINT - Inserindo 0 registros na tabela employees.the_office
+2025-06-12 00:33:55,235 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'records': 0, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-06-12 00:33:55,261 - INFO - TASK - Realizando carga completa da tabela employees.salary
+2025-06-12 00:33:55,261 - INFO - ENDPOINT - Removendo tabela employees.salary
+2025-06-12 00:33:55,263 - INFO - ENDPOINT - Criando tabela employees.salary
+2025-06-12 00:33:55,265 - INFO - ENDPOINT - Truncando tabela employees.salary
+2025-06-12 00:33:56,470 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela employees.salary
+2025-06-12 00:34:34,519 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': 1, 'time_elapsed': '00:00:39'}
+2025-06-12 00:34:34,531 - INFO - FILTER - Aplicando filtro em employees.department_manager from_date: Filtrando from_date somente do ano de 1992
+2025-06-12 00:34:34,544 - INFO - TASK - Realizando carga completa da tabela employees.department_manager
+2025-06-12 00:34:34,544 - INFO - ENDPOINT - Removendo tabela employees.department_manager
+2025-06-12 00:34:34,546 - INFO - ENDPOINT - Criando tabela employees.department_manager
+2025-06-12 00:34:34,550 - INFO - ENDPOINT - Truncando tabela employees.department_manager
+2025-06-12 00:34:34,552 - INFO - ENDPOINT - Inserindo 3 registros na tabela employees.department_manager
+2025-06-12 00:34:34,557 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 3, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-06-12 00:34:34,610 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-12 00:34:34,610 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-12 00:34:34,671 - INFO - TASK - cdc_department válido
+2025-06-12 00:34:34,671 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-06-12 00:34:34,732 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-06-12 00:34:34,732 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-06-12 00:34:34,737 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-06-12 00:34:34,738 - INFO - TASK - Obtendo detalhes da tabela employees.the_office_season
+2025-06-12 00:34:34,743 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office_season', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'season_number', 'description']}
+2025-06-12 00:34:34,743 - INFO - TASK - Obtendo detalhes da tabela employees.eletronic_history
+2025-06-12 00:34:34,748 - DEBUG - {'schema_name': 'employees', 'table_name': 'eletronic_history', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'date_acquisition']}
+2025-06-12 00:34:34,748 - INFO - TASK - Obtendo detalhes da tabela employees.the_office
+2025-06-12 00:34:34,753 - DEBUG - {'schema_name': 'employees', 'table_name': 'the_office', 'estimated_row_count': 0, 'table_size': '8192 bytes', 'columns': ['id', 'name', 'age', 'created_date']}
+2025-06-12 00:34:34,753 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-06-12 00:34:34,759 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-06-12 00:34:34,765 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-06-12 00:34:35,194 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-12 00:34:35,255 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-12 00:34:35,851 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:34:39,833 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:34:43,822 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:34:47,757 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:34:51,670 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:34:55,244 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:34:58,665 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:02,087 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:05,494 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:08,959 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:12,354 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:15,752 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:19,140 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:22,553 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:25,957 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:29,362 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:32,804 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:36,254 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:39,662 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:43,078 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:46,467 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:50,089 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:53,542 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:35:57,469 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:36:00,922 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:36:04,387 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:36:07,890 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:36:11,407 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:36:14,936 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-12 00:36:16,818 - INFO - UI - Replicação de dados finalizada
