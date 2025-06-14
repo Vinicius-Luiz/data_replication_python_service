@@ -300,12 +300,12 @@ class MetadataConnectionManager:
         )
         return df
 
-    def get_metadata_config(self, key: str) -> str:
+    def get_metadata_config(self, key: str, default: Optional[str] = None) -> str:
         """Obtém um valor de configuração da tabela metadata_table."""
         try:
             cursor = self.connection.cursor()
             cursor.execute(Query.SQL_GET_METADATA_CONFIG, (key,))
-            return cursor.fetchone()[0]
+            return cursor.fetchone()[0] or default
         except GetMetadataError as e:
             logger.critical(f"Erro ao obter config: {e}")
 

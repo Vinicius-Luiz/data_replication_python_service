@@ -226,7 +226,7 @@ class ReplicationStrategy(ABC):
         Returns:
             Task: Objeto Task totalmente configurado.
         """
-
+        
         source_endpoint = EndpointFactory.create_endpoint(
             **credentials.get("source_endpoint")
         )

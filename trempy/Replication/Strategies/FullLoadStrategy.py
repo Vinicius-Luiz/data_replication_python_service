@@ -24,9 +24,7 @@ class FullLoadStrategy(ReplicationStrategy):
             task_exists = False
 
         if not task_exists or task.start_mode.value == "reload":
-
             task = self.create_task(task_settings)
-
             Utils.write_task_pickle(task)
 
         with MetadataConnectionManager() as metadata_manager:
@@ -61,7 +59,6 @@ class FullLoadStrategy(ReplicationStrategy):
         Raises:
             SystemExit: Se qualquer um dos processos falhar.
         """
-
         with MetadataConnectionManager() as metadata_manager:
             metadata_manager.update_metadata_config(
                 {"CURRENT_REPLICATION_TYPE": "full_load"}

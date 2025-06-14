@@ -21,18 +21,20 @@ logger = ReplicationLogger()
 
 with MetadataConnectionManager() as metadata_manager:
     STOP_IF_INSERT_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_INSERT_ERROR")
+        metadata_manager.get_metadata_config("STOP_IF_INSERT_ERROR", "0")
     )
     STOP_IF_UPDATE_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_UPDATE_ERROR")
+        metadata_manager.get_metadata_config("STOP_IF_UPDATE_ERROR", "0")
     )
     STOP_IF_DELETE_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_DELETE_ERROR")
+        metadata_manager.get_metadata_config("STOP_IF_DELETE_ERROR", "0")
     )
     STOP_IF_UPSERT_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_UPSERT_ERROR")
+        metadata_manager.get_metadata_config("STOP_IF_UPSERT_ERROR", "0")
     )
-    STOP_IF_SCD2_ERROR = int(metadata_manager.get_metadata_config("STOP_IF_SCD2_ERROR"))
+    STOP_IF_SCD2_ERROR = int(
+        metadata_manager.get_metadata_config("STOP_IF_SCD2_ERROR", "0")
+    )
 
 
 class CDCOperationsHandler:

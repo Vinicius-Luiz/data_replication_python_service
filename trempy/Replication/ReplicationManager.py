@@ -5,7 +5,6 @@ from trempy.Replication.Factory.ReplicationStrategyFactory import (
 from trempy.Replication.Exceptions.Exception import *
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Shared.Types import TaskType
-from dotenv import load_dotenv
 import json
 
 
@@ -46,8 +45,6 @@ class ReplicationManager:
         Raises:
             Exception: Qualquer erro ocorrido durante a execução é registrado e relançado.
         """
-
-        load_dotenv()
 
         try:
             task_settings = self.__load_settings()

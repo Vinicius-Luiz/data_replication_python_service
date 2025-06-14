@@ -54,6 +54,5 @@ class ReplicationEngine:
                     st.session_state.process = None
 
             except Exception as e:
-                st.error(f"Erro ao parar a replicação: {e}")
                 logger.error(f"UI - Erro ao parar replicação: {e}")
                 st.session_state.process = None

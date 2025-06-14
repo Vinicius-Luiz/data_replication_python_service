@@ -27,7 +27,7 @@ class DisplayConnections:
         }
 
         try:
-            with open(".env", "w") as f:
+            with open(".env", "w", encoding="utf-8") as f:
                 for key, value in env_vars.items():
                     f.write(f"{key}={value}\n")
 
