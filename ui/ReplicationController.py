@@ -1,11 +1,11 @@
-from ui.components.SessionManager import SessionManager
+from ui.components.tools.SessionManager import SessionManager
 from ui.components.UIComponents import UIComponents
 import streamlit as st
 
 
 class ReplicationController:
     def __init__(self):
-        st.set_page_config(layout="wide", initial_sidebar_state="expanded")
+        st.set_page_config(page_title="TREMpy", page_icon="🚂", layout="wide", initial_sidebar_state="expanded")
         self.session_manager = SessionManager()
         self.ui_components = UIComponents()
         
