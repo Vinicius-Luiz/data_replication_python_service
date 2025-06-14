@@ -1,5 +1,6 @@
 from ui.components.DisplayHomePage import DisplayHomePage
 from ui.components.DisplayConections import DisplayConnections
+from ui.components.DisplayTaskSettings import DisplayTaskSettings
 import streamlit as st
 
 
@@ -8,6 +9,7 @@ class UIComponents:
     def __init__(self):
         self.home_page = DisplayHomePage()
         self.connections = DisplayConnections()
+        self.task_settings = DisplayTaskSettings()
 
     def __display_default(self, session_name: str):
         st.header(session_name)
@@ -37,7 +39,7 @@ class UIComponents:
 
     def display_task_settings(self):
         """Exibe configurações da tarefa"""
-        self.__display_default("Configurações da Tarefa")
+        self.task_settings.display_task_settings()
 
     def display_tables(self):
         """Exibe configurações de tabelas"""

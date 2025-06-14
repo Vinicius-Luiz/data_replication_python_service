@@ -1,4 +1,5 @@
 from trempy.Shared.Types import DatabaseType
+from dotenv import load_dotenv
 import streamlit as st
 import os
 
@@ -38,10 +39,12 @@ class DisplayConnections:
 
     def display_connections(self):
         """Exibe configurações de conexão"""
+        load_dotenv()
+
         st.header("Configurações de Conexão")
 
         # Opções para selects
-        database_types = list(map(lambda task: task.value, DatabaseType))
+        database_types = list(map(lambda database: database.value, DatabaseType))
 
         with st.form("connection_settings_form"):
             # Dividir em duas colunas para origem e destino
@@ -57,13 +60,13 @@ class DisplayConnections:
                 )
                 source_endpoint_name = st.text_input(
                     "Nome do Endpoint",
-                    value="Source_PostgreSQL",
+                    value=os.getenv("DB_SOURCE_ENDPOINT_NAME", ""),
                     key="source_endpoint_name",
                     help="Insira o nome do endpoint de origem. Escolha livremente",
                 )
                 source_db_name = st.text_input(
                     "Nome do Banco",
-                    value=os.getenv("DB_NAME_SOURCE", ""),
+                    value=os.getenv("DB_SOURCE_NAME", ""),
                     key="source_db_name",
                     help="Insira o nome do banco de dados de origem. Ex: db_employees",
                 )
@@ -71,7 +74,7 @@ class DisplayConnections:
                 with subcol11:
                     source_db_user = st.text_input(
                         "Usuário",
-                        value=os.getenv("DB_USER_SOURCE", ""),
+                        value=os.getenv("DB_SOURCE_USER", ""),
                         key="source_db_user",
                         help="Insira o usuário de acesso ao banco de dados de origem",
                     )
@@ -79,7 +82,7 @@ class DisplayConnections:
                     source_db_password = st.text_input(
                         "Senha",
                         type="password",
-                        value=os.getenv("DB_PASSWORD_SOURCE", ""),
+                        value=os.getenv("DB_SOURCE_PASSWORD", ""),
                         key="source_db_password",
                         help="Insira a senha de acesso ao banco de dados de origem",
                     )
@@ -88,14 +91,14 @@ class DisplayConnections:
                 with subcol21:
                     source_db_host = st.text_input(
                         "Host",
-                        value=os.getenv("DB_HOST_SOURCE", "localhost"),
+                        value=os.getenv("DB_SOURCE_HOST", "localhost"),
                         key="source_db_host",
                         help="Insira o host do banco de dados de origem",
                     )
                 with subcol22:
                     source_db_port = st.text_input(
                         "Porta",
-                        value=os.getenv("DB_PORT_SOURCE", "5432"),
+                        value=os.getenv("DB_SOURCE_PORT", "5432"),
                         key="source_db_port",
                         help="Insira a porta do banco de dados de origem",
                     )
@@ -103,7 +106,7 @@ class DisplayConnections:
                     "Tamanho do Lote CDC",
                     min_value=1,
                     max_value=80000,
-                    value=20000,
+                    value=int(os.getenv("DB_SOURCE_BATCH_SIZE", 20000)),
                     step=1000,
                     key="source_batch_size",
                     help="Quantidade de registros a serem processados por vez",
@@ -119,13 +122,13 @@ class DisplayConnections:
                 )
                 target_endpoint_name = st.text_input(
                     "Nome do Endpoint",
-                    value="Target_PostgreSQL",
+                    value=os.getenv("DB_TARGET_ENDPOINT_NAME", ""),
                     key="target_endpoint_name",
                     help="Insira o nome do endpoint de destino. Escolha livremente",
                 )
                 target_db_name = st.text_input(
                     "Nome do Banco",
-                    value=os.getenv("DB_NAME_TARGET", ""),
+                    value=os.getenv("DB_TARGET_NAME", ""),
                     key="target_db_name",
                     help="Insira o nome do banco de dados de destino. Ex: db_employees",
                 )
@@ -133,7 +136,7 @@ class DisplayConnections:
                 with subcol11:
                     target_db_user = st.text_input(
                         "Usuário",
-                        value=os.getenv("DB_USER_TARGET", ""),
+                        value=os.getenv("DB_TARGET_USER", ""),
                         key="target_db_user",
                         help="Insira o usuário de acesso ao banco de dados de destino",
                     )
@@ -141,7 +144,7 @@ class DisplayConnections:
                     target_db_password = st.text_input(
                         "Senha",
                         type="password",
-                        value=os.getenv("DB_PASSWORD_TARGET", ""),
+                        value=os.getenv("DB_TARGET_PASSWORD", ""),
                         key="target_db_password",
                         help="Insira a senha de acesso ao banco de dados de destino",
                     )
@@ -150,14 +153,14 @@ class DisplayConnections:
                 with subcol21:
                     target_db_host = st.text_input(
                         "Host",
-                        value=os.getenv("DB_HOST_TARGET", "localhost"),
+                        value=os.getenv("DB_TARGET_HOST", "localhost"),
                         key="target_db_host",
                         help="Insira o host do banco de dados de destino",
                     )
                 with subcol22:
                     target_db_port = st.text_input(
                         "Porta",
-                        value=os.getenv("DB_PORT_TARGET", "5432"),
+                        value=os.getenv("DB_TARGET_PORT", "5432"),
                         key="target_db_port",
                     )
 

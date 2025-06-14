@@ -1,89 +1,21 @@
 {
     "task": {
-        "task_name": "cdc_department",
+        "task_name": "fl-sdc2-employees-3",
         "replication_type": "full_load_and_cdc",
-        "interval_seconds": 3,
         "start_mode": "reload",
-
+        "interval_seconds": 3,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,
             "truncate_before_insert": true
         },
         "cdc_settings": {
-            "mode": "default"
-        }
-    },
-    "error_handling": {
-        "stop_if_insert_error": false,
-        "stop_if_update_error": false,
-        "stop_if_delete_error": false,
-        "stop_if_upsert_error": false,
-        "stop_if_scd2_error": false
-
-    },
-    "tables": [
-        {
-            "schema_name": "employees",
-            "table_name": "department_manager",
-            "priority": 2
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "department",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "the_office_season",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "eletronic_history",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "the_office",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "salary",
-            "priority": 0
-        }
-    ],
-    "filters": [
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "department_manager"
-            },
-            "settings": {
-                "filter_type": "date_between",
-                "description": "Filtrando from_date somente do ano de 1992",
-                "column_name": "from_date",
-                "lower": "1992-01-01",
-                "upper": "1992-12-31"
+            "mode": "scd2",
+            "scd2_settings": {
+                "start_date_column_name": "scd_start_date",
+                "end_date_column_name": "scd_end_date",
+                "current_column_name": "scd_current"
             }
         }
-    ],
-    "transformations": [
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "the_office"
-            },
-            "settings": {
-                "transformation_type": "create_column",
-                "description": "Carimbando data de sincronização",
-                "contract": {
-                    "operation": "date_now",
-                    "new_column_name": "sync_date"
-                },
-                "priority": 2
-            }
-        }
-    ]
+    }
 }
