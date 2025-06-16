@@ -66,7 +66,7 @@ class DisplayErrorHandling:
 
         with st.form("error_settings_form"):
             
-            col1, col2 = st.columns(2, gap="medium")
+            col1, col2, _ = st.columns(3, gap="medium")
             
             with col1:
                 st.subheader("Operações DML")
