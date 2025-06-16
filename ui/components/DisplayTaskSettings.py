@@ -8,8 +8,6 @@ class DisplayTaskSettings:
     SETTINGS_PATH = Path("task/settings.json")
 
     def __configure_default_settings(self):
-        # Caminho para o arquivo de configurações
-        # Valores padrão para a chave 'task'
         default_task_settings = {
             "task_name": "",
             "replication_type": "full_load",

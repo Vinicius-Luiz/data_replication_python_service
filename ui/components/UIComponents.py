@@ -1,6 +1,7 @@
 from ui.components.DisplayHomePage import DisplayHomePage
 from ui.components.DisplayConections import DisplayConnections
 from ui.components.DisplayTaskSettings import DisplayTaskSettings
+from ui.components.DisplayErrorHandling import DisplayErrorHandling
 import streamlit as st
 
 
@@ -10,6 +11,7 @@ class UIComponents:
         self.home_page = DisplayHomePage()
         self.connections = DisplayConnections()
         self.task_settings = DisplayTaskSettings()
+        self.error_settings = DisplayErrorHandling()
 
     def __display_default(self, session_name: str):
         st.header(session_name)
@@ -55,4 +57,4 @@ class UIComponents:
 
     def display_error_handling(self):
         """Exibe configurações de tratamento de erros"""
-        self.__display_default("Error Handling")
+        self.error_settings.display_error_settings()
