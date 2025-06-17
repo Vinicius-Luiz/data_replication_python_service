@@ -28,33 +28,13 @@
     "tables": [
         {
             "schema_name": "employees",
+            "table_name": "employee",
+            "priority": 0
+        },
+        {
+            "schema_name": "emplyoees",
             "table_name": "department_manager",
-            "priority": 2
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "department",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "the_office_season",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "eletronic_history",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "the_office",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "salary",
-            "priority": 0
+            "priority": 4
         }
     ],
     "filters": [
@@ -80,7 +60,7 @@
             },
             "settings": {
                 "transformation_type": "create_column",
-                "description": "Carimbando data de sincroniza\u00c3\u00a7\u00c3\u00a3o",
+                "description": "Carimbando data de sincroniza\u00e7\u00e3o",
                 "contract": {
                     "operation": "date_now",
                     "new_column_name": "sync_date"

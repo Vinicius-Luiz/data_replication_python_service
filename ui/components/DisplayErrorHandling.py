@@ -19,7 +19,7 @@ class DisplayErrorHandling:
         all_settings = {}
         if self.SETTINGS_PATH.exists():
             try:
-                with open(self.SETTINGS_PATH, "r") as f:
+                with open(self.SETTINGS_PATH, "r", encoding="utf-8") as f:
                     all_settings = json.load(f)
             except Exception as e:
                 st.warning(
@@ -50,7 +50,7 @@ class DisplayErrorHandling:
         # Save to file
         try:
             self.SETTINGS_PATH.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.SETTINGS_PATH, "w") as f:
+            with open(self.SETTINGS_PATH, "w", encoding="utf-8") as f:
                 json.dump(updated_settings, f, indent=4)
             st.success("Configurações de tratamento de erro salvas com sucesso!")
         except Exception as e:

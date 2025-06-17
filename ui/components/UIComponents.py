@@ -1,7 +1,8 @@
-from ui.components.DisplayHomePage import DisplayHomePage
-from ui.components.DisplayConections import DisplayConnections
-from ui.components.DisplayTaskSettings import DisplayTaskSettings
 from ui.components.DisplayErrorHandling import DisplayErrorHandling
+from ui.components.DisplayTaskSettings import DisplayTaskSettings
+from ui.components.DisplayConections import DisplayConnections
+from ui.components.DisplayHomePage import DisplayHomePage
+from ui.components.DisplayTables import DisplayTables
 import streamlit as st
 
 
@@ -11,6 +12,7 @@ class UIComponents:
         self.home_page = DisplayHomePage()
         self.connections = DisplayConnections()
         self.task_settings = DisplayTaskSettings()
+        self.tables = DisplayTables()
         self.error_settings = DisplayErrorHandling()
 
     def __display_default(self, session_name: str):
@@ -45,7 +47,7 @@ class UIComponents:
 
     def display_tables(self):
         """Exibe configurações de tabelas"""
-        self.__display_default("Tabelas")
+        self.tables.display_tables()
 
     def display_filters(self):
         """Exibe configurações de filtros"""

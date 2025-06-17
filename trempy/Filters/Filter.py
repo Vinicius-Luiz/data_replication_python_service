@@ -625,7 +625,7 @@ class Filter:
                 case FilterType.GREATER_THAN:
                     return self.__execute_greater_than(table)
                 case FilterType.GREATER_THAN_OR_EQUAL:
-                    return self.__execute_less_than_or_equal(table)
+                    return self.__execute_greater_than_or_equal(table)
                 case FilterType.LESS_THAN:
                     return self.__execute_less_than(table)
                 case FilterType.LESS_THAN_OR_EQUAL:
