@@ -82,3 +82,9 @@ class PriorityType(Enum):
     NORMAL = 2
     LOW = 3
     VERY_LOW = 4
+    
+class InputFilterType(Enum):
+    VALUE = "value"
+    VALUES = "values"
+    LOWER = "lower"
+    UPPER = "upper"

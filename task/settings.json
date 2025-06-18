@@ -44,11 +44,23 @@
                 "table_name": "department_manager"
             },
             "settings": {
-                "filter_type": "date_between",
+                "filter_type": "between",
                 "description": "Filtrando from_date somente do ano de 1992",
                 "column_name": "from_date",
                 "lower": "1992-01-01",
                 "upper": "1992-12-31"
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "employee"
+            },
+            "settings": {
+                "filter_type": "equals",
+                "description": "filtrando gênero masculino",
+                "column_name": "gender",
+                "value": "M"
             }
         }
     ],
@@ -60,7 +72,7 @@
             },
             "settings": {
                 "transformation_type": "create_column",
-                "description": "Carimbando data de sincroniza\u00e7\u00e3o",
+                "description": "Carimbando data de sincronização",
                 "contract": {
                     "operation": "date_now",
                     "new_column_name": "sync_date"

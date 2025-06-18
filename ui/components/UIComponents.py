@@ -3,6 +3,7 @@ from ui.components.DisplayTaskSettings import DisplayTaskSettings
 from ui.components.DisplayConections import DisplayConnections
 from ui.components.DisplayHomePage import DisplayHomePage
 from ui.components.DisplayTables import DisplayTables
+from ui.components.DisplayFilter import DisplayFilter
 import streamlit as st
 
 
@@ -13,7 +14,9 @@ class UIComponents:
         self.connections = DisplayConnections()
         self.task_settings = DisplayTaskSettings()
         self.tables = DisplayTables()
+        self.display_filter = DisplayFilter()
         self.error_settings = DisplayErrorHandling()
+
 
     def __display_default(self, session_name: str):
         st.header(session_name)
@@ -51,7 +54,7 @@ class UIComponents:
 
     def display_filters(self):
         """Exibe configurações de filtros"""
-        self.__display_default("Filtros")
+        self.display_filter.display_filters()
 
     def display_transformations(self):
         """Exibe configurações de transformações"""

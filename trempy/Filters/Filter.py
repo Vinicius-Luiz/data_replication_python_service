@@ -617,55 +617,40 @@ class Filter:
         )
 
         try:
-            match self.filter_type:
-                case FilterType.EQUALS:
-                    return self.__execute_equals(table)
-                case FilterType.NOT_EQUALS:
-                    return self.__execute_not_equals(table)
-                case FilterType.GREATER_THAN:
-                    return self.__execute_greater_than(table)
-                case FilterType.GREATER_THAN_OR_EQUAL:
-                    return self.__execute_greater_than_or_equal(table)
-                case FilterType.LESS_THAN:
-                    return self.__execute_less_than(table)
-                case FilterType.LESS_THAN_OR_EQUAL:
-                    return self.__execute_less_than_or_equal(table)
-                case FilterType.IN:
-                    return self.__execute_in(table)
-                case FilterType.NOT_IN:
-                    return self.__execute_not_in(table)
-                case FilterType.IS_NULL:
-                    return self.__execute_is_null(table)
-                case FilterType.IS_NOT_NULL:
-                    return self.__execute_is_not_null(table)
-                case FilterType.STARTS_WITH:
-                    return self.__execute_starts_with(table)
-                case FilterType.ENDS_WITH:
-                    return self.__execute_ends_with(table)
-                case FilterType.CONTAINS:
-                    return self.__execute_contains(table)
-                case FilterType.NOT_CONTAINS:
-                    return self.__execute_not_contains(table)
-                case FilterType.BETWEEN:
-                    return self.__execute_between(table)
-                case FilterType.NOT_BETWEEN:
-                    return self.__execute_not_between(table)
-                case FilterType.DATE_EQUALS:
-                    return self.__execute_date_equals(table)
-                case FilterType.DATE_NOT_EQUALS:
-                    return self.__execute_date_not_equals(table)
-                case FilterType.DATE_GREATER_THAN:
-                    return self.__execute_date_greater_than(table)
-                case FilterType.DATE_GREATER_THAN_OR_EQUAL:
-                    return self.__execute_date_greater_than_or_equal(table)
-                case FilterType.DATE_LESS_THAN:
-                    return self.__execute_date_less_than(table)
-                case FilterType.DATE_LESS_THAN_OR_EQUAL:
-                    return self.__execute_date_less_than_or_equal(table)
-                case FilterType.DATE_BETWEEN:
-                    return self.__execute_date_between(table)
-                case FilterType.DATE_NOT_BETWEEN:
-                    return self.__execute_date_not_between(table)
+
+            filter_functions = {
+                FilterType.EQUALS: self.__execute_equals,
+                FilterType.NOT_EQUALS: self.__execute_not_equals,
+                FilterType.GREATER_THAN: self.__execute_greater_than,
+                FilterType.GREATER_THAN_OR_EQUAL: self.__execute_greater_than_or_equal,
+                FilterType.LESS_THAN: self.__execute_less_than,
+                FilterType.LESS_THAN_OR_EQUAL: self.__execute_less_than_or_equal,
+                FilterType.IN: self.__execute_in,
+                FilterType.NOT_IN: self.__execute_not_in,
+                FilterType.IS_NULL: self.__execute_is_null,
+                FilterType.IS_NOT_NULL: self.__execute_is_not_null,
+                FilterType.STARTS_WITH: self.__execute_starts_with,
+                FilterType.ENDS_WITH: self.__execute_ends_with,
+                FilterType.CONTAINS: self.__execute_contains,
+                FilterType.NOT_CONTAINS: self.__execute_not_contains,
+                FilterType.BETWEEN: self.__execute_between,
+                FilterType.NOT_BETWEEN: self.__execute_not_between,
+                FilterType.DATE_EQUALS: self.__execute_date_equals,
+                FilterType.DATE_NOT_EQUALS: self.__execute_date_not_equals,
+                FilterType.DATE_GREATER_THAN: self.__execute_date_greater_than,
+                FilterType.DATE_GREATER_THAN_OR_EQUAL: self.__execute_date_greater_than_or_equal,
+                FilterType.DATE_LESS_THAN: self.__execute_date_less_than,
+                FilterType.DATE_LESS_THAN_OR_EQUAL: self.__execute_date_less_than_or_equal,
+                FilterType.DATE_BETWEEN: self.__execute_date_between,
+                FilterType.DATE_NOT_BETWEEN: self.__execute_date_not_between,
+            }
+
+            if self.filter_type in filter_functions:
+                return filter_functions[self.filter_type](table)
+            else:
+                e = InvalidFilterTypeError("Tipo de filtro inválido", self.filter_type)
+                logger.critical(e)
+
         except Exception as e:
             e = FilterError(str(e))
             logger.critical(e)

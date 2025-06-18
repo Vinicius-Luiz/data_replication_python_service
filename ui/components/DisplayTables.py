@@ -39,7 +39,7 @@ class DisplayTables:
         try:
             self.SETTINGS_PATH.parent.mkdir(parents=True, exist_ok=True)
             with open(self.SETTINGS_PATH, "w", encoding="utf-8") as f:
-                json.dump(updated_settings, f, indent=4)
+                json.dump(updated_settings, f, indent=4, ensure_ascii=False)
             st.success("Configurações de tabelas salvas com sucesso!")
         except Exception as e:
             st.error(f"Erro ao salvar configurações: {e}")
