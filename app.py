@@ -5,4 +5,4 @@ ReplicationLogger.configure_logging()
 
 if __name__ == "__main__":
     controller = ReplicationController()
-    controller.display_tabs()
+    controller.ui_components.display_ui()

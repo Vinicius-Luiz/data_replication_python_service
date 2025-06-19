@@ -111,7 +111,7 @@ class ReplicationStrategy(ABC):
             )
 
             if (
-                transformation.priority == PriorityType.VERY_LOW
+                transformation.priority == PriorityType.LOWEST
                 and task.replication_type == TaskType.CDC
                 and task.cdc_mode == CdcModeType.SCD2
             ):

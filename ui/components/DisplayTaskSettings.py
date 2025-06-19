@@ -1,14 +1,39 @@
 from trempy.Shared.Types import TaskType, StartType, CdcModeType
+from typing import Dict, Any
 from pathlib import Path
+from time import sleep
 import streamlit as st
 import json
 
 
 class DisplayTaskSettings:
+    """Gerencia a interface de configuração da tarefa."""
+    
     SETTINGS_PATH = Path("task/settings.json")
+    
+    def __init__(self):
+        """Inicializa os tipos de configuração disponíveis."""
+        self.task_types = [t.value for t in TaskType]
+        self.start_types = [t.value for t in StartType]
+        self.cdc_modes = [t.value for t in CdcModeType]
 
-    def __configure_default_settings(self):
-        default_task_settings = {
+    def __load_settings(self) -> Dict[str, Any]:
+        """Carrega as configurações do arquivo settings.json."""
+        try:
+            if self.SETTINGS_PATH.exists():
+                with open(self.SETTINGS_PATH, "r", encoding="utf-8") as f:
+                    settings = json.load(f)
+                    loaded_settings = settings.get("task", {})
+                    # Garante que todas as chaves existam mesclando com as configurações padrão
+                    return {**self.__get_default_settings(), **loaded_settings}
+            return self.__get_default_settings()
+        except Exception as e:
+            st.error(f"Erro ao carregar configurações: {str(e)}")
+            return self.__get_default_settings()
+
+    def __get_default_settings(self) -> Dict[str, Any]:
+        """Retorna as configurações padrão da tarefa."""
+        return {
             "task_name": "",
             "replication_type": "full_load",
             "interval_seconds": 1,
@@ -28,175 +53,162 @@ class DisplayTaskSettings:
             },
         }
 
-        # Carregar configurações existentes (se existirem)
-        all_settings = {}
-        if self.SETTINGS_PATH.exists():
-            try:
-                with open(self.SETTINGS_PATH, "r") as f:
-                    all_settings = json.load(f)
-            except Exception as e:
-                st.warning(
-                    f"Não foi possível carregar as configurações existentes: {e}"
-                )
-
-        # Mesclar defaults com configurações existentes (apenas para 'task')
-        current_task_settings = all_settings.get("task", {})
-        task_settings = {**default_task_settings, **current_task_settings}
-
-        return task_settings, all_settings
-
-    def __save_settings(self, all_settings: dict, task_settings: dict) -> None:
-        new_task_settings = {
-            "task_name": task_settings.get("task_name"),
-            "replication_type": task_settings.get("replication_type"),
-            "start_mode": task_settings.get("start_mode"),
-            "interval_seconds": task_settings.get("interval_seconds"),
-            "create_table_if_not_exists": task_settings.get(
-                "create_table_if_not_exists"
-            ),
-            "full_load_settings": {
-                "recreate_table_if_exists": task_settings.get(
-                    "recreate_table_if_exists"
-                ),
-                "truncate_before_insert": task_settings.get("truncate_before_insert"),
-            },
-        }
-
-        # Adicionar campos condicionais
-        if task_settings.get("replication_type") in ["cdc", "full_load_and_cdc"]:
-
-            # Configurações de CDC
-            cdc_settings = {"mode": task_settings.get("cdc_mode")}
-
-            if task_settings.get("cdc_mode") == "scd2":
-                # Configurações específicas do SCD2
-                cdc_settings["scd2_settings"] = {
-                    "start_date_column_name": task_settings.get(
-                        "start_date_column_name"
-                    ),
-                    "end_date_column_name": task_settings.get("end_date_column_name"),
-                    "current_column_name": task_settings.get("current_column_name"),
-                }
-
-            new_task_settings["cdc_settings"] = cdc_settings
-
-        # Atualizar apenas a chave 'task' mantendo as outras intactas
-        updated_settings = {
-            **all_settings,
-            "task": new_task_settings,
-        }
-
-        # Salvar no arquivo
+    def __save_settings(self, task_settings: Dict[str, Any]) -> bool:
+        """Salva as configurações no arquivo settings.json."""
         try:
-            self.SETTINGS_PATH.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.SETTINGS_PATH, "w") as f:
-                json.dump(updated_settings, f, indent=4)
-            st.success("Configurações salvas com sucesso!")
+            # Carrega configurações existentes para manter outras seções
+            with open(self.SETTINGS_PATH, "r", encoding="utf-8") as f:
+                settings = json.load(f)
+            
+            # Prepara as configurações da tarefa mantendo a estrutura completa
+            new_task_settings = {
+                **self.__get_default_settings(),  # Garante a estrutura base
+                "task_name": task_settings["task_name"],
+                "replication_type": task_settings["replication_type"],
+                "start_mode": task_settings["start_mode"],
+                "interval_seconds": task_settings["interval_seconds"],
+                "create_table_if_not_exists": task_settings["create_table_if_not_exists"],
+                "full_load_settings": {
+                    "recreate_table_if_exists": task_settings["recreate_table_if_exists"],
+                    "truncate_before_insert": task_settings["truncate_before_insert"],
+                },
+                "cdc_settings": {
+                    "mode": task_settings["cdc_mode"],
+                    "scd2_settings": {
+                        "start_date_column_name": task_settings["start_date_column_name"],
+                        "end_date_column_name": task_settings["end_date_column_name"],
+                        "current_column_name": task_settings["current_column_name"],
+                    }
+                }
+            }
+            
+            # Atualiza apenas a seção 'task'
+            settings["task"] = new_task_settings
+            
+            # Salva o arquivo
+            with open(self.SETTINGS_PATH, "w", encoding="utf-8") as f:
+                json.dump(settings, f, indent=4, ensure_ascii=False)
+            
+            return True
         except Exception as e:
-            st.error(f"Erro ao salvar configurações: {e}")
-
-        st.json(updated_settings)
+            st.error(f"Erro ao salvar configurações: {str(e)}")
+            return False
 
     def display_task_settings(self):
-        """Exibe configurações da tarefa, mantendo outras chaves do settings.json intactas"""
-        st.header("Configurações da Tarefa")
+        """Exibe a interface de configuração da tarefa."""
+        st.header("Configuração da Tarefa")
 
-        task_types = list(map(lambda task: task.value, TaskType))
-        start_types = list(map(lambda start: start.value, StartType))
-        cdc_modes = list(map(lambda cdc: cdc.value, CdcModeType))
-
-        task_settings, all_settings = self.__configure_default_settings()
-
+        # Inicializa o estado se necessário
+        if "task_settings" not in st.session_state:
+            st.session_state.task_settings = self.__load_settings()
+        
+        # Formulário de configuração
         with st.form("task_settings_form"):
-            # Seção básica
             col1, _ = st.columns([0.5, 0.5])
             with col1:
+                # Configurações básicas
                 st.subheader("Básicas")
-                task_name = st.text_input(
-                    "Nome da Tarefa", value=task_settings.get("task_name", "")
+                task_settings = {}
+                
+                task_settings["task_name"] = st.text_input(
+                    "Nome da Tarefa",
+                    value=st.session_state.task_settings["task_name"],
+                    help="Nome único para identificar esta tarefa"
                 )
-                replication_type = st.selectbox(
+                
+                task_settings["replication_type"] = st.selectbox(
                     "Tipo de Replicação",
-                    options=task_types,
-                    index=task_types.index(
-                        task_settings.get("replication_type", "full_load")
-                    ),
+                    options=self.task_types,
+                    index=self.task_types.index(st.session_state.task_settings["replication_type"]),
+                    help="Escolha o tipo de replicação: full_load, cdc ou ambos"
                 )
-                start_mode = st.selectbox(
+                
+                task_settings["start_mode"] = st.selectbox(
                     "Modo de Início",
-                    options=start_types,
-                    index=start_types.index(task_settings.get("start_mode", "reload")),
+                    options=self.start_types,
+                    index=self.start_types.index(st.session_state.task_settings["start_mode"]),
+                    help="Como a replicação deve começar: do zero (reload) ou continuar do último ponto"
                 )
-                interval_seconds = st.number_input(
+                
+                task_settings["interval_seconds"] = st.number_input(
                     "Intervalo em segundos",
                     min_value=1,
-                    value=task_settings.get("interval_seconds", 1),
+                    value=st.session_state.task_settings["interval_seconds"],
+                    help="Intervalo entre cada ciclo de replicação"
                 )
-                create_table_if_not_exists = st.checkbox(
+                
+                task_settings["create_table_if_not_exists"] = st.checkbox(
                     "Criar tabela se não existir",
-                    value=task_settings.get("create_table_if_not_exists", True),
+                    value=st.session_state.task_settings["create_table_if_not_exists"],
+                    help="Se marcado, cria a tabela de destino caso ela não exista"
                 )
 
+                # Configurações específicas
                 subcol1, subcol2 = st.columns(2, gap="medium")
+                
                 with subcol1:
                     st.subheader("CDC")
-                    cdc_mode = st.selectbox(
+                    # Garante que cdc_settings existe
+                    cdc_settings = st.session_state.task_settings.get("cdc_settings", {"mode": "default"})
+                    task_settings["cdc_mode"] = st.selectbox(
                         "Modo CDC",
-                        options=cdc_modes,
-                        index=cdc_modes.index(
-                            task_settings["cdc_settings"].get("mode", "default")
-                        ),
+                        options=self.cdc_modes,
+                        index=self.cdc_modes.index(cdc_settings["mode"]),
+                        help="Modo de captura de mudanças: padrão ou SCD2"
                     )
 
-                    st.subheader("SCD2 - Slowly Changing Dimension Type 2")
-                    scd2_defaults = task_settings["cdc_settings"].get(
-                        "scd2_settings", {}
+                    st.subheader("SCD2")
+                    # Obtém as configurações padrão para usar como fallback
+                    default_scd2 = self.__get_default_settings()["cdc_settings"]["scd2_settings"]
+                    # Usa get() para pegar as configurações SCD2 ou um dicionário vazio se não existir
+                    scd2_settings = cdc_settings.get("scd2_settings", default_scd2)
+                    
+                    task_settings["start_date_column_name"] = st.text_input(
+                        "Coluna de data inicial",
+                        value=scd2_settings.get("start_date_column_name", default_scd2["start_date_column_name"]),
+                        help="Nome da coluna que armazenará a data de início do registro"
                     )
-                    start_date_column_name = st.text_input(
-                        "Nome da coluna de data de início",
-                        value=scd2_defaults.get(
-                            "start_date_column_name", "scd_start_date"
-                        ),
+                    
+                    task_settings["end_date_column_name"] = st.text_input(
+                        "Coluna de data final",
+                        value=scd2_settings.get("end_date_column_name", default_scd2["end_date_column_name"]),
+                        help="Nome da coluna que armazenará a data de fim do registro"
                     )
-                    end_date_column_name = st.text_input(
-                        "Nome da coluna de data de fim",
-                        value=scd2_defaults.get("end_date_column_name", "scd_end_date"),
-                    )
-                    current_column_name = st.text_input(
-                        "Nome da coluna de indicador atual",
-                        value=scd2_defaults.get("current_column_name", "scd_current"),
+                    
+                    task_settings["current_column_name"] = st.text_input(
+                        "Coluna de registro atual",
+                        value=scd2_settings.get("current_column_name", default_scd2["current_column_name"]),
+                        help="Nome da coluna que indicará se o registro é o atual"
                     )
 
                 with subcol2:
                     st.subheader("Full Load")
-                    recreate_table_if_exists = st.checkbox(
+                    # Garante que full_load_settings existe
+                    full_load_settings = st.session_state.task_settings.get(
+                        "full_load_settings",
+                        self.__get_default_settings()["full_load_settings"]
+                    )
+                    
+                    task_settings["recreate_table_if_exists"] = st.checkbox(
                         "Recriar tabela se existir",
-                        value=task_settings["full_load_settings"].get(
-                            "recreate_table_if_exists", True
-                        ),
+                        value=full_load_settings.get("recreate_table_if_exists", True),
+                        help="Se marcado, recria a tabela de destino mesmo se ela já existir"
                     )
-                    truncate_before_insert = st.checkbox(
+                    
+                    task_settings["truncate_before_insert"] = st.checkbox(
                         "Truncar antes de inserir",
-                        value=task_settings["full_load_settings"].get(
-                            "truncate_before_insert", True
-                        ),
+                        value=full_load_settings.get("truncate_before_insert", True),
+                        help="Se marcado, limpa todos os dados da tabela antes de inserir"
                     )
 
-            # Botão de submit
-            submitted = st.form_submit_button("Salvar Configurações", type="primary")
-
-            if submitted:
-                task_settings = {
-                    "task_name": task_name,
-                    "replication_type": replication_type,
-                    "start_mode": start_mode,
-                    "interval_seconds": interval_seconds,
-                    "create_table_if_not_exists": create_table_if_not_exists,
-                    "recreate_table_if_exists": recreate_table_if_exists,
-                    "truncate_before_insert": truncate_before_insert,
-                    "cdc_mode": cdc_mode,
-                    "start_date_column_name": start_date_column_name,
-                    "end_date_column_name": end_date_column_name,
-                    "current_column_name": current_column_name,
-                }
-                self.__save_settings(all_settings, task_settings)
+            # Botão de salvar
+            if st.form_submit_button(
+                "Salvar Configurações",
+                type="primary",
+                help="Clique para salvar todas as alterações"
+            ):
+                if self.__save_settings(task_settings):
+                    st.session_state.task_settings = self.__load_settings()  # Recarrega as configurações
+                    st.success("Configurações salvas com sucesso!")
+                    sleep(5)
+                    st.rerun()

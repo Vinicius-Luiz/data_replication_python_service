@@ -77,11 +77,11 @@ class FilterType(Enum):
     DATE_NOT_BETWEEN = 'date_not_between'
 
 class PriorityType(Enum):
-    VERY_HIGH = 0
+    HIGHEST = 0
     HIGH = 1
     NORMAL = 2
     LOW = 3
-    VERY_LOW = 4
+    LOWEST = 4
     
 class InputFilterType(Enum):
     VALUE = "value"

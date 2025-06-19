@@ -1,9 +1,9 @@
 {
     "task": {
-        "task_name": "cdc_department-2",
+        "task_name": "cdc_department-new",
         "replication_type": "full_load_and_cdc",
+        "interval_seconds": 3,
         "start_mode": "reload",
-        "interval_seconds": 5,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,
@@ -32,9 +32,14 @@
             "priority": 0
         },
         {
-            "schema_name": "emplyoees",
+            "schema_name": "employees",
             "table_name": "department_manager",
             "priority": 4
+        },
+        {
+            "schema_name": "employees",
+            "table_name": "salary",
+            "priority": 1
         }
     ],
     "filters": [
