@@ -21,7 +21,7 @@ class UIComponents:
 
         # Define o layout da página
         st.set_page_config(
-            page_title="Replicação de Dados",
+            page_title="TREMpy - Replicação de Dados",
             page_icon="🚂",
             layout="wide",
             initial_sidebar_state="expanded"

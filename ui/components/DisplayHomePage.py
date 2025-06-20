@@ -4,18 +4,19 @@ from typing import Optional
 from pathlib import Path
 import streamlit as st
 
+
 class LogViewer:
     """
     Classe responsável por gerenciar a visualização de logs em tempo real.
-    
+
     Esta classe fornece funcionalidades para ler e exibir novas entradas
     de um arquivo de log, mantendo o controle da última posição lida.
     """
-    
+
     def __init__(self, log_file: str = "app.log"):
         """
         Inicializa o visualizador de logs.
-        
+
         Args:
             log_file (str): Caminho para o arquivo de log. Padrão é 'app.log'.
         """
@@ -25,7 +26,7 @@ class LogViewer:
     def get_new_log_entries(self) -> str:
         """
         Retorna as novas entradas do arquivo de log desde a última leitura.
-        
+
         Returns:
             str: Novas entradas do log ou mensagem de erro em caso de falha.
         """
@@ -37,26 +38,27 @@ class LogViewer:
                 # Atualiza a última posição
                 self.last_position = f.tell()
                 return new_content
-                
+
         except FileNotFoundError:
             return "Arquivo de log não encontrado. A replicação pode não ter gerado logs ainda."
         except Exception as e:
             return f"Erro ao ler o arquivo de log: {str(e)}"
 
+
 class DisplayHomePage:
     """
     Classe responsável por gerenciar e exibir a página inicial da aplicação.
-    
+
     Esta classe fornece uma interface gráfica para controlar a replicação,
     visualizar logs em tempo real e exibir estatísticas através de gráficos.
     """
-    
+
     def __init__(self):
         """Inicializa a página inicial com seus componentes."""
         self.replication_engine = ReplicationEngine()
         self.graph_generator = GraphGenerator()
         self.log_viewer = LogViewer()
-        
+
     def __display_status(self) -> None:
         """
         Exibe o painel de controle da replicação com botões de ação e status.
@@ -65,47 +67,76 @@ class DisplayHomePage:
         main_container = st.container()
 
         with main_container:
-            cols = st.columns([6, 12])
+            st.markdown(
+                """
+                <style>
+                    div.stButton > button {
+                        width: 100%;
+                        padding: 10px;
+                        border-radius: 5px;
+                    }
+                    div.stButton > button:hover {
+                        transform: translateY(-2px);
+                        transition: all 0.2s ease;
+                    }
+                </style>
+            """,
+                unsafe_allow_html=True,
+            )
 
-            with cols[0]:
-                # Botões de controle
-                control_cols = st.columns(4)
-                
-                # Botão Iniciar
-                with control_cols[0]:
-                    if st.button(
-                        "Iniciar",
-                        key="start",
-                        type="primary",
-                        help="Inicia o processo de replicação",
-                    ):
-                        self.replication_engine.start()
+            # Título da seção
+            st.markdown("### Painel de Controle")
+            st.markdown("---")
 
-                # Botão Parar
-                with control_cols[1]:
-                    if st.button(
-                        "Parar",
-                        key="stop",
-                        type="primary",
-                        help="Para o processo de replicação",
-                    ):
-                        self.replication_engine.stop()
+            # Layout dos controles
+            control_cols = st.columns([1, 1, 1, 3, 2])
 
-                # Botão Atualizar
-                with control_cols[2]:
-                    if st.button(
-                        "Atualizar",
-                        key="unique_refresh_button",
-                        help="Atualiza a visualização dos logs",
-                    ):
-                        st.session_state.log_refresh = not st.session_state.get("log_refresh", False)
+            # Botão Iniciar
+            with control_cols[0]:
+                start_btn = st.button(
+                    "▶️ Iniciar",
+                    key="start",
+                    type="primary",
+                    help="Inicia o processo de replicação",
+                    use_container_width=True,
+                )
+                if start_btn:
+                    self.replication_engine.start()
 
-                # Indicador de Status
-                with control_cols[3]:
-                    if st.session_state.get("process") is None:
-                        st.error("**PARADO**")
-                    else:
-                        st.success("**EXECUTANDO**")
+            # Botão Parar
+            with control_cols[1]:
+                stop_btn = st.button(
+                    "⏹️ Parar",
+                    key="stop",
+                    type="primary",
+                    help="Para o processo de replicação",
+                    use_container_width=True,
+                )
+                if stop_btn:
+                    self.replication_engine.stop()
+
+            # Botão Atualizar
+            with control_cols[2]:
+                refresh_btn = st.button(
+                    "🔄 Atualizar",
+                    key="unique_refresh_button",
+                    help="Atualiza a visualização dos logs",
+                    use_container_width=True,
+                )
+                if refresh_btn:
+                    st.session_state.log_refresh = not st.session_state.get(
+                        "log_refresh", False
+                    )
+
+            # Indicador de Status com estilo melhorado
+            with control_cols[3]:
+                pass
+
+            with control_cols[4]:
+                if st.session_state.get("process") is None:
+                    st.error("🔴 **Sistema Parado**")
+                else:
+                    st.success("🟢 **Sistema em Execução**")
 
     def __display_logs(self) -> None:
         """
@@ -167,7 +198,7 @@ class DisplayHomePage:
     def display_home_page(self) -> None:
         """
         Exibe a página inicial com todas as suas seções.
-        
+
         Esta é a função principal que organiza e exibe todos os componentes
         da página inicial, incluindo status, logs e estatísticas.
         """
@@ -175,12 +206,9 @@ class DisplayHomePage:
         self.__display_status()
 
         # Cria as abas para diferentes visualizações
-        subtab1, subtab2, subtab3, subtab4 = st.tabs([
-            "Logs",
-            "Full Load Stats",
-            "CDC Stats",
-            "Errors"
-        ])
+        subtab1, subtab2, subtab3, subtab4 = st.tabs(
+            ["Logs", "Full Load Stats", "CDC Stats", "Errors"]
+        )
 
         # Configura e exibe cada aba
         with subtab1:
