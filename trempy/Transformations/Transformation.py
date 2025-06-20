@@ -47,9 +47,10 @@ class Transformation:
 
         if self.transformation_type not in TransformationType:
             e = InvalidTransformationTypeError(
-                "Tipo de transformação inválido", self.transformation_type
+                "Tipo de transformação inválido", str(self.transformation_type.value)
             )
             logger.critical(e)
+            raise e
 
     def __execute_modify_schema_name(self, table: Table) -> Table:
         """
@@ -101,21 +102,15 @@ class Transformation:
 
         Returns:
             Table: Objeto representando a estrutura da tabela de origem com a chave primária adicionada.
+
         """
 
-        try:
-            column_names = self.contract["column_names"]
+        column_names = self.contract["column_names"]
 
-            for column_name in column_names:
-                table.columns[column_name].is_primary_key = True
+        for column_name in column_names:
+            table.columns[column_name].is_primary_key = True
 
-            return table
-        except KeyError as e:
-            e = ColumnNameNotFoundError("Coluna procurada não encontrada", column_name)
-            logger.critical(e)
-        except Exception as e:
-            e = TransformationError(str(e))
-            logger.critical(e)
+        return table
 
     def __execute_remove_primary_key(self, table: Table) -> Table:
         """
@@ -128,19 +123,12 @@ class Transformation:
             Table: Objeto representando a estrutura da tabela de origem com a chave primária removida.
         """
 
-        try:
-            column_names = self.contract["column_names"]
+        column_names = self.contract["column_names"]
 
-            for column_name in column_names:
-                table.columns[column_name].is_primary_key = False
+        for column_name in column_names:
+            table.columns[column_name].is_primary_key = False
 
-            return table
-        except KeyError as e:
-            e = ColumnNameNotFoundError("Coluna procurada não encontrada", column_name)
-            logger.critical(e)
-        except Exception as e:
-            e = TransformationError(str(e))
-            logger.critical(e)
+        return table
 
     def __execute_create_column(self, table: Table) -> Table:
         """
@@ -168,7 +156,7 @@ class Transformation:
 
         return ColumnModifier.modify_column(self.contract, table)
 
-    def execute(self, table: Table = None) -> None:
+    def execute(self, table: Table) -> Table:
         """
         Executa a transformação na tabela.
 
@@ -183,7 +171,11 @@ class Transformation:
             table (Table): Objeto representando a estrutura da tabela que receberá a transformação.
 
         Returns:
-            None
+            Table: A tabela após a aplicação da transformação.
+
+        Raises:
+            InvalidTransformationTypeError: Se o tipo de transformação for inválido.
+            TransformationError: Se ocorrer algum erro durante a transformação.
         """
 
         logger.info(
@@ -192,21 +184,27 @@ class Transformation:
         )
 
         try:
-            match self.transformation_type:
-                case TransformationType.CREATE_COLUMN:
-                    return self.__execute_create_column(table)
-                case TransformationType.MODIFY_SCHEMA_NAME:
-                    return self.__execute_modify_schema_name(table)
-                case TransformationType.MODIFY_TABLE_NAME:
-                    return self.__execute_modify_table_name(table)
-                case TransformationType.MODIFY_COLUMN_NAME:
-                    return self.__execute_modify_column_name(table)
-                case TransformationType.MODIFY_COLUMN_VALUE:
-                    return self.__execute_modify_column_value(table)
-                case TransformationType.ADD_PRIMARY_KEY:
-                    return self.__execute_add_primary_key(table)
-                case TransformationType.REMOVE_PRIMARY_KEY:
-                    return self.__execute_remove_primary_key(table)
+            transformation_functions = {
+                TransformationType.CREATE_COLUMN: self.__execute_create_column,
+                TransformationType.MODIFY_SCHEMA_NAME: self.__execute_modify_schema_name,
+                TransformationType.MODIFY_TABLE_NAME: self.__execute_modify_table_name,
+                TransformationType.MODIFY_COLUMN_NAME: self.__execute_modify_column_name,
+                TransformationType.MODIFY_COLUMN_VALUE: self.__execute_modify_column_value,
+                TransformationType.ADD_PRIMARY_KEY: self.__execute_add_primary_key,
+                TransformationType.REMOVE_PRIMARY_KEY: self.__execute_remove_primary_key,
+            }
+
+            if self.transformation_type in transformation_functions:
+                return transformation_functions[self.transformation_type](table)
+            else:
+                e = InvalidTransformationTypeError(
+                    "Tipo de transformação inválido",
+                    str(self.transformation_type.value),
+                )
+                logger.critical(e)
+                raise e
+
         except Exception as e:
             e = TransformationError(str(e))
             logger.critical(e)
+            raise e

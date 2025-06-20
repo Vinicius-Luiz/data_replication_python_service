@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union, List, Type, get_args, get_origin
+from typing import Union, List, Type, get_args, get_origin, Tuple, Any, Optional
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Filters.Exceptions.Exception import *
 from trempy.Shared.Types import FilterType
@@ -31,10 +31,10 @@ class Filter:
         column_name: str,
         filter_type: str,
         description: str,
-        value: Union[str, int, float, List] = None,
-        values: List[Union[str, int, float]] = None,
-        lower: Union[int, float] = None,
-        upper: Union[int, float] = None,
+        value: Optional[Union[str, int, float]] = None,
+        values: Optional[List[Union[str, int, float]]] = None,
+        lower: Optional[Union[int, float]] = None,
+        upper: Optional[Union[int, float]] = None,
     ) -> None:
         self.column_name = column_name
         self.filter_type = FilterType(filter_type)
@@ -57,7 +57,9 @@ class Filter:
         """
 
         if self.filter_type not in FilterType:
-            e = InvalidFilterTypeError("Tipo de filtro inválido", self.filter_type)
+            e = InvalidFilterTypeError(
+                "Tipo de filtro inválido", self.filter_type.value
+            )
             logger.critical(e)
 
     def __validate_column_exists(self, table: Table) -> None:
@@ -78,16 +80,18 @@ class Filter:
             )
             logger.critical(e)
 
-    def __validate_type(self, type_required: Type, value_param: str = None) -> None:
+    def __validate_type(
+        self, type_required: Type[Any] | Tuple[Type[Any], ...], value_param: str
+    ) -> None:
         """Valida se o tipo do valor do filtro corresponde ao tipo requerido.
 
         Args:
-            type_required (Type): Tipo ou tipos aceitos para a operação de filtro.
+            type_required (Type[Any] | Tuple[Type[Any], ...]): Tipo ou tupla de tipos aceitos para a operação de filtro.
+            value_param (str): Nome do parâmetro a ser validado ('value', 'values', 'lower' ou 'upper').
 
         Raises:
             InvalidTypeValueError: Se o tipo do valor não for compatível com o tipo requerido.
         """
-
         value_params = {
             "value": self.value,
             "values": self.values,
@@ -95,15 +99,16 @@ class Filter:
             "upper": self.upper,
         }
 
-        value_type = type(value_params[value_param])
+        value = value_params[value_param]
+        if value is None:
+            return
 
-        # Se for Union, pega todos os tipos aceitos
-        if get_origin(type_required) is Union:
-            allowed_types = get_args(type_required)
+        if isinstance(type_required, tuple):
+            allowed_types = type_required
         else:
             allowed_types = (type_required,)
 
-        # Verifica compatibilidade de tipos
+        value_type = type(value)
         if not any(
             issubclass(value_type, t) for t in allowed_types if isinstance(t, type)
         ):
@@ -142,14 +147,24 @@ class Filter:
             )
             logger.critical(e)
 
-        if not isinstance(value_param, str):
+        if value_param is None:
             e = InvalidTypeValueError(
-                f"Valor para comparação de datas deve ser string, ",
+                "Valor para comparação de datas não pode ser None",
+                "None",
+            )
+            logger.critical(e)
+
+        # Converte o valor para string antes de validar
+        try:
+            str(value_param)
+        except Exception as e:
+            e = InvalidTypeValueError(
+                "Valor para comparação de datas deve ser convertível para string",
                 type(value_param).__name__,
             )
             logger.critical(e)
 
-    def __convert_str_to_date(self, value: str):
+    def __convert_str_to_date(self, value: str) -> pl.Expr:
         """Converte string para Date ou Datetime conforme o tipo da coluna.
 
         Args:
@@ -161,15 +176,16 @@ class Filter:
         Raises:
             ValueError: Se o formato da string não corresponder ao esperado
         """
-
         try:
             if isinstance(self.col_type, pl.Date):
                 dt = datetime.strptime(value, "%Y-%m-%d")
-                date_value = pl.date(dt.year, dt.month, dt.day)
+                return pl.lit(pl.date(dt.year, dt.month, dt.day))
             else:
                 dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-                date_value = pl.datetime(
-                    dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
+                return pl.lit(
+                    pl.datetime(
+                        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
+                    )
                 )
 
         except Exception as e:
@@ -180,8 +196,6 @@ class Filter:
             )
             logger.critical(e)
 
-        return date_value
-
     def __execute_equals(self, table: Table) -> Table:
         """Filtra linhas onde a coluna é igual ao valor especificado.
 
@@ -191,10 +205,9 @@ class Filter:
         Returns:
             Table: Objeto Table com o filtro aplicado.
         """
-
-        type_required = Union[str, int, float]
         self.__validate_column_exists(table)
-        self.__validate_type(type_required, "value")
+        for t in (str, int, float):
+            self.__validate_type(t, "value")
 
         table.data = table.data.filter(pl.col(self.column_name) == self.value)
         return table
@@ -209,8 +222,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[str, int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str, int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) != self.value)
         return table
@@ -225,8 +238,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) > self.value)
         return table
@@ -241,8 +254,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) >= self.value)
         return table
@@ -257,8 +270,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) < self.value)
         return table
@@ -273,8 +286,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(pl.col(self.column_name) <= self.value)
         return table
@@ -289,8 +302,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = List[Union[str, int, float]]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str, int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "values")
         table.data = table.data.filter(pl.col(self.column_name).is_in(self.values))
         return table
@@ -305,8 +318,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = List[Union[str, int, float]]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str, int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "values")
         table.data = table.data.filter(~pl.col(self.column_name).is_in(self.values))
         return table
@@ -321,7 +334,7 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self.__validate_column_exists(self.column_name, table)
+        self.__validate_column_exists(table)
         table.data = table.data.filter(pl.col(self.column_name).is_null())
         return table
 
@@ -335,7 +348,7 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        self.__validate_column_exists(self.column_name, table)
+        self.__validate_column_exists(table)
         table.data = table.data.filter(pl.col(self.column_name).is_not_null())
         return table
 
@@ -349,8 +362,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = str
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str,)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             pl.col(self.column_name).str.starts_with(self.value)
@@ -367,8 +380,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = str
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str,)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             pl.col(self.column_name).str.ends_with(self.value)
@@ -385,8 +398,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = str
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str,)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             pl.col(self.column_name).str.contains(self.value)
@@ -403,8 +416,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = str
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (str,)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
         table.data = table.data.filter(
             ~pl.col(self.column_name).str.contains(self.value)
@@ -421,8 +434,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "lower")
         self.__validate_type(type_required, "upper")
         table.data = table.data.filter(
@@ -440,8 +453,8 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = Union[int, float]
-        self.__validate_column_exists(self.column_name, table)
+        type_required = (int, float)
+        self.__validate_column_exists(table)
         self.__validate_type(type_required, "lower")
         self.__validate_type(type_required, "upper")
         table.data = table.data.filter(
@@ -462,8 +475,11 @@ class Filter:
         self.__validate_column_exists(table)
         self.__validate_filter_date(table, "value")
 
-        date_value = self.__convert_str_to_date(self.value)
+        if self.value is None:
+            e = ValueError("Valor não pode ser None")
+            logger.critical(e)
 
+        date_value = self.__convert_str_to_date(str(self.value))
         table.data = table.data.filter(pl.col(self.column_name) == date_value)
         return table
 
@@ -617,7 +633,6 @@ class Filter:
         )
 
         try:
-
             filter_functions = {
                 FilterType.EQUALS: self.__execute_equals,
                 FilterType.NOT_EQUALS: self.__execute_not_equals,
