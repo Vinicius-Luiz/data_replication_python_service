@@ -195,13 +195,24 @@ class DisplayHomePage:
         """
         self.graph_generator.generate_fl_graph1()
 
-    def display_home_page(self) -> None:
+    def render(self) -> None:
         """
         Exibe a página inicial com todas as suas seções.
 
         Esta é a função principal que organiza e exibe todos os componentes
         da página inicial, incluindo status, logs e estatísticas.
         """
+        st.header("Bem-vindo ao Serviço de Replicação de Dados")
+        st.markdown(
+            """
+            Este é o painel de controle para o serviço de replicação de dados.
+            Aqui você pode monitorar o status das replicações, visualizar estatísticas
+            e acessar todas as configurações do sistema.
+            
+            Use o menu lateral para navegar entre as diferentes seções do sistema.
+            """
+        )
+
         # Exibe o painel de controle
         self.__display_status()
 

@@ -198,24 +198,26 @@ class DisplayFilter:
             
     def __render_save_all_button(self, all_settings: Dict) -> None:
         """Renderiza o botão para salvar todas as configurações."""
-        with st.form("main_save_form"):
-            if st.form_submit_button("Salvar Configurações", type="primary"):
-                # Salva as configurações
-                if self.__save_settings(all_settings, st.session_state.temp_filters):
-                    # Atualiza a lista temporária removendo os filtros marcados
-                    st.session_state.temp_filters = [
-                        f for f in st.session_state.temp_filters
-                        if f is not None and not f.get("__remove__", False)
-                    ]
+        col1, _ = st.columns([0.75, 0.25])
+        with col1:
+            with st.form("main_save_form"):
+                if st.form_submit_button("Salvar Configurações", type="primary"):
+                    # Salva as configurações
+                    if self.__save_settings(all_settings, st.session_state.temp_filters):
+                        # Atualiza a lista temporária removendo os filtros marcados
+                        st.session_state.temp_filters = [
+                            f for f in st.session_state.temp_filters
+                            if f is not None and not f.get("__remove__", False)
+                        ]
 
-                    # Resetar os estágios de edição
-                    st.session_state.edit_stage = {
-                        i: "complete"
-                        for i, f in enumerate(st.session_state.temp_filters)
-                        if f is not None
-                    }
+                        # Resetar os estágios de edição
+                        st.session_state.edit_stage = {
+                            i: "complete"
+                            for i, f in enumerate(st.session_state.temp_filters)
+                            if f is not None
+                        }
 
-                    st.rerun()
+                        st.rerun()
 
     def __render_filter_form(
         self,
@@ -344,7 +346,7 @@ class DisplayFilter:
         elif st.session_state.edit_stage.get(index) == "complete":
             st.json(settings)
 
-    def display_filters(self) -> None:
+    def render(self) -> None:
         """Exibe a interface para configuração dos filtros."""
         # Carregar configurações
         filters_settings, all_settings = self.__configure_default_settings()
@@ -359,7 +361,7 @@ class DisplayFilter:
         self.__handle_add_filter()
 
         # Lista de filtros
-        col1, _ = st.columns(2)
+        col1, _ = st.columns([0.75, 0.25])
         with col1:
             for i, filter_data in enumerate(st.session_state.temp_filters):
                 if filter_data is None:

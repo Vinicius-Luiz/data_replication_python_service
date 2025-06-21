@@ -156,7 +156,7 @@ class DisplayErrorHandling:
             ),
         }
 
-    def display_error_settings(self) -> None:
+    def render(self) -> None:
         """
         Exibe a interface para configuração do tratamento de erros.
         
@@ -177,19 +177,21 @@ class DisplayErrorHandling:
         error_settings, all_settings = self.__configure_default_settings()
 
         # Formulário de configurações
-        with st.form("error_settings_form"):
-            col1, col2, _ = st.columns(3, gap="medium")
-            
-            # Configurações de DML
-            with col1:
-                dml_settings = self.__render_dml_settings(error_settings)
-            
-            # Configurações de CDC
-            with col2:
-                cdc_settings = self.__render_cdc_settings(error_settings)
+        col1, _ = st.columns(2)
+        with col1:
+            with st.form("error_settings_form"):
+                col1, col2, _ = st.columns(3, gap="medium")
+                
+                # Configurações de DML
+                with col1:
+                    dml_settings = self.__render_dml_settings(error_settings)
+                
+                # Configurações de CDC
+                with col2:
+                    cdc_settings = self.__render_cdc_settings(error_settings)
 
-            # Botão de salvar
-            if st.form_submit_button("Salvar Configurações", type="primary"):
-                # Combina todas as configurações
-                new_error_settings = {**dml_settings, **cdc_settings}
-                self.__save_settings(all_settings, new_error_settings)
+                # Botão de salvar
+                if st.form_submit_button("Salvar Configurações", type="primary"):
+                    # Combina todas as configurações
+                    new_error_settings = {**dml_settings, **cdc_settings}
+                    self.__save_settings(all_settings, new_error_settings)

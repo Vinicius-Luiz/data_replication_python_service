@@ -94,18 +94,25 @@ class DisplayTaskSettings:
             st.error(f"Erro ao salvar configurações: {str(e)}")
             return False
 
-    def display_task_settings(self):
-        """Exibe a interface de configuração da tarefa."""
-        st.header("Configuração da Tarefa")
+    def render(self):
+        """Renderiza a interface de configurações da tarefa."""
+        st.header("Configurações da Tarefa")
+        st.markdown(
+            """
+            Configure as configurações gerais da tarefa de replicação.
+            Defina o tipo de replicação (CDC ou Full Load), o comportamento do SCD2,
+            e outras configurações que afetam como os dados serão processados e armazenados.
+            """
+        )
 
         # Inicializa o estado se necessário
         if "task_settings" not in st.session_state:
             st.session_state.task_settings = self.__load_settings()
         
         # Formulário de configuração
-        with st.form("task_settings_form"):
-            col1, _ = st.columns([0.5, 0.5])
-            with col1:
+        col1, _ = st.columns([0.75, 0.25])
+        with col1:
+            with st.form("task_settings_form"):
                 # Configurações básicas
                 st.subheader("Básicas")
                 task_settings = {}
@@ -201,14 +208,14 @@ class DisplayTaskSettings:
                         help="Se marcado, limpa todos os dados da tabela antes de inserir"
                     )
 
-            # Botão de salvar
-            if st.form_submit_button(
-                "Salvar Configurações",
-                type="primary",
-                help="Clique para salvar todas as alterações"
-            ):
-                if self.__save_settings(task_settings):
-                    st.session_state.task_settings = self.__load_settings()  # Recarrega as configurações
-                    st.success("Configurações salvas com sucesso!")
-                    sleep(5)
-                    st.rerun()
+                # Botão de salvar
+                if st.form_submit_button(
+                    "Salvar Configurações",
+                    type="primary",
+                    help="Clique para salvar todas as alterações"
+                ):
+                    if self.__save_settings(task_settings):
+                        st.session_state.task_settings = self.__load_settings()  # Recarrega as configurações
+                        st.success("Configurações salvas com sucesso!")
+                        sleep(5)
+                        st.rerun()

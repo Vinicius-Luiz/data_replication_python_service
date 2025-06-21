@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 logger = ReplicationLogger()
 
+
 class ColumnCreator:
     """Classe responsável por validar e criar novas colunas."""
 
@@ -213,15 +214,12 @@ class ColumnCreator:
             - A validação é feita usando isinstance(), permitindo herança de tipos
         """
 
-        if (
-            "column_type" not in op_config
-            or "depends_on" not in op_config["column_type"]
-        ):
+        if "column_type" not in op_config or depends_on is None:
             return
 
         for col in depends_on:
             actual_type = table.data.schema[col]
-            expected_types = op_config["column_type"]["depends_on"]
+            expected_types = op_config["column_type"]
 
             if not any(isinstance(actual_type, t) for t in expected_types):
                 expected_names = [t.__name__ for t in expected_types]
@@ -303,6 +301,10 @@ class ColumnCreator:
 
         # Extrai parâmetros do contrato
         new_column_name = contract.get("new_column_name")
+        # TODO DEBUG APAGAR
+        if new_column_name == "periodo_anos":
+            print("PERIODO ANOS")  # TODO APAGAR
+        # TODO DEBUG APAGAR
         operation = TransformationOperationType(contract.get("operation"))
         depends_on = contract.get("depends_on", [])
 

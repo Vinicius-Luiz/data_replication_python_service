@@ -1,3 +1,4 @@
+from ui.components.DisplayTransformation import DisplayTransformation
 from ui.components.DisplayErrorHandling import DisplayErrorHandling
 from ui.components.DisplayTaskSettings import DisplayTaskSettings
 from ui.components.DisplayConections import DisplayConnections
@@ -17,6 +18,7 @@ class UIComponents:
         self.task_settings = DisplayTaskSettings()
         self.tables = DisplayTables()
         self.display_filter = DisplayFilter()
+        self.display_transformation = DisplayTransformation()
         self.error_settings = DisplayErrorHandling()
 
         # Define o layout da página
@@ -81,19 +83,20 @@ class UIComponents:
             
         # Exibe o conteúdo apropriado
         if st.session_state.current_page == "home":
-            self.home_page.display_home_page()
+            self.home_page.render()
         elif st.session_state.current_page == "connections":
-            self.connections.display_connections()
+            self.connections.render()
         elif st.session_state.current_page == "task":
-            self.task_settings.display_task_settings()
+            self.task_settings.render()
         elif st.session_state.current_page == "tables":
-            self.tables.display_tables()
+            self.tables.render()
         elif st.session_state.current_page == "filters":
-            self.display_filter.display_filters()
+            self.display_filter.render()
         elif st.session_state.current_page == "transformations":
-            self.__display_transformations()
+            # self.__display_transformations()
+            self.display_transformation.render()
         elif st.session_state.current_page == "error_handling":
-            self.error_settings.display_error_settings()
+            self.error_settings.render()
 
     def __display_transformations(self):
         """Exibe a página de transformações (placeholder)."""

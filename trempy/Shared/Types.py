@@ -49,6 +49,7 @@ class TransformationOperationType(Enum):
     DATETIME_NOW = 'datetime_now'
     CONCAT = 'concat'
     DATE_DIFF_YEARS = 'date_diff_years'
+    
 
 class FilterType(Enum):
     EQUALS = 'equals'
@@ -88,3 +89,10 @@ class InputFilterType(Enum):
     VALUES = "values"
     LOWER = "lower"
     UPPER = "upper"
+    
+class OperationType(Enum):
+    CREATE_COLUMN = "create_column"
+    MODIFY_COLUMN = "modify_column"
+    MODIFY_STRUCTURE = "modify_structure"
+    
+    

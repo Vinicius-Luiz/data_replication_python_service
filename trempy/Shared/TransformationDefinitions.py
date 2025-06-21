@@ -1,6 +1,9 @@
-from trempy.Shared.Types import TransformationOperationType
+from trempy.Shared.Types import (
+    TransformationOperationType,
+    OperationType,
+    TransformationType,
+)
 from trempy.Loggings.Logging import ReplicationLogger
-from typing import Dict, Any
 import polars as pl
 
 logger = ReplicationLogger()
@@ -9,14 +12,49 @@ logger = ReplicationLogger()
 class TransformationDefinitions:
     """Classe que estrutura o mapeamento entre tipos de transformação e seus requisitos."""
 
-    # Mapeamento dos tipos de colunas requeridos para cada operação
+    STRUCTURE_OPERATION_TYPES = {
+        TransformationType.ADD_PRIMARY_KEY: OperationType.MODIFY_STRUCTURE,
+        TransformationType.REMOVE_PRIMARY_KEY: OperationType.MODIFY_STRUCTURE,
+        TransformationType.MODIFY_SCHEMA_NAME: OperationType.MODIFY_STRUCTURE,
+        TransformationType.MODIFY_TABLE_NAME: OperationType.MODIFY_STRUCTURE,
+        TransformationType.MODIFY_COLUMN_NAME: OperationType.MODIFY_STRUCTURE,
+    }
+
+    COLUMN_OPERATION_TYPES = {
+        TransformationOperationType.CONCAT: OperationType.CREATE_COLUMN,
+        TransformationOperationType.DATE_DIFF_YEARS: OperationType.CREATE_COLUMN,
+        TransformationOperationType.DATE_NOW: OperationType.CREATE_COLUMN,
+        TransformationOperationType.DATETIME_NOW: OperationType.CREATE_COLUMN,
+        TransformationOperationType.LITERAL: OperationType.CREATE_COLUMN,
+        TransformationOperationType.FORMAT_DATE: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.MATH_EXPRESSION: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.UPPERCASE: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.LOWERCASE: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.TRIM: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.EXTRACT_YEAR: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.EXTRACT_MONTH: OperationType.MODIFY_COLUMN,
+        TransformationOperationType.EXTRACT_DAY: OperationType.MODIFY_COLUMN,
+    }
+
+    STRUCTURE_MODIFIER_TYPES = {
+        TransformationType.ADD_PRIMARY_KEY: [pl.Utf8],
+        TransformationType.REMOVE_PRIMARY_KEY: [pl.Utf8],
+        TransformationType.MODIFY_SCHEMA_NAME: [pl.Utf8],
+        TransformationType.MODIFY_TABLE_NAME: [pl.Utf8],
+        TransformationType.MODIFY_COLUMN_NAME: [pl.Utf8],
+    }
+
     COLUMN_CREATOR_TYPES = {
-        TransformationOperationType.CONCAT: {"depends_on": [pl.Utf8]},
+        TransformationOperationType.CONCAT: [pl.Utf8],
         TransformationOperationType.DATE_DIFF_YEARS: [pl.Datetime, pl.Date],
+        TransformationOperationType.DATE_NOW: [],
+        TransformationOperationType.DATETIME_NOW: [],
+        TransformationOperationType.LITERAL: [],
     }
 
     COLUMN_MODIFIER_TYPES = {
         TransformationOperationType.FORMAT_DATE: [pl.Datetime, pl.Date],
+        TransformationOperationType.MATH_EXPRESSION: [pl.Utf8],
         TransformationOperationType.UPPERCASE: [pl.Utf8],
         TransformationOperationType.LOWERCASE: [pl.Utf8],
         TransformationOperationType.TRIM: [pl.Utf8],
@@ -25,120 +63,29 @@ class TransformationDefinitions:
         TransformationOperationType.EXTRACT_DAY: [pl.Datetime, pl.Date],
     }
 
-    # Mapeamento dos parâmetros requeridos para cada operação
+    STRUCTURE_MODIFIER_PARAMS = {
+        TransformationType.ADD_PRIMARY_KEY: ["column_names"],
+        TransformationType.REMOVE_PRIMARY_KEY: ["column_names"],
+        TransformationType.MODIFY_SCHEMA_NAME: ["target_schema_name"],
+        TransformationType.MODIFY_TABLE_NAME: ["target_table_name"],
+        TransformationType.MODIFY_COLUMN_NAME: ["column_name", "target_column_name"],
+    }
+
     COLUMN_CREATOR_PARAMS = {
-        TransformationOperationType.LITERAL: ["value", "value_type"],
-        TransformationOperationType.CONCAT: ["depends_on"],
-        TransformationOperationType.DATE_DIFF_YEARS: ["depends_on"],
+        TransformationOperationType.LITERAL: ["new_column_name", "value", "value_type"],
+        TransformationOperationType.CONCAT: ["new_column_name", "depends_on"],
+        TransformationOperationType.DATE_DIFF_YEARS: ["new_column_name", "depends_on"],
+        TransformationOperationType.DATE_NOW: ["new_column_name"],
+        TransformationOperationType.DATETIME_NOW: ["new_column_name"],
     }
 
     COLUMN_MODIFIER_PARAMS = {
-        TransformationOperationType.FORMAT_DATE: ["format"],
-        TransformationOperationType.MATH_EXPRESSION: ["expression"],
+        TransformationOperationType.FORMAT_DATE: ["column_name", "format"],
+        TransformationOperationType.MATH_EXPRESSION: ["column_name", "expression"],
+        TransformationOperationType.UPPERCASE: ["column_name"],
+        TransformationOperationType.LOWERCASE: ["column_name"],
+        TransformationOperationType.TRIM: ["column_name"],
+        TransformationOperationType.EXTRACT_YEAR: ["column_name"],
+        TransformationOperationType.EXTRACT_MONTH: ["column_name"],
+        TransformationOperationType.EXTRACT_DAY: ["column_name"],
     }
-
-    @classmethod
-    def get_creator_operations(
-        cls, depends_on: list, contract: dict
-    ) -> Dict[TransformationOperationType, Dict[str, Any]]:
-        """Retorna um dicionário de operações com base em tipos de operações definidos."""
-        return {
-            TransformationOperationType.LITERAL: {
-                "func": lambda: cls.literal(
-                    value=contract["value"], value_type=contract["value_type"]
-                ),
-                "required_params": cls.COLUMN_CREATOR_PARAMS.get(
-                    TransformationOperationType.LITERAL, []
-                ),
-            },
-            TransformationOperationType.DATE_NOW: {"func": lambda: cls.date_now()},
-            TransformationOperationType.DATETIME_NOW: {
-                "func": lambda: cls.datetime_now()
-            },
-            TransformationOperationType.CONCAT: {
-                "func": lambda: cls.concat(
-                    separator=contract.get("separator", ""),
-                    depends_on=depends_on,
-                ),
-                "required_params": cls.COLUMN_CREATOR_PARAMS.get(
-                    TransformationOperationType.CONCAT, []
-                ),
-                "column_type": cls.COLUMN_CREATOR_TYPES.get(
-                    TransformationOperationType.CONCAT
-                ),
-            },
-            TransformationOperationType.DATE_DIFF_YEARS: {
-                "func": lambda: cls.date_diff_years(
-                    start_col=depends_on[0],
-                    end_col=depends_on[1],
-                    round_result=contract.get("round_result", False),
-                ),
-                "required_params": cls.COLUMN_CREATOR_PARAMS.get(
-                    TransformationOperationType.DATE_DIFF_YEARS, []
-                ),
-                "column_type": cls.COLUMN_CREATOR_TYPES.get(
-                    TransformationOperationType.DATE_DIFF_YEARS
-                ),
-            },
-        }
-
-    @classmethod
-    def get_modifier_operations(
-        cls, column_name: str, contract: dict
-    ) -> Dict[TransformationOperationType, Dict[str, Any]]:
-        """Retorna um dicionário de operações de transformação disponíveis para uma coluna."""
-        return {
-            TransformationOperationType.FORMAT_DATE: {
-                "func": lambda: cls.format_date(column_name, contract["format"]),
-                "required_params": cls.COLUMN_MODIFIER_PARAMS.get(
-                    TransformationOperationType.FORMAT_DATE, []
-                ),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.FORMAT_DATE
-                ),
-            },
-            TransformationOperationType.UPPERCASE: {
-                "func": lambda: cls.uppercase(column_name),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.UPPERCASE
-                ),
-            },
-            TransformationOperationType.LOWERCASE: {
-                "func": lambda: cls.lowercase(column_name),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.LOWERCASE
-                ),
-            },
-            TransformationOperationType.TRIM: {
-                "func": lambda: cls.trim(column_name),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.TRIM
-                ),
-            },
-            TransformationOperationType.EXTRACT_YEAR: {
-                "func": lambda: cls.extract_year(column_name),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.EXTRACT_YEAR
-                ),
-            },
-            TransformationOperationType.EXTRACT_MONTH: {
-                "func": lambda: cls.extract_month(column_name),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.EXTRACT_MONTH
-                ),
-            },
-            TransformationOperationType.EXTRACT_DAY: {
-                "func": lambda: cls.extract_day(column_name),
-                "column_type": cls.COLUMN_MODIFIER_TYPES.get(
-                    TransformationOperationType.EXTRACT_DAY
-                ),
-            },
-            TransformationOperationType.MATH_EXPRESSION: {
-                "func": lambda: cls.math_expression(
-                    column_name, contract["expression"]
-                ),
-                "required_params": cls.COLUMN_MODIFIER_PARAMS.get(
-                    TransformationOperationType.MATH_EXPRESSION, []
-                ),
-            },
-        }

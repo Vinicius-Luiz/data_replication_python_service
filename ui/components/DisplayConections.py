@@ -177,9 +177,17 @@ class DisplayConnections:
             
         return config
 
-    def display_connections(self) -> None:
-        """Exibe a interface para configuração das conexões com bancos de dados."""
-        st.header("Configurações de Conexão")
+    def render(self) -> None:
+        """Renderiza a interface de configuração de conexões."""
+        st.header("Configuração de Conexões")
+        st.markdown(
+            """
+            Configure as conexões com os bancos de dados de origem e destino.
+            Defina os parâmetros de conexão como host, porta, usuário e senha.
+            Para o banco de origem, você também pode configurar o tamanho do lote
+            para operações CDC.
+            """
+        )
 
         # Opções para selects
         database_types = [db_type.value for db_type in DatabaseType]
