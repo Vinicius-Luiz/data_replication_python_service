@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union, List, Type, get_args, get_origin, Tuple, Any, Optional
+from typing import Union, List, Type, Tuple, Any, Optional
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Filters.Exceptions.Exception import *
 from trempy.Shared.Types import FilterType
@@ -179,14 +179,10 @@ class Filter:
         try:
             if isinstance(self.col_type, pl.Date):
                 dt = datetime.strptime(value, "%Y-%m-%d")
-                return pl.lit(pl.date(dt.year, dt.month, dt.day))
+                return pl.lit(dt.date()).cast(pl.Date)
             else:
                 dt = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-                return pl.lit(
-                    pl.datetime(
-                        dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
-                    )
-                )
+                return pl.lit(dt).cast(pl.Datetime)
 
         except Exception as e:
             e = ValueError(
@@ -205,9 +201,9 @@ class Filter:
         Returns:
             Table: Objeto Table com o filtro aplicado.
         """
+        type_required = (str, int, float)
         self.__validate_column_exists(table)
-        for t in (str, int, float):
-            self.__validate_type(t, "value")
+        self.__validate_type(type_required, "value")
 
         table.data = table.data.filter(pl.col(self.column_name) == self.value)
         return table
@@ -225,6 +221,7 @@ class Filter:
         type_required = (str, int, float)
         self.__validate_column_exists(table)
         self.__validate_type(type_required, "value")
+        
         table.data = table.data.filter(pl.col(self.column_name) != self.value)
         return table
 

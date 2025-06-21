@@ -1,3 +1,4 @@
+from trempy.Shared.TransformationDefinitions import TransformationDefinitions
 from trempy.Transformations.FunctionColumn import FunctionColumn
 from trempy.Shared.Types import TransformationOperationType
 from trempy.Transformations.Exceptions.Exception import *
@@ -9,114 +10,52 @@ logger = ReplicationLogger()
 
 
 class FunctionColumnModifier(FunctionColumn):
-    """Classe que representa uma coluna de fun o de transforma o."""
+    """Classe que representa uma coluna de função de transformação."""
 
-    REQUIRED_COLUMN_TYPES = {
-        TransformationOperationType.FORMAT_DATE: [pl.Datetime, pl.Date],
-        TransformationOperationType.UPPERCASE: [pl.Utf8],
-        TransformationOperationType.LOWERCASE: [pl.Utf8],
-        TransformationOperationType.TRIM: [pl.Utf8],
-        TransformationOperationType.EXTRACT_YEAR: [pl.Datetime, pl.Date],
-        TransformationOperationType.EXTRACT_MONTH: [pl.Datetime, pl.Date],
-        TransformationOperationType.EXTRACT_DAY: [pl.Datetime, pl.Date],
-    }
+    @staticmethod
+    def get_required_column_types(operation_type: TransformationOperationType):
+        """Retorna os tipos de coluna requeridos para uma operação específica."""
+        return TransformationDefinitions.COLUMN_MODIFIER_TYPES.get(operation_type)
 
-    REQUIRED_PARAMS = {
-        TransformationOperationType.FORMAT_DATE: ["format"],
-        TransformationOperationType.MATH_EXPRESSION: ["expression"],
-    }
+    @staticmethod
+    def get_required_params(operation_type: TransformationOperationType):
+        """Retorna os parâmetros requeridos para uma operação específica."""
+        return TransformationDefinitions.COLUMN_MODIFIER_PARAMS.get(operation_type, [])
 
     @staticmethod
     def format_date(column_name: str, format: str) -> pl.Expr:
-        """Formata uma coluna de data/tempo para string usando o formato especificado.
-
-        Args:
-            column_name: Nome da coluna contendo valores de data/tempo.
-            format: String de formato (ex: "%Y-%m-%d" para "2023-01-01").
-
-        Returns:
-            Expressão Polars que converte a coluna para string formatada.
-        """
-
+        """Formata uma coluna de data/datetime."""
         return pl.col(column_name).dt.strftime(format)
 
     @staticmethod
-    def extract_year(column_name: str) -> pl.Expr:
-        """Extrai o componente ano de uma coluna de data/tempo.
-
-        Args:
-            column_name: Nome da coluna contendo valores de data/tempo.
-
-        Returns:
-            Expressão Polars que retorna o ano como valor numérico.
-        """
-
-        return pl.col(column_name).dt.year()
-
-    @staticmethod
-    def extract_month(column_name: str) -> pl.Expr:
-        """Extrai o componente mês (1-12) de uma coluna de data/tempo.
-
-        Args:
-            column_name: Nome da coluna contendo valores de data/tempo.
-
-        Returns:
-            Expressão Polars que retorna o mês como valor numérico (1-12).
-        """
-
-        return pl.col(column_name).dt.month()
-
-    @staticmethod
-    def extract_day(column_name: str) -> pl.Expr:
-        """Extrai o componente dia (1-31) de uma coluna de data/tempo.
-
-        Args:
-            column_name: Nome da coluna contendo valores de data/tempo.
-
-        Returns:
-            Expressão Polars que retorna o dia como valor numérico (1-31).
-        """
-
-        return pl.col(column_name).dt.day()
-
-    @staticmethod
     def uppercase(column_name: str) -> pl.Expr:
-        """Converte todos os caracteres de uma coluna de texto para maiúsculas.
-
-        Args:
-            column_name: Nome da coluna contendo strings.
-
-        Returns:
-            Expressão Polars com strings em maiúsculas.
-        """
-
+        """Converte uma coluna para maiúsculas."""
         return pl.col(column_name).str.to_uppercase()
 
     @staticmethod
     def lowercase(column_name: str) -> pl.Expr:
-        """Converte todos os caracteres de uma coluna de texto para minúsculas.
-
-        Args:
-            column_name: Nome da coluna contendo strings.
-
-        Returns:
-            Expressão Polars com strings em minúsculas.
-        """
-
+        """Converte uma coluna para minúsculas."""
         return pl.col(column_name).str.to_lowercase()
 
     @staticmethod
     def trim(column_name: str) -> pl.Expr:
-        """Remove espaços em branco do início e fim de cada string na coluna.
+        """Remove espaços em branco do início e fim."""
+        return pl.col(column_name).str.strip_chars()
 
-        Args:
-            column_name: Nome da coluna contendo strings.
+    @staticmethod
+    def extract_year(column_name: str) -> pl.Expr:
+        """Extrai o ano de uma data."""
+        return pl.col(column_name).dt.year()
 
-        Returns:
-            Expressão Polars com strings sem espaços extras nas extremidades.
-        """
+    @staticmethod
+    def extract_month(column_name: str) -> pl.Expr:
+        """Extrai o mês de uma data."""
+        return pl.col(column_name).dt.month()
 
-        return pl.col(column_name).str.strip()
+    @staticmethod
+    def extract_day(column_name: str) -> pl.Expr:
+        """Extrai o dia de uma data."""
+        return pl.col(column_name).dt.day()
 
     @staticmethod
     def math_expression(column_name: str, expression: str) -> pl.Expr:

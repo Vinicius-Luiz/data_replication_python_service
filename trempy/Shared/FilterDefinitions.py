@@ -2,7 +2,7 @@ from trempy.Shared.Types import FilterType, InputFilterType
 from typing import Dict, Tuple, Optional, List
 
 
-class InputFilter:
+class FilterDefinitions:
     """Classe que estrutura o mapeamento entre tipos de filtro e seus inputs necessários."""
 
     # Mapeamento completo dos filtros para seus tipos de input

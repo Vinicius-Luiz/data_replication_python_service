@@ -1,6 +1,6 @@
+from trempy.Shared.FilterDefinitions import FilterDefinitions
 from trempy.Shared.Types import FilterType, InputFilterType
-from trempy.Shared.InputFilter import InputFilter
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple
 from pathlib import Path
 import streamlit as st
 import json
@@ -115,7 +115,7 @@ class DisplayFilter:
         }
         
         inputs = {}
-        for input_type in InputFilter.get_input_types(filter_type):
+        for input_type in FilterDefinitions.get_input_types(filter_type):
             if input_type in input_mapping:
                 key, default = input_mapping[input_type]
                 inputs[key] = current_settings.get(key, default)
@@ -126,7 +126,7 @@ class DisplayFilter:
         self, filter_type: FilterType, current_settings: Dict, unique_key: str
     ):
         """Renderiza os inputs específicos para o tipo de filtro."""
-        input_types = InputFilter.get_input_types(filter_type)
+        input_types = FilterDefinitions.get_input_types(filter_type)
 
         if not input_types:
             st.info("Este filtro não requer valores adicionais")
