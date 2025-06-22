@@ -1,21 +1,12 @@
 {
     "task": {
-        "task_name": "fl_employees",
-        "replication_type": "full_load_and_cdc",
-        "interval_seconds": 10,
-        "start_mode": "reload",
+        "task_name": "fl_cdc_employees",
+        "replication_type": "full_load",
+        "interval_seconds": 1,
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,
             "truncate_before_insert": true
-        },
-        "cdc_settings": {
-            "mode": "upsert",
-            "scd2_settings": {
-                "start_date_column_name": "scd_start_date",
-                "end_date_column_name": "scd_end_date",
-                "current_column_name": "scd_current"
-            }
         }
     },
     "error_handling": {
@@ -33,12 +24,12 @@
         {
             "schema_name": "employees",
             "table_name": "employee",
-            "priority": 0
+            "priority": 2
         },
         {
             "schema_name": "employees",
             "table_name": "department_manager",
-            "priority": 2
+            "priority": 0
         }
     ],
     "filters": [

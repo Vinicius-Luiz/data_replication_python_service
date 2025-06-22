@@ -1,0 +1,2 @@
+sleep após salvar em filtros
+"operation": "literal", em modify_table_name

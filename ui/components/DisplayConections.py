@@ -17,7 +17,7 @@ class DisplayConnections:
     ENV_FILE = Path(".env")
     DEFAULT_HOST = "localhost"
     DEFAULT_PORT = "5432"
-    DEFAULT_BATCH_SIZE = 20000
+    DEFAULT_BATCH_SIZE = 1000
     
     def __init__(self):
         """Inicializa a classe carregando as variáveis de ambiente."""

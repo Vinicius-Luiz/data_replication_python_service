@@ -73,7 +73,7 @@ class TransformationDefinitions:
 
     COLUMN_CREATOR_PARAMS = {
         TransformationOperationType.LITERAL: ["new_column_name", "value", "value_type"],
-        TransformationOperationType.CONCAT: ["new_column_name", "depends_on"],
+        TransformationOperationType.CONCAT: ["new_column_name", "depends_on", "separator"],
         TransformationOperationType.DATE_DIFF_YEARS: ["new_column_name", "depends_on"],
         TransformationOperationType.DATE_NOW: ["new_column_name"],
         TransformationOperationType.DATETIME_NOW: ["new_column_name"],

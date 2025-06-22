@@ -1,75 +1,171 @@
-2025-06-21 16:51:45,188 - INFO - UI - Replicação de dados iniciada
-2025-06-21 16:51:45,633 - INFO - REPLICATION - Recarregando tarefa
-2025-06-21 16:51:45,634 - INFO - REPLICATION - Recriando tabelas de metadata
-2025-06-21 16:51:45,835 - INFO - TASK - fl_employees válido
-2025-06-21 16:51:45,835 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-06-21 16:51:45,867 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-06-21 16:51:45,867 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-06-21 16:51:45,872 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-06-21 16:51:45,872 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-06-21 16:51:45,880 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-06-21 16:51:45,885 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-06-21 16:51:46,364 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-06-21 16:51:46,417 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-21 16:51:46,417 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-06-21 16:51:47,101 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300027, 'statusmessage': 'SELECT 300027', 'time_elapsed': '00:00:01'}
-2025-06-21 16:51:47,105 - INFO - TASK - Obtendo dados da tabela employees.salary
-2025-06-21 16:51:54,225 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'time_elapsed': '00:00:06'}
-2025-06-21 16:51:54,231 - INFO - TASK - Obtendo dados da tabela employees.department_manager
-2025-06-21 16:51:54,239 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
-2025-06-21 16:51:54,334 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-21 16:51:54,334 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-06-21 16:51:54,773 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-06-21 16:51:54,824 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-21 16:51:54,861 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando gênero feminino
-2025-06-21 16:51:54,872 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para considerar somente funcionários do gênero feminino
-2025-06-21 16:51:54,872 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'first_name' com tudo em maiúsculo
-2025-06-21 16:51:54,880 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Formata coluna 'last_name' com tudo em maiúsculo
-2025-06-21 16:51:54,885 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-06-21 16:51:54,892 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar como python quem realizou a replicação dos dados
-2025-06-21 16:51:54,894 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Carimbar data de sincronização
-2025-06-21 16:51:54,895 - INFO - TASK - Realizando carga completa da tabela employees.employee_female
-2025-06-21 16:51:54,895 - INFO - ENDPOINT - Removendo tabela employees.employee_female
-2025-06-21 16:51:54,912 - INFO - ENDPOINT - Criando tabela employees.employee_female
-2025-06-21 16:51:54,923 - INFO - ENDPOINT - Truncando tabela employees.employee_female
-2025-06-21 16:51:55,057 - INFO - ENDPOINT - Inserindo 120051 registros na tabela employees.employee_female
-2025-06-21 16:51:58,131 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 120051, 'success': 1, 'time_elapsed': '00:00:03'}
-2025-06-21 16:51:58,162 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome da tabela para português
-2025-06-21 16:51:58,162 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterando nome do schema para português
-2025-06-21 16:51:58,162 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter diferença de anos entre o data_inicio e data_fim do salario
-2025-06-21 16:51:58,182 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Obter salário mensal
-2025-06-21 16:51:58,192 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'employee_id' para 'funcionario_id'
-2025-06-21 16:51:58,192 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'amount' para 'quantia'
-2025-06-21 16:51:58,192 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'from_date' para 'data_inicio'
-2025-06-21 16:51:58,192 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Modificando 'to_date' para 'data_fim'
-2025-06-21 16:51:58,192 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario
-2025-06-21 16:51:58,192 - INFO - ENDPOINT - Removendo tabela funcionarios.salario
-2025-06-21 16:51:59,205 - INFO - ENDPOINT - Criando tabela funcionarios.salario
-2025-06-21 16:51:59,208 - INFO - ENDPOINT - Truncando tabela funcionarios.salario
-2025-06-21 16:52:00,677 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario
-2025-06-21 16:52:54,638 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': 1, 'time_elapsed': '00:00:56'}
-2025-06-21 16:52:54,685 - INFO - FILTER - Aplicando filtro em employees.department_manager to_date: Filtrando data de inicio igual a 9999-01-01
-2025-06-21 16:52:54,705 - INFO - TASK - Realizando carga completa da tabela employees.department_manager
-2025-06-21 16:52:54,705 - INFO - ENDPOINT - Removendo tabela employees.department_manager
-2025-06-21 16:52:54,712 - INFO - ENDPOINT - Criando tabela employees.department_manager
-2025-06-21 16:52:54,717 - INFO - ENDPOINT - Truncando tabela employees.department_manager
-2025-06-21 16:52:54,721 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_manager
-2025-06-21 16:52:54,727 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 7, 'success': 1, 'time_elapsed': '00:00:00'}
-2025-06-21 16:52:54,796 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0, 'message_type': 'output', 'output': 'PERIODO ANOS'}
-2025-06-21 16:52:54,796 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-06-21 16:52:54,863 - INFO - TASK - fl_employees válido
-2025-06-21 16:52:54,863 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-06-21 16:52:54,942 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 0, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-06-21 16:52:54,942 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-06-21 16:52:54,953 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-06-21 16:52:54,953 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-06-21 16:52:54,963 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-06-21 16:52:54,969 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 10s
-2025-06-21 16:52:55,618 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-06-21 16:52:55,697 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-06-21 16:52:56,533 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-21 16:53:07,587 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-21 16:53:18,026 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-21 16:53:28,565 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-21 16:53:39,140 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-21 16:53:48,802 - INFO - UI - Replicação de dados finalizada
+2025-06-22 01:45:34,459 - INFO - UI - Replicação de dados iniciada
+2025-06-22 01:45:34,835 - INFO - REPLICATION - Recarregando tarefa
+2025-06-22 01:45:34,836 - INFO - REPLICATION - Recriando tabelas de metadata
+2025-06-22 01:45:34,913 - INFO - TASK - fl_cdc_upsert_employees válido
+2025-06-22 01:45:34,913 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-06-22 01:45:34,937 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-06-22 01:45:34,942 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-22 01:45:35,298 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-22 01:45:35,336 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-22 01:45:35,336 - INFO - TASK - Obtendo dados da tabela employees.employee
+2025-06-22 01:45:35,869 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
+2025-06-22 01:45:35,932 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:45:35,932 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-22 01:45:36,314 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-22 01:45:36,350 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-22 01:45:36,365 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando somente funcionários do gênero Feminino
+2025-06-22 01:45:36,367 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para employee_female
+2025-06-22 01:45:36,367 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna nome completo
+2025-06-22 01:45:36,373 - INFO - TASK - Realizando carga completa da tabela employees.employee_female
+2025-06-22 01:45:36,373 - INFO - ENDPOINT - Removendo tabela employees.employee_female
+2025-06-22 01:45:36,382 - INFO - ENDPOINT - Criando tabela employees.employee_female
+2025-06-22 01:45:36,390 - INFO - ENDPOINT - Truncando tabela employees.employee_female
+2025-06-22 01:45:36,482 - INFO - ENDPOINT - Inserindo 120051 registros na tabela employees.employee_female
+2025-06-22 01:45:38,767 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 120051, 'success': 1, 'time_elapsed': '00:00:02'}
+2025-06-22 01:45:38,803 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-22 01:45:38,803 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-22 01:45:38,853 - INFO - TASK - fl_cdc_upsert_employees válido
+2025-06-22 01:45:38,853 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-06-22 01:45:38,873 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 0, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-06-22 01:45:38,878 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 5s
+2025-06-22 01:45:39,214 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-22 01:45:39,278 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-22 01:45:39,331 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:45:44,885 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:45:50,336 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:45:55,779 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:01,233 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:06,655 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:12,088 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:17,547 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:22,978 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:28,398 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:33,829 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:39,262 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:44,675 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:50,085 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:46:55,539 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:00,952 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:06,355 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:11,786 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:17,214 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:22,784 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:30,365 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:47:40,299 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:49:37,885 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:49:56,155 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:01,649 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:07,248 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:12,678 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:18,121 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:23,530 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:28,939 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:34,366 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:39,898 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:45,353 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:50,836 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:50:56,279 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:01,706 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:07,128 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:12,545 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:17,936 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:23,329 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:28,751 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:34,151 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:39,538 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:44,996 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:50,427 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:51:55,846 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:01,306 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:06,714 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:12,124 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:17,565 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:22,975 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:28,381 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:33,772 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:39,206 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:44,621 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:50,072 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:52:55,473 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:00,893 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:06,322 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:11,770 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:17,201 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:22,621 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:28,032 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:33,460 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:38,855 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:44,256 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:49,706 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:53:55,107 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:00,507 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:05,910 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:11,341 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:16,752 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:22,146 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:25,031 - INFO - UI - Replicação de dados finalizada
+2025-06-22 01:54:44,349 - INFO - UI - Replicação de dados iniciada
+2025-06-22 01:54:44,700 - INFO - REPLICATION - Recarregando tarefa
+2025-06-22 01:54:44,701 - INFO - REPLICATION - Recriando tabelas de metadata
+2025-06-22 01:54:44,778 - INFO - TASK - fl_cdc_upsert_employees válido
+2025-06-22 01:54:44,778 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-06-22 01:54:44,832 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 3, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-06-22 01:54:44,838 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-22 01:54:45,186 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-22 01:54:45,223 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-22 01:54:45,223 - INFO - TASK - Obtendo dados da tabela employees.employee
+2025-06-22 01:54:45,765 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300027, 'statusmessage': 'SELECT 300027', 'time_elapsed': '00:00:01'}
+2025-06-22 01:54:45,821 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:45,821 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-22 01:54:46,171 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-22 01:54:46,209 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-22 01:54:46,237 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando somente funcionários do gênero Feminino
+2025-06-22 01:54:46,240 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterando nome da tabela para employee_female
+2025-06-22 01:54:46,240 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna nome completo
+2025-06-22 01:54:46,246 - INFO - TASK - Realizando carga completa da tabela employees.employee_female
+2025-06-22 01:54:46,246 - INFO - ENDPOINT - Removendo tabela employees.employee_female
+2025-06-22 01:54:46,288 - INFO - ENDPOINT - Criando tabela employees.employee_female
+2025-06-22 01:54:46,305 - INFO - ENDPOINT - Truncando tabela employees.employee_female
+2025-06-22 01:54:46,392 - INFO - ENDPOINT - Inserindo 120053 registros na tabela employees.employee_female
+2025-06-22 01:54:48,625 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 120053, 'success': 1, 'time_elapsed': '00:00:02'}
+2025-06-22 01:54:48,663 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-22 01:54:48,663 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-22 01:54:48,709 - INFO - TASK - fl_cdc_upsert_employees válido
+2025-06-22 01:54:48,709 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-06-22 01:54:48,731 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 3, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-06-22 01:54:48,735 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 5s
+2025-06-22 01:54:49,102 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-22 01:54:49,170 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-22 01:54:49,226 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:54:54,729 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:00,264 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:05,696 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:11,099 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:16,507 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:21,903 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:27,314 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:32,715 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:45,107 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:50,710 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:55:56,191 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:01,655 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:07,112 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:12,733 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:18,165 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:23,638 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:29,092 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:34,623 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:40,143 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:45,638 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:51,092 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:56:56,558 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:02,023 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:07,596 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:13,077 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:18,505 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:23,950 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:29,433 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:34,897 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:40,305 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:45,723 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-22 01:57:49,160 - INFO - UI - Replicação de dados finalizada

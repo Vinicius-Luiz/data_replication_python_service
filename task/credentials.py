@@ -8,7 +8,7 @@ credentials = {
         "database_type": os.getenv("DB_SOURCE_TYPE"),
         "endpoint_type": "source",
         "endpoint_name": os.getenv("DB_SOURCE_ENDPOINT_NAME"),
-        "batch_cdc_size": int(os.getenv("DB_SOURCE_BATCH_SIZE")),
+        "batch_cdc_size": int(os.getenv("DB_SOURCE_BATCH_SIZE", 1000)),
         "credentials": {
             "dbname": os.getenv("DB_SOURCE_NAME"),
             "user": os.getenv("DB_SOURCE_USER"),

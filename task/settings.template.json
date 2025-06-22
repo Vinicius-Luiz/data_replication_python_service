@@ -1,0 +1,26 @@
+{
+    "task": {
+        "task_name": "",
+        "replication_type": "full_load",
+        "interval_seconds": 1,
+        "start_mode": "reload",
+        "create_table_if_not_exists": true,
+        "full_load_settings": {
+            "recreate_table_if_exists": true,
+            "truncate_before_insert": true
+        },
+        "cdc_settings": {
+            "mode": "default"
+        }
+    },
+    "error_handling": {
+        "stop_if_insert_error": false,
+        "stop_if_update_error": false,
+        "stop_if_delete_error": false,
+        "stop_if_upsert_error": false,
+        "stop_if_scd2_error": false
+    },
+    "tables": [],
+    "filters": [],
+    "transformations": []
+} 

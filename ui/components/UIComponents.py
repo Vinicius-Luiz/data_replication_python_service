@@ -5,7 +5,9 @@ from ui.components.DisplayConections import DisplayConnections
 from ui.components.DisplayHomePage import DisplayHomePage
 from ui.components.DisplayTables import DisplayTables
 from ui.components.DisplayFilter import DisplayFilter
+from time import sleep
 import streamlit as st
+
 
 
 class UIComponents:
@@ -57,6 +59,60 @@ class UIComponents:
             if st.sidebar.button("TRATAMENTO DE ERROS", use_container_width=True):
                 st.session_state.current_page = "error_handling"
             
+            # Grupo: Importar/Exportar Configurações
+            st.sidebar.markdown("### 💾 Backup")
+            action = st.sidebar.selectbox(
+                "Configurações",
+                options=["📤 Exportar", "📥 Importar", "🔄 Redefinir"],
+                key="settings_action",
+                help="Selecione uma ação para importar, exportar ou redefinir configurações",
+                label_visibility="collapsed"
+            )
+            
+            if action == "📤 Exportar":
+                st.sidebar.download_button(
+                    "Baixar settings.json",
+                    data=open("task/settings.json", "r", encoding="utf-8").read(),
+                    file_name="settings.json",
+                    mime="application/json",
+                    help="Exporta o arquivo de configurações",
+                    use_container_width=True,
+                )
+            elif action == "📥 Importar":
+                uploaded_file = st.sidebar.file_uploader(
+                    "Selecione o arquivo settings.json",
+                    type=["json"],
+                    help="Importa um arquivo de configurações",
+                    label_visibility="collapsed"
+                )
+                if uploaded_file is not None:
+                    try:
+                        with open("task/settings.json", "w", encoding="utf-8") as f:
+                            f.write(uploaded_file.getvalue().decode())
+                        st.sidebar.success("Configurações importadas com sucesso!")
+                        st.rerun()
+                    except Exception as e:
+                        st.sidebar.error(f"Erro ao importar configurações: {str(e)}")
+            elif action == "🔄 Redefinir":
+                if st.sidebar.button(
+                    "Confirmar Redefinição",
+                    help="Redefine todas as configurações para o padrão",
+                    type="primary",
+                    use_container_width=True
+                ):
+                    try:
+                        with open("task/settings.template.json", "r", encoding="utf-8") as template_file:
+                            template_content = template_file.read()
+                        with open("task/settings.json", "w", encoding="utf-8") as settings_file:
+                            settings_file.write(template_content)
+                        st.sidebar.success("Configurações redefinidas com sucesso! Atualize a página")
+                        sleep(5)
+                        st.rerun()
+                    except FileNotFoundError:
+                        st.sidebar.error("Arquivo template não encontrado. Verifique se task/settings.template.json existe.")
+                    except Exception as e:
+                        st.sidebar.error(f"Erro ao redefinir configurações: {str(e)}")
+            
             # Rodapé da sidebar com ícones de redes sociais
             st.sidebar.markdown("---")
             col1, col2 = st.sidebar.columns(2)
@@ -93,20 +149,9 @@ class UIComponents:
         elif st.session_state.current_page == "filters":
             self.display_filter.render()
         elif st.session_state.current_page == "transformations":
-            # self.__display_transformations()
             self.display_transformation.render()
         elif st.session_state.current_page == "error_handling":
             self.error_settings.render()
-
-    def __display_transformations(self):
-        """Exibe a página de transformações (placeholder)."""
-        st.header("🔄 Transformações")
-        st.info(
-            """
-            Esta seção permitirá configurar transformações nos dados durante a replicação.
-            Funcionalidade em desenvolvimento.
-            """
-        )
 
     def display_ui(self):
         """Método principal para exibir a interface completa."""

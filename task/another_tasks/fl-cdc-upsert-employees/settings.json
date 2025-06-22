@@ -2,7 +2,7 @@
     "task": {
         "task_name": "fl_cdc_upsert_employees",
         "replication_type": "full_load_and_cdc",
-        "interval_seconds": 5,
+        "interval_seconds": 3,
         "start_mode": "reload",
         "create_table_if_not_exists": true,
         "full_load_settings": {
@@ -10,26 +10,20 @@
             "truncate_before_insert": true
         },
         "cdc_settings": {
-            "mode": "upsert",
-            "scd2_settings": {
-                "start_date_column_name": "scd_start_date",
-                "end_date_column_name": "scd_end_date",
-                "current_column_name": "scd_current"
-            }
+            "mode": "default"
         }
     },
     "error_handling": {
         "stop_if_insert_error": false,
         "stop_if_update_error": false,
         "stop_if_delete_error": false,
-        "stop_if_upsert_error": false,
-        "stop_if_scd2_error": false
+        "stop_if_upsert_error": false
     },
     "tables": [
         {
             "schema_name": "employees",
             "table_name": "employee",
-            "priority": 2
+            "priority": 0
         }
     ],
     "filters": [
@@ -40,7 +34,7 @@
             },
             "settings": {
                 "filter_type": "equals",
-                "description": "Filtrando somente funcionários do gênero Feminino",
+                "description": "Filtrando gênero feminino",
                 "column_name": "gender",
                 "value": "F"
             }
@@ -54,7 +48,7 @@
             },
             "settings": {
                 "transformation_type": "create_column",
-                "description": "Criando coluna nome completo",
+                "description": "Cria coluna 'full_name'",
                 "contract": {
                     "operation": "concat",
                     "new_column_name": "full_name",
@@ -66,21 +60,6 @@
                 },
                 "priority": 2
             }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "employee"
-            },
-            "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alterando nome da tabela para employee_female",
-                "contract": {
-                    "operation": "literal",
-                    "target_table_name": "employee_female"
-                },
-                "priority": 0
-            }
         }
     ]
-}
+} 
