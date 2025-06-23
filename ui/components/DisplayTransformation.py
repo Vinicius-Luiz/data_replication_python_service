@@ -75,7 +75,7 @@ class DisplayTransformation:
                     "transformation_type": TransformationType.CREATE_COLUMN.value,
                     "description": "",
                     "contract": {
-                        "operation": TransformationOperationType.LITERAL.value
+                        # "operation": TransformationOperationType.LITERAL.value TODO APAGAR
                     },
                     "priority": 0,
                 },
@@ -739,17 +739,17 @@ class DisplayTransformation:
         Returns:
             List[str]: Lista de colunas dependentes
         """
-        num_cols = st.number_input(
-            "Número de Colunas Dependentes",
-            min_value=1,
-            max_value=5,
-            value=len(contract.get("depends_on", [])) or 2,
-            key=f"num_cols_{unique_key}",
-            help="Quantidade de colunas que serão usadas nesta operação",
-        )
+        # num_cols = st.number_input(
+        #     "Número de Colunas Dependentes",
+        #     min_value=1,
+        #     max_value=5,
+        #     value=len(contract.get("depends_on", [])) or 2,
+        #     key=f"num_cols_{unique_key}",
+        #     help="Quantidade de colunas que serão usadas nesta operação",
+        # )
 
         depends_on = []
-        for i in range(num_cols):
+        for i in range(2):
             col = (
                 st.text_input(
                     f"Coluna Dependente {i+1}",

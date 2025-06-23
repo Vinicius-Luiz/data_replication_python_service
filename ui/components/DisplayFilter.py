@@ -2,6 +2,7 @@ from trempy.Shared.FilterDefinitions import FilterDefinitions
 from trempy.Shared.Types import FilterType, InputFilterType
 from typing import List, Dict, Tuple
 from pathlib import Path
+from time import sleep
 import streamlit as st
 import json
 
@@ -217,6 +218,7 @@ class DisplayFilter:
                             if f is not None
                         }
 
+                        sleep(5)
                         st.rerun()
 
     def __render_filter_form(
@@ -373,8 +375,8 @@ class DisplayFilter:
                 unique_key = f"filter_{i}"
 
                 with st.expander(
-                    f"Filtro {i+1} - {filter_type.value.replace('_', ' ').title()}",
-                    expanded=True,
+                    f"Filtro {i+1}: {settings.get('description', '')}",
+                    expanded=False,
                 ):
                     self.__render_filter_form(i, filter_data, table_info, settings, filter_type, unique_key)
 

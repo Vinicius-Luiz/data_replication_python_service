@@ -188,6 +188,8 @@ class DisplayConnections:
             para operações CDC.
             """
         )
+        
+        load_dotenv()
 
         # Opções para selects
         database_types = [db_type.value for db_type in DatabaseType]
