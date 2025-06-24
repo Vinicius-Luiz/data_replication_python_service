@@ -6,7 +6,7 @@ from trempy.Messages import Message, MessageDlx, MessageConsumer
 from trempy.Loggings.Logging import ReplicationLogger
 from trempy.Replication.Exceptions.Exception import *
 from trempy.Filters.Filter import Filter
-from task.credentials import credentials
+from trempy.Shared.Utils import Utils
 from trempy.Tables.Table import Table
 from abc import ABC, abstractmethod
 from trempy.Tasks.Task import Task
@@ -199,10 +199,9 @@ class ReplicationStrategy(ABC):
                         },
                     },
                 ]
+
                 for transformation_config in scd2_transformations:
-                    transformation = Transformation(
-                        **transformation_config.get("settings")
-                    )
+                    transformation = Transformation(**transformation_config.get("settings"))
                     table_info: dict = transformation_config.get("table_info")
                     task.add_transformation(
                         schema_name=table_info.get("schema_name"),
@@ -227,9 +226,8 @@ class ReplicationStrategy(ABC):
             Task: Objeto Task totalmente configurado.
         """
         
-        source_endpoint = EndpointFactory.create_endpoint(
-            **credentials.get("source_endpoint")
-        )
+        credentials = Utils.read_credentials()
+        source_endpoint = EndpointFactory.create_endpoint(**credentials.get("source_endpoint"))
 
         task = Task(
             source_endpoint=source_endpoint,
@@ -277,10 +275,10 @@ class ReplicationStrategy(ABC):
         Executa um script Python como subprocesso.
 
         Args:
-            script_name: Nome do script a ser executado.
+            script_name (str): Nome do script a ser executado.
 
         Returns:
-            True se executou com sucesso, False caso contrário.
+            bool: True se o script foi executado com sucesso, False caso contrário.
         """
         process = self.__create_subprocess(script_name)
         exit_code = self.__monitor_process(process, script_name)
@@ -288,5 +286,10 @@ class ReplicationStrategy(ABC):
 
     @abstractmethod
     def execute(self, task: Task) -> None:
-        """Método principal para execução da estratégia."""
+        """
+        Executa a estratégia de replicação.
+
+        Args:
+            task (Task): Tarefa a ser executada.
+        """
         pass

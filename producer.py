@@ -1,7 +1,6 @@
 from trempy.Metadata.MetadataConnectionManager import MetadataConnectionManager
 from trempy.Endpoints.Factory.EndpointFactory import EndpointFactory
 from trempy.Loggings.Logging import ReplicationLogger
-from task.credentials import credentials
 from trempy.Shared.Utils import Utils
 from trempy.Tasks.Task import Task
 
@@ -15,6 +14,7 @@ with MetadataConnectionManager() as metadata_manager:
 
 
 task: Task = Utils.read_task_pickle()
+credentials = Utils.read_credentials()
 
 source_endpoint = EndpointFactory.create_endpoint(**credentials.get("source_endpoint"))
 task.add_endpoint(source_endpoint)

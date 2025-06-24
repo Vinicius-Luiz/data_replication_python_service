@@ -10,7 +10,7 @@
             "truncate_before_insert": true
         },
         "cdc_settings": {
-            "mode": "default"
+            "mode": "upsert"
         }
     },
     "error_handling": {
