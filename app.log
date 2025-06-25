@@ -1,35 +1,6 @@
-2025-06-24 01:20:33,217 - INFO - UI - Replicação de dados iniciada
-2025-06-24 01:20:33,570 - INFO - REPLICATION - Recarregando tarefa
-2025-06-24 01:20:33,571 - INFO - REPLICATION - Recriando tabelas de metadata
-2025-06-24 01:20:33,664 - INFO - TASK - fl_cdc_upsert_employees válido
-2025-06-24 01:20:33,664 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-06-24 01:20:33,688 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-06-24 01:20:33,694 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-06-24 01:20:34,045 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-06-24 01:20:34,082 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-24 01:20:34,083 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-06-24 01:20:34,620 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
-2025-06-24 01:20:34,688 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-24 01:20:34,689 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-06-24 01:20:35,037 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-06-24 01:20:35,074 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-24 01:20:35,088 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrando gênero feminino
-2025-06-24 01:20:35,091 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Cria coluna 'full_name'
-2025-06-24 01:20:35,097 - INFO - TASK - Realizando carga completa da tabela employees.employee
-2025-06-24 01:20:35,097 - INFO - ENDPOINT - Removendo tabela employees.employee
-2025-06-24 01:20:35,106 - INFO - ENDPOINT - Criando tabela employees.employee
-2025-06-24 01:20:35,116 - INFO - ENDPOINT - Truncando tabela employees.employee
-2025-06-24 01:20:35,205 - INFO - ENDPOINT - Inserindo 120051 registros na tabela employees.employee
-2025-06-24 01:20:37,414 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 120051, 'success': 1, 'time_elapsed': '00:00:02'}
-2025-06-24 01:20:37,455 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-06-24 01:20:37,456 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-06-24 01:20:37,503 - INFO - TASK - fl_cdc_upsert_employees válido
-2025-06-24 01:20:37,503 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-06-24 01:20:37,526 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-06-24 01:20:37,531 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
-2025-06-24 01:20:37,890 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-06-24 01:20:37,978 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-06-24 01:20:38,027 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-24 01:20:41,487 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-24 01:20:44,935 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-24 01:20:45,923 - INFO - UI - Replicação de dados finalizada
+2025-06-24 22:49:49,237 - INFO - UI - Replicação de dados iniciada
+2025-06-24 22:49:49,622 - INFO - REPLICATION - Recarregando tarefa
+2025-06-24 22:49:49,622 - INFO - REPLICATION - Recriando tabelas de metadata
+2025-06-24 22:49:49,831 - INFO - TASK - fl_cdc_upsert_employees válido
+2025-06-24 22:49:49,831 - CRITICAL - trempy.Tasks.Exceptions.Exception.AddFilterError: TASK - Tabela não encontrada | employees.employee
+2025-06-24 22:49:56,044 - ERROR - builtins.str: UI - Erro ao parar replicação: process PID not found (pid=12452)

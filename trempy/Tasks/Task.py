@@ -190,7 +190,7 @@ class Task:
             e = TaskError(f"Erro ao realizar carga de alterações no callback: {str(e)}")
             channel.basic_nack(delivery_tag=delivery_tag, requeue=False)
             logger.critical(e)
-        
+
         finally:
             with MetadataConnectionManager() as metadata_manager:
                 metadata_manager.update_stats_message(
@@ -253,6 +253,9 @@ class Task:
         de dados para cada uma delas. A carga completa de dados é realizada em
         paralelo para todas as tabelas especificadas.
         """
+        if not self.tables:
+            e = TaskError("Nenhuma tabela encontrada na tarefa")
+            logger.critical(e)
 
         if self.replication_type.value in (
             "full_load",
@@ -336,6 +339,10 @@ class Task:
         return False
 
     def execute_target_cdc(self) -> bool:
+        if not self.tables:
+            e = TaskError("Nenhuma tabela encontrada na tarefa")
+            logger.critical(e)
+
         if self.replication_type.value in (
             "cdc",
             "full_load_and_cdc",
@@ -450,10 +457,18 @@ class Task:
 
         try:
             table = self.__find_table(schema_name, table_name)
+            if not table:
+                e = AddTransformationError(
+                    f"Tabela não encontrada",
+                    f"{schema_name}.{table_name}",
+                )
+                logger.critical(e)
+
             table.transformations.append(transformation)
         except Exception as e:
             e = AddTransformationError(
-                f"Erro ao adicionar transformação: {e}", f"{schema_name}.{table_name}"
+                f"Erro ao adicionar transformação: {e}",
+                f"{schema_name}.{table_name}",
             )
             logger.critical(e)
 
@@ -474,6 +489,13 @@ class Task:
 
         try:
             table = self.__find_table(schema_name, table_name)
+            if not table:
+                e = AddFilterError(
+                    f"Tabela não encontrada",
+                    f"{schema_name}.{table_name}",
+                )
+                logger.critical(e)
+
             table.filters.append(filter)
         except Exception as e:
             e = AddFilterError(

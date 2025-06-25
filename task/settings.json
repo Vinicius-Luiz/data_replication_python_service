@@ -24,13 +24,7 @@
         "stop_if_delete_error": false,
         "stop_if_upsert_error": false
     },
-    "tables": [
-        {
-            "schema_name": "employees",
-            "table_name": "employee",
-            "priority": 0
-        }
-    ],
+    "tables": [],
     "filters": [
         {
             "table_info": {
