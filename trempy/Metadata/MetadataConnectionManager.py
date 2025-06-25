@@ -156,24 +156,15 @@ class MetadataConnectionManager:
     # Métodos específicos para cada tabela (apenas encapsulam o método genérico)
     def insert_stats_cdc(self, data: Dict, **kwargs) -> None:
         """Insere dados na tabela stats_cdc."""
-        try:
-            self.__insert_data("stats_cdc", {**data, **kwargs})
-        except InsertMetadataError as e:
-            logger.critical(str(e))
+        self.__insert_data("stats_cdc", {**data, **kwargs})
 
     def insert_stats_full_load(self, data: Dict, **kwargs) -> None:
         """Insere dados na tabela stats_full_load."""
-        try:
-            self.__insert_data("stats_full_load", {**data, **kwargs})
-        except InsertMetadataError as e:
-            logger.critical(str(e))
+        self.__insert_data("stats_full_load", {**data, **kwargs})
 
     def insert_stats_source_tables(self, data: Dict, **kwargs) -> None:
         """Insere dados na tabela stats_source_tables."""
-        try:
-            self.__insert_data("stats_source_tables", {**data, **kwargs})
-        except InsertMetadataError as e:
-            logger.critical(str(e))
+        self.__insert_data("stats_source_tables", {**data, **kwargs})
 
     def insert_stats_message(self, data: Dict, **kwargs) -> None:
         """Insere dados na tabela stats_message."""
@@ -185,21 +176,21 @@ class MetadataConnectionManager:
 
             self.__insert_data("stats_message", data)
         except InsertMetadataError as e:
-            logger.critical(str(e))
+            logger.critical(e)
 
     def insert_dlx_message(self, data: Dict, **kwargs) -> None:
         """Insere dados na tabela dlx_message."""
         try:
             self.__insert_data("dlx_message", {**data, **kwargs})
         except InsertMetadataError as e:
-            logger.critical(str(e))
+            logger.critical(e)
 
     def insert_apply_exceptions(self, data: Dict, **kwargs) -> None:
         """Insere dados na tabela apply_exceptions."""
         try:
             self.__insert_data("apply_exceptions", {**data, **kwargs})
         except InsertMetadataError as e:
-            logger.critical(str(e))
+            logger.critical(e)
 
     def update_stats_message(self, data: Dict, **kwargs) -> None:
         """Atualiza dados na tabela stats_message."""
@@ -222,7 +213,8 @@ class MetadataConnectionManager:
             )
             self.connection.commit()
         except InsertMetadataError as e:
-            logger.critical(f"Erro ao atualizar dados na tabela stats_message: {e}")
+            e = ValueError(f"Erro ao atualizar dados na tabela stats_message: {e}")
+            logger.critical(e)
 
     def update_metadata_config(self, config: Dict) -> None:
         """Atualiza configurações na tabela metadata_table."""
@@ -232,7 +224,8 @@ class MetadataConnectionManager:
                 cursor.execute(Query.SQL_UPSERT_METADATA_TABLE, (key, value))
             self.connection.commit()
         except InsertMetadataError as e:
-            logger.critical(f"Erro ao atualizar dados na tabela metadata_table: {e}")
+            e = ValueError(f"Erro ao atualizar dados na tabela metadata_table: {e}")
+            logger.critical(e)
 
     def get_metadata_tables(
         self,
@@ -286,7 +279,8 @@ class MetadataConnectionManager:
             return df
 
         except GetMetadataError as e:
-            logger.critical(f"Erro ao obter estatísticas: {e}")
+            e = ValueError(f"Erro ao obter estatísticas: {e}")
+            logger.critical(e)
 
     def get_messages_stats(self) -> pl.DataFrame:
         """Obtém estatísticas de mensagens."""
@@ -307,7 +301,8 @@ class MetadataConnectionManager:
             cursor.execute(Query.SQL_GET_METADATA_CONFIG, (key,))
             return cursor.fetchone()[0] or default
         except GetMetadataError as e:
-            logger.critical(f"Erro ao obter config: {e}")
+            e = ValueError(f"Erro ao obter config: {e}")
+            logger.critical(e)
 
     def truncate_tables(self) -> None:
         """Limpa todas as tabelas de metadados."""

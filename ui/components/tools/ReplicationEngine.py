@@ -29,7 +29,6 @@ class ReplicationEngine:
                 logger.info("UI - Replicação de dados iniciada")
             except Exception as e:
                 st.error(f"Erro ao iniciar a replicação: {e}")
-                logger.error(f"UI - Erro ao iniciar replicação: {e}")
 
     def stop(self):
         """Para o processo de replicação"""
@@ -54,5 +53,5 @@ class ReplicationEngine:
                     st.session_state.process = None
 
             except Exception as e:
-                logger.error(f"UI - Erro ao parar replicação: {e}")
+                st.error(f"Erro ao parar a replicação: {e}")
                 st.session_state.process = None
