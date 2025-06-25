@@ -133,7 +133,7 @@ class DisplayHomePage:
                 pass
 
             with control_cols[4]:
-                if st.session_state.get("process") is None:
+                if not self.replication_engine.is_running():
                     st.error("🔴 **Sistema Parado**")
                 else:
                     st.success("🟢 **Sistema em Execução**")

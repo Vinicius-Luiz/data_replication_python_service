@@ -1,6 +1,34 @@
-2025-06-24 22:49:49,237 - INFO - UI - Replicação de dados iniciada
-2025-06-24 22:49:49,622 - INFO - REPLICATION - Recarregando tarefa
-2025-06-24 22:49:49,622 - INFO - REPLICATION - Recriando tabelas de metadata
-2025-06-24 22:49:49,831 - INFO - TASK - fl_cdc_upsert_employees válido
-2025-06-24 22:49:49,831 - CRITICAL - trempy.Tasks.Exceptions.Exception.AddFilterError: TASK - Tabela não encontrada | employees.employee
-2025-06-24 22:49:56,044 - ERROR - builtins.str: UI - Erro ao parar replicação: process PID not found (pid=12452)
+2025-06-25 00:47:47,194 - INFO - UI - Replicação de dados iniciada
+2025-06-25 00:47:47,578 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-25 00:47:47,943 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-25 00:47:47,983 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-25 00:47:48,024 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:47:48,024 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-25 00:47:48,388 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-25 00:47:48,425 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-25 00:47:48,452 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-25 00:47:48,452 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-25 00:47:48,460 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-06-25 00:47:48,824 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-25 00:47:48,905 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-25 00:47:48,932 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:47:52,515 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:47:55,971 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:47:58,811 - INFO - UI - Replicação de dados finalizada
+2025-06-25 00:48:04,027 - INFO - UI - Replicação de dados iniciada
+2025-06-25 00:48:04,416 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-25 00:48:04,779 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-25 00:48:04,818 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-25 00:48:04,860 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:48:04,861 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-25 00:48:05,230 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-25 00:48:05,269 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-25 00:48:05,298 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-25 00:48:05,298 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-25 00:48:05,306 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-06-25 00:48:05,662 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-25 00:48:05,743 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-25 00:48:05,782 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:48:09,242 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:48:12,666 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-25 00:48:14,219 - INFO - UI - Replicação de dados finalizada

@@ -3,7 +3,7 @@
         "task_name": "fl_cdc_upsert_employees",
         "replication_type": "full_load_and_cdc",
         "interval_seconds": 3,
-        "start_mode": "reload",
+        "start_mode": "continue",
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": true,
@@ -24,7 +24,13 @@
         "stop_if_delete_error": false,
         "stop_if_upsert_error": false
     },
-    "tables": [],
+    "tables": [
+        {
+            "schema_name": "employees",
+            "table_name": "employee",
+            "priority": 2
+        }
+    ],
     "filters": [
         {
             "table_info": {
