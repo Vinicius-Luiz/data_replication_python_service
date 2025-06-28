@@ -96,11 +96,15 @@ class ReplicationEngine:
                     process = psutil.Process(state["pid"])
                     process.wait(timeout=5)
                     logger.info("UI - Replicação de dados finalizada")
-                except (psutil.NoSuchProcess, subprocess.TimeoutExpired):
-                    st.error(
-                        "Não foi possível parar a replicação graciosamente. Processo foi terminado."
-                    )
-                    logger.warning("UI - Replicação finalizada forçadamente")
+                except (psutil.NoSuchProcess, subprocess.TimeoutExpired) as e:
+                    # No Windows, o processo já foi finalizado pelo taskkill
+                    if isinstance(e, psutil.NoSuchProcess) and platform.system() == "Windows":
+                        logger.info("UI - Replicação de dados finalizada com sucesso")
+                    else:
+                        st.error(
+                            "Não foi possível parar a replicação graciosamente. Processo foi terminado."
+                        )
+                        logger.warning("UI - Replicação finalizada forçadamente")
                 finally:
                     self.save_state()  # Reseta o estado para parado
 

@@ -301,10 +301,6 @@ class ColumnCreator:
 
         # Extrai parâmetros do contrato
         new_column_name = contract.get("new_column_name")
-        # TODO DEBUG APAGAR
-        if new_column_name == "periodo_anos":
-            print("PERIODO ANOS")  # TODO APAGAR
-        # TODO DEBUG APAGAR
         operation = TransformationOperationType(contract.get("operation"))
         depends_on = contract.get("depends_on", [])
 

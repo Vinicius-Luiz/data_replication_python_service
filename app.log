@@ -1,34 +1,202 @@
-2025-06-25 00:47:47,194 - INFO - UI - Replicação de dados iniciada
-2025-06-25 00:47:47,578 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-06-25 00:47:47,943 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-06-25 00:47:47,983 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-25 00:47:48,024 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:47:48,024 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-06-25 00:47:48,388 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-06-25 00:47:48,425 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-25 00:47:48,452 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-06-25 00:47:48,452 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-06-25 00:47:48,460 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
-2025-06-25 00:47:48,824 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-06-25 00:47:48,905 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-06-25 00:47:48,932 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:47:52,515 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:47:55,971 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:47:58,811 - INFO - UI - Replicação de dados finalizada
-2025-06-25 00:48:04,027 - INFO - UI - Replicação de dados iniciada
-2025-06-25 00:48:04,416 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-06-25 00:48:04,779 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-06-25 00:48:04,818 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-25 00:48:04,860 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:48:04,861 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-06-25 00:48:05,230 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-06-25 00:48:05,269 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-06-25 00:48:05,298 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-06-25 00:48:05,298 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-06-25 00:48:05,306 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
-2025-06-25 00:48:05,662 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-06-25 00:48:05,743 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-06-25 00:48:05,782 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:48:09,242 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:48:12,666 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-06-25 00:48:14,219 - INFO - UI - Replicação de dados finalizada
+2025-06-28 02:51:56,599 - INFO - UI - Replicação de dados iniciada
+2025-06-28 02:51:56,941 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-28 02:51:57,280 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-28 02:51:57,315 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-28 02:51:57,363 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:51:57,363 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-28 02:51:57,689 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-28 02:51:57,723 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-28 02:51:57,748 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-28 02:51:57,748 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-28 02:51:57,757 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-06-28 02:51:58,103 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-28 02:51:58,176 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-28 02:51:58,204 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:01,713 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:03,971 - INFO - UI - Replicação de dados finalizada com sucesso
+2025-06-28 02:52:07,633 - INFO - UI - Replicação de dados iniciada
+2025-06-28 02:52:07,981 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-28 02:52:08,316 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-28 02:52:08,353 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-28 02:52:08,392 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:08,393 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-28 02:52:08,729 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-28 02:52:08,770 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-28 02:52:08,803 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-28 02:52:08,804 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-28 02:52:08,811 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-06-28 02:52:09,181 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-28 02:52:09,261 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-28 02:52:09,307 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:12,814 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:13,738 - INFO - UI - Replicação de dados finalizada com sucesso
+2025-06-28 02:52:22,151 - INFO - UI - Replicação de dados iniciada
+2025-06-28 02:52:22,493 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-06-28 02:52:22,815 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-06-28 02:52:22,849 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-28 02:52:22,898 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:22,898 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-06-28 02:52:23,232 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-06-28 02:52:23,269 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-06-28 02:52:23,302 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-06-28 02:52:23,302 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-06-28 02:52:23,309 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 3s
+2025-06-28 02:52:23,639 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-06-28 02:52:23,720 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-06-28 02:52:23,745 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:27,190 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:30,661 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:34,179 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:37,683 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:41,147 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:44,662 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:48,103 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:51,548 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:54,976 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:52:58,448 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:01,885 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:05,367 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:08,816 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:12,245 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:15,703 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:19,146 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:22,585 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:26,037 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:29,515 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:32,967 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:36,420 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:39,851 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:43,293 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:46,763 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:50,235 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:53,701 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:53:57,269 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:00,816 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:04,260 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:07,723 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:11,163 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:14,641 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:18,078 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:21,560 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:25,052 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:28,510 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:31,996 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:35,641 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:39,073 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:42,521 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:45,990 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:49,527 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:53,024 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:56,491 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:54:59,960 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:03,429 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:06,881 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:10,332 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:13,845 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:17,339 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:20,771 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:24,209 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:27,700 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:31,155 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:34,572 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:38,008 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:41,467 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:44,929 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:48,363 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:51,810 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:55,232 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:55:58,716 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:02,202 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:05,682 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:09,125 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:12,584 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:16,127 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:19,583 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:23,063 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:26,523 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:29,995 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:33,510 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:36,998 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:40,484 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:43,943 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:47,390 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:50,821 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:54,263 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:56:57,690 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:01,132 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:04,614 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:08,061 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:11,498 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:14,932 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:18,463 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:21,912 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:25,356 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:28,798 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:32,265 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:35,735 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:39,217 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:42,661 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:46,108 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:49,541 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:52,962 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:56,410 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:57:59,855 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:03,326 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:06,791 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:10,207 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:13,646 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:17,111 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:20,529 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:23,960 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:27,401 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:30,834 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:34,319 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:37,741 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:41,170 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:44,622 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:48,102 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:51,534 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:54,988 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:58:58,418 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:01,909 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:05,396 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:08,922 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:12,406 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:15,901 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:19,375 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:22,832 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:26,296 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:29,855 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:33,334 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:36,760 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:40,184 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:43,670 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:47,099 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:50,537 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:53,956 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 02:59:57,348 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:00,761 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:04,171 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:07,573 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:10,979 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:14,380 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:17,772 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:21,188 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:24,575 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:27,957 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:31,362 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:34,738 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:38,207 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:41,631 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:45,036 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:48,467 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:51,880 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:55,320 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:00:58,763 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:02,162 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:05,567 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:08,957 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:12,347 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:15,741 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:19,135 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-06-28 03:01:21,652 - INFO - UI - Replicação de dados finalizada com sucesso
