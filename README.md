@@ -39,11 +39,17 @@ Configuração em `postgresql.conf`
 wal_level = logical
 max_replication_slots = 5 # recomendado > 20
 max_wal_senders = 5       # recomendado = max_replication_slots
+
+# Para conexões via Docker
+listen_addresses = '*'     # permite conexões de qualquer interface
 ```
 
 Configuração em `pg_hba.conf`
 ```
 host replication all 0.0.0.0/0 trust # permitir conexões de replicação
+
+# Para conexões via Docker
+host    all             all             172.17.0.0/16           md5    # rede do Docker
 ```
 
 ## ENTIDADES

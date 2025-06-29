@@ -1,5 +1,7 @@
 from pika.adapters.blocking_connection import BlockingChannel
 import pika
+import os
+from typing import Optional
 
 
 class Message:
@@ -12,7 +14,7 @@ class Message:
     def __init__(
         self,
         task_name: str,
-        host: str = "localhost",
+        host: Optional[str] = None,
         exchange_type: str = "direct",
         durable: bool = True,
     ):
@@ -26,7 +28,7 @@ class Message:
         self.dlx_routing_key = self.DLX_ROUTING_KEY_PATTERN.format(task_name=task_name)
         self.routing_key = self.ROUNTING_KEY_PATTERN.format(task_name=task_name)
 
-        self.host = host
+        self.host = host if host is not None else os.getenv('RABBITMQ_HOST', 'localhost')
         self.exchange_type = exchange_type
         self.durable = durable
 

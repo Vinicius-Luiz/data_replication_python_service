@@ -3,7 +3,7 @@ import base64
 from pathlib import Path
 # Gera a chave de criptografia
 key = CredentialsCrypto.generate_key()
-env_value = f"TREMPY_CRYPTO_KEY_TST={base64.b64encode(key).decode()}"
+env_value = f"TREMPY_CRYPTO_KEY={base64.b64encode(key).decode()}"
 
 # Define o caminho do arquivo .env
 env_path = Path(".env")
@@ -16,7 +16,7 @@ else:
     env_lines = []
 
 # Remove a linha antiga se existir
-env_lines = [line for line in env_lines if not line.startswith("TREMPY_CRYPTO_KEY_TST=")]
+env_lines = [line for line in env_lines if not line.startswith("TREMPY_CRYPTO_KEY=")]
 
 # Adiciona a nova linha
 env_lines.append(env_value + "\n")

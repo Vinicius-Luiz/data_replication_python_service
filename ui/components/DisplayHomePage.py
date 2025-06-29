@@ -47,13 +47,15 @@ class LogViewer:
                     "timestamp": timestamp,
                     "level": level,
                     "message": message,
-                    "raw": line
+                    "raw": line,
                 }
             return None
         except:
             return None
 
-    def get_filtered_logs(self, selected_levels=None, search_text="", page=1) -> tuple[list, int]:
+    def get_filtered_logs(
+        self, selected_levels=None, search_text="", page=1
+    ) -> tuple[list, int]:
         """
         Retorna as entradas do arquivo de log filtradas e paginadas.
 
@@ -74,7 +76,10 @@ class LogViewer:
                         # Aplica filtros
                         if selected_levels and parsed["level"] not in selected_levels:
                             continue
-                        if search_text and search_text.lower() not in parsed["raw"].lower():
+                        if (
+                            search_text
+                            and search_text.lower() not in parsed["raw"].lower()
+                        ):
                             continue
                         all_logs.append(parsed)
 
@@ -83,7 +88,7 @@ class LogViewer:
             total_pages = (total_logs + self.page_size - 1) // self.page_size
             start_idx = (page - 1) * self.page_size
             end_idx = start_idx + self.page_size
-            
+
             return all_logs[start_idx:end_idx], total_pages
 
         except FileNotFoundError:
@@ -115,44 +120,44 @@ class DisplayHomePage:
                 # Obtém estatísticas de mensagens
                 messages_stats = metadata_manager.get_messages_stats()
                 if not messages_stats.is_empty():
-                    total_ops = messages_stats['quantity_operations'][0]
+                    total_ops = messages_stats["quantity_operations"][0]
                 else:
                     total_ops = 0
 
                 # Obtém estatísticas de CDC
                 stats_cdc = metadata_manager.get_metadata_tables("stats_cdc")
                 if not stats_cdc.is_empty():
-                    total_errors = stats_cdc['errors'].sum()
-                    total_operations = stats_cdc['total'].sum()
-                    error_rate = (total_errors / total_operations * 100) if total_operations > 0 else 0
+                    total_errors = stats_cdc["errors"].sum()
+                    total_operations = stats_cdc["total"].sum()
+                    error_rate = (
+                        (total_errors / total_operations * 100)
+                        if total_operations > 0
+                        else 0
+                    )
                 else:
                     error_rate = 0
 
                 # Obtém total de registros do full load
                 stats_fl = metadata_manager.get_metadata_tables("stats_full_load")
                 if not stats_fl.is_empty():
-                    total_records = stats_fl['records'].sum()
+                    total_records = stats_fl["records"].sum()
                 else:
                     total_records = 0
 
                 return {
-                    'total_ops': f"{total_ops:,}".replace(',', '.'),
-                    'total_records': f"{total_records:,}".replace(',', '.'),
-                    'error_rate': f"{100 - error_rate:.1f}%"
+                    "total_ops": f"{total_ops:,}".replace(",", "."),
+                    "total_records": f"{total_records:,}".replace(",", "."),
+                    "error_rate": f"{100 - error_rate:.1f}%",
                 }
         except Exception as e:
-            return {
-                'total_ops': "N/A",
-                'total_records': "N/A",
-                'error_rate': "N/A"
-            }
+            return {"total_ops": "N/A", "total_records": "N/A", "error_rate": "N/A"}
 
     def __display_header(self) -> None:
         """
         Exibe o cabeçalho da página com informações importantes.
         """
         metrics = self.__get_metrics()
-        
+
         st.markdown(
             """
             <style>
@@ -190,14 +195,17 @@ class DisplayHomePage:
                 }
             </style>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
-        st.markdown('<h1 class="main-header">🚂 Serviço de Replicação de Dados</h1>', unsafe_allow_html=True)
+        st.markdown(
+            '<h1 class="main-header">🚂 Serviço de Replicação de Dados</h1>',
+            unsafe_allow_html=True,
+        )
 
         # Métricas em cards
         col1, col2, col3, col4 = st.columns(4)
-        
+
         with col1:
             st.markdown(
                 f"""
@@ -206,9 +214,9 @@ class DisplayHomePage:
                     <div class="metric-label">Registros Full Load</div>
                 </div>
                 """,
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
-        
+
         with col2:
             st.markdown(
                 f"""
@@ -217,9 +225,9 @@ class DisplayHomePage:
                     <div class="metric-label">Operações CDC</div>
                 </div>
                 """,
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
-        
+
         with col3:
             st.markdown(
                 f"""
@@ -228,12 +236,18 @@ class DisplayHomePage:
                     <div class="metric-label">Taxa de Sucesso</div>
                 </div>
                 """,
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
-        
+
         with col4:
-            status_class = "status-running" if self.replication_engine.is_running() else "status-stopped"
-            status_text = "Em Execução" if self.replication_engine.is_running() else "Parado"
+            status_class = (
+                "status-running"
+                if self.replication_engine.is_running()
+                else "status-stopped"
+            )
+            status_text = (
+                "Em Execução" if self.replication_engine.is_running() else "Parado"
+            )
             st.markdown(
                 f"""
                 <div class="metric-card">
@@ -241,7 +255,7 @@ class DisplayHomePage:
                     <div class="metric-label">Status do Sistema</div>
                 </div>
                 """,
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
 
     def __display_control_panel(self) -> None:
@@ -272,12 +286,12 @@ class DisplayHomePage:
                 }
             </style>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         with st.container():
             st.markdown('<div class="control-panel">', unsafe_allow_html=True)
-            
+
             # Layout dos controles em grid
             col1, col2, col3 = st.columns([1, 1, 1])
 
@@ -315,7 +329,7 @@ class DisplayHomePage:
                         "log_refresh", False
                     )
 
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
     def __display_logs(self) -> None:
         """
@@ -352,15 +366,29 @@ class DisplayHomePage:
                 }
             </style>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         with st.container():
             # Cabeçalho com título e botão de limpar
-            col1, col2 = st.columns([5, 2])
+            col1, col2, col3 = st.columns([4, 1, 1])
             with col1:
                 st.subheader("📋 Logs do Sistema")
             with col2:
+                try:
+                    with open(self.log_viewer.log_file, "r", encoding="utf-8") as f:
+                        log_content = f.read()
+                    st.download_button(
+                        label="📥 Baixar Log",
+                        data=log_content.encode("utf-8"),
+                        file_name="app.log",
+                        mime="text/plain",
+                        help="Baixa o arquivo de log completo",
+                        type="secondary",
+                    )
+                except Exception as e:
+                    st.error(f"Erro ao baixar logs: {str(e)}")
+            with col3:
                 if st.button(
                     "🗑️ Limpar Logs",
                     help="Limpa todo o conteúdo do arquivo de log",
@@ -395,7 +423,7 @@ class DisplayHomePage:
             logs, total_pages = self.log_viewer.get_filtered_logs(
                 selected_levels=st.session_state.log_levels,
                 search_text=st.session_state.log_search,
-                page=st.session_state.log_page
+                page=st.session_state.log_page,
             )
 
             # Exibe os logs
@@ -408,13 +436,13 @@ class DisplayHomePage:
                         "INFO": "⚪",
                         "WARNING": "🟡",
                         "ERROR": "🔴",
-                        "CRITICAL": "⛔"
+                        "CRITICAL": "⛔",
                     }.get(log["level"], "⚪")
-                    
+
                     formatted_logs.append(
                         f"{log['timestamp']} {level_color} {log['level']} - {log['message']}"
                     )
-                
+
                 st.code(
                     "\n".join(formatted_logs),
                     language="log",
@@ -432,7 +460,9 @@ class DisplayHomePage:
                 with col2:
                     st.write(f"Página {st.session_state.log_page} de {total_pages}")
                 with col3:
-                    if st.button("Próxima ➡️", disabled=st.session_state.log_page >= total_pages):
+                    if st.button(
+                        "Próxima ➡️", disabled=st.session_state.log_page >= total_pages
+                    ):
                         st.session_state.log_page += 1
 
     def __display_statistics(self) -> None:
@@ -458,16 +488,12 @@ class DisplayHomePage:
                 }
             </style>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         st.subheader("📊 Estatísticas de Replicação")
-        
-        tab1, tab2, tab3 = st.tabs([
-            "📈 Full Load", 
-            "🔄 CDC", 
-            "⚠️ Erros"
-        ])
+
+        tab1, tab2, tab3 = st.tabs(["📈 Full Load", "🔄 CDC", "⚠️ Erros"])
 
         with tab1:
             self.__display_full_load_stats()
@@ -510,9 +536,9 @@ class DisplayHomePage:
 
         # Exibe logs e estatísticas
         col1, col2 = st.columns([1, 1])
-        
+
         with col1:
             self.__display_logs()
-        
+
         with col2:
             self.__display_statistics()

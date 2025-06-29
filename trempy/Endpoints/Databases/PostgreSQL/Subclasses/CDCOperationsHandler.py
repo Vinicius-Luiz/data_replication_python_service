@@ -19,26 +19,15 @@ from typing import Dict, List
 
 logger = ReplicationLogger()
 
-with MetadataConnectionManager() as metadata_manager:
-    STOP_IF_INSERT_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_INSERT_ERROR", "0")
-    )
-    STOP_IF_UPDATE_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_UPDATE_ERROR", "0")
-    )
-    STOP_IF_DELETE_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_DELETE_ERROR", "0")
-    )
-    STOP_IF_UPSERT_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_UPSERT_ERROR", "0")
-    )
-    STOP_IF_SCD2_ERROR = int(
-        metadata_manager.get_metadata_config("STOP_IF_SCD2_ERROR", "0")
-    )
-
-
 class CDCOperationsHandler:
     """Responsabilidade: Executar operações CDC (INSERT, UPDATE, DELETE)."""
+
+    # Variáveis de classe para configurações de erro
+    STOP_IF_INSERT_ERROR = 0
+    STOP_IF_UPDATE_ERROR = 0
+    STOP_IF_DELETE_ERROR = 0
+    STOP_IF_UPSERT_ERROR = 0
+    STOP_IF_SCD2_ERROR = 0
 
     def __init__(
         self,
@@ -47,6 +36,7 @@ class CDCOperationsHandler:
     ):
         self.connection_manager = connection_manager
         self.table_manager = table_manager
+        self._load_error_configurations()
 
     from psycopg2 import InterfaceError, Error
 
@@ -409,7 +399,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if STOP_IF_SCD2_ERROR
+                if self.STOP_IF_SCD2_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -473,7 +463,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if STOP_IF_SCD2_ERROR
+                if self.STOP_IF_SCD2_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -538,7 +528,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if STOP_IF_INSERT_ERROR
+                if self.STOP_IF_INSERT_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -611,7 +601,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if STOP_IF_UPDATE_ERROR
+                if self.STOP_IF_UPDATE_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -671,7 +661,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if STOP_IF_DELETE_ERROR
+                if self.STOP_IF_DELETE_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -753,7 +743,7 @@ class CDCOperationsHandler:
             )
             (
                 logger.critical(e, required_types=["cdc"])
-                if STOP_IF_UPSERT_ERROR
+                if self.STOP_IF_UPSERT_ERROR
                 else logger.error(e, required_types=["cdc"])
             )
 
@@ -790,3 +780,23 @@ class CDCOperationsHandler:
             self.connection_manager.rollback()
             e = EndpointError(f"Erro ao inserir dados ({mode}): {e}")
             logger.critical(e, required_types=["cdc"])
+
+    @classmethod
+    def _load_error_configurations(cls):
+        """Carrega as configurações de tratamento de erro do metadata."""
+        with MetadataConnectionManager() as metadata_manager:
+            cls.STOP_IF_INSERT_ERROR = int(
+                metadata_manager.get_metadata_config("STOP_IF_INSERT_ERROR", "0")
+            )
+            cls.STOP_IF_UPDATE_ERROR = int(
+                metadata_manager.get_metadata_config("STOP_IF_UPDATE_ERROR", "0")
+            )
+            cls.STOP_IF_DELETE_ERROR = int(
+                metadata_manager.get_metadata_config("STOP_IF_DELETE_ERROR", "0")
+            )
+            cls.STOP_IF_UPSERT_ERROR = int(
+                metadata_manager.get_metadata_config("STOP_IF_UPSERT_ERROR", "0")
+            )
+            cls.STOP_IF_SCD2_ERROR = int(
+                metadata_manager.get_metadata_config("STOP_IF_SCD2_ERROR", "0")
+            )

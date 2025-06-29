@@ -4,6 +4,7 @@ from typing import Dict, Any, Union
 from pathlib import Path
 import streamlit as st
 import json
+import os
 
 
 class DisplayConnections:
@@ -15,7 +16,7 @@ class DisplayConnections:
     """
     
     CREDENTIALS_FILE = Path("task/credentials.json")
-    DEFAULT_HOST = "localhost"
+    DEFAULT_HOST = os.getenv("POSTGRES_HOST", "localhost")
     DEFAULT_PORT = "5432"
     DEFAULT_BATCH_SIZE = 1000
     
@@ -43,8 +44,8 @@ class DisplayConnections:
                         "dbname": "",
                         "user": "",
                         "password": "",
-                        "host": self.DEFAULT_HOST,
-                        "port": self.DEFAULT_PORT
+                        "host": os.getenv("POSTGRES_HOST", "localhost"),
+                        "port": "5432"
                     }
                 },
                 "target_endpoint": {
@@ -55,8 +56,8 @@ class DisplayConnections:
                         "dbname": "",
                         "user": "",
                         "password": "",
-                        "host": self.DEFAULT_HOST,
-                        "port": self.DEFAULT_PORT
+                        "host": os.getenv("POSTGRES_HOST", "localhost"),
+                        "port": "5432"
                     }
                 }
             }

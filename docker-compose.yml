@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ${CONTAINER_NAME:-data_replication}_rabbitmq
+    ports:
+      - "5672:5672"   # RabbitMQ default port
+      - "15672:15672" # RabbitMQ management interface
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - replication_network
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: ${CONTAINER_NAME:-data_replication}_streamlit
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - POSTGRES_HOST=${POSTGRES_HOST:-172.26.64.1}  # Substitua pelo seu IP local
+    env_file:
+      - .env
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"  # Porta dinâmica para Streamlit
+    networks:
+      - replication_network
+    depends_on:
+      - rabbitmq
+    tmpfs:
+      - /app/__pycache__
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # Permite conexão com localhost em todas as plataformas
+
+networks:
+  replication_network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_log: 

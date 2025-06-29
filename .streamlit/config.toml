@@ -1,0 +1,7 @@
+[server]
+runOnSave = true
+fileWatcherType = "poll"
+
+[server.fileWatcherIgnorePatterns]
+# Ignorar arquivos de log
+patterns = ["*.log", "*.pyc", "__pycache__"] 

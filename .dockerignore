@@ -1,0 +1,21 @@
+# Ambiente virtual
+venv/
+__pycache__/
+*.pyc
+
+# Arquivos de desenvolvimento
+.gitignore
+.cursor/
+.git/
+
+# Pastas de documentação/anotações
+_anotacoes/
+_images/
+
+# Outros
+.env
+*.log
+app.log
+
+# Banco de dados
+trempy.db
