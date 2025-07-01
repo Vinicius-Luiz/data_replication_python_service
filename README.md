@@ -107,3 +107,19 @@ Entidade de definição de regras de uma determinada transformação na relicaç
 
 referência
 - https://www.thoughtspot.com/data-trends/data-modeling/slowly-changing-dimensions-in-data-warehouse
+
+## CONFIGURAÇÃO DE REDE PARA DOCKER
+
+### POSTGRESQL COM DOCKER
+
+Para garantir que o PostgreSQL aceite conexões do container Docker, você precisa configurar o `pg_hba.conf` com as seguintes entradas:
+
+```
+# Projeto Python Replicate
+host replication all 0.0.0.0/0 trust
+host all all 172.17.0.0/16 md5
+host all all 172.26.64.0/20 md5  # Rede do WSL
+host all all 192.168.1.0/24 md5  # Sua rede Wi-Fi
+```
+
+Ao configurar a conexão na interface do Streamlit, use o IP do WSL (`172.26.64.1`) como host quando estiver rodando a aplicação via Docker. Este é o IP que o container Docker usará para se comunicar com seu PostgreSQL local.

@@ -139,30 +139,3 @@ docker exec data_replication_streamlit python manager.py
 > ```bash
 > docker exec ${CONTAINER_NAME:-data_replication}_streamlit python manager.py
 > ``` 
-
-## Conectando com Serviços Externos
-
-### Banco de Dados Local
-
-Para conectar com um banco PostgreSQL rodando na máquina host:
-
-- Use `host.docker.internal` ao invés de `localhost` nas suas strings de conexão
-- Exemplo: 
-  ```
-  host=host.docker.internal
-  port=5432
-  database=seu_banco
-  ```
-
-> **Nota**: Se você estiver usando Linux, pode ser necessário adicionar `--add-host=host.docker.internal:host-gateway` no serviço do streamlit no docker-compose.yml
-
-### RabbitMQ
-
-O serviço Streamlit se conecta ao RabbitMQ usando:
-- Dentro do container: `RABBITMQ_HOST=rabbitmq` (configurado automaticamente)
-- Fora do container (local): `RABBITMQ_HOST=localhost`
-
-Para sobrescrever essa configuração:
-```bash
-RABBITMQ_HOST=meu_host docker-compose up -d
-``` 

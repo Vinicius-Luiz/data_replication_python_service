@@ -20,7 +20,6 @@ services:
     container_name: ${CONTAINER_NAME:-data_replication}_streamlit
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - POSTGRES_HOST=${POSTGRES_HOST:-172.26.64.1}  # Substitua pelo seu IP local
     env_file:
       - .env
     ports:

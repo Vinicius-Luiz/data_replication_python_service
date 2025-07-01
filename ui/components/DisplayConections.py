@@ -16,8 +16,6 @@ class DisplayConnections:
     """
     
     CREDENTIALS_FILE = Path("task/credentials.json")
-    DEFAULT_HOST = os.getenv("POSTGRES_HOST", "localhost")
-    DEFAULT_PORT = "5432"
     DEFAULT_BATCH_SIZE = 1000
     
     def __init__(self):
@@ -44,7 +42,7 @@ class DisplayConnections:
                         "dbname": "",
                         "user": "",
                         "password": "",
-                        "host": os.getenv("POSTGRES_HOST", "localhost"),
+                        "host": "172.26.64.1",
                         "port": "5432"
                     }
                 },
@@ -54,10 +52,10 @@ class DisplayConnections:
                     "endpoint_name": "",
                     "credentials": {
                         "dbname": "",
-                        "user": "",
-                        "password": "",
-                        "host": os.getenv("POSTGRES_HOST", "localhost"),
-                        "port": "5432"
+                                                  "user": "",
+                          "password": "",
+                          "host": "172.26.64.1",
+                          "port": "5432"
                     }
                 }
             }
@@ -209,14 +207,14 @@ class DisplayConnections:
         with subcol21:
             config[f"{prefix}_db_host"] = st.text_input(
                 "Host",
-                value=self.__get_endpoint_value(prefix, "host", self.DEFAULT_HOST),
+                value=self.__get_endpoint_value(prefix, "host", 'localhost'),
                 key=f"{prefix}_db_host",
                 help=f"Insira o host do banco de dados de {title.lower()}",
             )
         with subcol22:
             config[f"{prefix}_db_port"] = st.text_input(
                 "Porta",
-                value=self.__get_endpoint_value(prefix, "port", self.DEFAULT_PORT),
+                value=self.__get_endpoint_value(prefix, "port", 5432),
                 key=f"{prefix}_db_port",
                 help=f"Insira a porta do banco de dados de {title.lower()}",
             )
