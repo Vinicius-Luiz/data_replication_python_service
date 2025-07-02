@@ -113,7 +113,7 @@ class CDCManager:
 
         return result
 
-    def capture_changes(self, **kargs) -> pl.DataFrame:
+    def capture_changes(self, slot_name: str, database_type: str) -> pl.DataFrame:
         """
         Captura as alterações de dados de um slot de replicação lógico.
 
@@ -122,8 +122,7 @@ class CDCManager:
         alterações de dados do slot de replicação e retorna como um DataFrame.
 
         Args:
-            **kargs: Argumentos que incluem:
-                - slot_name (str): Nome do slot de replicação.
+            - slot_name (str): Nome do slot de replicação.
 
         Returns:
             pl.DataFrame: DataFrame contendo as alterações capturadas do slot de replicação.
@@ -133,8 +132,22 @@ class CDCManager:
         """
 
         try:
-            slot_name = kargs.get("slot_name")
+            table_name = slot_name.rsplit('_', 1)[0]
+
             with self.connection_manager.cursor() as cursor:
+                old_replication_slots = cursor.execute(
+                    ReplicationQueriesPostgreSQL.VERIFY_OLD_REPLICATION_SLOT,
+                    (f"{table_name}%", slot_name),
+                )
+                old_replication_slots = [slot[0] for slot in cursor.fetchall()]
+
+                if old_replication_slots:
+                    for old_replication_slot in old_replication_slots:
+                        cursor.execute(
+                            ReplicationQueriesPostgreSQL.DROP_REPLICATION_SLOT,
+                            (old_replication_slot,),
+                        )
+
                 cursor.execute(
                     ReplicationQueriesPostgreSQL.VERIFY_IF_EXISTS_A_REPLICATION_SLOT,
                     (slot_name,),

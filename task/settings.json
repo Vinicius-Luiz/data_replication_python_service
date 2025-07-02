@@ -10,7 +10,12 @@
             "truncate_before_insert": true
         },
         "cdc_settings": {
-            "mode": "upsert"
+            "mode": "upsert",
+            "scd2_settings": {
+                "start_date_column_name": "scd_start_date",
+                "end_date_column_name": "scd_end_date",
+                "current_column_name": "scd_current"
+            }
         }
     },
     "error_handling": {
@@ -62,4 +67,4 @@
             }
         }
     ]
-} 
+}

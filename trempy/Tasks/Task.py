@@ -18,7 +18,6 @@ from trempy.Tables.Table import Table
 from typing import List, Optional
 import polars as pl
 import re
-import os
 
 logger = ReplicationLogger()
 
@@ -45,6 +44,7 @@ class Task:
         self,
         task_name: str,
         replication_type: str,
+        hash_id: str,
         interval_seconds: int = 60,
         source_endpoint: Endpoint = None,
         target_endpoint: Endpoint = None,
@@ -53,7 +53,7 @@ class Task:
         cdc_settings: dict = {},
         scd2_settings: dict = {},
         create_table_if_not_exists: bool = False,
-        error_handling: dict = {},
+        error_handling: dict = {}
     ) -> None:
         self.task_name = task_name
         self.replication_type = TaskType(replication_type)
@@ -93,6 +93,8 @@ class Task:
         self.tables: List[Table] = []
 
         self.filters = []
+        
+        self.hash_id = hash_id
 
         self.__validate()
 
@@ -310,7 +312,7 @@ class Task:
 
                 match self.source_endpoint.database_type:
                     case DatabaseType.POSTGRESQL:
-                        kargs["slot_name"] = self.task_name
+                        kargs["slot_name"] = f"{self.task_name}_{self.hash_id}"
                     case _:
                         e = DatabaseNotImplementedError(
                             "Banco de dados não implementado",

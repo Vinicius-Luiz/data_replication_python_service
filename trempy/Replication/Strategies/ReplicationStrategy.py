@@ -228,12 +228,11 @@ class ReplicationStrategy(ABC):
         
         credentials = Utils.read_credentials()
         source_endpoint = EndpointFactory.create_endpoint(**credentials.get("source_endpoint"))
-
         task = Task(
             source_endpoint=source_endpoint,
             **task_settings.get("task"),
         )
-
+        
         if source_endpoint.batch_cdc_size > 1 and task.cdc_mode.value == "scd2":
             logger.warning(
                 f"REPLICATION - CDC com modo SCD2 nao é recomendado para endpoints com batch_cdc_size > 1"
@@ -257,7 +256,7 @@ class ReplicationStrategy(ABC):
             logger.info("REPLICATION - Recriando tabelas de metadata")
             metadata_manager.create_tables()
             metadata_manager.truncate_tables()
-
+            
         message = Message.Message(task_name)
         message_dlx = MessageDlx.MessageDlx(task_name)
         message_consumer = MessageConsumer.MessageConsumer(
@@ -269,7 +268,7 @@ class ReplicationStrategy(ABC):
 
         message_dlx.delete_queue()
         message_consumer.delete_queue()
-
+        
     def run_process(self, script_name: str) -> bool:
         """
         Executa um script Python como subprocesso.

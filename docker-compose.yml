@@ -7,9 +7,6 @@ services:
     ports:
       - "5672:5672"   # RabbitMQ default port
       - "15672:15672" # RabbitMQ management interface
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-      - rabbitmq_log:/var/log/rabbitmq
     networks:
       - replication_network
 
@@ -35,8 +32,4 @@ services:
 
 networks:
   replication_network:
-    driver: bridge
-
-volumes:
-  rabbitmq_data:
-  rabbitmq_log: 
+    driver: bridge 

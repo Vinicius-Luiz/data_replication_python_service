@@ -120,6 +120,10 @@ class ReplicationQueries:
     VERIFY_IF_EXISTS_A_REPLICATION_SLOT = """
   SELECT COUNT(*) FROM pg_replication_slots WHERE slot_name = %s
   """
+  
+    VERIFY_OLD_REPLICATION_SLOT = """
+  SELECT slot_name FROM pg_replication_slots WHERE slot_name LIKE %s AND slot_name <> %s AND active = 'f'
+  """
 
     DROP_REPLICATION_SLOT = """
   SELECT pg_drop_replication_slot(%s)

@@ -23,11 +23,17 @@ class FullLoadStrategy(ReplicationStrategy):
         except FileNotFoundError:
             task_exists = False
 
-        if not task_exists or task.start_mode.value == "reload":
-            task = self.create_task(task_settings)
-            Utils.write_task_pickle(task)
-
         with MetadataConnectionManager() as metadata_manager:
+            hash_id = metadata_manager.get_metadata_config("HASH_ID")
+            if not hash_id:
+                hash_id = Utils.hash_6_chars()
+                metadata_manager.update_metadata_config({"HASH_ID": hash_id})
+            task_settings["task"]["hash_id"] = hash_id
+            
+            if not task_exists or task.start_mode.value == "reload":
+                task = self.create_task(task_settings)
+                Utils.write_task_pickle(task)
+            
             metadata_manager.update_metadata_config(
                 {
                     "STOP_IF_INSERT_ERROR": str(int(task.stop_if_insert_error)),

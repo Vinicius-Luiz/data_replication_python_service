@@ -294,7 +294,7 @@ class MetadataConnectionManager:
         )
         return df
 
-    def get_metadata_config(self, key: str, default: Optional[str] = None) -> str:
+    def get_metadata_config(self, key: str, default: Optional[str] = None) -> str | None:
         """Obtém um valor de configuração da tabela metadata_table."""
         try:
             cursor = self.connection.cursor()
