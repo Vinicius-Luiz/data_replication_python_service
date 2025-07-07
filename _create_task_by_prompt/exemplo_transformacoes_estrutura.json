@@ -1,0 +1,86 @@
+{
+    "task": {
+        "task_name": "exemplo_transformacoes_estrutura",
+        "replication_type": "full_load",
+        "interval_seconds": 60,
+        "start_mode": "reload",
+        "create_table_if_not_exists": true,
+        "full_load_settings": {
+            "recreate_table_if_exists": true,
+            "truncate_before_insert": true
+        }
+    },
+    "error_handling": {
+        "stop_if_insert_error": false,
+        "stop_if_update_error": false,
+        "stop_if_delete_error": false,
+        "stop_if_upsert_error": false
+    },
+    "tables": [
+        {
+            "schema_name": "financeiro",
+            "table_name": "transacoes",
+            "priority": 1
+        }
+    ],
+    "filters": [],
+    "transformations": [
+        {
+            "table_info": {
+                "schema_name": "financeiro",
+                "table_name": "transacoes"
+            },
+            "settings": {
+                "transformation_type": "modify_schema_name",
+                "description": "Alterar schema para finance",
+                "contract": {
+                    "target_schema_name": "finance"
+                },
+                "priority": 1
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "finance",
+                "table_name": "transacoes"
+            },
+            "settings": {
+                "transformation_type": "modify_table_name",
+                "description": "Alterar nome da tabela para transactions",
+                "contract": {
+                    "target_table_name": "transactions"
+                },
+                "priority": 2
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "finance",
+                "table_name": "transactions"
+            },
+            "settings": {
+                "transformation_type": "modify_column_name",
+                "description": "Renomear coluna valor para amount",
+                "contract": {
+                    "column_name": "valor",
+                    "target_column_name": "amount"
+                },
+                "priority": 3
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "finance",
+                "table_name": "transactions"
+            },
+            "settings": {
+                "transformation_type": "add_primary_key",
+                "description": "Adicionar chave primária",
+                "contract": {
+                    "column_names": ["transaction_id"]
+                },
+                "priority": 4
+            }
+        }
+    ]
+} 

@@ -1,0 +1,111 @@
+{
+    "task": {
+        "task_name": "exemplo_transformacoes_texto",
+        "replication_type": "full_load",
+        "interval_seconds": 60,
+        "start_mode": "reload",
+        "create_table_if_not_exists": true,
+        "full_load_settings": {
+            "recreate_table_if_exists": true,
+            "truncate_before_insert": true
+        }
+    },
+    "error_handling": {
+        "stop_if_insert_error": false,
+        "stop_if_update_error": false,
+        "stop_if_delete_error": false,
+        "stop_if_upsert_error": false
+    },
+    "tables": [
+        {
+            "schema_name": "vendas",
+            "table_name": "clientes",
+            "priority": 1
+        }
+    ],
+    "filters": [],
+    "transformations": [
+        {
+            "table_info": {
+                "schema_name": "vendas",
+                "table_name": "clientes"
+            },
+            "settings": {
+                "transformation_type": "modify_column_value",
+                "description": "Converter nome para maiúsculo",
+                "contract": {
+                    "operation": "uppercase",
+                    "column_name": "nome"
+                },
+                "priority": 1
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "vendas",
+                "table_name": "clientes"
+            },
+            "settings": {
+                "transformation_type": "modify_column_value",
+                "description": "Converter email para minúsculo",
+                "contract": {
+                    "operation": "lowercase",
+                    "column_name": "email"
+                },
+                "priority": 2
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "vendas",
+                "table_name": "clientes"
+            },
+            "settings": {
+                "transformation_type": "modify_column_value",
+                "description": "Remover espaços do CPF",
+                "contract": {
+                    "operation": "trim",
+                    "column_name": "cpf"
+                },
+                "priority": 3
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "vendas",
+                "table_name": "clientes"
+            },
+            "settings": {
+                "transformation_type": "create_column",
+                "description": "Criar nome completo concatenando nome e sobrenome",
+                "contract": {
+                    "operation": "concat",
+                    "new_column_name": "nome_completo",
+                    "depends_on": [
+                        "nome",
+                        "sobrenome"
+                    ],
+                    "separator": " "
+                },
+                "priority": 4
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "vendas",
+                "table_name": "clientes"
+            },
+            "settings": {
+                "transformation_type": "create_column",
+                "description": "Adicionar coluna com origem do cliente",
+                "contract": {
+                    "operation": "literal",
+                    "new_column_name": "origem_cadastro",
+                    "value_type": "varchar",
+                    "value": "SITE"
+                },
+                "priority": 5
+            }
+        }
+    ]
+} 

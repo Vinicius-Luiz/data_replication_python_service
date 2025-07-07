@@ -1,27 +1,7 @@
-Eu quero criar um docker-compose.yml para rodar minha ferramenta de replicação de dados em um container.
+Caso na configuração da tarefa exista transformações que modificam estrutura de tabela:
+- Essas transformações devem ter prioridade mais alta (0)
+- As demais transformações não podem ter prioridade mais alta (0), mas não impede que tenham uma prioridade alta (1)
 
-Na imagem criada, tem que ser possível utilizar:
-- python
-- rabbitmq
+Os valores dentro de depends_on devem ser referentes ao nome da coluna na tabela de origem. Ou seja, se a coluna teve o seu nome alterado de "from_date" para "data_inicio" em outra transformação, o depends_on na transformação atual deve receber o valor "from_date"
 
-Na imagem criada, ele deve ter as configurações de rede:
-- que seja possível se conectar com bancos de dados fora do container
-- que a página streamlit gerada pela ferramenta seja acessível fora do container
-
-Na imagem criada, ele deve realizar os seguintes passos no start do container:
-- deve executar o requirements.txt
-- criar um arquivo .env vazio
-- deve executar o arquivo save_key_crypto.py
-- copiar o conteúdo de task/credentials.template.json em  task/credentials.json
-- copiar o conteúdo de task/settings.template.json em  task/settings.json
-
-Detalhes da montagem do docker-compose.yml
-- separe em serviços, (rabbitmq e streamlit)
-- no serviço do rabbitmq, você tem que iniciar ele
-- no serviço do steramlit, você deve digitar o comando `streamlit run app.py`
-- os dois serviços devem conversar
-- o nome do container, se conseguir ser dinâmico (input do usuário, que seja feito, senão, pode ser um default mesmo)
-- não utilize políticas de restart por enquanto
-- o serviço do streamlit depende do serviço do rabbitmq (depends_on)
-
-Além disso, no projeto, crie uma pasta docker e um arquivo .md lá dentro explicando o manual de como startar, parar, continuar estado de container, etc... de maneira concisa 
+Eu devo especificar quais os valore possíveis para "value_type" na transformação "literal"
