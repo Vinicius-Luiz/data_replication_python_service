@@ -5,99 +5,106 @@
 - Docker instalado
 - Docker Compose instalado
 
-## Comandos Básicos
+## Executando Múltiplas Instâncias
+
+Para rodar múltiplas instâncias do serviço de replicação, utilize SEMPRE o parâmetro `-p <nome_do_projeto>` para isolar cada instância. Assim, cada conjunto de containers, redes e recursos será independente.
 
 ### Construção e Inicialização
 
+> **Dica:** Sempre utilize o parâmetro `-p` para build e up, mesmo na primeira vez.
+
 ```bash
-# Construir/Reconstruir a imagem
-docker-compose build streamlit
+# Construir/Reconstruir a imagem para um projeto específico
+# (Necessário apenas se você alterou o código ou o Dockerfile)
+docker-compose -p replication1 build streamlit
+
+docker-compose -p replication2 build streamlit
+# ... para cada projeto/instância
 
 # Iniciar os serviços (primeira vez ou após parar)
-docker-compose up -d
+docker-compose -p replication1 up -d
+CONTAINER_NAME=replication2 STREAMLIT_PORT=8502 docker-compose -p replication2 up -d
+CONTAINER_NAME=replication3 STREAMLIT_PORT=8503 docker-compose -p replication3 up -d
 
 # Reconstruir e iniciar (comando único)
-docker-compose up -d --build
+docker-compose -p replication1 up -d --build
 ```
 
-### Gerenciamento de Containers
+> **Importante:**
+> - O parâmetro `-p <nome_do_projeto>` garante que cada instância seja totalmente isolada das demais, mesmo usando o mesmo arquivo `docker-compose.yml` e no mesmo diretório.
+> - Não é necessário duplicar arquivos ou pastas para rodar múltiplas instâncias.
+> - Para parar/remover uma instância específica, use `docker-compose -p <nome_do_projeto> down`.
 
+## Gerenciamento de Containers e Projetos
+
+### Listar projetos ativos
 ```bash
-# Verificar status dos containers
-docker-compose ps
-
-# Parar containers (mantendo dados)
-docker-compose stop
-
-# Remover containers
-docker-compose down
-
-# Remover containers e volumes (limpeza completa)
-docker-compose down -v
-
-# Reiniciar um serviço específico
-docker-compose restart rabbitmq
-# ou
-docker-compose restart streamlit
+docker-compose ls
 ```
 
-> **Nota sobre Limpeza**: 
-> - `docker-compose down`: Remove containers e redes, mantém volumes
-> - `docker-compose down -v`: Remove containers, redes E volumes (útil para "começar do zero")
-> - Use `-v` quando precisar limpar completamente os dados do RabbitMQ ou outros volumes persistentes
+### Listar todos os containers ativos
+```bash
+docker ps -a
+```
+
+### Verificar status dos containers de um projeto
+```bash
+docker-compose -p <nome_do_projeto> ps
+```
+
+### Parar containers de um projeto (mantendo dados)
+```bash
+docker-compose -p <nome_do_projeto> stop
+```
+
+### Remover containers de um projeto
+```bash
+docker-compose -p <nome_do_projeto> down
+```
+
+### Remover containers e redes de todos os projetos (cuidado!)
+```bash
+docker rm -f $(docker ps -aq)
+```
+
+### Reiniciar um serviço específico de um projeto
+```bash
+docker-compose -p <nome_do_projeto> restart rabbitmq
+# ou
+docker-compose -p <nome_do_projeto> restart streamlit
+```
 
 ### Pausar e Retomar
-
 ```bash
-# Pausar todos os containers (mantém estado em memória)
-docker-compose pause
+# Pausar todos os containers de um projeto
+docker-compose -p <nome_do_projeto> pause
 
 # Pausar serviço específico
-docker-compose pause rabbitmq
+docker-compose -p <nome_do_projeto> pause rabbitmq
 # ou
-docker-compose pause streamlit
+docker-compose -p <nome_do_projeto> pause streamlit
 
 # Retomar containers pausados
-docker-compose unpause
+docker-compose -p <nome_do_projeto> unpause
 
 # Retomar serviço específico
-docker-compose unpause rabbitmq
+docker-compose -p <nome_do_projeto> unpause rabbitmq
 # ou
-docker-compose unpause streamlit
+docker-compose -p <nome_do_projeto> unpause streamlit
 ```
-
-> **Nota sobre Pause vs Stop**:
-> - `pause`: congela o estado em memória (para pausas curtas)
-> - `stop`: salva o estado em disco (para pausas longas)
 
 ### Logs e Monitoramento
-
 ```bash
-# Ver logs de todos os serviços
-docker-compose logs
+# Ver logs de todos os serviços de um projeto
+docker-compose -p <nome_do_projeto> logs
 
 # Ver logs de um serviço específico
-docker-compose logs rabbitmq
+docker-compose -p <nome_do_projeto> logs rabbitmq
 # ou
-docker-compose logs streamlit
+docker-compose -p <nome_do_projeto> logs streamlit
 
 # Acompanhar logs em tempo real
-docker-compose logs -f
-```
-
-## Executando Múltiplas Instâncias
-
-Para executar várias instâncias simultaneamente:
-
-```bash
-# Primeira instância (portas padrão)
-docker-compose up -d
-
-# Segunda instância
-CONTAINER_NAME=replication2 STREAMLIT_PORT=8502 docker-compose up -d
-
-# Terceira instância
-CONTAINER_NAME=replication3 STREAMLIT_PORT=8503 docker-compose up -d
+docker-compose -p <nome_do_projeto> logs -f
 ```
 
 ## Acessando os Serviços
@@ -107,7 +114,8 @@ CONTAINER_NAME=replication3 STREAMLIT_PORT=8503 docker-compose up -d
 
 ## Volumes e Persistência
 
-Os dados são persistidos através de volumes Docker. O código fonte é montado diretamente do host para o container, permitindo desenvolvimento em tempo real. 
+- **Removido:** Esta aplicação não utiliza volumes Docker para persistência de dados.
+- O código fonte é montado diretamente do host para o container, permitindo desenvolvimento em tempo real.
 
 ## Inspecionando Containers
 
@@ -133,7 +141,8 @@ docker cp ${CONTAINER_NAME:-data_replication}_streamlit:/app/.env ./env_backup
 
 ```bash
 # Executar um script Python
-docker exec data_replication_streamlit python manager.py
+docker exec ${CONTAINER_NAME:-data_replication}_streamlit python manager.py
+```
 
 > **Dica**: Se você definiu um CONTAINER_NAME personalizado, use:
 > ```bash

@@ -15,5 +15,3 @@ ForEach-Object {
 } | Out-File -FilePath $outputFile -Encoding UTF8
 
 Write-Host "Estrutura de diretórios salva em $outputFile"
-
-taskkill /F /IM python.exe

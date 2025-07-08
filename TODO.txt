@@ -1,7 +1,0 @@
-Caso na configuração da tarefa exista transformações que modificam estrutura de tabela:
-- Essas transformações devem ter prioridade mais alta (0)
-- As demais transformações não podem ter prioridade mais alta (0), mas não impede que tenham uma prioridade alta (1)
-
-Os valores dentro de depends_on devem ser referentes ao nome da coluna na tabela de origem. Ou seja, se a coluna teve o seu nome alterado de "from_date" para "data_inicio" em outra transformação, o depends_on na transformação atual deve receber o valor "from_date"
-
-Eu devo especificar quais os valore possíveis para "value_type" na transformação "literal"

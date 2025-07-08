@@ -1,0 +1,44 @@
+Crie uma tarefa de replicação completa com CDC seguindo estas especificações:
+
+1. Configurações Básicas:
+- Tipo: Full Load e CDC
+- Intervalo de execução: 5 segundos 
+- Criar tabela de destino se não existir
+- Modo CDC: scd2
+- Inicie a tarefa com reload
+
+2. Comportamento em Erros:
+- A tarefa não deve parar em caso de erro
+
+3. Tabela de Origem:
+- Tabela 1: employees.salary
+- Tabela 2: employees.employee (prioridade mais alta)
+- Tabela 3: employees.department_manager
+- Tabela 4: employees.department (prioridade mais alta)
+
+4. Filtros a serem aplicados:
+- Sem filtros
+
+5. Transformações necessárias:
+- Transformação 1: Alterar nome da tabela employees.employee para employees.employee_history (prioridade mais alta)
+- Transformação 2: Alterar nome da tabela employees.salary para employees.salario_historico (prioridade mais alta)
+- Transformação 3: Alterar nome da tabela employees.department_manager para employees.department_manager_history (prioridade mais alta)
+- Transformação 4: Alterar nome da tabela employees.department para employees.department_history (prioridade mais alta)
+- Transformação 5: Alterar nome do schema employees para funcionarios na tabela employees.salary (prioridade mais alta)
+- Transformação 6: Alterar nome da coluna employees.salary.employee_id para funcionarios.salario.funcionario_id (prioridade mais alta)
+- Transformação 7: Alterar nome da coluna employees.salary.amount para funcionarios.salario.quantia_mensal (prioridade mais alta)
+- Transformação 8: Alterar nome da coluna employees.salary.from_date para funcionarios.salario.data_inicio
+- Transformação 9: Alterar nome da coluna employees.salary.to_date para funcionarios.salario.data_fim
+- Transformação 10: obter a diferença de anos entre a from_date e to_date da tabela employees.salary e criar uma nova coluna com o nome periodo_anos
+- Transformação 11: modificar o valor de funcionarios.salario.quantia_mensal através de uma expressão matemática dividindo o seu valor por 12
+- Transformação 12: formata a coluna first_name em employees.employee para maiúsculo (prioridade alta)
+- Transformação 13: formata a coluna last_name em employees.employee para maiúsculo (prioridade alta)
+- Transformação 14: criar coluna full_name em employees.employee concatenando as colunas first_name e last_name
+- Transformação 15: criar coluna updated_by em employees.employee com o valor PYTHON
+- Transformação 16: criar coluna sync_date em employees.employee com a data atual
+
+6. Configurações de Full Load:
+- Recriar tabela se existir
+- Truncar tabela antes da carga completa
+
+Retorne o settings.json completo com todas as seções estruturadas corretamente, usando os valores exatos dos enums conforme a documentação. Inclua descrições claras para cada filtro e transformação.

@@ -299,3 +299,49 @@ Crie uma tarefa de replicação completa com CDC seguindo estas especificações
 
 Retorne o settings.json completo com todas as seções estruturadas corretamente, usando os valores exatos dos enums conforme a documentação. Inclua descrições claras para cada filtro e transformação.
 ```
+
+# Regras Adicionais para Geração de settings.json
+
+Além das instruções anteriores, considere as seguintes regras ao gerar o arquivo de configuração:
+
+## 8. Regras Especiais para Transformações de Estrutura de Tabela
+
+- **Prioridade das Transformações de Estrutura:**
+  - Transformações que modificam a estrutura da tabela devem obrigatoriamente ter prioridade mais alta (`0`).
+  - As demais transformações **não podem** ter prioridade `0`, mas podem ter prioridade alta (`1`).
+
+- **Transformações consideradas de estrutura:**
+  - `modify_schema_name`
+  - `modify_table_name`
+  - `modify_column_name`
+  - `add_primary_key`
+  - `remove_primary_key`
+
+- **Sobre o campo `depends_on` em transformações:**
+  - Os valores de `depends_on` devem sempre se referir ao nome da coluna na tabela de origem.
+  - Caso o nome da coluna seja alterado por outra transformação, o valor em `depends_on` deve permanecer igual ao nome original da coluna (antes da alteração).
+
+- **Valores possíveis para `value_type` na transformação `literal`:**
+  - `smallint`
+  - `integer`
+  - `bigint`
+  - `real`
+  - `double precision`
+  - `character varying`
+  - `varchar`
+  - `boolean`
+  - `date`
+  - `timestamp`
+  - `numeric`
+  - `text`
+
+## 9. Observações Específicas sobre math_expression
+
+- Na operação `math_expression`, a expressão deve sempre utilizar o termo `value` para representar o valor da coluna indicada em `column_name`.
+
+## 10. Prioridade para Transformações com depends_on
+
+- Transformações que possuem o campo `depends_on` devem ter prioridade **inferior** (ou seja, um número maior) em relação às transformações das quais dependem, mas **não é obrigatório** que tenham prioridade 4 (a mais baixa). Basta garantir que sua prioridade seja menor do que a das transformações das quais dependem.
+
+> **Observação Importante:**
+> Caso o usuário solicite alguma configuração, parâmetro ou campo que não esteja previsto nesta documentação, **NÃO** crie nem invente parâmetros ou seções extras. Utilize **apenas** o que está explicitamente documentado aqui.
