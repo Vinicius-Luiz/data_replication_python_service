@@ -199,7 +199,7 @@ class DisplayHomePage:
         )
 
         st.markdown(
-            '<h1 class="main-header">🚂 Serviço de Replicação de Dados</h1>',
+            '<h1 class="main-header">🚂 Transactional Replication Engine Made in Python</h1>',
             unsafe_allow_html=True,
         )
 

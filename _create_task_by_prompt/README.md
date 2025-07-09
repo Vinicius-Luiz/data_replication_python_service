@@ -317,10 +317,6 @@ Além das instruções anteriores, considere as seguintes regras ao gerar o arqu
   - `add_primary_key`
   - `remove_primary_key`
 
-- **Sobre o campo `depends_on` em transformações:**
-  - Os valores de `depends_on` devem sempre se referir ao nome da coluna na tabela de origem.
-  - Caso o nome da coluna seja alterado por outra transformação, o valor em `depends_on` deve permanecer igual ao nome original da coluna (antes da alteração).
-
 - **Valores possíveis para `value_type` na transformação `literal`:**
   - `smallint`
   - `integer`

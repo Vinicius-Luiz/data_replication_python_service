@@ -1,0 +1,1 @@
+Crie uma tarefa no modo Full Load e CDC realizando upsert no CDC. A tarefa não para em caso de erros. Você deve replicar a tabela employees.employee filtrando gender = F. Na transformação crie uma coluna full_name que concatena o first_name e o last_name

@@ -37,11 +37,6 @@ docker-compose -p replication1 up -d --build
 
 ## Gerenciamento de Containers e Projetos
 
-### Listar projetos ativos
-```bash
-docker-compose ls
-```
-
 ### Listar todos os containers ativos
 ```bash
 docker ps -a
