@@ -1,0 +1,6 @@
+system_fingerprint,usage_prompt_tokens,usage_completion_tokens,usage_total_tokens,usage_cached_tokens,len_system_content,len_user_content,len_message_content
+fp_8802369eaa_prod0623_fp8_kvcache,34,98,132,0,66,42,351
+fp_8802369eaa_prod0623_fp8_kvcache,3523,397,3920,0,12926,254,1457
+fp_8802369eaa_prod0623_fp8_kvcache,3523,398,3921,3520,12926,254,1459
+fp_8802369eaa_prod0623_fp8_kvcache,3523,399,3922,3520,12926,254,1461
+fp_8802369eaa_prod0623_fp8_kvcache,4178,2117,6295,3456,12926,2758,8468
