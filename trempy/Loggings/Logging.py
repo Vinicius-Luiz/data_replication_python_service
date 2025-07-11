@@ -5,6 +5,17 @@ import os
 
 
 class ReplicationLogger:
+    LIBS_TO_IGNORE = [
+        "pika",
+        "matplotlib",
+        "fonttools",
+        "pyarrow",
+        "openai",
+        "requests",
+        "httpcore",
+        "httpx",
+    ]
+
     def __init__(self):
         """
         Inicializa o logger com o tipo de replicação.
@@ -48,10 +59,9 @@ class ReplicationLogger:
             encoding="utf-8",
         )
 
-        logging.getLogger("pika").setLevel(logging.WARNING)
-        logging.getLogger("matplotlib").setLevel(logging.WARNING)
-        logging.getLogger("fonttools").setLevel(logging.WARNING)
-        logging.getLogger("pyarrow").setLevel(logging.WARNING)
+        for lib in ReplicationLogger.LIBS_TO_IGNORE:
+            logging.getLogger(lib).setLevel(logging.WARNING)
+
         return True
 
     def _should_log(self, required_types: Union[str, list]) -> bool:

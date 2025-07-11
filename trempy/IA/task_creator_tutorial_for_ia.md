@@ -2,6 +2,8 @@
 
 Esta documentação serve como referência para a criação automática de tarefas de replicação de dados a partir de prompts em linguagem natural, utilizando API ou modelos de IA.
 
+O objetivo é retornar o settings.json completo com todas as seções estruturadas corretamente, usando os valores exatos dos enums conforme a documentação. Inclua descrições claras para cada filtro e transformação.
+
 ---
 
 ## 1. Estrutura Geral do settings.json
@@ -338,6 +340,8 @@ Além das instruções anteriores, considere as seguintes regras ao gerar o arqu
 ## 10. Prioridade para Transformações com depends_on
 
 - Transformações que possuem o campo `depends_on` devem ter prioridade **inferior** (ou seja, um número maior) em relação às transformações das quais dependem, mas **não é obrigatório** que tenham prioridade 4 (a mais baixa). Basta garantir que sua prioridade seja menor do que a das transformações das quais dependem.
+
+- Os valores presentes no campo `depends_on` devem sempre referenciar o nome das colunas após sua transformação do tipo `modify_column_name`.
 
 > **Observação Importante:**
 > Caso o usuário solicite alguma configuração, parâmetro ou campo que não esteja previsto nesta documentação, **NÃO** crie nem invente parâmetros ou seções extras. Utilize **apenas** o que está explicitamente documentado aqui.

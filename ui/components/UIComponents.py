@@ -1,5 +1,6 @@
 from ui.components.DisplayTransformation import DisplayTransformation
 from ui.components.DisplayErrorHandling import DisplayErrorHandling
+from ui.components.DisplayTaskCreatorAI import DisplayTaskCreatorAI
 from ui.components.DisplayTaskSettings import DisplayTaskSettings
 from ui.components.DisplayConections import DisplayConnections
 from ui.components.DisplayHomePage import DisplayHomePage
@@ -15,17 +16,18 @@ class UIComponents:
 
     def __init__(self):
         """Inicializa os componentes da interface."""
-        self.home_page = DisplayHomePage()
-        self.connections = DisplayConnections()
-        self.task_settings = DisplayTaskSettings()
-        self.tables = DisplayTables()
+        self.display_home_page = DisplayHomePage()
+        self.display_connections = DisplayConnections()
+        self.display_task_settings = DisplayTaskSettings()
+        self.display_tables = DisplayTables()
         self.display_filter = DisplayFilter()
         self.display_transformation = DisplayTransformation()
-        self.error_settings = DisplayErrorHandling()
+        self.display_error_handling = DisplayErrorHandling()
+        self.display_task_creator_ai = DisplayTaskCreatorAI()
 
         # Define o layout da página
         st.set_page_config(
-            page_title="TREMpy - Replicação de Dados",
+            page_title="TREMpy - Transactional Replication Engine Made in Python",
             page_icon="🚂",
             layout="wide",
             initial_sidebar_state="expanded"
@@ -58,6 +60,11 @@ class UIComponents:
             st.sidebar.markdown("### 🛠️ Configurações Avançadas")
             if st.sidebar.button("TRATAMENTO DE ERROS", use_container_width=True):
                 st.session_state.current_page = "error_handling"
+
+            # Novo Grupo: IA & Automação
+            st.sidebar.markdown("### 🧠 IA & Automação")
+            if st.sidebar.button("🤖 TaskCreator AI", use_container_width=True, type="primary"):
+                st.session_state.current_page = "taskcreator_ai"
             
             # Grupo: Importar/Exportar Configurações
             st.sidebar.markdown("### 💾 Backup")
@@ -139,19 +146,21 @@ class UIComponents:
             
         # Exibe o conteúdo apropriado
         if st.session_state.current_page == "home":
-            self.home_page.render()
+            self.display_home_page.render()
         elif st.session_state.current_page == "connections":
-            self.connections.render()
+            self.display_connections.render()
         elif st.session_state.current_page == "task":
-            self.task_settings.render()
+            self.display_task_settings.render()
         elif st.session_state.current_page == "tables":
-            self.tables.render()
+            self.display_tables.render()
         elif st.session_state.current_page == "filters":
             self.display_filter.render()
         elif st.session_state.current_page == "transformations":
             self.display_transformation.render()
         elif st.session_state.current_page == "error_handling":
-            self.error_settings.render()
+            self.display_error_handling.render()
+        elif st.session_state.current_page == "taskcreator_ai":
+            self.display_task_creator_ai.render()
 
     def display_ui(self):
         """Método principal para exibir a interface completa."""
