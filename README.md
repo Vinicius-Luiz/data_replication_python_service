@@ -81,11 +81,11 @@ host all all 172.26.64.0/20 md5  # Rede do WSL
 host all all 192.168.1.0/24 md5  # Sua rede Wi-Fi
 ```
 
-Ao configurar a conexão na interface do Streamlit, use o Endereço IPv4 como host quando estiver rodando a aplicação via Docker. Este é o IP que o container Docker usará para se comunicar com seu PostgreSQL local.
+> **Nota**: Ao configurar a conexão na interface do Streamlit, use o Endereço IPv4 como host quando estiver rodando a aplicação via Docker. Este é o IP que o container Docker usará para se comunicar com seu PostgreSQL local.
 
 ## Configuração e Uso do RabbitMQ
 
-O TREMpy implementa um padrão robusto de mensageria com RabbitMQ, organizado em três componentes principais:
+O TREMpy implementa um padrão de mensageria com RabbitMQ, organizado em três componentes principais:
 
 ### 1. Topologia de Mensagens
 - **Exchange Principal**: `trempy_exchange_{task_name}` (tipo direct/duravel)
@@ -122,7 +122,7 @@ graph TD
 
 ### Configuração Local do RabbitMQ (Windows)
 
-> **OBS**: Para uso do TREMpy no Docker, ess etapa não é necessária.
+> **OBS**: Para uso do TREMpy no Docker, esta etapa não é necessária.
 
 #### Pré-requisitos Essenciais
 1. Instalar [Erlang](https://www.erlang.org/downloads) (versão compatível)
@@ -187,7 +187,7 @@ docker-compose -p replication1 up -d
 - Streamlit: http://localhost:${STREAMLIT_PORT:-8501}
 - RabbitMQ: http://localhost:15672 (usuário/senha: guest/guest)
 
-Para mais detalhes, consulte o manual completo em [`docker/README.md`](docker/README.md).
+Para mais detalhes, consulte o manual completo em [`README_DOCKER.md`](README_DOCKER.md).
 
 ## Estrutura do Projeto
 
@@ -198,14 +198,14 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
 | **Replication** | Núcleo da replicação com estratégias para CDC e Full Load                       | `CDCStrategy.py`, `FullLoadStrategy.py`, `ReplicationManager.py` |
 | **Messages**    | Implementa a comunicação via RabbitMQ (produtores/consumidores)                 | `MessageProducer.py`, `MessageConsumer.py` |
 | **Tasks**       | Modelagem e execução de tarefas de replicação                                   | `Task.py`                                  |
-| **Endpoints**   | Gerencia conexões com bancos de dados (PostgreSQL) e sistemas externos          | `Endpoint.py`, `CDCManager.py`, `FullLoadHandler.py` |
+| **Endpoints**   | Gerencia conexões com bancos de dados (PostgreSQL)          | `Endpoint.py`, `CDCManager.py`, `FullLoadHandler.py` |
 | **Tables**      | Representação e operações básicas de tabelas                                    | `Table.py`                                 |
 | **Columns**     | Define a estrutura e metadados de colunas para transformação de dados            | `Column.py`                                 |
-| **Transformations** | Transformações de dados e geração de colunas derivadas                     | `ColumnModifier.py`, `Transformation.py`   |
+| **Transformations** | Transformações de dados e geração de colunas derivadas                     | `ColumnModifier.py`, `ColumnCreator.py`, `Transformation.py`   |
 | **Filters**     | Aplica regras de filtragem aos dados durante o processamento                    | `Filter.py`                        |
 | **IA**          | Integração com IA para automação de tarefas e geração de configurações          | `TaskCreator.py`                           |
 | **Loggings**    | Centraliza o sistema de logs e monitoramento da aplicação                       | `Logging.py`                               |
-| **Metadata**    | Gerencia metadados de bancos de dados e tabelas                                 | `Query.py`, `MetadataConnectionManager.py` |
+| **Metadata**    | Gerencia metadados do sistema                                 | `MetadataConnectionManager.py` |
 | **Shared**      | Utilitários compartilhados (tipos de dados, queries SQL, definitions)               | `Crypto.py`, `Utils.py`, `QueryPostgreSQL.py` |
 
 ### Fluxo Principal:
@@ -218,13 +218,13 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
 3. **Descoberta de Metadados**  
    *(`Endpoints` coleta estrutura de tabelas/colunas, armazena em `Tables`/`Columns`)*  
 4. **Extração de Dados**  
-   *(`Endpoints` realiza extração complet ou consultas de CDC no banco de origem)*  
+   *(`Endpoints` realiza extração completa ou consultas de CDC no banco de origem)*  
 5. **Roteamento de Eventos**  
    *(`Messages` gerencia filas RabbitMQ para entrega assíncrona)*  
 6. **Transformação e Filtragem**  
    *(`Filters` remove dados indesejados, `Transformations` aplica regras de mapeamento)*  
 7. **Carregamento Transacional**  
-   *(`Endpoints` aplica batches/transações no banco de destino com tratamento de erros)*  
+   *(`Endpoints` aplica transações no banco de destino com tratamento de erros)*  
 
 *Os módulos `Shared`, `Metadata` e `Loggings` fornecem suporte transversal a toda a aplicação.*
 
