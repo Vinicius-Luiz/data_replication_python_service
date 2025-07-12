@@ -7,8 +7,8 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 
 ## Conteúdos
 - [Instalação](#instalação)
-- [Usando PostgreSQL](#databasesusando-postgresql)
-- [Configuração e Uso do RabbitMQ](#integração-com-rabbitmq)
+- [Usando PostgreSQL](#usando-postgresql)
+- [Configuração e Uso do RabbitMQ](#configuração-e-uso-do-rabbitmq)
 - [Configuração e Uso do Docker](#configuração-e-uso-do-docker)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Funcionamento da Replicação](#funcionamento-da-replicação)
@@ -227,17 +227,6 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
    *(`Endpoints` aplica transações no banco de destino com tratamento de erros)*  
 
 *Os módulos `Shared`, `Metadata` e `Loggings` fornecem suporte transversal a toda a aplicação.*
-
-## Funcionamento da Replicação
-
-O processo de replicação no TREMpy segue estas etapas:
-
-1. **Configuração Inicial**: Definição dos bancos de origem e destino, tabelas a serem replicadas e parâmetros de conexão.
-2. **Captura de Alterações**: O PostgreSQL envia as alterações (INSERT, UPDATE, DELETE) para o replication slot configurado.
-3. **Transformação**: Os dados são convertidos em um formato padronizado para envio ao RabbitMQ.
-4. **Enfileiramento**: As mensagens são enviadas para filas específicas no RabbitMQ.
-5. **Processamento**: Consumidores leem as mensagens e aplicam as alterações no banco de destino.
-6. **Monitoramento**: A interface Streamlit exibe o status e métricas do processo.
 
 ## Uso da IA
 
