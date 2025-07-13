@@ -1,4 +1,4 @@
-# 🚂 TREMpy
+<img src="_images/logo-white.png" width="70%">
 
 **Transactional Replication Engine Made in Python**
 
