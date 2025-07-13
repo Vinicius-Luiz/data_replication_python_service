@@ -209,7 +209,7 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
 
 ### Fluxo Principal:
 
-![flow-chart](_images\flow_chart.png)
+![flow-chart](_images/flow_chart.png)
 
 *Os módulos `Shared`, `Metadata` e `Loggings` fornecem suporte transversal a toda a aplicação.*
 
