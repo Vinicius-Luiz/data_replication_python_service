@@ -11,7 +11,6 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 - [Configuração e Uso do RabbitMQ](#configuração-e-uso-do-rabbitmq)
 - [Configuração e Uso do Docker](#configuração-e-uso-do-docker)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Funcionamento da Replicação](#funcionamento-da-replicação)
 - [Uso da IA](#uso-da-ia)
 - [Licença](#licença)
 - [Contato](#contato)
@@ -209,22 +208,8 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
 | **Shared**      | Utilitários compartilhados (tipos de dados, queries SQL, definitions)               | `Crypto.py`, `Utils.py`, `QueryPostgreSQL.py` |
 
 ### Fluxo Principal:
-0. **Definição da Tarefa**  
-   *(Edição manual do `settings.json`, criação via UI ou geração automatizada via `IA`)*  
-1. **Seleção da Estratégia**  
-   *(`Replication` define o método: Full Load, CDC ou híbrido)*  
-2. **Inicialização da Tarefa**  
-   *(`Task` configura parâmetros e valida a execução)*  
-3. **Descoberta de Metadados**  
-   *(`Endpoints` coleta estrutura de tabelas/colunas, armazena em `Tables`/`Columns`)*  
-4. **Extração de Dados**  
-   *(`Endpoints` realiza extração completa ou consultas de CDC no banco de origem)*  
-5. **Roteamento de Eventos**  
-   *(`Messages` gerencia filas RabbitMQ para entrega assíncrona)*  
-6. **Transformação e Filtragem**  
-   *(`Filters` remove dados indesejados, `Transformations` aplica regras de mapeamento)*  
-7. **Carregamento Transacional**  
-   *(`Endpoints` aplica transações no banco de destino com tratamento de erros)*  
+
+![](_images\flow_chart.png)
 
 *Os módulos `Shared`, `Metadata` e `Loggings` fornecem suporte transversal a toda a aplicação.*
 
