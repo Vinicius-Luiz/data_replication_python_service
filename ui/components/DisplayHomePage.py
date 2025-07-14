@@ -198,11 +198,6 @@ class DisplayHomePage:
             unsafe_allow_html=True,
         )
 
-        st.markdown(
-            '<h1 class="main-header">🚂 Transactional Replication Engine Made in Python</h1>',
-            unsafe_allow_html=True,
-        )
-
         # Métricas em cards
         col1, col2, col3, col4 = st.columns(4)
 

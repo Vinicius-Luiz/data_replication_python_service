@@ -51,7 +51,19 @@ docker-compose up -d
 
 ## Usando PostgreSQL
 
-Além de um usuário com permissões de super-user, para utilizar o PostgreSQL com o TREMpy, é necessário realizar as seguintes configurações:
+Para utilizar o PostgreSQL com o TREMpy, é necessário de um usuário com permissões de **super-user**.
+
+### Sobre Replication Slots no PostgreSQL
+
+O TREMpy utiliza o recurso de *replication slots* do PostgreSQL para garantir a captura confiável e contínua das alterações realizadas no banco de dados de origem. Um replication slot é um mecanismo nativo do PostgreSQL que mantém o histórico das mudanças (WALs) necessárias para que consumidores externos possam ler todas as alterações, sem risco de perda de dados, mesmo que haja interrupções temporárias na conexão.
+
+No contexto do TREMpy, cada tarefa de replicação criada recebe seu próprio replication slot dedicado. Isso permite que múltiplas tarefas operem de forma independente, cada uma acompanhando as alterações de suas tabelas de interesse, sem interferência entre si.
+
+Além disso, o gerenciamento automático dos replication slots pelo TREMpy evita o acúmulo de slots antigos e garante que apenas os slots necessários estejam ativos, otimizando recursos e prevenindo problemas de armazenamento de WALs não consumidos.
+
+<img src="_images/slot_replication.png"></img>
+
+Para mais informações sobre *replicatin slots*, acesse a [documentação oficial](https://www.postgresql.org/docs/9.4/catalog-pg-replication-slots.html)
 
 ### Configuração em `postgresql.conf`:
 ```
@@ -221,7 +233,118 @@ O TREMpy planeja integrar a Deepseek API para auxiliar na criação automática 
 
 A funcionalidade permitirá que o sistema sugira configurações inteligentes baseadas no esquema do banco de dados e nos requisitos do usuário.
 
----
+## Features Principais
+
+O TREMpy oferece uma interface abrangente para configuração e monitoramento de replicação de dados, com as seguintes funcionalidades:
+
+### 1. Dashboard de Monitoramento
+[IMAGEM: 1 - DASHBOARD.png]
+- Visualização em tempo real dos logs do sistema
+- Estatísticas detalhadas de replicação (registros processados, sucesso/falha, tempo de execução)
+- Filtros para busca específica de mensagens
+- Status atual das tarefas em execução
+
+### 2. Gerenciamento de Conexões
+[IMAGEM: 2 - CONEXOES.png]
+- Configuração flexível de conexões com bancos de dados origem e destino
+- Suporte a múltiplos tipos de SGBD (inicialmente PostgreSQL)
+- Parâmetros ajustáveis como tamanho de lote para operações CDC
+- Armazenamento seguro de credenciais
+
+### 3. Configuração de Tarefas
+[IMAGEM: 3 - TAREFA.png]
+- **Tipos de Replicação**:
+  - `full_load`: Carga completa inicial
+  - `cdc`: Captura contínua de alterações
+  - `full_load_and_cdc`: Combinação híbrida
+- **Modos de Início**:
+  - `reload`: Reinicia a replicação do zero
+  - `continue`: Retoma de onde parou
+- **Configurações Avançadas**:
+  - Intervalo de execução personalizável (em segundos)
+  - Opção para criação automática de tabelas de destino
+  - Controle de truncagem/reconstrução de tabelas
+- **SCD2 (Slowly Changing Dimension Type 2)**:
+  - Configuração dedicada de colunas temporais:
+    - `scd_start_date`: Data de início da vigência
+    - `scd_end_date`: Data de término da vigência
+    - `scd_current`: Indicador de registro ativo
+  - Histórico automático de versões de registros
+
+### 4. Filtros Avançados  
+[IMAGEM: 4 - FILTROS.png]  
+
+#### **Tipos de Filtros Suportados**  
+| Categoria          | Operadores                     | Inputs Necessários         |
+|--------------------|--------------------------------|----------------------------|
+| **Comparação**     | `equals`, `not_equals`         | `value`                    |
+| **Intervalo**      | `between`, `not_between`       | `lower`, `upper`           |
+| **Texto**          | `starts_with`, `ends_with`, `contains`, `not_contains` | `value`       |
+| **Listas**         | `in`, `not_in`                 | `values` (array)           |
+| **Nulos**          | `is_null`, `is_not_null`       | —                          |
+| **Datas**          | `date_equals`, `date_between`  | `value` ou `lower`/`upper` |
+
+- Aplicáveis a colunas específicas (numéricas, textuais ou datas).
+- Interface intuitiva para composição de regras complexas.
+
+### 5. Transformações de Dados  
+[IMAGEM: 5 - TRANSFORMACOES.png]  
+
+#### **Tipos de Transformações**  
+| Tipo                  | Operações Suportadas          | Parâmetros Chave               | Exemplo                      |  
+|-----------------------|-------------------------------|--------------------------------|------------------------------|  
+| **Modificar Valores** | `uppercase`, `lowercase`, `trim`, `format_date` | `column_name`, `format`  | Padronizar `name` em maiúsculas |  
+| **Criar Colunas**     | `concat`, `date_diff_years`, `math_expression`, `literal`, `datetime_now` | `new_column_name`, `expression` | `full_name = first_name + ' ' + last_name` |  
+| **Renomear**          | `modify_schema_name`, `modify_table_name`, `modify_column_name` | `target_name` | Renomear `emp_id` para `employee_id` |  
+| **Chaves Primárias**  | `add_primary_key`, `remove_primary_key` | `column_names`       | Definir `id` como PK          |  
+
+- **Hierarquia de Prioridades**:
+  ```mermaid
+  graph TD
+    A[Estruturais - Prioridade Muito Alta] --> B[Valor - Prioridade Alta-Média]
+    B --> C[Derivadas - Prioridade Baixa-Muito Baixa]
+  ```
+
+### 6. Tratamento de Erros
+[IMAGEM: 6 - ERROR HANDLING.png]
+- Configuração granular de comportamento para falhas:
+  - Por tipo de operação (INSERT, UPDATE, DELETE)
+  - Por modo de replicação (CDC, Full Load)
+- Políticas de continuidade após erros
+- Logs detalhados para diagnóstico
+
+### 7. Assistente de IA para Criação de Tarefas
+[IMAGEM: 7 - TASK CREATOR AI.png]
+- **Geração via Linguagem Natural**:
+  - Aceita prompts descritivos como:
+    ```text
+    Crie uma tarefa no modo Full Load e CDC realizando upsert no CDC. A tarefa não para em caso de erros. Você deve replicar a tabela employees.employee filtrando gender = F. Na transformação crie uma coluna full_name que concatena o first_name e o last_name
+    ```
+- **Saída Estruturada**:
+  - Gera arquivo `settings.json` completo
+  - Aplica enums e padrões documentados
+  - Inclui descrições automáticas
+- **Validação Automática**:
+  - Verifica consistência de prioridades
+  - Garante dependências entre transformações
+  - Aplica regras de estrutura de tabelas
+
+## Slowly Changing Dimension Type 2 (SCD2)
+
+O TREMpy implementa nativamente o padrão SCD2 para gerenciamento de dimensões que mudam ao longo do tempo:
+
+[IMAGEM: Seção relevante de 3 - TAREFA.png destacando SCD2]
+- **Configuração dedicada**:
+  - Colunas para datas de início/fim (scd_start_date, scd_end_date)
+  - Indicador de registro atual (scd_current)
+- **Funcionamento**:
+  - Mantém histórico completo de todas as versões dos registros
+  - Atualiza automaticamente os marcadores temporais
+  - Preserva a integridade temporal dos dados
+- **Benefícios**:
+  - Rastreabilidade completa de mudanças
+  - Análise histórica facilitada
+  - Compatível com ferramentas de BI e data warehousing
 
 ## Licença
 
@@ -231,8 +354,6 @@ Distribuído sob a licença Apache 2.0. Consulte [LICENSE](LICENSE) para informa
 - Uso, modificação e distribuição livre
 - Requer preservação de avisos de copyright
 - Isenção de garantias
-
----
 
 ## Contato
 

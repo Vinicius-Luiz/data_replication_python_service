@@ -17,7 +17,7 @@ class DisplayTaskCreatorAI:
 
     def __load_system_content(self) -> str:
         with open(
-            "trempy/IA/task_creator_tutorial_for_ia.md", "r", encoding="utf-8"
+            "trempy/IA/task_creator_tutorial_for_ai.md", "r", encoding="utf-8"
         ) as f:
             system_content = f.read()
 

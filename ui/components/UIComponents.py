@@ -36,7 +36,8 @@ class UIComponents:
     def display_sidebar(self):
         """Exibe a barra lateral de navegação."""
         with st.sidebar:
-            st.title("🚂 TREMpy")
+            st.image("_images/logo-white.png", use_container_width = True, channels="RGB")
+
             
             # Grupo: Configurações Básicas
             st.sidebar.markdown("### ⚙️ Configurações Básicas")
