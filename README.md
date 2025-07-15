@@ -9,7 +9,9 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 - [Configuração e Uso do RabbitMQ](#configuração-e-uso-do-rabbitmq)
 - [Configuração e Uso do Docker](#configuração-e-uso-do-docker)
 - [Estrutura do Projeto](#estrutura-do-projeto)
+- [Features Principais](#features-principais)
 - [Uso da IA](#uso-da-ia)
+- [Slowly Changing Dimension Type 2 (SCD2)](#slowly-changing-dimension-type-2-scd2)
 - [Licença](#licença)
 - [Contato](#contato)
 

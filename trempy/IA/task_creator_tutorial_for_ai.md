@@ -26,15 +26,15 @@ O arquivo de configuração é um JSON com a seguinte estrutura:
 
 ### 2.1. Seção `task`
 - **task_name**: Nome da tarefa.
-- **replication_type**: Tipo de replicação (`full_load`, `cdc`, `full_load_and_cdc`).
-- **interval_seconds**: Intervalo entre execuções (em segundos).
-- **start_mode**: Modo de início (`reload`, `continue`). Opcional em alguns casos.
-- **create_table_if_not_exists**: Cria a tabela de destino se não existir (boolean).
+- **replication_type**: Tipo de replicação (`full_load`, `cdc`, `full_load_and_cdc`) (default `full_load`).
+- **interval_seconds**: Intervalo entre execuções (em segundos) (default 60).
+- **start_mode**: Modo de início (`reload`, `continue`). Opcional em alguns casos (default `reload`).
+- **create_table_if_not_exists**: Cria a tabela de destino se não existir (boolean) (default false).
 - **full_load_settings**: (objeto)
-  - **recreate_table_if_exists**: Recria a tabela se já existir (boolean).
-  - **truncate_before_insert**: Trunca a tabela antes de inserir (boolean).
+  - **recreate_table_if_exists**: Recria a tabela se já existir (boolean) (default false).
+  - **truncate_before_insert**: Trunca a tabela antes de inserir (boolean) (default false).
 - **cdc_settings**: (objeto, opcional)
-  - **mode**: Modo do CDC (`default`, `upsert`, `scd2`).
+  - **mode**: Modo do CDC (`default`, `upsert`, `scd2`) (default `default`).
   - **scd2_settings**: (objeto, apenas se `mode` for `scd2`)
     - **start_date_column_name**: Nome da coluna de início de vigência (se não especificado pelo usuário, o nome deve ser "scd_start_date").
     - **end_date_column_name**: Nome da coluna de fim de vigência (se não especificado pelo usuário, o nome deve ser "scd_end_date").

@@ -1,9 +1,9 @@
 {
     "task": {
-        "task_name": "replicacao_employees_female",
+        "task_name": "replicacao_employees_feminino",
         "replication_type": "full_load_and_cdc",
         "interval_seconds": 5,
-        "start_mode": "continue",
+        "start_mode": "reload",
         "create_table_if_not_exists": true,
         "full_load_settings": {
             "recreate_table_if_exists": false,
@@ -20,9 +20,9 @@
     },
     "error_handling": {
         "stop_if_insert_error": false,
-        "stop_if_upsert_error": false,
+        "stop_if_update_error": false,
         "stop_if_delete_error": false,
-        "stop_if_update_error": false
+        "stop_if_upsert_error": false
     },
     "tables": [
         {
@@ -42,6 +42,22 @@
                 "description": "Filtrar apenas funcionárias do gênero feminino",
                 "column_name": "gender",
                 "value": "F"
+            }
+        },
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "employee"
+            },
+            "settings": {
+                "filter_type": "in",
+                "description": "Filtrar funcionárias com os nomes Dipankar, Tetsushi e Kristin",
+                "column_name": "first_name",
+                "values": [
+                    "Dipankar",
+                    "Tetsushi",
+                    "Kristin"
+                ]
             }
         }
     ],
@@ -63,7 +79,7 @@
                     ],
                     "separator": " "
                 },
-                "priority": 1
+                "priority": 3
             }
         }
     ]

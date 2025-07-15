@@ -299,7 +299,7 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = (str, int, float)
+        type_required = (list,)
         self.__validate_column_exists(table)
         self.__validate_type(type_required, "values")
         table.data = table.data.filter(pl.col(self.column_name).is_in(self.values))
@@ -315,7 +315,7 @@ class Filter:
             Table: Objeto Table com o filtro aplicado.
         """
 
-        type_required = (str, int, float)
+        type_required = (list,)
         self.__validate_column_exists(table)
         self.__validate_type(type_required, "values")
         table.data = table.data.filter(~pl.col(self.column_name).is_in(self.values))
