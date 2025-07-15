@@ -14,6 +14,8 @@ class ReplicationLogger:
         "requests",
         "httpcore",
         "httpx",
+        "PIL",
+        "Pillow",
     ]
 
     def __init__(self):

@@ -1,348 +1,55 @@
-2025-07-11 00:42:14,599 - INFO - Chatbot inicializado com sucesso.
-2025-07-11 00:42:14,599 - DEBUG - {'model': 'deepseek-chat', 'response_format': {'type': 'json_object'}, 'temperature': 0}
-2025-07-11 00:43:49,979 - INFO - Requisição realizada com sucesso. Tokens usados: 6337
-2025-07-11 00:43:49,979 - DEBUG - {'log_file': 'C:\\Users\\Vinicius Luiz\\Desktop\\Scripts\\data_replication_python_service\\chatbot_stats.csv', 'usage_prompt_tokens': 4262, 'usage_completion_tokens': 2075, 'usage_total_tokens': 6337, 'usage_cached_tokens': 3392, 'len_system_content': 13283, 'len_user_content': 2758, 'len_message_content': 8341}
-2025-07-11 00:46:35,865 - INFO - UI - Replicação de dados iniciada
-2025-07-11 00:46:36,231 - INFO - REPLICATION - Recarregando tarefa
-2025-07-11 00:46:36,232 - INFO - REPLICATION - Recriando tabelas de metadata
-2025-07-11 00:46:36,340 - INFO - TASK - replicacao_employees válido
-2025-07-11 00:46:36,341 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-07-11 00:46:36,363 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-07-11 00:46:36,363 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-07-11 00:46:36,368 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2869133, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-07-11 00:46:36,369 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-07-11 00:46:36,374 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-07-11 00:46:36,374 - INFO - TASK - Obtendo detalhes da tabela employees.department
-2025-07-11 00:46:36,379 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
-2025-07-11 00:46:36,379 - INFO - REPLICATION - Preparando employees.employee para SCD2
-2025-07-11 00:46:36,379 - INFO - REPLICATION - Preparando employees.department para SCD2
-2025-07-11 00:46:36,379 - INFO - REPLICATION - Preparando employees.salary para SCD2
-2025-07-11 00:46:36,379 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
-2025-07-11 00:46:36,383 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-07-11 00:46:36,741 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-07-11 00:46:36,783 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-07-11 00:46:36,784 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-07-11 00:46:37,357 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
-2025-07-11 00:46:37,360 - INFO - TASK - Obtendo dados da tabela employees.department
-2025-07-11 00:46:37,363 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'rowcount': 7, 'statusmessage': 'SELECT 7', 'time_elapsed': '00:00:00'}
-2025-07-11 00:46:37,366 - INFO - TASK - Obtendo dados da tabela employees.salary
-2025-07-11 00:46:41,040 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'time_elapsed': '00:00:04'}
-2025-07-11 00:46:41,043 - INFO - TASK - Obtendo dados da tabela employees.department_manager
-2025-07-11 00:46:41,046 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
-2025-07-11 00:46:41,106 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:46:41,106 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-07-11 00:46:41,489 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-07-11 00:46:41,529 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-07-11 00:46:41,545 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterar nome da tabela employees.employee para employees.employee_history
-2025-07-11 00:46:41,545 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: formata a coluna first_name em employees.employee para maiúsculo
-2025-07-11 00:46:41,554 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: formata a coluna last_name em employees.employee para maiúsculo
-2025-07-11 00:46:41,563 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: criar coluna full_name em employees.employee concatenando as colunas first_name e last_name
-2025-07-11 00:46:41,576 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: criar coluna updated_by em employees.employee com o valor PYTHON
-2025-07-11 00:46:41,578 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: criar coluna sync_date em employees.employee com a data atual
-2025-07-11 00:46:41,579 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
-2025-07-11 00:46:41,580 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
-2025-07-11 00:46:41,581 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
-2025-07-11 00:46:41,582 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
-2025-07-11 00:46:41,582 - INFO - TASK - Realizando carga completa da tabela employees.employee_history
-2025-07-11 00:46:41,582 - INFO - ENDPOINT - Removendo tabela employees.employee_history
-2025-07-11 00:46:41,592 - INFO - ENDPOINT - Criando tabela employees.employee_history
-2025-07-11 00:46:41,599 - INFO - ENDPOINT - Truncando tabela employees.employee_history
-2025-07-11 00:46:41,981 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee_history
-2025-07-11 00:46:50,972 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 300024, 'success': 1, 'time_elapsed': '00:00:09'}
-2025-07-11 00:46:50,976 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alterar nome da tabela employees.department para employees.department_history
-2025-07-11 00:46:50,976 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
-2025-07-11 00:46:50,976 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
-2025-07-11 00:46:50,976 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
-2025-07-11 00:46:50,976 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
-2025-07-11 00:46:50,976 - INFO - TASK - Realizando carga completa da tabela employees.department_history
-2025-07-11 00:46:50,976 - INFO - ENDPOINT - Removendo tabela employees.department_history
-2025-07-11 00:46:50,978 - INFO - ENDPOINT - Criando tabela employees.department_history
-2025-07-11 00:46:50,980 - INFO - ENDPOINT - Truncando tabela employees.department_history
-2025-07-11 00:46:50,982 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_history
-2025-07-11 00:46:50,986 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'records': 7, 'success': 1, 'time_elapsed': '00:00:00'}
-2025-07-11 00:46:51,011 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da tabela employees.salary para employees.salario_historico
-2025-07-11 00:46:51,011 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome do schema employees para funcionarios na tabela employees.salary
-2025-07-11 00:46:51,011 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.employee_id para funcionarios.salario.funcionario_id
-2025-07-11 00:46:51,012 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.amount para funcionarios.salario.quantia_mensal
-2025-07-11 00:46:51,012 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.from_date para funcionarios.salario.data_inicio
-2025-07-11 00:46:51,012 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.to_date para funcionarios.salario.data_fim
-2025-07-11 00:46:51,012 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: obter a diferença de anos entre a from_date e to_date da tabela employees.salary e criar uma nova coluna com o nome periodo_anos
-2025-07-11 00:46:51,031 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: modificar o valor de funcionarios.salario.quantia_mensal através de uma expressão matemática dividindo o seu valor por 12
-2025-07-11 00:46:51,039 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
-2025-07-11 00:46:51,043 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
-2025-07-11 00:46:51,048 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
-2025-07-11 00:46:51,052 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
-2025-07-11 00:46:51,052 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario_historico
-2025-07-11 00:46:51,052 - INFO - ENDPOINT - Removendo tabela funcionarios.salario_historico
-2025-07-11 00:46:51,054 - INFO - ENDPOINT - Criando tabela funcionarios.salario_historico
-2025-07-11 00:46:51,056 - INFO - ENDPOINT - Truncando tabela funcionarios.salario_historico
-2025-07-11 00:46:53,216 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario_historico
-2025-07-11 00:47:56,592 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': 1, 'time_elapsed': '00:01:06'}
-2025-07-11 00:47:56,606 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterar nome da tabela employees.department_manager para employees.department_manager_history
-2025-07-11 00:47:56,606 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
-2025-07-11 00:47:56,606 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
-2025-07-11 00:47:56,606 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
-2025-07-11 00:47:56,607 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
-2025-07-11 00:47:56,607 - INFO - TASK - Realizando carga completa da tabela employees.department_manager_history
-2025-07-11 00:47:56,607 - INFO - ENDPOINT - Removendo tabela employees.department_manager_history
-2025-07-11 00:47:56,616 - INFO - ENDPOINT - Criando tabela employees.department_manager_history
-2025-07-11 00:47:56,622 - INFO - ENDPOINT - Truncando tabela employees.department_manager_history
-2025-07-11 00:47:56,625 - INFO - ENDPOINT - Inserindo 18 registros na tabela employees.department_manager_history
-2025-07-11 00:47:56,629 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 18, 'success': 1, 'time_elapsed': '00:00:00'}
-2025-07-11 00:47:56,681 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-07-11 00:47:56,681 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-07-11 00:47:56,737 - INFO - TASK - replicacao_employees válido
-2025-07-11 00:47:56,737 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-07-11 00:47:56,801 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-07-11 00:47:56,801 - INFO - TASK - Obtendo detalhes da tabela employees.salary
-2025-07-11 00:47:56,806 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2869133, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
-2025-07-11 00:47:56,806 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
-2025-07-11 00:47:56,811 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
-2025-07-11 00:47:56,811 - INFO - TASK - Obtendo detalhes da tabela employees.department
-2025-07-11 00:47:56,816 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
-2025-07-11 00:47:56,816 - INFO - REPLICATION - Preparando employees.employee para SCD2
-2025-07-11 00:47:56,816 - INFO - REPLICATION - Preparando employees.department para SCD2
-2025-07-11 00:47:56,817 - INFO - REPLICATION - Preparando employees.salary para SCD2
-2025-07-11 00:47:56,817 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
-2025-07-11 00:47:56,821 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 5s
-2025-07-11 00:47:57,206 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-07-11 00:47:57,274 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-07-11 00:47:57,967 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:48:04,065 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:48:09,572 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:48:14,990 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:48:20,561 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:48:26,054 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-11 00:48:26,591 - INFO - UI - Replicação de dados finalizada com sucesso
-2025-07-11 00:51:14,482 - INFO - DeepSeek API inicializado com sucesso.
-2025-07-11 00:51:14,482 - DEBUG - {'model': 'deepseek-chat', 'response_format': {'type': 'json_object'}, 'temperature': 0}
-2025-07-11 00:51:14,979 - ERROR - openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: 123 is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
-2025-07-11 00:57:06,640 - INFO - DeepSeek API inicializado com sucesso.
-2025-07-11 00:57:06,640 - DEBUG - {'model': 'deepseek-chat', 'response_format': {'type': 'json_object'}, 'temperature': 0}
-2025-07-11 00:57:07,451 - ERROR - openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: 123 is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
-2025-07-11 00:58:37,582 - INFO - DeepSeek API inicializado com sucesso.
-2025-07-11 00:58:37,583 - DEBUG - {'model': 'deepseek-chat', 'response_format': {'type': 'json_object'}, 'temperature': 0}
-2025-07-11 00:58:38,009 - ERROR - openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: 123 is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
-2025-07-11 01:01:13,048 - INFO - DeepSeek API inicializado com sucesso.
-2025-07-11 01:01:13,048 - DEBUG - {'model': 'deepseek-chat', 'response_format': {'type': 'json_object'}, 'temperature': 0}
-2025-07-11 01:01:13,506 - ERROR - openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Authentication Fails, Your api key: 123 is invalid', 'type': 'authentication_error', 'param': None, 'code': 'invalid_request_error'}}
-2025-07-11 01:04:34,428 - INFO - DeepSeek API inicializado com sucesso.
-2025-07-11 01:04:34,428 - DEBUG - {'model': 'deepseek-chat', 'response_format': {'type': 'json_object'}, 'temperature': 0}
-2025-07-11 01:04:53,865 - INFO - Requisição realizada com sucesso. Tokens usados: 3975
-2025-07-11 01:04:53,865 - DEBUG - {'log_file': 'C:\\Users\\Vinicius Luiz\\Desktop\\Scripts\\data_replication_python_service\\task_creator_by_ia_stats.csv', 'usage_prompt_tokens': 3549, 'usage_completion_tokens': 426, 'usage_total_tokens': 3975, 'usage_cached_tokens': 3520, 'len_system_content': 13283, 'len_user_content': 36, 'len_message_content': 1571}
-2025-07-14 01:01:19,083 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:19,084 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:27,774 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:32,143 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:45,253 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:57,080 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:57,080 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:57,080 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:57,081 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:01:57,081 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:01:57,081 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:01:57,081 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:01:57,081 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:07,686 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:07,686 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:07,686 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:07,686 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:07,686 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:07,686 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:07,687 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:07,687 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:37,018 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:37,019 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:42,034 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:43,651 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:43,652 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:45,296 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:02:45,297 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:04:34,378 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:04:34,379 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:04:41,233 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:05:02,222 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:05:02,222 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:05:02,222 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:05:02,222 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:05:02,223 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:05:02,223 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:05:02,223 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:05:02,223 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:05:27,315 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:05:27,315 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:05:27,315 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:05:27,315 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:05:27,315 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:05:27,316 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:05:27,316 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:05:27,316 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:05:50,958 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:05:50,958 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:05:50,959 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:05:50,959 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:05:50,959 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:05:50,959 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:05:50,959 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:05:50,959 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:10,693 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:16,016 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:16,634 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:16,635 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:17,792 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:17,792 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:17,792 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:17,792 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:17,792 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:17,793 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:17,793 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:17,793 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:18,459 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:27,611 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:27,611 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:27,611 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:27,611 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:27,611 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:27,612 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:27,612 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:27,612 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:06:40,070 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:08:00,438 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:08:00,439 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:08:24,024 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:08:40,780 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:08:40,780 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:08:40,780 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:08:40,781 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:08:40,781 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:08:40,781 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:08:40,781 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:08:40,781 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:26:58,523 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:26:58,524 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'IDAT' 75 27958
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'IHDR' 16 13
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'sRGB' 41 1
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'pHYs' 54 9
-2025-07-14 01:27:06,411 - DEBUG - STREAM b'IDAT' 75 27958
+2025-07-15 00:15:12,293 - INFO - UI - Replicação de dados iniciada
+2025-07-15 00:15:12,667 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-07-15 00:15:13,027 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-07-15 00:15:13,063 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-07-15 00:15:13,105 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:13,105 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-07-15 00:15:13,460 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-07-15 00:15:13,499 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-07-15 00:15:13,541 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-07-15 00:15:13,541 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-07-15 00:15:13,552 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 5s
+2025-07-15 00:15:13,898 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-07-15 00:15:13,998 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-07-15 00:15:14,003 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:19,444 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:24,926 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:24,953 - ERROR - trempy.Endpoints.Exceptions.Exception.UpsertCDCError: ENDPOINT - Erro ao realizar UPSERT: employees.employee: SyntaxError - ERRO:  erro de sintaxe em ou próximo a ""employees""
+LINE 2:     INSERT  "employees"."employee" ("id", "birth_date", "fir...
+                    ^
+ | employees.employee | 
+    INSERT  "employees"."employee" ("id", "birth_date", "first_name", "last_name", "gender", "hire_date", "full_name")
+    VALUES (500000, '2002-09-16'::date, 'Maria', 'Luiza', 'F', '2024-06-01'::date, 'Maria Luiza')
+        ON CONFLICT ("id") 
+        DO UPDATE SET "birth_date" = EXCLUDED."birth_date", "first_name" = EXCLUDED."first_name", "last_name" = EXCLUDED."last_name", "gender" = EXCLUDED."gender", "hire_date" = EXCLUDED."hire_date", "full_name" = EXCLUDED."full_name"
+  
+2025-07-15 00:15:24,969 - ERROR - trempy.Endpoints.Exceptions.Exception.UpsertCDCError: ENDPOINT - Erro ao realizar UPSERT: employees.employee: SyntaxError - ERRO:  erro de sintaxe em ou próximo a ""employees""
+LINE 2:     INSERT  "employees"."employee" ("id", "birth_date", "fir...
+                    ^
+ | employees.employee | 
+    INSERT  "employees"."employee" ("id", "birth_date", "first_name", "last_name", "gender", "hire_date", "full_name")
+    VALUES (500001, '1979-09-19'::date, 'Hermione', 'Granger', 'F', '2025-04-04'::date, 'Hermione Granger')
+        ON CONFLICT ("id") 
+        DO UPDATE SET "birth_date" = EXCLUDED."birth_date", "first_name" = EXCLUDED."first_name", "last_name" = EXCLUDED."last_name", "gender" = EXCLUDED."gender", "hire_date" = EXCLUDED."hire_date", "full_name" = EXCLUDED."full_name"
+  
+2025-07-15 00:15:30,362 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:35,780 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:41,219 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:46,641 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:52,079 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:15:57,504 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:02,950 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:08,383 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:13,813 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:19,355 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:24,796 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:30,227 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:35,657 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:41,073 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:46,502 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:51,928 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:16:57,359 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:17:02,797 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:17:08,225 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:17:13,645 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-15 00:17:14,164 - INFO - UI - Replicação de dados finalizada com sucesso

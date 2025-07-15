@@ -712,7 +712,6 @@ class CDCOperationsHandler:
                     for col in data_columns
                     if col not in pk_columns
                 ]
-
                 query = sql.SQL(CDCQueriesPostgreSQL.CDC_UPSERT_DATA).format(
                     schema=sql.Identifier(table.target_schema_name),
                     table=sql.Identifier(table.target_table_name),

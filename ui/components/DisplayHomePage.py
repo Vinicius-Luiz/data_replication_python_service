@@ -117,13 +117,6 @@ class DisplayHomePage:
         """Obtém as métricas do sistema de replicação."""
         try:
             with self.metadata_manager as metadata_manager:
-                # Obtém estatísticas de mensagens
-                messages_stats = metadata_manager.get_messages_stats()
-                if not messages_stats.is_empty():
-                    total_ops = messages_stats["quantity_operations"][0]
-                else:
-                    total_ops = 0
-
                 # Obtém estatísticas de CDC
                 stats_cdc = metadata_manager.get_metadata_tables("stats_cdc")
                 if not stats_cdc.is_empty():
@@ -136,6 +129,7 @@ class DisplayHomePage:
                     )
                 else:
                     error_rate = 0
+                    total_operations = 0
 
                 # Obtém total de registros do full load
                 stats_fl = metadata_manager.get_metadata_tables("stats_full_load")
@@ -145,8 +139,9 @@ class DisplayHomePage:
                     total_records = 0
 
                 return {
-                    "total_ops": f"{total_ops:,}".replace(",", "."),
+                    "total_ops": f"{total_operations:,}".replace(",", "."),
                     "total_records": f"{total_records:,}".replace(",", "."),
+                    "total_operations": f"{total_operations:,}".replace(",", "."),
                     "error_rate": f"{100 - error_rate:.1f}%",
                 }
         except Exception as e:

@@ -32,7 +32,6 @@ class GraphGenerator:
         df_pd = df.to_pandas()
 
         # Adicionando métricas resumidas
-        st.subheader("Resumo de Erros")
         col1, col2, col3 = st.columns(3)
         col1.metric("Total de Erros", len(df_pd))
         col2.metric("Tipos de Erros Únicos", df_pd["type"].nunique())

@@ -174,3 +174,5 @@ cython_debug/
 data/full_load_data/*.parquet
 task/credentials.json
 _anotacoes/
+task/settings.pickle
+task/settings.json

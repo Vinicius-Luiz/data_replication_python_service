@@ -1,16 +1,16 @@
 {
     "task": {
-        "task_name": "replicacao_employees",
+        "task_name": "replicacao_employees_female",
         "replication_type": "full_load_and_cdc",
         "interval_seconds": 5,
-        "start_mode": "reload",
+        "start_mode": "continue",
         "create_table_if_not_exists": true,
         "full_load_settings": {
-            "recreate_table_if_exists": true,
+            "recreate_table_if_exists": false,
             "truncate_before_insert": true
         },
         "cdc_settings": {
-            "mode": "scd2",
+            "mode": "upsert",
             "scd2_settings": {
                 "start_date_column_name": "scd_start_date",
                 "end_date_column_name": "scd_end_date",
@@ -20,34 +20,31 @@
     },
     "error_handling": {
         "stop_if_insert_error": false,
-        "stop_if_update_error": false,
-        "stop_if_delete_error": false,
         "stop_if_upsert_error": false,
-        "stop_if_scd2_error": false
+        "stop_if_delete_error": false,
+        "stop_if_update_error": false
     },
     "tables": [
         {
             "schema_name": "employees",
             "table_name": "employee",
-            "priority": 0
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "salary",
             "priority": 2
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "department_manager",
-            "priority": 2
-        },
-        {
-            "schema_name": "employees",
-            "table_name": "department",
-            "priority": 0
         }
     ],
-    "filters": [],
+    "filters": [
+        {
+            "table_info": {
+                "schema_name": "employees",
+                "table_name": "employee"
+            },
+            "settings": {
+                "filter_type": "equals",
+                "description": "Filtrar apenas funcionárias do gênero feminino",
+                "column_name": "gender",
+                "value": "F"
+            }
+        }
+    ],
     "transformations": [
         {
             "table_info": {
@@ -55,204 +52,8 @@
                 "table_name": "employee"
             },
             "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alterar nome da tabela employees.employee para employees.employee_history",
-                "contract": {
-                    "target_table_name": "employee_history"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alterar nome da tabela employees.salary para employees.salario_historico",
-                "contract": {
-                    "target_table_name": "salario_historico"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "department_manager"
-            },
-            "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alterar nome da tabela employees.department_manager para employees.department_manager_history",
-                "contract": {
-                    "target_table_name": "department_manager_history"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "department"
-            },
-            "settings": {
-                "transformation_type": "modify_table_name",
-                "description": "Alterar nome da tabela employees.department para employees.department_history",
-                "contract": {
-                    "target_table_name": "department_history"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_schema_name",
-                "description": "Alterar nome do schema employees para funcionarios na tabela employees.salary",
-                "contract": {
-                    "target_schema_name": "funcionarios"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_column_name",
-                "description": "Alterar nome da coluna employees.salary.employee_id para funcionarios.salario.funcionario_id",
-                "contract": {
-                    "column_name": "employee_id",
-                    "target_column_name": "funcionario_id"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_column_name",
-                "description": "Alterar nome da coluna employees.salary.amount para funcionarios.salario.quantia_mensal",
-                "contract": {
-                    "column_name": "amount",
-                    "target_column_name": "quantia_mensal"
-                },
-                "priority": 0
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_column_name",
-                "description": "Alterar nome da coluna employees.salary.from_date para funcionarios.salario.data_inicio",
-                "contract": {
-                    "column_name": "from_date",
-                    "target_column_name": "data_inicio"
-                },
-                "priority": 2
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_column_name",
-                "description": "Alterar nome da coluna employees.salary.to_date para funcionarios.salario.data_fim",
-                "contract": {
-                    "column_name": "to_date",
-                    "target_column_name": "data_fim"
-                },
-                "priority": 2
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
                 "transformation_type": "create_column",
-                "description": "obter a diferença de anos entre a from_date e to_date da tabela employees.salary e criar uma nova coluna com o nome periodo_anos",
-                "contract": {
-                    "operation": "date_diff_years",
-                    "new_column_name": "periodo_anos",
-                    "depends_on": [
-                        "data_inicio",
-                        "data_fim"
-                    ],
-                    "round_result": true
-                },
-                "priority": 3
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "salary"
-            },
-            "settings": {
-                "transformation_type": "modify_column_value",
-                "description": "modificar o valor de funcionarios.salario.quantia_mensal através de uma expressão matemática dividindo o seu valor por 12",
-                "contract": {
-                    "operation": "math_expression",
-                    "column_name": "quantia_mensal",
-                    "expression": "value / 12"
-                },
-                "priority": 3
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "employee"
-            },
-            "settings": {
-                "transformation_type": "modify_column_value",
-                "description": "formata a coluna first_name em employees.employee para maiúsculo",
-                "contract": {
-                    "operation": "uppercase",
-                    "column_name": "first_name"
-                },
-                "priority": 1
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "employee"
-            },
-            "settings": {
-                "transformation_type": "modify_column_value",
-                "description": "formata a coluna last_name em employees.employee para maiúsculo",
-                "contract": {
-                    "operation": "uppercase",
-                    "column_name": "last_name"
-                },
-                "priority": 1
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "employee"
-            },
-            "settings": {
-                "transformation_type": "create_column",
-                "description": "criar coluna full_name em employees.employee concatenando as colunas first_name e last_name",
+                "description": "Criar coluna full_name concatenando first_name e last_name",
                 "contract": {
                     "operation": "concat",
                     "new_column_name": "full_name",
@@ -262,39 +63,7 @@
                     ],
                     "separator": " "
                 },
-                "priority": 2
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "employee"
-            },
-            "settings": {
-                "transformation_type": "create_column",
-                "description": "criar coluna updated_by em employees.employee com o valor PYTHON",
-                "contract": {
-                    "operation": "literal",
-                    "new_column_name": "updated_by",
-                    "value_type": "varchar",
-                    "value": "PYTHON"
-                },
-                "priority": 2
-            }
-        },
-        {
-            "table_info": {
-                "schema_name": "employees",
-                "table_name": "employee"
-            },
-            "settings": {
-                "transformation_type": "create_column",
-                "description": "criar coluna sync_date em employees.employee com a data atual",
-                "contract": {
-                    "operation": "datetime_now",
-                    "new_column_name": "sync_date"
-                },
-                "priority": 2
+                "priority": 1
             }
         }
     ]

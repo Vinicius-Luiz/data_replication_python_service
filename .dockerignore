@@ -10,7 +10,6 @@ __pycache__/
 
 # Pastas de documentação/anotações
 _anotacoes/
-_images/
 
 # Outros
 .env
@@ -19,3 +18,13 @@ app.log
 
 # Banco de dados
 trempy.db
+
+# Documentação
+README_DOCKER.md
+README_RABBITMQ.md
+README.md
+TODO.txt
+
+# Scripts
+task/settings.pickle
+task/settings.json

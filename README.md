@@ -235,24 +235,22 @@ A funcionalidade permitirá que o sistema sugira configurações inteligentes ba
 
 ## Features Principais
 
-O TREMpy oferece uma interface abrangente para configuração e monitoramento de replicação de dados, com as seguintes funcionalidades:
+O TREMpy oferece uma interface para configuração e monitoramento de replicação de dados, com as seguintes funcionalidades:
 
 ### 1. Dashboard de Monitoramento
-[IMAGEM: 1 - DASHBOARD.png]
+<img src="_images/dashboard.png"></img>
 - Visualização em tempo real dos logs do sistema
 - Estatísticas detalhadas de replicação (registros processados, sucesso/falha, tempo de execução)
 - Filtros para busca específica de mensagens
 - Status atual das tarefas em execução
 
 ### 2. Gerenciamento de Conexões
-[IMAGEM: 2 - CONEXOES.png]
-- Configuração flexível de conexões com bancos de dados origem e destino
-- Suporte a múltiplos tipos de SGBD (inicialmente PostgreSQL)
-- Parâmetros ajustáveis como tamanho de lote para operações CDC
+<img src="_images/conexoes.png"></img>
+- Configuração de conexões com bancos de dados origem e destino
 - Armazenamento seguro de credenciais
 
 ### 3. Configuração de Tarefas
-[IMAGEM: 3 - TAREFA.png]
+<img src="_images/tarefa.png"></img>
 - **Tipos de Replicação**:
   - `full_load`: Carga completa inicial
   - `cdc`: Captura contínua de alterações
@@ -261,7 +259,7 @@ O TREMpy oferece uma interface abrangente para configuração e monitoramento de
   - `reload`: Reinicia a replicação do zero
   - `continue`: Retoma de onde parou
 - **Configurações Avançadas**:
-  - Intervalo de execução personalizável (em segundos)
+  - Intervalo de execução personalizável
   - Opção para criação automática de tabelas de destino
   - Controle de truncagem/reconstrução de tabelas
 - **SCD2 (Slowly Changing Dimension Type 2)**:
@@ -272,7 +270,7 @@ O TREMpy oferece uma interface abrangente para configuração e monitoramento de
   - Histórico automático de versões de registros
 
 ### 4. Filtros Avançados  
-[IMAGEM: 4 - FILTROS.png]  
+<img src="_images/filtro.png"></img>
 
 #### **Tipos de Filtros Suportados**  
 | Categoria          | Operadores                     | Inputs Necessários         |
@@ -282,23 +280,23 @@ O TREMpy oferece uma interface abrangente para configuração e monitoramento de
 | **Texto**          | `starts_with`, `ends_with`, `contains`, `not_contains` | `value`       |
 | **Listas**         | `in`, `not_in`                 | `values` (array)           |
 | **Nulos**          | `is_null`, `is_not_null`       | —                          |
-| **Datas**          | `date_equals`, `date_between`  | `value` ou `lower`/`upper` |
+| **Datas**          | `date_equals`, `date_between`, `greater_than`, etc  | `value` ou `lower`/`upper` |
 
 - Aplicáveis a colunas específicas (numéricas, textuais ou datas).
 - Interface intuitiva para composição de regras complexas.
 
 ### 5. Transformações de Dados  
-[IMAGEM: 5 - TRANSFORMACOES.png]  
+<img src="_images/transformacao.png"></img>
 
 #### **Tipos de Transformações**  
-| Tipo                  | Operações Suportadas          | Parâmetros Chave               | Exemplo                      |  
-|-----------------------|-------------------------------|--------------------------------|------------------------------|  
-| **Modificar Valores** | `uppercase`, `lowercase`, `trim`, `format_date` | `column_name`, `format`  | Padronizar `name` em maiúsculas |  
-| **Criar Colunas**     | `concat`, `date_diff_years`, `math_expression`, `literal`, `datetime_now` | `new_column_name`, `expression` | `full_name = first_name + ' ' + last_name` |  
-| **Renomear**          | `modify_schema_name`, `modify_table_name`, `modify_column_name` | `target_name` | Renomear `emp_id` para `employee_id` |  
-| **Chaves Primárias**  | `add_primary_key`, `remove_primary_key` | `column_names`       | Definir `id` como PK          |  
+| Tipo                  | Operações Suportadas          | Exemplo                      |  
+|-----------------------|-------------------------------|------------------------------|  
+| **Modificar Valores** | `uppercase`, `lowercase`, `trim`, `format_date` | Padronizar `name` em maiúsculas |  
+| **Criar Colunas**     | `concat`, `date_diff_years`, `math_expression`, `literal`, `datetime_now` | `full_name = first_name + ' ' + last_name` |  
+| **Renomear**          | `modify_schema_name`, `modify_table_name`, `modify_column_name` | Renomear `emp_id` para `employee_id` |  
+| **Chaves Primárias**  | `add_primary_key`, `remove_primary_key` | Definir `created_at` como PK          |  
 
-- **Hierarquia de Prioridades**:
+- **Hierarquia de prioridades recomendadas**:
   ```mermaid
   graph TD
     A[Estruturais - Prioridade Muito Alta] --> B[Valor - Prioridade Alta-Média]
@@ -306,20 +304,18 @@ O TREMpy oferece uma interface abrangente para configuração e monitoramento de
   ```
 
 ### 6. Tratamento de Erros
-[IMAGEM: 6 - ERROR HANDLING.png]
+<img src="_images/tratamento_erros.png"></img>
 - Configuração granular de comportamento para falhas:
   - Por tipo de operação (INSERT, UPDATE, DELETE)
-  - Por modo de replicação (CDC, Full Load)
+  - Por modo de replicação (Upsert, SCD2)
 - Políticas de continuidade após erros
 - Logs detalhados para diagnóstico
 
+<img src="_images/errors_stats.png"></img>
+
 ### 7. Assistente de IA para Criação de Tarefas
-[IMAGEM: 7 - TASK CREATOR AI.png]
-- **Geração via Linguagem Natural**:
-  - Aceita prompts descritivos como:
-    ```text
-    Crie uma tarefa no modo Full Load e CDC realizando upsert no CDC. A tarefa não para em caso de erros. Você deve replicar a tabela employees.employee filtrando gender = F. Na transformação crie uma coluna full_name que concatena o first_name e o last_name
-    ```
+**Geração via Linguagem Natural**:
+<img src="_images/task_creator_ia_001.png"></img>
 - **Saída Estruturada**:
   - Gera arquivo `settings.json` completo
   - Aplica enums e padrões documentados
@@ -328,6 +324,9 @@ O TREMpy oferece uma interface abrangente para configuração e monitoramento de
   - Verifica consistência de prioridades
   - Garante dependências entre transformações
   - Aplica regras de estrutura de tabelas
+
+
+<img src="_images/task_creator_ia_002.png"></img>
 
 ## Slowly Changing Dimension Type 2 (SCD2)
 
