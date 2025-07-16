@@ -1,82 +1,484 @@
-2025-07-15 00:48:21,242 - INFO - UI - Replicação de dados iniciada
-2025-07-15 00:48:21,631 - INFO - REPLICATION - Recarregando tarefa
-2025-07-15 00:48:21,631 - INFO - REPLICATION - Recriando tabelas de metadata
-2025-07-15 00:48:21,743 - INFO - TASK - replicacao_employees_feminino válido
-2025-07-15 00:48:21,743 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-07-15 00:48:21,766 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300027, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-07-15 00:48:21,769 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
-2025-07-15 00:48:22,144 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
-2025-07-15 00:48:22,180 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-07-15 00:48:22,181 - INFO - TASK - Obtendo dados da tabela employees.employee
-2025-07-15 00:48:22,745 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300027, 'statusmessage': 'SELECT 300027', 'time_elapsed': '00:00:01'}
-2025-07-15 00:48:22,811 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:22,811 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
-2025-07-15 00:48:23,183 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
-2025-07-15 00:48:23,219 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
-2025-07-15 00:48:23,236 - INFO - FILTER - Aplicando filtro em employees.employee gender: Filtrar apenas funcionárias do gênero feminino
-2025-07-15 00:48:23,238 - INFO - FILTER - Aplicando filtro em employees.employee first_name: Filtrar funcionárias com os nomes Dipankar, Tetsushi e Kristin
-2025-07-15 00:48:23,245 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criar coluna full_name concatenando first_name e last_name
-2025-07-15 00:48:23,247 - INFO - TASK - Realizando carga completa da tabela employees.employee
-2025-07-15 00:48:23,254 - INFO - ENDPOINT - Truncando tabela employees.employee
-2025-07-15 00:48:23,260 - INFO - ENDPOINT - Inserindo 383 registros na tabela employees.employee
-2025-07-15 00:48:23,273 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 383, 'success': 1, 'time_elapsed': '00:00:00'}
-2025-07-15 00:48:23,321 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
-2025-07-15 00:48:23,321 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
-2025-07-15 00:48:23,373 - INFO - TASK - replicacao_employees_feminino válido
-2025-07-15 00:48:23,374 - INFO - TASK - Obtendo detalhes da tabela employees.employee
-2025-07-15 00:48:23,398 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300027, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
-2025-07-15 00:48:23,402 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 5s
-2025-07-15 00:48:23,841 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
-2025-07-15 00:48:23,917 - INFO - MESSAGE - Consumer Esperando por mensagens
-2025-07-15 00:48:23,954 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:29,396 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:34,827 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:40,285 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:45,736 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:51,215 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:48:56,658 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:02,122 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:07,565 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:12,991 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:18,482 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:23,943 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:29,388 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:34,823 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:40,280 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:45,708 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:51,278 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:49:56,713 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:02,168 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:07,614 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:13,056 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:18,596 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:24,070 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:29,498 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:34,929 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:40,360 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:45,804 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:51,255 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:50:56,683 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:02,108 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:07,548 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:12,983 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:18,415 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:23,865 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:29,298 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:34,730 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:40,176 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:45,619 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:51,115 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:51:56,559 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:02,018 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:07,485 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:12,927 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:18,382 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:23,830 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:29,289 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:34,729 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:40,168 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:45,578 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:51,048 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:52:56,481 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
-2025-07-15 00:53:01,922 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:08:49,729 - INFO - UI - Replicação de dados iniciada
+2025-07-16 00:08:50,066 - INFO - REPLICATION - Recarregando tarefa
+2025-07-16 00:08:50,067 - INFO - REPLICATION - Recriando tabelas de metadata
+2025-07-16 00:08:50,163 - INFO - TASK - replicacao_employees válido
+2025-07-16 00:08:50,163 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-07-16 00:08:50,183 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-07-16 00:08:50,183 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-07-16 00:08:50,188 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-07-16 00:08:50,188 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-07-16 00:08:50,193 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2869133, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-07-16 00:08:50,193 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-07-16 00:08:50,198 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-07-16 00:08:50,198 - INFO - REPLICATION - Preparando employees.employee para SCD2
+2025-07-16 00:08:50,198 - INFO - REPLICATION - Preparando employees.department para SCD2
+2025-07-16 00:08:50,198 - INFO - REPLICATION - Preparando employees.salary para SCD2
+2025-07-16 00:08:50,198 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
+2025-07-16 00:08:50,202 - INFO - FULL LOAD STRATEGY - Iniciando extração dos dados
+2025-07-16 00:08:50,550 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Source_PostgreSQL como SOURCE
+2025-07-16 00:08:50,585 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-07-16 00:08:50,586 - INFO - TASK - Obtendo dados da tabela employees.employee
+2025-07-16 00:08:51,140 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'rowcount': 300024, 'statusmessage': 'SELECT 300024', 'time_elapsed': '00:00:01'}
+2025-07-16 00:08:51,143 - INFO - TASK - Obtendo dados da tabela employees.department
+2025-07-16 00:08:51,146 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'rowcount': 7, 'statusmessage': 'SELECT 7', 'time_elapsed': '00:00:00'}
+2025-07-16 00:08:51,149 - INFO - TASK - Obtendo dados da tabela employees.salary
+2025-07-16 00:08:54,561 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'rowcount': 2844047, 'statusmessage': 'SELECT 2844047', 'time_elapsed': '00:00:03'}
+2025-07-16 00:08:54,565 - INFO - TASK - Obtendo dados da tabela employees.department_manager
+2025-07-16 00:08:54,568 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'rowcount': 18, 'statusmessage': 'SELECT 18', 'time_elapsed': '00:00:00'}
+2025-07-16 00:08:54,628 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:08:54,628 - INFO - FULL LOAD STRATEGY - Iniciando carregamento dos dados
+2025-07-16 00:08:54,990 - INFO - ENDPOINT FACTORY - Conectando ao banco de dados Target_PostgreSQL como TARGET
+2025-07-16 00:08:55,025 - DEBUG - {'user': 'postgres', 'channel_binding': 'prefer', 'dbname': 'db_employees_target', 'host': 'localhost', 'port': '5432', 'options': '', 'sslmode': 'prefer', 'sslcompression': '0', 'sslcertmode': 'allow', 'sslsni': '1', 'ssl_min_protocol_version': 'TLSv1.2', 'gssencmode': 'disable', 'krbsrvname': 'postgres', 'gssdelegation': '0', 'target_session_attrs': 'any', 'load_balance_hosts': 'disable'}
+2025-07-16 00:08:55,040 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Alterar nome da tabela employees.employee para employees.employee_history
+2025-07-16 00:08:55,040 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: formata a coluna first_name em employees.employee para maiúsculo
+2025-07-16 00:08:55,049 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: formata a coluna last_name em employees.employee para maiúsculo
+2025-07-16 00:08:55,057 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: criar coluna full_name em employees.employee concatenando as colunas first_name e last_name
+2025-07-16 00:08:55,070 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: criar coluna updated_by em employees.employee com o valor PYTHON
+2025-07-16 00:08:55,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: criar coluna sync_date em employees.employee com a data atual
+2025-07-16 00:08:55,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_start_date
+2025-07-16 00:08:55,071 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_end_date
+2025-07-16 00:08:55,074 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Criando coluna scd_current
+2025-07-16 00:08:55,075 - INFO - TRANSFORMATION - Aplicando transformação em employees.employee: Adicionando chave primária scd_start_date
+2025-07-16 00:08:55,075 - INFO - TASK - Realizando carga completa da tabela employees.employee_history
+2025-07-16 00:08:55,075 - INFO - ENDPOINT - Removendo tabela employees.employee_history
+2025-07-16 00:08:55,087 - INFO - ENDPOINT - Criando tabela employees.employee_history
+2025-07-16 00:08:55,096 - INFO - ENDPOINT - Truncando tabela employees.employee_history
+2025-07-16 00:08:55,483 - INFO - ENDPOINT - Inserindo 300024 registros na tabela employees.employee_history
+2025-07-16 00:09:05,855 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'records': 300024, 'success': 1, 'time_elapsed': '00:00:11'}
+2025-07-16 00:09:05,865 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Alterar nome da tabela employees.department para employees.department_history
+2025-07-16 00:09:05,866 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_start_date
+2025-07-16 00:09:05,866 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_end_date
+2025-07-16 00:09:05,866 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Criando coluna scd_current
+2025-07-16 00:09:05,866 - INFO - TRANSFORMATION - Aplicando transformação em employees.department: Adicionando chave primária scd_start_date
+2025-07-16 00:09:05,866 - INFO - TASK - Realizando carga completa da tabela employees.department_history
+2025-07-16 00:09:05,866 - INFO - ENDPOINT - Removendo tabela employees.department_history
+2025-07-16 00:09:05,868 - INFO - ENDPOINT - Criando tabela employees.department_history
+2025-07-16 00:09:05,870 - INFO - ENDPOINT - Truncando tabela employees.department_history
+2025-07-16 00:09:05,872 - INFO - ENDPOINT - Inserindo 7 registros na tabela employees.department_history
+2025-07-16 00:09:05,876 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'records': 7, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da tabela employees.salary para employees.salario_historico
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome do schema employees para funcionarios na tabela employees.salary
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.employee_id para funcionarios.salario.funcionario_id
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.amount para funcionarios.salario.quantia_mensal
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.from_date para funcionarios.salario.data_inicio
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Alterar nome da coluna employees.salary.to_date para funcionarios.salario.data_fim
+2025-07-16 00:09:05,900 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: obter a diferença de anos entre a from_date e to_date da tabela employees.salary e criar uma nova coluna com o nome periodo_anos
+2025-07-16 00:09:05,916 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: modificar o valor de funcionarios.salario.quantia_mensal através de uma expressão matemática dividindo o seu valor por 12
+2025-07-16 00:09:05,922 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_start_date
+2025-07-16 00:09:05,926 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_end_date
+2025-07-16 00:09:05,932 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Criando coluna scd_current
+2025-07-16 00:09:05,935 - INFO - TRANSFORMATION - Aplicando transformação em employees.salary: Adicionando chave primária scd_start_date
+2025-07-16 00:09:05,935 - INFO - TASK - Realizando carga completa da tabela funcionarios.salario_historico
+2025-07-16 00:09:05,935 - INFO - ENDPOINT - Removendo tabela funcionarios.salario_historico
+2025-07-16 00:09:07,004 - INFO - ENDPOINT - Criando tabela funcionarios.salario_historico
+2025-07-16 00:09:07,030 - INFO - ENDPOINT - Truncando tabela funcionarios.salario_historico
+2025-07-16 00:09:09,233 - INFO - ENDPOINT - Inserindo 2844047 registros na tabela funcionarios.salario_historico
+2025-07-16 00:10:19,083 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'records': 2844047, 'success': 1, 'time_elapsed': '00:01:13'}
+2025-07-16 00:10:19,091 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Alterar nome da tabela employees.department_manager para employees.department_manager_history
+2025-07-16 00:10:19,091 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_start_date
+2025-07-16 00:10:19,091 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_end_date
+2025-07-16 00:10:19,091 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Criando coluna scd_current
+2025-07-16 00:10:19,092 - INFO - TRANSFORMATION - Aplicando transformação em employees.department_manager: Adicionando chave primária scd_start_date
+2025-07-16 00:10:19,092 - INFO - TASK - Realizando carga completa da tabela employees.department_manager_history
+2025-07-16 00:10:19,092 - INFO - ENDPOINT - Removendo tabela employees.department_manager_history
+2025-07-16 00:10:19,099 - INFO - ENDPOINT - Criando tabela employees.department_manager_history
+2025-07-16 00:10:19,103 - INFO - ENDPOINT - Truncando tabela employees.department_manager_history
+2025-07-16 00:10:19,105 - INFO - ENDPOINT - Inserindo 18 registros na tabela employees.department_manager_history
+2025-07-16 00:10:19,109 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'records': 18, 'success': 1, 'time_elapsed': '00:00:00'}
+2025-07-16 00:10:19,168 - DEBUG - {'script_name': 'consumer.py', 'exit_code': 0}
+2025-07-16 00:10:19,168 - INFO - FULL LOAD STRATEGY - Full Load concluído com sucesso
+2025-07-16 00:10:19,226 - INFO - TASK - replicacao_employees válido
+2025-07-16 00:10:19,227 - INFO - TASK - Obtendo detalhes da tabela employees.employee
+2025-07-16 00:10:19,277 - DEBUG - {'schema_name': 'employees', 'table_name': 'employee', 'estimated_row_count': 300024, 'table_size': '41 MB', 'columns': ['id', 'birth_date', 'first_name', 'last_name', 'gender', 'hire_date']}
+2025-07-16 00:10:19,277 - INFO - TASK - Obtendo detalhes da tabela employees.department
+2025-07-16 00:10:19,282 - DEBUG - {'schema_name': 'employees', 'table_name': 'department', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['id', 'dept_name']}
+2025-07-16 00:10:19,282 - INFO - TASK - Obtendo detalhes da tabela employees.salary
+2025-07-16 00:10:19,287 - DEBUG - {'schema_name': 'employees', 'table_name': 'salary', 'estimated_row_count': 2869133, 'table_size': '425 MB', 'columns': ['employee_id', 'amount', 'from_date', 'to_date']}
+2025-07-16 00:10:19,287 - INFO - TASK - Obtendo detalhes da tabela employees.department_manager
+2025-07-16 00:10:19,292 - DEBUG - {'schema_name': 'employees', 'table_name': 'department_manager', 'estimated_row_count': 0, 'table_size': '40 kB', 'columns': ['employee_id', 'department_id', 'from_date', 'to_date']}
+2025-07-16 00:10:19,293 - INFO - REPLICATION - Preparando employees.employee para SCD2
+2025-07-16 00:10:19,293 - INFO - REPLICATION - Preparando employees.department para SCD2
+2025-07-16 00:10:19,293 - INFO - REPLICATION - Preparando employees.salary para SCD2
+2025-07-16 00:10:19,293 - INFO - REPLICATION - Preparando employees.department_manager para SCD2
+2025-07-16 00:10:19,297 - INFO - CDC STRATEGY - Iniciando CDC com intervalo de 5s
+2025-07-16 00:10:19,643 - INFO - MESSAGE DLX - Consumer Esperando por mensagens
+2025-07-16 00:10:19,733 - INFO - MESSAGE - Consumer Esperando por mensagens
+2025-07-16 00:10:20,423 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:26,434 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:31,835 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:37,598 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:43,057 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:48,605 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:54,213 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:10:59,877 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:05,545 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:11,150 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:16,552 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:21,946 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:27,346 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:32,753 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:38,172 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:43,580 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:48,995 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:54,404 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:11:59,809 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:05,236 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:10,641 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:16,057 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:21,455 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:26,894 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:32,316 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:37,771 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:43,167 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:48,576 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:53,977 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:12:59,415 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:04,825 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:10,231 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:15,647 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:21,055 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:26,450 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:31,857 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:37,262 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:42,668 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:48,101 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:53,567 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:13:58,990 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:04,416 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:09,874 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:15,276 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:20,680 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:26,102 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:31,499 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:36,909 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:42,311 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:47,705 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:53,103 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:14:58,537 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:03,950 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:09,354 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:14,834 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:20,267 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:25,695 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:31,115 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:36,511 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:41,918 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:47,325 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:52,781 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:15:58,205 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:03,613 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:09,026 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:14,505 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:19,954 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:25,371 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:30,786 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:36,212 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:41,614 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:47,031 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:52,433 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:16:57,849 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:03,295 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:08,708 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:14,143 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:19,546 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:24,951 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:30,345 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:35,796 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:41,190 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:46,592 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:51,995 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:17:57,401 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:02,824 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:08,225 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:13,651 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:19,044 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:24,445 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:29,868 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:35,296 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:40,729 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:46,132 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:51,532 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:18:56,931 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:02,326 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:07,792 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:13,236 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:18,662 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:24,078 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:29,503 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:34,942 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:40,407 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:45,837 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:51,256 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:19:56,688 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:02,088 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:07,495 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:12,926 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:18,365 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:23,777 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:29,201 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:34,660 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:40,094 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:45,506 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:50,926 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:20:56,385 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:01,787 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:07,196 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:12,618 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:18,024 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:23,440 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:28,859 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:34,285 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:39,698 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:45,110 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:50,536 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:21:55,941 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:01,342 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:06,761 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:12,189 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:17,605 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:23,019 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:28,440 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:33,859 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:39,271 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:44,684 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:50,164 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:22:55,600 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:01,035 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:06,448 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:11,887 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:17,296 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:22,714 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:28,112 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:33,536 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:39,028 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:44,435 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:49,836 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:23:55,248 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:00,658 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:06,220 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:11,685 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:17,164 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:22,594 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:28,075 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:33,585 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:39,083 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:44,543 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:50,058 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:24:55,508 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:00,990 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:06,518 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:11,929 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:17,340 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:22,758 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:28,167 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:33,565 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:38,981 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:44,419 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:49,856 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:25:55,277 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:00,695 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:06,155 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:11,561 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:16,966 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:22,381 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:27,780 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:33,186 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:38,563 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:43,952 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:49,349 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:26:54,748 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:00,131 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:05,535 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:10,923 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:16,317 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:21,715 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:27,088 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:32,492 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:37,889 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:43,288 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:48,672 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:54,163 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:27:59,556 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:04,939 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:10,380 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:15,827 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:21,241 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:26,642 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:32,037 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:37,439 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:42,842 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:48,252 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:53,670 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:28:59,069 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:04,482 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:09,877 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:15,281 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:20,699 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:26,094 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:31,489 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:36,880 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:42,301 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:47,693 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:53,094 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:29:58,482 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:03,873 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:09,262 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:14,680 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:20,169 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:25,595 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:31,009 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:36,433 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:41,889 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:47,298 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:52,692 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:30:58,091 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:03,487 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:08,889 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:14,366 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:19,872 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:25,288 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:30,709 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:36,184 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:41,605 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:47,025 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:52,438 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:31:57,858 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:03,285 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:08,710 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:14,138 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:19,562 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:24,986 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:30,423 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:35,864 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:41,263 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:46,701 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:52,127 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:32:57,542 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:02,964 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:08,381 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:13,815 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:19,232 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:24,649 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:30,073 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:35,515 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:40,985 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:46,400 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:51,804 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:33:57,212 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:02,698 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:08,141 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:13,560 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:18,985 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:24,407 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:29,866 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:35,273 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:40,691 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:46,100 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:51,511 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:34:56,908 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:02,326 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:07,742 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:13,175 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:18,591 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:23,994 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:29,404 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:34,813 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:40,223 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:45,644 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:51,052 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:35:56,471 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:01,898 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:07,313 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:12,731 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:18,168 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:23,604 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:29,051 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:34,455 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:39,884 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:45,305 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:50,713 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:36:56,200 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:01,660 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:07,101 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:12,523 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:17,930 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:23,339 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:28,758 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:34,188 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:39,622 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:45,055 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:50,484 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:37:55,883 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:01,286 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:06,725 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:12,160 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:17,572 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:23,010 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:28,421 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:33,846 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:39,264 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:44,695 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:50,104 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:38:55,517 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:00,923 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:06,346 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:11,786 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:17,244 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:22,664 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:28,073 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:33,514 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:38,917 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:44,338 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:49,761 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:39:55,197 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:00,628 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:06,081 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:11,484 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:16,908 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:22,329 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:27,748 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:33,151 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:38,576 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:43,987 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:49,406 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:40:54,831 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:00,252 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:05,705 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:11,116 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:16,580 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:22,010 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:27,455 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:32,858 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:38,250 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:43,681 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:49,087 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:54,515 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:41:59,925 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:05,323 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:10,718 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:16,144 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:21,563 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:26,982 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:32,400 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:37,836 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:43,292 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:48,736 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:54,220 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:42:59,621 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:05,025 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:10,421 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:15,820 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:21,211 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:26,602 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:31,999 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:37,398 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:42,790 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:48,203 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:53,600 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:43:59,021 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:44:04,439 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:44:09,839 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:44:15,255 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:44:20,708 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:44:26,123 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}
+2025-07-16 00:44:31,515 - DEBUG - {'script_name': 'producer.py', 'exit_code': 0}

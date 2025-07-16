@@ -7,7 +7,6 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 - [Instalação](#instalação)
 - [Usando PostgreSQL](#usando-postgresql)
 - [Configuração e Uso do RabbitMQ](#configuração-e-uso-do-rabbitmq)
-- [Configuração e Uso do Docker](#configuração-e-uso-do-docker)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Features Principais](#features-principais)
 - [Uso da IA](#uso-da-ia)
@@ -41,7 +40,7 @@ Você pode executar o TREMpy de duas formas:
 
 ### Executando com Docker
 
-Para executar o projeto em um container Docker, siga os passos básicos abaixo. Para configurações avançadas, consulte o manual completo em [`README_DOCKER.md`](README_DOCKER.md):
+O projeto utiliza Docker para facilitar a orquestração e o isolamento dos serviços. Para executar o projeto em um container Docker, siga os passos básicos abaixo. Para configurações avançadas, consulte o manual completo em [`README_DOCKER.md`](README_DOCKER.md):
 
 ```bash
 # Construir a imagem
@@ -50,6 +49,10 @@ docker-compose build
 # Iniciar os serviços
 docker-compose up -d
 ```
+
+### Acessando os Serviços
+- Streamlit: http://localhost:${STREAMLIT_PORT:-8501}
+- RabbitMQ: http://localhost:15672 (usuário/senha: guest/guest)
 
 ## Usando PostgreSQL
 
@@ -180,31 +183,11 @@ rabbitmqctl status
 
 > **Nota**: O sistema foi projetado para usar a configuração mínima do RabbitMQ. Para personalizações avançadas, consulte [`README_RABBITMQ.md`](README_RABBITMQ.md).
 
-
-## Configuração e Uso do Docker
-
-O projeto utiliza Docker para facilitar a orquestração e o isolamento dos serviços. Abaixo estão os comandos básicos para execução:
-
-### Construção e Inicialização
-```bash
-# Construir/Reconstruir a imagem para um projeto específico
-docker-compose -p replication1 build streamlit
-
-# Iniciar os serviços
-docker-compose -p replication1 up -d
-```
-
-### Acessando os Serviços
-- Streamlit: http://localhost:${STREAMLIT_PORT:-8501}
-- RabbitMQ: http://localhost:15672 (usuário/senha: guest/guest)
-
-Para mais detalhes, consulte o manual completo em [`README_DOCKER.md`](README_DOCKER.md).
-
 ## Estrutura do Projeto
 
 O núcleo do TREMpy é organizado em módulos especializados conforme a tabela abaixo:
 
-| Módulo          | Descrição Concisa                                                                 | Componentes Principais |
+| Módulo          | Descrição                                                                 | Componentes Principais |
 |-----------------|----------------------------------------------------------------------------------|---------------------------------------------|
 | **Replication** | Núcleo da replicação com estratégias para CDC e Full Load                       | `CDCStrategy.py`, `FullLoadStrategy.py`, `ReplicationManager.py` |
 | **Messages**    | Implementa a comunicação via RabbitMQ (produtores/consumidores)                 | `MessageProducer.py`, `MessageConsumer.py` |
@@ -227,13 +210,62 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
 
 ## Uso da IA
 
-O TREMpy planeja integrar a Deepseek API para auxiliar na criação automática de tarefas de replicação. A IA será treinada com os seguintes dados:
+O TREMpy integra a **API da DeepSeek** para automatizar a criação de tarefas de replicação através de linguagem natural, seguindo as especificações documentadas em [`task_creator_tutorial_for_ai.md`](trempy/IA/task_creator_tutorial_for_ai.md).  
 
-1. **Padrões de Dados**: Estruturas comuns de tabelas e relacionamentos.
-2. **Histórico de Replicação**: Casos de uso anteriores para sugerir configurações similares.
-3. **Performance**: Dados de tempo de replicação para otimização automática.
+### Benefícios da DeepSeek  
+| **Vantagem**               | **Descrição**                                                                 |
+|----------------------------|------------------------------------------------------------------------------|
+| **Custo-efetividade**      | Preço competitivo (~5x menor que GPT-4 Turbo para tarefas equivalentes)     |
+| **Performance**            | Otimizada para geração de JSON estruturado com baixa temperatura (`temperature=0`) |
+| **Confiabilidade**         | Respostas deterministicas (ideal para configurações técnicas)               |
 
-A funcionalidade permitirá que o sistema sugira configurações inteligentes baseadas no esquema do banco de dados e nos requisitos do usuário.
+### Implementação Técnica  
+A classe `TaskCreator` utiliza os seguintes parâmetros-chave na chamada à API:  
+
+| **Parâmetro**           | **Valor**               | **Finalidade**                                                                 |
+|-------------------------|-------------------------|--------------------------------------------------------------------------------|
+| `model`                 | `deepseek-chat`         | Modelo especializado em tarefas técnicas                                      |
+| `response_format`       | `json_object`           | Garante saída em JSON válido                                                  |
+| `temperature`           | `0`                     | Elimina aleatoriedade (crucial para configurações precisas)                   |
+| `messages`              | Sistema + User          | Contexto estruturado conforme documentação do TREMpy                          |
+
+### Fluxo de Operação  
+1. **Input do Usuário**:  
+   - Descrição em linguagem natural (ex: *"Replique a tabela employees.employee_salary com filtro para salários > 5000 e replique a tabela employees.employee com concatenação de first_name e last_name"*).  
+
+2. **Processamento**:  
+   - A IA gera um `settings.json` completo, aplicando:  
+     - Enums pré-definidos (ex: `replication_type="full_load_and_cdc"`)  
+     - Regras de prioridade entre transformações  
+     - Validação de dependências entre colunas  
+
+3. **Saída**:  
+   - Configuração pronta para execução, incluindo:  
+     ```json
+     {
+       "task": {
+         "replication_type": "full_load_and_cdc",
+         "cdc_settings": { "mode": "upsert" }
+       },
+       "error_handling": { ... },
+       "tables": [ ... ],
+       "filters": [ ... ],
+       "transformations": [ ... ]
+     }
+     ```
+
+4. **Validação Automática**:  
+   - Verifica inconsistências como:  
+     - Transformações estruturais sem prioridade `0`  
+     - Filtros com operadores inválidos para o tipo de coluna  
+
+> **Para desenvolvedores**: A implementação completa está disponível em `trempy/IA/TaskCreator.py`. Customizações avançadas podem ser feitas via `.env` (ex: alterar `DEEPSEEK_API_KEY` ou URL base).  
+
+<img src="_images/task_creator_ia_002.png" alt="Interface do Assistente de IA"></img>
+
+**Caso de Uso Típico**:  
+- Prompt para criar uma tarefa de replicação de dados simples: **[prompt_upsert.txt](task\another_tasks\fl-cdc-upsert-employees\prompt_upsert.txt)**
+- Prompt para criar uma tarefa de replicação de dados no modo SCD2 com transformações extras: **[prompt_scd2.txt](task\another_tasks\fl-cdc-scd2-employees\prompt_scd2.txt)**
 
 ## Features Principais
 
@@ -298,7 +330,7 @@ O TREMpy oferece uma interface para configuração e monitoramento de replicaç�
 | **Renomear**          | `modify_schema_name`, `modify_table_name`, `modify_column_name` | Renomear `emp_id` para `employee_id` |  
 | **Chaves Primárias**  | `add_primary_key`, `remove_primary_key` | Definir `created_at` como PK          |  
 
-- **Hierarquia de prioridades recomendadas**:
+- **Hierarquia recomendada de prioridades**:
   ```mermaid
   graph TD
     A[Estruturais - Prioridade Muito Alta] --> B[Valor - Prioridade Alta-Média]
@@ -327,14 +359,10 @@ O TREMpy oferece uma interface para configuração e monitoramento de replicaç�
   - Garante dependências entre transformações
   - Aplica regras de estrutura de tabelas
 
-
-<img src="_images/task_creator_ia_002.png"></img>
-
 ## Slowly Changing Dimension Type 2 (SCD2)
 
 O TREMpy implementa nativamente o padrão SCD2 para gerenciamento de dimensões que mudam ao longo do tempo:
 
-[IMAGEM: Seção relevante de 3 - TAREFA.png destacando SCD2]
 - **Configuração dedicada**:
   - Colunas para datas de início/fim (scd_start_date, scd_end_date)
   - Indicador de registro atual (scd_current)
@@ -346,6 +374,18 @@ O TREMpy implementa nativamente o padrão SCD2 para gerenciamento de dimensões 
   - Rastreabilidade completa de mudanças
   - Análise histórica facilitada
   - Compatível com ferramentas de BI e data warehousing
+
+### Exemplo 1: Tabela com replicação de dados simples no modo SCD2
+**Tabela no banco de dados de origem**  
+<img src="_images/source_table_scd_002.png"></img>  
+**Tabela no banco de dados de destino**  
+<img src="_images/target_table_scd_002.png"></img>  
+
+### Exemplo 2: Tabela com replicação de dados no modo SCD2 com diversas tranformações extras
+**Tabela no banco de dados de origem**  
+<img src="_images/source_table_scd_001.png"></img>  
+**Tabela no banco de dados de destino**  
+<img src="_images/target_table_scd_001.png"></img>  
 
 ## Licença
 
