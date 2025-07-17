@@ -21,7 +21,7 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 O TREMpy foi desenvolvido com base nas melhores práticas de ferramentas modernas de replicação de dados, adaptando-as para cenários acessíveis. Nossas principais inspirações foram:
 
 ### 1. **Snowflake Streams (CDC)**
-[IMAGEM: docs_snowflake.pdf - Páginas 1-3]  
+<img src="_images/inspiracao_snowflake.png" width=80%></img>
 - **Destaques**:  
   - Mecanismo nativo de **Change Data Capture (CDC)** via objetos `STREAM`.  
   - Implementação nativa de **Slowly Changing Dimension Type 2 (SCD2)** usando `STREAMS` e `TASKS`.
@@ -32,7 +32,7 @@ O TREMpy foi desenvolvido com base nas melhores práticas de ferramentas moderna
   - Requer configuração manual de streams.  
 
 ### 2. **Qlik Replicate**  
-[IMAGEM: www_qlik.pdf - Página 1]  
+<img src="_images/inspiracao_qlik_replicate.png" width=80%></img>
 - **Destaques**:  
   - Solução **enterprise** para replicação heterogênea (on-premise/cloud).  
   - Interface gráfica intuitiva para CDC e Full Load.  
@@ -56,10 +56,6 @@ Oferecer funcionalidades semelhantes às ferramentas enterprise (CDC, SCD2, tran
 - ✅ **Zero dependência** de vendors caros.  
 - ✅ **Compatibilidade** com bancos de dados tradicionais.  
 - ✅ **Fácil deploy** (Docker ou execução local).  
-
-> *"Queremos trazer o poder do Snowflake e Qlik para projetos que não podem investir em soluções caras."*  
-
----
 
 ### Por que essa abordagem?  
 1. **Para times pequenos**: Elimina a necessidade de infraestrutura complexa.  
