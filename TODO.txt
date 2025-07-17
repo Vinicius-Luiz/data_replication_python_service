@@ -1,5 +1,3 @@
-# Falar sobre inspirações
 # Adicionar guia de limitações PostgreSQL
-# Adicionar informações na GUIA IA
 # Adicionar parâmetro de DEEPSEEK_API no Docker
 # Adicionar no footer a versão da trempy

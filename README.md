@@ -4,6 +4,8 @@
 O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python, projetado para facilitar a replicação de dados entre SGBDs (inicialmente projeto para PostgreSQL) utilizando técnicas modernas de captura de dados de alteração (CDC) e integração com mensageria via RabbitMQ. Com uma interface intuitiva baseada em Streamlit e suporte a orquestração via Docker, o TREMpy oferece uma solução flexível e extensível para cenários de replicação, monitoramento e automação de fluxos de dados.
 
 ## Conteúdos
+- [Inspirações e Referências Técnicas](#inspirações-e-referências-técnicas)
+- [Objetivo Principal](#objetivo-principal)
 - [Instalação](#instalação)
 - [Usando PostgreSQL](#usando-postgresql)
 - [Configuração e Uso do RabbitMQ](#configuração-e-uso-do-rabbitmq)
@@ -14,6 +16,60 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 - [Licença](#licença)
 - [Contato](#contato)
 
+## Inspirações e Referências Técnicas
+
+O TREMpy foi desenvolvido com base nas melhores práticas de ferramentas modernas de replicação de dados, adaptando-as para cenários acessíveis. Nossas principais inspirações foram:
+
+### 1. **Snowflake Streams (CDC)**
+[IMAGEM: docs_snowflake.pdf - Páginas 1-3]  
+- **Destaques**:  
+  - Mecanismo nativo de **Change Data Capture (CDC)** via objetos `STREAM`.  
+  - Implementação nativa de **Slowly Changing Dimension Type 2 (SCD2)** usando `STREAMS` e `TASKS`.
+  - Rastreia mudanças (INSERT/UPDATE/DELETE) em tabelas com metadados temporais.  
+  - Suporte a múltiplos consumidores de dados incrementais.  
+- **Limitações**:  
+  - Exclusivo do ecossistema Snowflake (não aplicável a SGBDs tradicionais).  
+  - Requer configuração manual de streams.  
+
+### 2. **Qlik Replicate**  
+[IMAGEM: www_qlik.pdf - Página 1]  
+- **Destaques**:  
+  - Solução **enterprise** para replicação heterogênea (on-premise/cloud).  
+  - Interface gráfica intuitiva para CDC e Full Load.  
+  - Suporte a 20+ fontes/destinos (Oracle, SAP, Kafka, etc.).  
+- **Limitações**:  
+  - Modelo licenciado caro.  
+  - Infraestrutura complexa (requer servidores dedicados).  
+
+### Diferencial do TREMpy  
+Enquanto essas ferramentas são poderosas, o TREMpy foi projetado para democratizar a replicação de dados:  
+
+| **Recurso**          | **Snowflake/Qlik**               | **TREMpy**                          |  
+|----------------------|----------------------------------|-------------------------------------|  
+| **Custo**            | Alto (licenças/cloud)            | **Open-source** (sem custos)        |  
+| **Stack**            | Ecossistema próprio              | **Qualquer SGBD** (PostgreSQL, MySQL, etc.) |  
+| **Complexidade**     | Requer expertise avançada        | **Interface simplificada** (Streamlit) |  
+| **CDC**              | Nativo ou via licença            | **Implementação leve** (baseada em triggers/WAL) |  
+
+## Objetivo Principal
+Oferecer funcionalidades semelhantes às ferramentas enterprise (CDC, SCD2, transformações), mas com:  
+- ✅ **Zero dependência** de vendors caros.  
+- ✅ **Compatibilidade** com bancos de dados tradicionais.  
+- ✅ **Fácil deploy** (Docker ou execução local).  
+
+> *"Queremos trazer o poder do Snowflake e Qlik para projetos que não podem investir em soluções caras."*  
+
+---
+
+### Por que essa abordagem?  
+1. **Para times pequenos**: Elimina a necessidade de infraestrutura complexa.  
+2. **Para legados**: Permite modernizar bancos antigos sem migração.  
+3. **Para desenvolvedores**: API aberta e extensível via Python.  
+
+Se precisar de detalhes técnicos das inspirações, consulte:  
+- [Documentação do Snowflake Streams](https://docs.snowflake.com/)  
+- [Site oficial do Qlik Replicate](https://www.qlik.com/products/qlik-replicate)  
+- [Snowflake SCD2 Guide](https://www.snowflake.com/en/blog/building-a-type-2-slowly-changing-dimension-in-snowflake-using-streams-and-tasks-part-1/)
 
 ## Instalação
 
@@ -264,8 +320,8 @@ A classe `TaskCreator` utiliza os seguintes parâmetros-chave na chamada à API:
 <img src="_images/task_creator_ia_002.png" alt="Interface do Assistente de IA"></img>
 
 **Caso de Uso Típico**:  
-- Prompt para criar uma tarefa de replicação de dados simples: **[prompt_upsert.txt](task\another_tasks\fl-cdc-upsert-employees\prompt_upsert.txt)**
-- Prompt para criar uma tarefa de replicação de dados no modo SCD2 com transformações extras: **[prompt_scd2.txt](task\another_tasks\fl-cdc-scd2-employees\prompt_scd2.txt)**
+- Prompt para criar uma tarefa de replicação de dados simples: **[prompt_upsert.txt](task/another_tasks/fl-cdc-upsert-employees/prompt_upsert.txt)**
+- Prompt para criar uma tarefa de replicação de dados no modo SCD2 com transformações extras: **[prompt_scd2.txt](task/another_tasks/fl-cdc-scd2-employees/prompt_scd2.txt)**
 
 ## Features Principais
 
@@ -374,6 +430,7 @@ O TREMpy implementa nativamente o padrão SCD2 para gerenciamento de dimensões 
   - Rastreabilidade completa de mudanças
   - Análise histórica facilitada
   - Compatível com ferramentas de BI e data warehousing
+  - Configuração nativa via interface (sem código SQL).
 
 ### Exemplo 1: Tabela com replicação de dados simples no modo SCD2
 **Tabela no banco de dados de origem**  
