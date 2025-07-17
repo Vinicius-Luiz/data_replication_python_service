@@ -138,6 +138,8 @@ class UIComponents:
                     </a>""",
                     unsafe_allow_html=True
                 )
+            # Footer de versão
+            st.sidebar.markdown("<div style='text-align: center; color: gray; font-size: 0.9em; margin-top: 10px;'>Versão: 1.0</div>", unsafe_allow_html=True)
 
     def display_content(self):
         """Exibe o conteúdo principal baseado na página selecionada."""

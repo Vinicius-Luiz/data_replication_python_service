@@ -149,6 +149,10 @@ host all all 192.168.1.0/24 md5  # Sua rede Wi-Fi
 
 > **Nota**: Ao configurar a conexão na interface do Streamlit, use o Endereço IPv4 como host quando estiver rodando a aplicação via Docker. Este é o IP que o container Docker usará para se comunicar com seu PostgreSQL local.
 
+### Limitações
+
+- Usar **filtros** em colunas que não sejam **Chave Primária**, as operações **DELETE** não serão capturadas
+
 ## Configuração e Uso do RabbitMQ
 
 O TREMpy implementa um padrão de mensageria com RabbitMQ, organizado em três componentes principais:
