@@ -13,6 +13,7 @@ O **TREMpy** é uma sistema de replicação transacional desenvolvido em Python,
 - [Features Principais](#features-principais)
 - [Uso da IA](#uso-da-ia)
 - [Slowly Changing Dimension Type 2 (SCD2)](#slowly-changing-dimension-type-2-scd2)
+- [Ideias Futuras](#ideias-futuras)
 - [Licença](#licença)
 - [Contato](#contato)
 
@@ -443,6 +444,27 @@ O TREMpy implementa nativamente o padrão SCD2 para gerenciamento de dimensões 
 <img src="_images/source_table_scd_001.png"></img>  
 **Tabela no banco de dados de destino**  
 <img src="_images/target_table_scd_001.png"></img>  
+
+## Ideias Futuras
+
+O TREMpy está em constante evolução, e planejamos as seguintes melhorias futuras:
+
+### 1. Suporte a Multiplos SGBDs
+- **Expansão de Compatibilidade**:  
+  - Adicionar suporte nativo para MySQL, Oracle, SQL Server e outros SGBDs populares como fontes e destinos de replicação.  
+  - Implementar adaptadores específicos para cada banco de dados, mantendo a mesma interface unificada.  
+
+- **Benefícios Esperados**:  
+  - Permitir cenários de migração entre bancos heterogêneos (ex: Oracle → PostgreSQL).  
+
+### 2. Migração para Flask
+- **Motivação**:  
+  - Substituir a interface Streamlit por uma baseada em Flask, oferecendo:  
+    - Maior flexibilidade para integrações externas.  
+    - Controle mais granular sobre a UI/UX.  
+
+- **Vantagens**:  
+  - Arquitetura mais escalável para ambientes enterprise.  
 
 ## Licença
 
