@@ -17,6 +17,7 @@ services:
     container_name: ${CONTAINER_NAME:-data_replication}_streamlit
     environment:
       - RABBITMQ_HOST=rabbitmq
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
     env_file:
       - .env
     ports:

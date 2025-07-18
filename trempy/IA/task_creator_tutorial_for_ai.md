@@ -1,5 +1,7 @@
 # Documentação para Geração Automática de Tarefas de Replicação
 
+> **Atenção:** Sempre preencha todos os campos obrigatórios do settings.json, utilizando os valores padrão definidos nesta documentação caso o usuário não especifique. Não crie parâmetros extras além dos explicitamente documentados.
+
 Esta documentação serve como referência para a criação automática de tarefas de replicação de dados a partir de prompts em linguagem natural, utilizando API ou modelos de IA.
 
 O objetivo é retornar o settings.json completo com todas as seções estruturadas corretamente, usando os valores exatos dos enums conforme a documentação. Inclua descrições claras para cada filtro e transformação.
@@ -22,23 +24,42 @@ O arquivo de configuração é um JSON com a seguinte estrutura:
 
 ---
 
+## 1.1 Parâmetros obrigatórios e valores padrão
+
+Ao gerar o settings.json, SEMPRE inclua os seguintes parâmetros, mesmo que o usuário não os mencione. Use o valor padrão indicado caso o usuário não especifique:
+
+- task.replication_type: "full_load" (se não informado pelo usuário)
+- task.interval_seconds: 10 (se não informado pelo usuário)
+- task.start_mode: "reload" (se não informado pelo usuário)
+- task.create_table_if_not_exists: false (se não informado pelo usuário)
+- task.full_load_settings.recreate_table_if_exists: false (se não informado pelo usuário)
+- task.full_load_settings.truncate_before_insert: false (se não informado pelo usuário)
+- task.cdc_settings.mode: "default" (se não informado pelo usuário e houver CDC)
+- task.cdc_settings.scd2_settings.start_date_column_name: "scd_start_date" (se não informado e houver SCD2)
+- task.cdc_settings.scd2_settings.end_date_column_name: "scd_end_date" (se não informado e houver SCD2)
+- task.cdc_settings.scd2_settings.current_column_name: "scd_current" (se não informado e houver SCD2)
+
+Importante: Mesmo que o usuário não mencione, inclua todos os parâmetros obrigatórios com seus valores padrão.
+
+---
+
 ## 2. Seções do Arquivo de Configuração
 
 ### 2.1. Seção `task`
 - **task_name**: Nome da tarefa.
-- **replication_type**: Tipo de replicação (`full_load`, `cdc`, `full_load_and_cdc`) (default `full_load`).
-- **interval_seconds**: Intervalo entre execuções (em segundos) (default 60).
-- **start_mode**: Modo de início (`reload`, `continue`). Opcional em alguns casos (default `reload`).
-- **create_table_if_not_exists**: Cria a tabela de destino se não existir (boolean) (default false).
+- **replication_type**: Tipo de replicação (`full_load`, `cdc`, `full_load_and_cdc`).
+- **interval_seconds**: Intervalo entre execuções (em segundos).
+- **start_mode**: Modo de início (`reload`, `continue`).
+- **create_table_if_not_exists**: Cria a tabela de destino se não existir (boolean).
 - **full_load_settings**: (objeto)
-  - **recreate_table_if_exists**: Recria a tabela se já existir (boolean) (default false).
-  - **truncate_before_insert**: Trunca a tabela antes de inserir (boolean) (default false).
+  - **recreate_table_if_exists**: Recria a tabela se já existir (boolean).
+  - **truncate_before_insert**: Trunca a tabela antes de inserir (boolean).
 - **cdc_settings**: (objeto, opcional)
-  - **mode**: Modo do CDC (`default`, `upsert`, `scd2`) (default `default`).
+  - **mode**: Modo do CDC (`default`, `upsert`, `scd2`).
   - **scd2_settings**: (objeto, apenas se `mode` for `scd2`)
-    - **start_date_column_name**: Nome da coluna de início de vigência (se não especificado pelo usuário, o nome deve ser "scd_start_date").
-    - **end_date_column_name**: Nome da coluna de fim de vigência (se não especificado pelo usuário, o nome deve ser "scd_end_date").
-    - **current_column_name**: Nome da coluna que indica se o registro é o atual (se não especificado pelo usuário, o nome deve ser "scd_current").
+    - **start_date_column_name**: Nome da coluna de início de vigência.
+    - **end_date_column_name**: Nome da coluna de fim de vigência.
+    - **current_column_name**: Nome da coluna que indica se o registro é o atual.
 
 ### 2.2. Seção `error_handling`
 - **stop_if_insert_error**: Interrompe a tarefa em erro de insert (boolean).
@@ -152,6 +173,7 @@ Cada objeto:
     "task_name": "replicacao_clientes_vip",
     "replication_type": "full_load_and_cdc",
     "interval_seconds": 600,
+    "start_mode": "reload",
     "create_table_if_not_exists": true,
     "full_load_settings": {
       "recreate_table_if_exists": false,
@@ -254,6 +276,8 @@ Crie uma tarefa de replicação para a tabela "produtos" do schema "estoque":
 - Adicionar coluna "ultima_atualizacao" com data/hora atual
 - Converter nome do produto para maiúsculas
 - Não parar em caso de erro de inserção
+
+// Mesmo que o prompt não mencione, o settings.json gerado deve conter todos os parâmetros obrigatórios com seus valores padrão, conforme a tabela de parâmetros obrigatórios.
 ```
 
 ---

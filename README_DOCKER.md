@@ -23,8 +23,8 @@ docker-compose -p replication2 build streamlit
 
 # Iniciar os serviços (primeira vez ou após parar)
 docker-compose -p replication1 up -d
-CONTAINER_NAME=replication2 STREAMLIT_PORT=8502 docker-compose -p replication2 up -d
-CONTAINER_NAME=replication3 STREAMLIT_PORT=8503 docker-compose -p replication3 up -d
+CONTAINER_NAME=replication2 STREAMLIT_PORT=8502 DEEPSEEK_API_KEY=sua_chave_aqui docker-compose -p replication2 up -d
+CONTAINER_NAME=replication3 STREAMLIT_PORT=8503 DEEPSEEK_API_KEY=sua_chave_aqui docker-compose -p replication3 up -d
 
 # Reconstruir e iniciar (comando único)
 docker-compose -p replication1 up -d --build
