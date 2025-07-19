@@ -50,20 +50,19 @@ Enquanto essas ferramentas são poderosas, o TREMpy foi projetado para democrati
 | **Custo**            | Alto (licenças/cloud)            | **Open-source** (sem custos)        |  
 | **Stack**            | Ecossistema próprio              | **Qualquer SGBD** (PostgreSQL, MySQL, etc.) |  
 | **Complexidade**     | Requer expertise avançada        | **Interface simplificada** (Streamlit) |  
-| **CDC**              | Nativo ou via licença            | **Implementação leve** (baseada em triggers/WAL) |  
 
 ## Objetivo Principal
 Oferecer funcionalidades semelhantes às ferramentas enterprise (CDC, SCD2, transformações), mas com:  
-- ✅ **Zero dependência** de vendors caros.  
+- ✅ **Zero dependência** de fornecedores caros.  
 - ✅ **Compatibilidade** com bancos de dados tradicionais.  
 - ✅ **Fácil deploy** (Docker ou execução local).  
 
 ### Por que essa abordagem?  
 1. **Para times pequenos**: Elimina a necessidade de infraestrutura complexa.  
 2. **Para legados**: Permite modernizar bancos antigos sem migração.  
-3. **Para desenvolvedores**: API aberta e extensível via Python.  
+3. **Para desenvolvedores**: Projeto Python aberto e extensível.  
 
-Se precisar de detalhes técnicos das inspirações, consulte:  
+Para mais detalhes técnicos das inspirações, consulte:  
 - [Documentação do Snowflake Streams](https://docs.snowflake.com/)  
 - [Site oficial do Qlik Replicate](https://www.qlik.com/products/qlik-replicate)  
 - [Snowflake SCD2 Guide](https://www.snowflake.com/en/blog/building-a-type-2-slowly-changing-dimension-in-snowflake-using-streams-and-tasks-part-1/)
@@ -77,6 +76,8 @@ Antes de começar, certifique-se de que os seguintes pré-requisitos estão inst
 - **Docker Compose** (para orquestração dos containers)
 
 ### Executando Localmente
+
+Caso seja a primeira vez utilizando o TREMpy, execute o script `save_key_crypto.py` para configurar a chave de encriptação de credenciais.
 
 Você pode executar o TREMpy de duas formas:
 
@@ -183,13 +184,7 @@ O TREMpy implementa um padrão de mensageria com RabbitMQ, organizado em três c
 
 ### 4. Fluxo
 
-```mermaid
-graph TD
-    A[Producer] -->|Publica| B[Exchange]
-    B -->|Routing Key| C[Fila Durável]
-    C --> D[Consumer]
-    C --> E[DLX]
-```
+<img src="_images/message_chart.png"></img>
 
 ### Configuração Local do RabbitMQ (Windows)
 
@@ -223,9 +218,9 @@ rabbitmqctl status
 #### Observações Importantes:
 1. O TREMpy utiliza por padrão:
    - Host: `localhost`
-   - Usuário: `guest` (padrão do RabbitMQ)
-   - Senha: `guest` (padrão do RabbitMQ)
-   - Porta: `5672` (AMQP padrão)
+   - Usuário: `guest`
+   - Senha: `guest`
+   - Porta: `5672`
 
 2. Não é necessário criar usuários específicos, pois o código usa as credenciais padrão
 
@@ -249,7 +244,7 @@ O núcleo do TREMpy é organizado em módulos especializados conforme a tabela a
 | **Replication** | Núcleo da replicação com estratégias para CDC e Full Load                       | `CDCStrategy.py`, `FullLoadStrategy.py`, `ReplicationManager.py` |
 | **Messages**    | Implementa a comunicação via RabbitMQ (produtores/consumidores)                 | `MessageProducer.py`, `MessageConsumer.py` |
 | **Tasks**       | Modelagem e execução de tarefas de replicação                                   | `Task.py`                                  |
-| **Endpoints**   | Gerencia conexões com bancos de dados (PostgreSQL)          | `Endpoint.py`, `CDCManager.py`, `FullLoadHandler.py` |
+| **Endpoints**   | Gerencia conexões com bancos de dados          | `Endpoint.py`, `CDCManager.py`, `FullLoadHandler.py` |
 | **Tables**      | Representação e operações básicas de tabelas                                    | `Table.py`                                 |
 | **Columns**     | Define a estrutura e metadados de colunas para transformação de dados            | `Column.py`                                 |
 | **Transformations** | Transformações de dados e geração de colunas derivadas                     | `ColumnModifier.py`, `ColumnCreator.py`, `Transformation.py`   |
@@ -273,7 +268,7 @@ O TREMpy integra a **API da DeepSeek** para automatizar a criação de tarefas d
 | **Vantagem**               | **Descrição**                                                                 |
 |----------------------------|------------------------------------------------------------------------------|
 | **Custo-efetividade**      | Preço competitivo (~5x menor que GPT-4 Turbo para tarefas equivalentes)     |
-| **Performance**            | Otimizada para geração de JSON estruturado com baixa temperatura (`temperature=0`) |
+| **Performance**            | Otimizada para geração de JSON estruturado |
 | **Confiabilidade**         | Respostas deterministicas (ideal para configurações técnicas)               |
 
 ### Implementação Técnica  
@@ -311,18 +306,13 @@ A classe `TaskCreator` utiliza os seguintes parâmetros-chave na chamada à API:
      }
      ```
 
-4. **Validação Automática**:  
-   - Verifica inconsistências como:  
-     - Transformações estruturais sem prioridade `0`  
-     - Filtros com operadores inválidos para o tipo de coluna  
-
-> **Para desenvolvedores**: A implementação completa está disponível em `trempy/IA/TaskCreator.py`. Customizações avançadas podem ser feitas via `.env` (ex: alterar `DEEPSEEK_API_KEY` ou URL base).  
+> **Para desenvolvedores**: A implementação completa está disponível em [TaskCreator.py](trempy/IA/TaskCreator.py). Você deve adicionar uma API Key válida no seu .env com o nome `DEEPSEEK_API_KEY`.   
 
 <img src="_images/task_creator_ia_002.png" alt="Interface do Assistente de IA"></img>
 
 **Caso de Uso Típico**:  
-- Prompt para criar uma tarefa de replicação de dados simples: **[prompt_upsert.txt](task/another_tasks/fl-cdc-upsert-employees/prompt_upsert.txt)**
-- Prompt para criar uma tarefa de replicação de dados no modo SCD2 com transformações extras: **[prompt_scd2.txt](task/another_tasks/fl-cdc-scd2-employees/prompt_scd2.txt)**
+- Prompt para criar uma tarefa simples: **[prompt_upsert.txt](task/another_tasks/fl-cdc-upsert-employees/prompt_upsert.txt)**
+- Prompt para criar uma tarefa no modo SCD2 com transformações extras: **[prompt_scd2.txt](task/another_tasks/fl-cdc-scd2-employees/prompt_scd2.txt)**
 
 ## Features Principais
 
@@ -450,21 +440,14 @@ O TREMpy implementa nativamente o padrão SCD2 para gerenciamento de dimensões 
 O TREMpy está em constante evolução, e planejamos as seguintes melhorias futuras:
 
 ### 1. Suporte a Multiplos SGBDs
-- **Expansão de Compatibilidade**:  
-  - Adicionar suporte nativo para MySQL, Oracle, SQL Server e outros SGBDs populares como fontes e destinos de replicação.  
-  - Implementar adaptadores específicos para cada banco de dados, mantendo a mesma interface unificada.  
+- **Expansão de Compatibilidade**: Adicionar suporte nativo para MySQL, Oracle, SQL Server e outros SGBDs populares como fontes e destinos de replicação, mantendo a mesma interface unificada.  
 
-- **Benefícios Esperados**:  
-  - Permitir cenários de migração entre bancos heterogêneos (ex: Oracle → PostgreSQL).  
+- **Benefícios Esperados**: Permitir cenários de migração entre bancos heterogêneos (ex: Oracle → PostgreSQL).  
 
 ### 2. Migração para Flask
-- **Motivação**:  
-  - Substituir a interface Streamlit por uma baseada em Flask, oferecendo:  
-    - Maior flexibilidade para integrações externas.  
-    - Controle mais granular sobre a UI/UX.  
+- **Motivação**: Substituir a interface Streamlit por uma baseada em Flask, oferecendo maior controle mais granular sobre a UI/UX.  
 
-- **Vantagens**:  
-  - Arquitetura mais escalável para ambientes enterprise.  
+- **Vantagens**: Arquitetura mais escalável para ambientes enterprise.  
 
 ## Licença
 

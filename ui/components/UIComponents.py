@@ -28,7 +28,7 @@ class UIComponents:
         # Define o layout da página
         st.set_page_config(
             page_title="TREMpy - Transactional Replication Engine Made in Python",
-            page_icon="🚂",
+            page_icon="_images/logo_white_trempy.ico",
             layout="wide",
             initial_sidebar_state="expanded"
         )

@@ -172,7 +172,7 @@ Cada objeto:
   "task": {
     "task_name": "replicacao_clientes_vip",
     "replication_type": "full_load_and_cdc",
-    "interval_seconds": 600,
+    "interval_seconds": 60,
     "start_mode": "reload",
     "create_table_if_not_exists": true,
     "full_load_settings": {

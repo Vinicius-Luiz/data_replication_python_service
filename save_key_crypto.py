@@ -3,7 +3,7 @@ import base64
 from pathlib import Path
 # Gera a chave de criptografia
 key = CredentialsCrypto.generate_key()
-env_value = f"TREMPY_CRYPTO_KEY={base64.b64encode(key).decode()}"
+env_value = f"\nTREMPY_CRYPTO_KEY={base64.b64encode(key).decode()}"
 
 # Define o caminho do arquivo .env
 env_path = Path(".env")
